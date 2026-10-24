@@ -1,0 +1,198 @@
+# WeMath worksheet playbook
+
+How to build WeMath math packets fast and the way the founder (the person who runs WeMath) wants them. Read this before touching `build_worksheets.py`.
+
+WeMath is a math tutoring program in a community center, with Mathnasium-style teaching. The audience is **very young kids (K–2)**. These packets are the start of a home-grown curriculum.
+
+---
+
+## 1. What exists
+
+| Folder | Topic | Key visual |
+|---|---|---|
+| `0-adding-and-taking-away/` | Add and take away within 9 with objects (comes before packet 1) | `icon(bk, kind, cx, cy, s)` (17 drawn objects, colour and B/W outline), `objects` (rows of 5, last ones crossed), `together` (two groups with +, `outline=True` rings each group), `circles` (a child's drawn circles for keys), `STORY_BANK` + `story_text`, `flow()` (a part that runs onto new pages by itself) |
+| `1-ten-buddies/` | Pairs that make 10 | ten-frames, blue + orange dots |
+| `2-ten-and-some-more/` | 10 + n, teen numbers | full ten-frame + extra dots, "1**4**" with the ones digit in orange |
+| `3-up-to-and-over-ten/` | Crossing 10 (8 + 5) | **break-apart diagram** (make-ten box with the ten in a band, leftover circle) |
+| `4-over-the-next-ten/` | Crossing 20, 30… (28 + 5) | break-apart with band 30/40…, dot "ladder" 8+2, 18+2, 28+2 |
+| `5-back-through-ten/` | Subtracting across ten (15 − 8) | **jump diagram**: 15 → 10 → 8, jumps 5 + 2 = 7 |
+| `6-doubles-and-near-doubles/` | Doubles to 10 + 10, near doubles (6 + 7) | `dot_pair` rows like a domino, extra dot orange |
+| `7-tens-and-ones/` | Two-digit numbers as tens and ones | `ten_stick` (bar of 10 blue dots), loose orange ones, `quick_tens` (line per ten, dot per one), `pv_chart` (tens \| ones) |
+| `8-ten-more-ten-less/` | 10 more / 10 less than a two-digit number | `more_less_picture`: an added ten-stick with orange dots, or the last stick crossed out (`cross_out`); 10 less ← n → 10 more strips; +10 chains |
+| `9-adding-two-digit-numbers/` | Two-digit + two-digit within 100 | `add_picture` (first number blue sticks + ones, second orange), `split_rows` (tens / ones / total scaffold; `helped=True` prints the parts) |
+| `10-subtracting-two-digit-numbers/` | Two-digit − two-digit, no borrowing | `take_away_picture` (blue sticks + ones, the taken tens crossed with an orange X, taken ones slashed), `split_rows(..., op="−")` (total row still adds tens + ones) |
+| `11-missing-numbers/` | Missing addends (8 + ☐ = 13, 42 + ☐ = 75) | `jump_stops(start, total)` (start → next ten → last ten → total), `jump_up` (stops in a row, a curved arrow per jump with the jump size in a bubble on the curve; `given=False` makes the tens stops boxes), `jumps_sum` |
+| `12-subtracting-with-borrowing/` | Two-digit subtraction that needs a ten broken | `broken_picture` (tens − 1 sticks, the opened ten as an orange ten-frame, then the loose ones; taken parts crossed), `borrow_rows` (break / tens / ones / total). `column_sub` (stacked, crossed digits) is kept for a later column packet |
+| `13-adding-in-columns/` | Stacked two-digit addition | `stacked(op="+")` (columns, carry boxes, `room=False` for no carry row), `stack_grid` (empty columns to copy into), `add_mat` (tens/ones mat; the new ten is an orange-outlined stick) |
+| `14-subtracting-in-columns/` | Stacked two-digit subtraction | `stacked(op="−")` (crossed digits, new digits above), `sub_mat` (row 1 the number, row 2 a ten opened into 10 orange ones; taken parts crossed) |
+| `15-hundreds-tens-and-ones/` | Three-digit place value | `hundred_flat` (10 × 10 grid; orange for an added hundred), `hto_picture`, `quick_hto` (square, line, dot), `hto_chart`, `hto_boxes` |
+| `16-skip-counting/` | By 5s, 10s and 100s | `five_bar`, `count_chain` (arcs with a +5 bubble, or commas when `arcs=False`), `step_bubble` |
+| `17-comparing-numbers/` | <, >, = | `compare_card` (each picture centred over its number, sign box between), `mini_tens`, `sign_of` |
+| `18-10-and-100-more-or-less/` | ±10, ±100 | `number_cross` (100 more up, 100 less down, 10 less left, 10 more right) |
+| `19-adding-three-digit-numbers/` | Three-digit addition | `two_drawings` (blue + orange quick drawings), `hto_add_rows` (hundreds/tens/ones/total; total adds three parts so no carrying is needed), `stacked` with 3 places |
+| `20-subtracting-three-digit-numbers/` | Three-digit subtraction, one break | `quick_take` (quick drawing with taken parts crossed), `hto_sub_rows` (break row only when needed) |
+| `21-equal-groups-and-arrays/` | Repeated addition | `group_ring` (dice pattern), `groups_picture`, `array_picture` (rows or columns alternate blue/orange) |
+| `22-even-and-odd/` | Even and odd | `pairs_picture` (pairs in rings; the leftover dot is orange only on the key, so it doesn't give the answer away), `even_odd_choice` |
+| `23-hundred-buddies/` | Complements to 100, 50, 1000 (Mathnasium wholes and parts) | `hundred_grid` (10 × 10 dots filled row by row; buddy orange), `c_hgrid`, `c_nines` (tens make 9, ones make 10), reuses `c_jump_up` |
+| `24-counting-forward-and-backward/` | Count by any number, either way (Mathnasium counting) | `count_chain` with "−2" bubbles, `c_chain` (sign-aware), `c_seq`, `c_direction` (Count [forward/back] by [n]), `countby_key` |
+| `25-halves/` | Half of, both directions (Mathnasium: half first, before other fractions) | `c_share` (objects over two plates; key fills the plates), `c_half_double` (dot pairs), `c_half_tens` (sticks cut by a dashed line), `c_half_split`, `c_half_odd` (last object cut), `half_str` (3½, ½) |
+
+Each folder has `color/` and `black-and-white/` subfolders, each holding `<slug>-packet.pdf` and `<slug>-answer-key.pdf`. Packets 3 and 4 also include `break-apart-template.pdf`.
+
+**Rebuild everything:** `python build_worksheets.py`, run from this folder.
+- Needs `reportlab` (plus `pypdfium2` and `pypdf` for checking). If they're missing, create a venv outside the PDF folders: `python3 -m venv .venv && .venv/bin/pip install reportlab pypdfium2 pypdf`.
+- Uses the macOS fonts Avenir Next (`.ttc` subfont indices 7, 5, 2, 0) and Arial Rounded Bold.
+- The folder moved once (from `Website/curriculum` to `WeMath/curriculum`). Always `ls` before assuming paths.
+
+---
+
+## 2. Founder's preferences (non-negotiable)
+
+### Packet structure
+- **One subject per packet, one folder per packet.** Number the folders in teaching order: `N-slug/`.
+- **Page 1 is a learning page:** very visual, few words, for young kids. Big title (AvB 30), short tagline (Rnd 15), big dots and big colored numbers. Usually 3 numbered step panels, then "Write it like this" with the diagram filled in, then a "Your turn!" panel.
+- **Practice pages remove help gradually ("training wheels").** The pattern: full diagram + dots → diagram with labels → less help (only blanks for the parts) → **"On your own"** plain problems → word problems. The founder asks for more help at the start and an unstructured, no-help section near the end.
+- **Always write problems as a + b = c** (blank in any of the three spots), never "c = a + b" or "☐ = 6 + 7". The founder says it's too early to switch the order. This applies to every packet so far. To ask for a fact already used plainly in an earlier packet, use two blanks instead (☐ + ☐ = 13, "two numbers 1 apart") or a different wording ("double ☐ = 10").
+- **No-help practice is organized by kind of question**, not one mixed pile. Example from packet 6: *Find the missing double* → *Find the near double* (total unknown) → *Find the missing near double* → *Big numbers*. Put the blank in the answer spot (6 + 8 = ☐). A blank in the first two spots (☐ + 7 = 14) is a missing addend, which belongs to the planned Missing Numbers packet; only use it when it *is* the packet's core skill (buddies, doubles, 10 + ☐ = 16 place value). The founder wants plenty of it: about 40–50 no-help problems per packet.
+- **Word problems scattered in**, with different stories (take-away, "how many more", missing part). The challenge problem goes last.
+- **Respect dependencies.** Never use a skill before the packet that teaches it. Number lines were removed for this reason; don't use them. "Find the buddies, then add" moved to packet 2 because it needs 10 + n.
+- **Answer keys:** the same pages with answers in red (color) or black (black-and-white). Add a short "For teachers" note at the bottom of the learning page: the goal and the exact words to say.
+
+### Problems
+- **No question twice, ever, across all packets.** `Book.ask()` enforces this, so register every question (see §4). Commutative pairs (2 + 9 vs 9 + 2) were allowed; the founder said leave that.
+- **Mix the order.** Don't drill 9s, then 8s, then 7s, and don't always put the buddies in the same positions in 6 + 4 + 3 problems. Shuffle so no two problems in a row start with the same number.
+- **Avoid boring answer runs** (five answers of 13 in a row looked bad).
+- **No "turnarounds" in diagrams** (smaller number first, so the arrows cross). Always write bigger + smaller in break-apart diagrams. Commutative versions are fine in plain compact problems.
+- **Wanted:** plenty of bigger-number problems (two-digit across tens) and plenty of practice overall.
+- **Worked examples must differ from practice problems.** Example: 28 + 5 is the example in packet 4, so practice uses 28 + 6.
+
+### Visual style
+- **Simple, not "AI-looking":** no heavy header bands, no pill or bubble badges for "SET B" or "PART 2", no gradients or shadows.
+  - Header: a thin top line with the WeMath "buddies" logo (`draw_logo`, from `assets/wemath-logo.svg`: blue and orange pieces that fit together; black and grey in black-and-white), "WeMath", the subject in gray, and Name/Date on the right ("Answer Key" in red on keys).
+  - Sections are plain text: **Part 2** Fill in the buddy. *gray subtitle*.
+- **Problem numbers are a gray "12)"**: in the top-left corner on tall cards, vertically centered on short cards. Content starts at `x + GUT` (46pt), well clear of the number.
+  - Tried and rejected: blue number bubbles (too AI-looking), and a left "number column" with a divider line (looked weird on tall cards).
+- **Cards:** light outlined rounded boxes, no fill.
+- **Two inks for every PDF:**
+  - Color: blue = the starting number, orange = the buddy, leftover or jump, red = answers.
+  - Black-and-white: no fills, black dots for the start, hollow dots for the buddy.
+- **Break-apart diagram** (`Book.break_apart`): problem on top with the split number in the accent color, two arrows down, make-ten box (band = the next ten, dashed split, buddy box), + circle (leftover) = answer box, with captions *start / buddy / left over / answer*.
+- **Jump diagram** (`jump_diagram`, packet 5): based on the founder's own sketch.
+  - **Chosen style: `JUMP_STYLE = "inline"`** ("bubble on the curve"). One smooth curve runs from the first number down to the 10 and back up to the second, with each jump bubble sitting on the curve and the line hidden behind the bubble's white fill. It was compressed vertically twice ("too tall"), so keep it flat.
+  - Vertical version (`jump_column_inline`): plain column subtraction, with the curve going **out to the right** to a 10 beside the column and back in to the bottom number. Keep it horizontally compact.
+  - The older `"below"` style (circles under the arrow bends) is still in the code but not used.
+- **Dot pairs** (`dot_pair`, packet 6): two rows of dots lined up like a domino, with a small gap after every 5. The extra "one more" dot is orange (hollow in black-and-white).
+
+---
+
+## 3. Fast process for a new packet
+
+1. **Research the next topic briefly** (Common Core progressions, Mathnasium method page). Propose a short sequence and get a yes before building. Already researched next steps: doubles/near doubles → tens and ones (sticks + dots "quick tens") → 10 more/10 less → 2-digit + 2-digit. Use part-whole bar models in word problems.
+2. **Write a problem plan before coding:**
+   - Enumerate the full fact pool (e.g., all 35 single-digit subtractions that cross ten).
+   - Allocate each fact once across learn page, parts and word problems.
+   - Check that the order is shuffled and the answers vary.
+   - Confirm the example is not used in practice.
+3. **Write `learn_<topic>(bk)` and `practice_<topic>(bk)`.** Reuse the components in §4, then add the packet to `PACKETS`.
+4. **Plan page heights first.**
+   - First practice page content starts at y ≈ H − 130 (with a goal line); continuation pages start at H − 104.
+   - Part header ≈ 14pt; gap after a grid ≈ 30pt.
+   - The footer guard warns if a card goes below y = 44.
+   - Typical heights: compact rows 42, word cards 110 + 8 gap, break-apart cards 130.
+5. **Build, then render every new page to PNG and look at it** (pypdfium2, scale 1.4) in both inks. Check the answer key too.
+6. **Fix, rebuild, re-check.** Update `README.md` (packet table and page counts).
+7. **Send** the color packet and key with `SendUserFile`, and say the black-and-white versions are in the folder.
+
+---
+
+## 4. Components (in `build_worksheets.py`)
+
+- **Page:**
+  - `bk.new_page(heading, goal, first=, name_line=, footer=, big=)`. `big=True` is the learning-page title. Pass `footer=` on the first page of a packet only.
+  - `bk.part(y, n, text, sub)`, `bk.note(y, text)`.
+- **Layout:**
+  - `practice_cards(bk, y, items, first_num, cols, rows, h, gap, draw)`: generic grid. `draw(x, cy, w, item)` must call `bk.ask(...)`.
+  - `compact(bk, y, ["a + b = [ans]", ...], first_num, cols=3)`: one-line problems; it registers questions itself.
+  - `words(bk, y, [(story, sentence, answer, unit)], first_num)` → `word_card`: registers `story: …`.
+  - `ba_grid(bk, y, [(bigger, smaller)], first_num)`: break-apart cards. `(None, None)` gives a blank card.
+- **Equations:**
+  - `bk.eq(x, y, "8 + [2] = 10", size)`: `[n]` is an answer box, revealed only on the key; `{n}` is a number in the accent color.
+  - `bk.fit_eq(x, y, max_w, text, size)` shrinks the equation to fit. **Use it anywhere width is tight.**
+- **Visuals:**
+  - `bk.ten_frame(x, y, cell, fills)` and `bk.frames(...)` for two frames. fills are `'a'`, `'b'` or `None`; `dots(n, kind)`.
+  - `bk.break_apart`, `bk.buddies_first`, `jump_diagram` / `jump_inline` / `jump_column_inline` / `jump_vertical`, `buddy_strip`, `step_panel`.
+  - `curve_arrow(bk, p0, p1, p2, p3)` (Bézier with head), `bk.arrow`, `jump_circle`, `bezier_point`.
+- **Learning page:** `color_eq(bk, x, y, [(text, kind[, "tight"])], size, anchor)` with kind `'a'`, `'b'`, `'op'` or `None`. Also `panel`, `your_turn(bk, y, h)`, `label`, `teacher_note(bk, text)` (key only).
+- **Answers:** `bk.box(x, y, w, h, value, size, reveal=)` and `bk.value(...)` show on the key, or always when `reveal` is a color (worked examples).
+- **Themes:** `theme(color)` sets the global `T`. Never hardcode colors; use `T.ink`, `T.text2`, `T.muted`, `T.line`, `T.box`, `T.dot_a`, `T.dot_b` (None means hollow), `T.accent`, `T.answer`, `T.band`, `T.panel`, `T.strip`.
+
+---
+
+## 5. Mistakes made before (check these every time)
+
+| Mistake | Fix |
+|---|---|
+| **Arial Rounded (`Rnd`) has no minus "−" or "·"**, so it rendered as a blank box | Draw signs with Avenir (`AvD`). Use `bk.eq` / `color_eq` (ops already use AvD); never `drawString("15 − 8", font="Rnd")`. |
+| Avenir has no "☐" | Use "?" or a drawn box. |
+| **Fill color bleeds**: after drawing hollow dots the fill is white, so the next "=" vanished in B/W and turned orange in color | Always `setFillColor` right before drawing text. |
+| Footer set before `new_page` closed the previous page, so the wrong set name showed in the footer | Pass `footer=` into `new_page`. |
+| Cards running into the footer | Plan heights; watch for the `WARNING ... overlaps the footer` output. |
+| Answer boxes poking out of cards or panels (Set C Part 5, packet 2 "Your turn") | Use `fit_eq` and keep everything inside the card width. |
+| Problem numbers touching the math ("10) 10 + …") | Content starts at `x + GUT`. |
+| Captions sitting on card borders | Add card height. |
+| Circles in the answer key overlapping "+" signs | Widen the gaps. |
+| Story text running into the work box | Cap the paragraph width. |
+| Duplicate questions slipped in (9 + 3 twice, 7 + 6 twice) | Register everything with `bk.ask`; run one registry across all packets (it's shared in `__main__`). |
+| `rep()` patch scripts failing on escaped "−" vs a literal "−" in the source | `grep \| cat -v` first and match exactly. |
+| Problem numbers skipping after a "(continued)" part (12 → 15) | When a part is split across pages, recount `first_num` for every later part. |
+| Rows of answer boxes touching (tens / ones / total scaffold) | A box is 1.6 × the type size tall; space rows at least 2 × size apart. |
+| Wording that names a color ("the orange tens") | The black-and-white version has no orange. Describe the thing instead ("the second number's tens"). |
+| Yes/no cards with the answers in a pattern (yes, no, yes, no, so in 2 columns every "yes" was on the left) | **Shuffle the order of the questions** so the right answers don't follow the grid; check where the key's circles land. **Keep "yes" first and "no" second on every card**: swapping the labels was tried and the founder said it looked weird. Fixed in packet 1 (Are they Ten Buddies?) and packet 10 (Enough ones?). |
+| Stacked layers inside a structured card (problem, then jump bubbles, then the sum row) crammed together: the bubbles were ~3pt under the problem's answer box | **Leave about 15pt of clear space between each layer** of a structured card, and grow the card (packet 11 jump cards went from 130 to 152pt tall) instead of squeezing. Look at the gap between the top of the diagram and the bottom of the problem's answer box. |
+| A picture that gives the answer away (the leftover dot in orange on an even/odd question; answer boxes sized to fit "even" or "odd") | Highlight only on the key, and keep choice boxes one size. |
+| `bk.ask()` keys treat anything in `[ ]` as a blank, so a Python list in the key (`f"{sizes}"`) made every card the same question | Never put a list or brackets in a question key; join with `-` instead. |
+| Repeats with earlier packets only show up at build time, one at a time | Before writing a new packet's lists, run `python check_questions.py "47 + 5 = []" ...` to see which are already used. |
+| Answer boxes holding a + or − sign printed a blank box (Arial Rounded has no minus) | `Book.value` now uses Avenir for signs. A sign blank next to number boxes looks like a 3-digit number, so draw the sign blank as a circle. |
+| Equation placed at a fixed spot (`x + w - 200`) on full-width picture cards ran into the widest picture (4 birds + 5 birds, packet 0 #62) | Right-align equations from the card edge with `eq_width`, and check the card with the widest picture, not a typical one. |
+| Check-In "Mastery" tag on the title line ran into long titles | The score/mastery tag sits on the goal line (H − 103). |
+| A word problem over ~95 characters wraps to 3 lines and runs into "Number sentence" | Keep stories to 2 lines, especially the long "Challenge:" ones. |
+| `rm` on an empty glob aborts a `&&` chain | `mkdir -p` / `rm -f`, or don't chain. |
+| Assuming paths | The folder moved without notice; check first. |
+| Repeating the pattern shown just above (a "Your turn" that repeats a row of the pattern) | Pick a fresh fact. |
+| Worked example equal to a practice problem | Pick a fresh fact. |
+| **Learning page running into the "For teachers" note** (key only, note sits at y ≈ 48–106) | Learning-page content must end above y = 112. Add a check like the one in `learn_doubles`, and look at the **answer key's** page 1, not just the packet's. |
+| **A packet's core skill getting dodged with odd wording** because earlier packets had used those facts as filler (packet 6's "find the near double" became ☐ + ☐ = 13, and the founder said adding two numbers 1 apart is the whole point) | **Each packet owns its core facts.** Move filler problems in earlier packets to other facts so the new packet can ask its main question plainly (5 + 6 to 8 + 9 were moved out of packet 3). Never weaken the main skill to get past the duplicate check. |
+| Facts already used as plain questions in an earlier packet (5 + 5 … 9 + 9 in packet 3) | Use a different wording: "double 6 = ?", "? + ? = 12", "double 7 = ?, so 7 + 8 = ?". Let `bk.ask` catch the rest. It caught "10 + 9" from packet 2. |
+
+---
+
+## 6. Open decisions / state
+
+- **Packet 5 jump style:** decided. "Inline" (bubble on the curve) is the default, and the test files were deleted.
+- **Packet 6 (Doubles and Near Doubles):** built; waiting for the founder's review.
+- **Packet 7 (Tens and Ones):** built; waiting for the founder's review. Parts: count tens and ones from pictures → draw quick tens → count whole tens → tens plus ones (40 + 6) → which is more (circle it; no < > signs yet) → no help (☐ tens ☐ ones = 76, then 6 tens 2 ones = ☐) → words. Ten-sticks are wide: put more than 6 in a row only on 2-column cards.
+- **Packet 8 (Ten More, Ten Less):** built; waiting for the founder's review. Pictures (10 more, 10 less) → 10 less ← n → 10 more strips → +10 / −10 chains → no help (ten more, ten less, both ways, mixed) → words. The founder removed the missing-number part and the unknown-start word problem; see the Missing Numbers packet below.
+- **Packet 9 (Adding Two-Digit Numbers):** built; waiting for the founder's review. Add tens with pictures → pictures + helped split → split with all boxes → split that makes a new ten → no help (add tens, no new ten, make a new ten, mixed) → words. The founder removed "find the missing tens" (42 + ☐ = 72): missing-addend problems are their own unit, so don't put them in addition packets. No column (stacked) addition yet; ask the founder before adding it.
+- **Packet 11 (Missing Numbers):** built; waiting for the founder's review. **Missing addends only, no subtraction forms** (founder: no 15 − ☐ = 8, no ☐ − 7 = 8). **Core idea (founder): it's all about jumping up, and always the same route: jump to the next ten, then by tens, then the ones.** 42 + ☐ = 75 is 42 → 50 → 70 → 75 = 8 + 20 + 5 = 33 (never 42 → 72 → 75). Within 20: 8 → 10 → 13. Parts: jump to 10 (stops given) → jump to the next ten (two-digit, stops given) → find the stops (tens are boxes) → no help (up to 20, total is a ten, two-digit, mixed) → word problems (unknown change, "how many more"). Doubles and near doubles are left out of the within-20 facts because packet 6 owns them (its "find the missing near double" already asks 8 + ☐ = 17). **Outside this packet and each packet's own core skill, keep the blank in the answer spot.**
+- **Packet 10 (Subtracting Two-Digit Numbers):** built; waiting for the founder's review. Founder chose real take-away subtraction (not jumping up) because **borrowing will be added later** and builds on the tens/ones split. Every problem has enough ones; Part 4 "Enough ones?" only asks kids to spot the borrowing cases (52 − 27 → no). Take away tens (pictures) → tens and ones (pictures + helped rows) → all-box rows → enough ones? → no help (take away tens, take away ones, tens and ones, mixed) → take-away word problems. "How many more?" stories wait for Missing Numbers (jumping up).
+- **Packet 12 (Subtracting with Borrowing):** built; the founder picked the **rows** option over stacked columns ("the one with the sticks is a much better first start"). Column subtraction (and column addition with carrying) can be a later packet; `column_sub` already exists. **Part 1 gives the tens and asks only for the ones** ("63 = 5 tens ☐ ones"), so kids see that the opened ten joins the ones. Parts: break a ten (pictures) → break, then subtract (break row given) → all boxes → no help (break a ten, from a tens number, take away ones, mixed) → take-away words. When showing the founder two designs, build both with `OPTIONS` (each gets its own registry copy) and send both keys.
+- **Packet 0 (Adding and Taking Away):** built; waiting for the founder's review. Plan, research and the story bank are in `PLAN-0-adding-and-taking-away.md`. The founder wants it much bigger than the others (141 problems) for early retention, with real-object pictures and the cross-out method. Picture problems may reuse a fact with a different object (keys like `pic: apple 5 - 2`); plain facts never repeat and skip the doubles/near doubles packet 6 owns. Sums stay ≤ 9 (10 belongs to Ten Buddies). Within 5 first, then up to 9. Up-to-9 pictures need full-width cards (rows of 5); half-width cards made the groups wrap badly.
+- **Check-Ins and grade assessments (founder's request):**
+  - **Check-In:** one page per packet (`<slug>-check-in.pdf`) with each kind of problem from the packet.
+  - **Assessments:** a pre and a post assessment per grade in `assessments/`. Kindergarten covers packets 0–2, grade 1 covers 3–9, and grade 2 covers 10–22.
+  - **How it's built:**
+    - Defined in `CHECKINS` and `GRADES` at the end of `build_worksheets.py`. A `Section` is (name, subtitle, card kind, pool, count, packet).
+    - Card kinds are in `KINDS`. Each points to a shared `c_*` drawer: the practice packets' card code, lifted out.
+    - `Picker` takes problems from each pool: first ones no practice packet used, then practice ones, and never twice across check-ins and assessments (except tiny fact sets like ten buddies, which never repeat within one page).
+    - `BALANCE` alternates yes/no, even/odd and </> answers so they don't form a pattern, and `spread()` keeps two equations in a row from starting with the same number.
+    - Word problems come from templates in `stories()`.
+  - **Rules to keep:**
+    - A check-in must fit on one page (the build warns if it doesn't).
+    - Every answer key shows "Mastery: N of M (80%)".
+    - Assessment keys end with a scoring sheet.
+  - **When adding a packet:** add a `CHECKINS` entry and add it to the right grade in `GRADES`.
+- **Packets 13–22:** built in one go from `PLAN-13-22.md` (research, sources and the plan for each); all waiting for the founder's review. Left for later: money, time, measurement, two-step bar-model word problems, subtracting across zeros (403 − 157), fractions.
+- **Packets 23–25 (Hundred Buddies, Counting Forward and Backward, Halves):** built from Mathnasium research (counting from any number by any number both ways; wholes and parts: halves first, then complements). Waiting for the founder's review. In teaching order they can come earlier: Hundred Buddies after 11, Counting after 16, Halves after 22. Each has a Check-In, and they're in the grade 2 assessments.
+- **Next up (researched, not built):** Halves, Thirds and Fourths of Shapes → Money → Telling Time → Two-Step Word Problems with bar models → Subtracting Across Zeros → Measuring and Graphs → grade 3 (Multiplication, Division as Sharing, Fractions as Numbers). Also mental-math warm-up cards per level. Also planned: a one-page "quick check" per packet, and linking packets to skills in the app.
+- The online Claude doc "Up to and Over Ten: Research & Practice Problems" is out of date compared with the PDFs. Don't rely on it.
+- The founder likes a short summary after each change: what changed, what was checked, and which files.
