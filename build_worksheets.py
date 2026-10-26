@@ -20,6 +20,8 @@ if one does.
 """
 
 import math
+import os
+from fractions import Fraction
 import re
 from pathlib import Path
 from types import SimpleNamespace
@@ -33,14 +35,22 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph
 
-ROOT = Path(__file__).parent
+ROOT = Path(os.environ.get("WEMATH_OUT") or Path(__file__).parent)  # WEMATH_OUT: build somewhere else (previews)
 
 AVENIR = "/System/Library/Fonts/Avenir Next.ttc"
-pdfmetrics.registerFont(TTFont("Av", AVENIR, subfontIndex=7))
-pdfmetrics.registerFont(TTFont("AvM", AVENIR, subfontIndex=5))
-pdfmetrics.registerFont(TTFont("AvD", AVENIR, subfontIndex=2))
-pdfmetrics.registerFont(TTFont("AvB", AVENIR, subfontIndex=0))
-pdfmetrics.registerFont(TTFont("Rnd", "/System/Library/Fonts/Supplemental/Arial Rounded Bold.ttf"))
+# Off a Mac, WEMATH_PREVIEW_FONTS can point at a folder of stand-in fonts (Inter-Regular/Medium/
+# SemiBold/Bold.ttf + LiberationSans-Bold.ttf) to check layouts. Never ship PDFs built that way.
+PREVIEW_FONTS = None if Path(AVENIR).exists() else os.environ.get("WEMATH_PREVIEW_FONTS")
+if PREVIEW_FONTS:
+    for name, file in [("Av", "Inter-Regular"), ("AvM", "Inter-Medium"), ("AvD", "Inter-SemiBold"),
+                       ("AvB", "Inter-Bold"), ("Rnd", "LiberationSans-Bold")]:
+        pdfmetrics.registerFont(TTFont(name, f"{PREVIEW_FONTS}/{file}.ttf"))
+else:
+    pdfmetrics.registerFont(TTFont("Av", AVENIR, subfontIndex=7))
+    pdfmetrics.registerFont(TTFont("AvM", AVENIR, subfontIndex=5))
+    pdfmetrics.registerFont(TTFont("AvD", AVENIR, subfontIndex=2))
+    pdfmetrics.registerFont(TTFont("AvB", AVENIR, subfontIndex=0))
+    pdfmetrics.registerFont(TTFont("Rnd", "/System/Library/Fonts/Supplemental/Arial Rounded Bold.ttf"))
 pdfmetrics.registerFontFamily("Av", normal="Av", bold="AvD", italic="Av", boldItalic="AvD")
 pdfmetrics.registerFontFamily("AvM", normal="AvM", bold="AvB", italic="AvM", boldItalic="AvB")
 
@@ -56,6 +66,7 @@ def theme(color):
             accent=HexColor("#f08c00"), answer=HexColor("#e03131"),
             band=HexColor("#dbe8fd"), panel=HexColor("#f3f7fe"), panel_line=HexColor("#c9defc"),
             strip=HexColor("#fff6e8"), strip_line=HexColor("#f5d9a8"),
+            share=HexColor("#bcd3fb"), share_ans=HexColor("#ffc9c9"),  # shaded parts of a shape
         )
     return SimpleNamespace(
         color=False,
@@ -65,6 +76,7 @@ def theme(color):
         accent=HexColor("#1a1a1a"), answer=HexColor("#1a1a1a"),
         band=None, panel=None, panel_line=HexColor("#c4c4c4"),
         strip=None, strip_line=HexColor("#c4c4c4"),
+        share=None, share_ans=None,  # None = diagonal hatching
     )
 
 
@@ -624,10 +636,11 @@ def word_card(bk, y, num, text, sentence, answer, unit):
     c.setFillColor(T.text2)
     c.setFont("AvM", 8.5)
     c.drawString(tx, cy + 17, "Answer")
-    bk.box(tx + 38, cy + 8, 46, 28, answer, size=17)
+    bw = max(46, sw(str(answer), "Rnd", 17) + 16)  # wider only for long answers like 11:30
+    bk.box(tx + 38, cy + 8, bw, 28, answer, size=17)
     c.setFillColor(T.ink)
     c.setFont("AvM", 11)
-    c.drawString(tx + 92, cy + 18, unit)
+    c.drawString(tx + 46 + bw, cy + 18, unit)
     bk.work(M + lw + 46, cy + 10, CW - lw - 56, h - 20, "Draw or show your work")
     return cy - 8
 
@@ -6958,6 +6971,732 @@ _g2[-1:-1] = [
 ]
 
 
+# ====================================================================== 26. Halves, Thirds and Fourths (of shapes)
+
+SHARE_NAME = {1: ("whole", "wholes"), 2: ("half", "halves"), 3: ("third", "thirds"), 4: ("fourth", "fourths")}
+
+
+def share_word(n, k=1):
+    """share_word(3, 2) = "2 thirds"."""
+    return f"{k} {SHARE_NAME[n][0 if k == 1 else 1]}"
+
+
+def share_size(kind, s):
+    return {"rect": (s * 1.5, s * 0.9), "tall": (s * 0.9, s * 1.3)}.get(kind, (s, s))
+
+
+def share_parts(kind, x, y, s, n, equal=True):
+    """Polygons for a shape cut into n parts; (x, y) = bottom-left, s = size.
+    kind: circle, rect (wide, cut top to bottom), tall (cut across), square (cut top to bottom),
+    hsquare (cut across), grid (square in 2 × 2), diag (square cut corner to corner).
+    equal=False gives a cut that looks fair at a glance but isn't."""
+    w, h = share_size(kind, s)
+    if kind == "circle":
+        cx, cy, r = x + s / 2, y + s / 2, s / 2
+
+        def arc(a0, a1, k=40):
+            return [(cx + r * math.cos(a0 + (a1 - a0) * i / k), cy + r * math.sin(a0 + (a1 - a0) * i / k))
+                    for i in range(k + 1)]
+        if n == 1:
+            return [arc(0, 2 * math.pi)]
+        if not equal and n == 2:  # one straight cut that misses the middle
+            a = math.acos(0.42)
+            return [arc(-a, a), arc(a, 2 * math.pi - a)]
+        fr = [i / n for i in range(n)] if equal else {3: (0, 0.22, 0.55), 4: (0, 0.18, 0.5, 0.7)}[n]
+        cuts = [math.pi / 2 - 2 * math.pi * f for f in fr] + [math.pi / 2 - 2 * math.pi]
+        return [[(cx, cy)] + arc(cuts[i], cuts[i + 1]) for i in range(n)]
+    if kind == "grid":
+        h2 = s / 2
+        return [[(x + i * h2, y + j * h2), (x + (i + 1) * h2, y + j * h2), (x + (i + 1) * h2, y + (j + 1) * h2),
+                 (x + i * h2, y + (j + 1) * h2)] for j in (1, 0) for i in (0, 1)]
+    if kind == "diag":
+        a, b, c_, d = (x, y), (x + s, y), (x + s, y + s), (x, y + s)
+        if n == 2:
+            return [[a, b, c_], [a, c_, d]]
+        o = (x + s / 2, y + s / 2)
+        return [[d, c_, o], [c_, b, o], [b, a, o], [a, d, o]]
+    fr = [i / n for i in range(n + 1)] if equal else {2: [0, .32, 1], 3: [0, .2, .55, 1], 4: [0, .15, .45, .7, 1]}[n]
+    if kind in ("tall", "hsquare"):  # cut across, top part first
+        return [[(x, y + h * (1 - fr[i + 1])), (x + w, y + h * (1 - fr[i + 1])), (x + w, y + h * (1 - fr[i])),
+                 (x, y + h * (1 - fr[i]))] for i in range(n)]
+    return [[(x + w * fr[i], y), (x + w * fr[i + 1], y), (x + w * fr[i + 1], y + h), (x + w * fr[i], y + h)]
+            for i in range(n)]
+
+
+def _poly(c, pts):
+    p = c.beginPath()
+    p.moveTo(*pts[0])
+    for q in pts[1:]:
+        p.lineTo(*q)
+    p.close()
+    return p
+
+
+def shade(bk, pts, answer=False):
+    """Fill one part: a light colour, or diagonal hatching in black-and-white."""
+    c = bk.c
+    fill = T.share_ans if answer else T.share
+    if fill is not None:
+        c.setFillColor(fill)
+        c.drawPath(_poly(c, pts), stroke=0, fill=1)
+        return
+    xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+    c.saveState()
+    c.clipPath(_poly(c, pts), stroke=0, fill=0)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(0.8)
+    x0, y0, span = min(xs), min(ys), (max(xs) - min(xs)) + (max(ys) - min(ys))
+    t = -span
+    while t < span:
+        c.line(x0 + t, y0, x0 + t + span, y0 + span)
+        t += 4.5
+    c.restoreState()
+
+
+def share_shape(bk, kind, x, y, s, n, shaded=(), equal=True, answer=(), lines=True, lw=1.6):
+    """A shape cut into n parts. shaded = parts filled now; answer = parts filled only on the key.
+    lines=False draws only the outline (the key adds the cuts in the answer colour). Returns (w, h)."""
+    c = bk.c
+    parts = share_parts(kind, x, y, s, n, equal)
+    for i in shaded:
+        shade(bk, parts[i])
+    if bk.key:
+        for i in answer:
+            shade(bk, parts[i], answer=True)
+    c.setLineJoin(1)
+    if lines or bk.key:
+        c.setStrokeColor(T.ink if lines else T.answer)
+        c.setLineWidth(lw if lines else lw * 0.9)
+        for pts in parts:
+            c.drawPath(_poly(c, pts), stroke=1, fill=0)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(lw)
+    c.drawPath(_poly(c, share_parts(kind, x, y, s, 1)[0]) if kind == "circle" else
+               _poly(c, [(x, y), (x + share_size(kind, s)[0], y), (x + share_size(kind, s)[0], y + share_size(kind, s)[1]),
+                         (x, y + share_size(kind, s)[1])]), stroke=1, fill=0)
+    c.setLineJoin(0)
+    return share_size(kind, s)
+
+
+def circle_choice(bk, x, y, words, right, size=12, gap=10):
+    """Words in a row; the key rings the right one. y = baseline. Returns the width."""
+    c = bk.c
+    x0 = x
+    for word in words:
+        ww = sw(word, "AvD", size)
+        c.setFillColor(T.text2)
+        c.setFont("AvD", size)
+        c.drawString(x, y, word)
+        if bk.key and word == right:
+            c.setStrokeColor(T.answer)
+            c.setLineWidth(1.5)
+            c.ellipse(x - 5, y - 6, x + ww + 5, y + size + 2, stroke=1, fill=0)
+        x += ww + gap
+    return x - gap - x0
+
+
+def yes_no_choice(bk, x, cy, w, yes):
+    """yes on top, no below (always this order); the key rings the right one."""
+    for j, word in enumerate(["yes", "no"]):
+        px, py = x + w - 40, cy + 36 - j * 24
+        bk.c.setFillColor(T.text2)
+        bk.c.setFont("AvD", 13)
+        bk.c.drawCentredString(px, py, word)
+        if bk.key and (word == "yes") == yes:
+            bk.c.setStrokeColor(T.answer)
+            bk.c.setLineWidth(1.6)
+            bk.c.ellipse(px - 19, py - 7, px + 19, py + 14, stroke=1, fill=0)
+
+
+def c_eq_share(bk, x, cy, w, item):
+    kind, n, equal = item
+    s = 44 if kind not in ("rect", "tall") else 32
+    sw_, sh_ = share_size(kind, s)
+    share_shape(bk, kind, x + GUT + 6, cy + (64 - sh_) / 2, s, n, equal=equal)
+    yes_no_choice(bk, x, cy, w, equal)
+
+
+def c_name_share(bk, x, cy, w, item):
+    kind, n, i = item
+    s = 54 if kind not in ("rect", "tall") else 48
+    sw_, sh_ = share_size(kind, s)
+    share_shape(bk, kind, x + GUT, cy + (96 - sh_) / 2 - 2, s, n, shaded=[i])
+    tx = x + GUT + 92
+    bk.fit_eq(tx, cy + 58, w - (tx - x) - 8, f"[{n}] equal shares", size=14)
+    bk.c.setFillColor(T.text2)
+    bk.c.setFont("Av", 9)
+    bk.c.drawString(tx, cy + 36, "The shaded part is 1")
+    circle_choice(bk, tx, cy + 15, ["half", "third", "fourth"], SHARE_NAME[n][0], size=11.5, gap=12)
+
+
+def c_shade(bk, x, cy, w, item):
+    kind, n, k = item
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 13)
+    bk.c.drawString(x + GUT, cy + 92, f"Shade {share_word(n, k)}.")
+    s = 58 if kind not in ("rect", "tall") else 46
+    sw_, sh_ = share_size(kind, s)
+    share_shape(bk, kind, x + GUT, cy + 76 - sh_, s, n, answer=range(k))
+
+
+CUT_LOOK = {("square", 4): "grid"}  # what the key draws for a cut
+
+
+def c_cut(bk, x, cy, w, item):
+    kind, n = item
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 13)
+    bk.c.drawString(x + GUT, cy + 92, f"{n} equal shares")
+    s = 58 if kind not in ("rect", "tall") else 46
+    sw_, sh_ = share_size(kind, s)
+    share_shape(bk, CUT_LOOK.get((kind, n), kind), x + GUT, cy + 76 - sh_, s, n, lines=False)
+
+
+def c_bigger_share(bk, x, cy, w, item):
+    """Two copies of the same shape, cut into a and b parts with one part shaded. The key rings the bigger share."""
+    kind, a, b = item
+    s = 54 if kind not in ("rect", "tall") else 44
+    sw_, sh_ = share_size(kind, s)
+    for j, n in enumerate((a, b)):
+        sx = x + GUT + j * (sw_ + 34)
+        share_shape(bk, kind, sx, cy + 30, s, n, shaded=[0])
+        bk.c.setFillColor(T.text2)
+        bk.c.setFont("AvD", 11)
+        bk.c.drawCentredString(sx + sw_ / 2, cy + 12, share_word(n))
+        if bk.key and n == min(a, b):
+            bk.c.setStrokeColor(T.answer)
+            bk.c.setLineWidth(1.6)
+            bk.c.roundRect(sx - 8, cy + 5, sw_ + 16, sh_ + 31, 10, stroke=1, fill=0)
+
+
+def square_grid(bk, x, y, rows, cols, cell, lines=True):
+    """A rectangle of rows × cols squares; y = bottom. lines=False: outline only (the key draws the lines)."""
+    c = bk.c
+    if lines or bk.key:
+        c.setStrokeColor(T.ink if lines else T.answer)
+        c.setLineWidth(1)
+        for i in range(1, cols):
+            c.line(x + i * cell, y, x + i * cell, y + rows * cell)
+        for j in range(1, rows):
+            c.line(x, y + j * cell, x + cols * cell, y + j * cell)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.6)
+    c.rect(x, y, cols * cell, rows * cell, stroke=1, fill=0)
+
+
+def c_rows_squares(bk, x, cy, w, item):
+    rows, cols = item
+    cell = 15
+    square_grid(bk, x + GUT, cy + (96 - rows * cell) / 2, rows, cols, cell)
+    tx = x + GUT + 5 * cell + 18
+    bk.fit_eq(tx, cy + 58, w - (tx - x) - 8, f"[{rows}] rows of [{cols}]", size=14)
+    bk.fit_eq(tx, cy + 22, w - (tx - x) - 8, f"[{rows * cols}] squares", size=14)
+
+
+def c_draw_squares(bk, x, cy, w, item):
+    rows, cols = item
+    cell = 17
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 13)
+    bk.c.drawString(x + GUT, cy + 92, f"Draw lines: {rows} rows of {cols} squares.")
+    square_grid(bk, x + GUT, cy + 74 - rows * cell, rows, cols, cell, lines=False)
+    bk.fit_eq(x + GUT + cols * cell + 24, cy + 30, w - GUT - cols * cell - 32, f"[{rows * cols}] squares", size=14)
+
+
+def learn_shares(bk):
+    y = bk.new_page("Halves, Thirds and Fourths", "Equal shares are the same size.", name_line=False,
+                    big=True, footer="WeMath  ·  Halves, Thirds and Fourths")
+    c = bk.c
+    label(bk, M, y - 6, "Fair to share? The shares must be the same size.")
+    for i, (kind, n, eq_) in enumerate([("circle", 2, True), ("circle", 2, False), ("rect", 3, True),
+                                        ("rect", 3, False)]):
+        sx = M + 14 + i * 128
+        share_shape(bk, kind, sx, y - 80, 54 if kind == "circle" else 42, n, equal=eq_)
+        c.setFillColor(T.ink if eq_ else T.text2)
+        c.setFont("Rnd", 13)
+        c.drawString(sx, y - 94, "equal" if eq_ else "not equal")
+    y -= 112
+
+    label(bk, M, y - 6, "Name the shares")
+    for i, n in enumerate((2, 3, 4)):
+        sx = M + 14 + i * 172
+        share_shape(bk, "circle", sx, y - 86, 64, n, shaded=[0])
+        color_eq(bk, sx + 78, y - 50, [("1", "b"), (SHARE_NAME[n][0], None)], 20)
+        c.setFillColor(T.text2)
+        c.setFont("Rnd", 11)
+        c.drawString(sx + 78, y - 70, f"{n} {SHARE_NAME[n][1]} make")
+        c.drawString(sx + 78, y - 84, "1 whole")
+    y -= 108
+
+    label(bk, M, y - 6, "More shares, smaller shares")
+    for i, n in enumerate((2, 3, 4)):
+        by = y - 44 - i * 30
+        parts = [[(M + 14 + 210 * j / n, by), (M + 14 + 210 * (j + 1) / n, by), (M + 14 + 210 * (j + 1) / n, by + 22),
+                  (M + 14 + 210 * j / n, by + 22)] for j in range(n)]
+        shade(bk, parts[0])
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(1.4)
+        for pts in parts:
+            c.drawPath(_poly(c, pts), stroke=1, fill=0)
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", 13)
+        c.drawString(M + 236, by + 6, share_word(n))
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 13)
+    c.drawString(M + 330, y - 54, "Cut the same bar")
+    c.drawString(M + 330, y - 72, "into more shares:")
+    c.drawString(M + 330, y - 90, "each share gets smaller.")
+    y -= 120
+
+    label(bk, M, y - 6, "Halves can look different")
+    for i, kind in enumerate(("square", "hsquare", "diag")):
+        share_shape(bk, kind, M + 14 + i * 84, y - 82, 58, 2, shaded=[i % 2])
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 13)
+    c.drawString(M + 290, y - 44, "Each square is cut in half.")
+    c.drawString(M + 290, y - 62, "Each shaded part is 1 half.")
+    y -= 100
+
+    bottom = your_turn(bk, y, h=90)
+    bk.ask("shade: rect 4 1 your turn")
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 14)
+    c.drawString(M + 130, bottom + 62, "Shade 1 fourth.")
+    share_shape(bk, "rect", M + 130, bottom + 12, 42, 4, answer=[0])
+    bk.eq(M + 300, bottom + 36, "[4] fourths make 1 whole", size=17)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: cut shapes into 2, 3 or 4 equal shares and name them (2.G.3). Ask “Are the "
+                     "shares the same size?” before naming them. Say “the more shares, the smaller each "
+                     "share,” so 1 fourth is smaller than 1 half. No fraction numbers (½) yet.")
+
+
+def practice_shares(bk):
+    title = "Halves, Thirds and Fourths: Practice"
+    y = bk.new_page(title, "Equal shares first. Then name them.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    part(1, "Equal shares?", "Are all the shares the same size? Circle yes or no.",
+         [("circle", 2, False), ("rect", 2, True), ("grid", 4, True), ("tall", 3, False), ("circle", 3, True),
+          ("square", 2, False), ("diag", 4, True), ("rect", 4, False), ("circle", 4, True), ("tall", 4, True),
+          ("circle", 3, False), ("rect", 3, True)], 3, 64, 8, c_eq_share, KINDS_26["eq_share"].key)
+    part(2, "Name the share", "Count the equal shares. Circle the name of the shaded part.",
+         [("circle", 3, 0), ("rect", 2, 1), ("grid", 4, 2), ("tall", 3, 1), ("circle", 4, 3), ("diag", 2, 0),
+          ("rect", 4, 2), ("square", 3, 2)], 2, 96, 10, c_name_share, KINDS_26["name_share"].key)
+    part(3, "Shade it", None,
+         [("rect", 2, 1), ("circle", 4, 1), ("tall", 3, 1), ("grid", 4, 3), ("circle", 3, 2), ("hsquare", 2, 1),
+          ("rect", 4, 2), ("circle", 2, 1), ("tall", 4, 3)], 3, 110, 10, c_shade, KINDS_26["shade"].key)
+    part(4, "Cut it", "Draw lines to cut the shape into equal shares.",
+         [("circle", 2), ("rect", 3), ("square", 4), ("circle", 4), ("tall", 2), ("rect", 4)], 3, 110, 10,
+         c_cut, lambda it: f"cut: {it[0]} {it[1]}")
+    part(5, "Which share is bigger?", "Same shape, same size. Circle the bigger shaded share.",
+         [("circle", 2, 4), ("rect", 3, 2), ("circle", 4, 3), ("tall", 2, 3), ("square", 3, 4), ("circle", 3, 2)],
+         2, 104, 10, c_bigger_share, KINDS_26["bigger_share"].key)
+    part(6, "Rows and columns", "Count the rows, the squares in each row, then all the squares.",
+         [(2, 3), (3, 4), (4, 3), (2, 5), (5, 2), (3, 3)], 2, 96, 10, c_rows_squares, KINDS_26["rows_squares"].key)
+    part(7, "Draw the squares", "Draw lines to make the rows and columns.",
+         [(2, 4), (3, 2), (2, 3), (4, 3)], 2, 110, 10, c_draw_squares, lambda it: f"draw squares {it[0]} rows of {it[1]}")
+
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(8, "Make a whole", "No help this time.",
+         ["1 half + 1 half = [1] whole", "2 fourths + [2] fourths = 1 whole", "1 third + [2] thirds = 1 whole",
+          "3 fourths + [1] fourth = 1 whole", "1 fourth + 1 fourth = [2] fourths", "2 thirds + [1] third = 1 whole",
+          "1 third + 1 third = [2] thirds", "2 fourths + 1 fourth = [3] fourths", "1 half + [1] half = 1 whole",
+          "1 fourth + [3] fourths = 1 whole", "1 third + [1] third = 2 thirds",
+          "1 fourth + 2 fourths = [3] fourths"], 2, 42, 8, plain, lambda t: t)
+    part(9, "Wholes and shares", "No help this time. Picture the shapes.",
+         ["1 whole = [2] halves", "2 wholes = [8] fourths", "1 whole = [3] thirds", "3 wholes = [6] halves",
+          "1 whole = [4] fourths", "2 wholes = [6] thirds", "4 halves = [2] wholes", "9 thirds = [3] wholes",
+          "8 fourths = [2] wholes", "3 wholes = [9] thirds"], 2, 42, 8, plain, lambda t: t)
+    part(10, "Bigger or smaller?", "No help this time. Write <, > or =. Same size wholes.",
+         ["1 half [>] 1 fourth", "1 third [<] 1 half", "2 halves [=] 1 whole", "1 fourth [<] 1 third",
+          "1 whole [>] 2 thirds", "1 half [=] 2 fourths", "3 fourths [<] 1 whole", "1 third [>] 1 fourth",
+          "3 thirds [=] 4 fourths", "1 fourth [<] 1 half"], 2, 42, 8, plain, lambda t: t)
+    part(11, "Remember?", "Problems from earlier packets.",
+         REVIEW_26, 3, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 12, "Word problems", "Draw the shapes. Share them fairly.")
+    for i, story in enumerate(WORDS_26):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 12, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_26 = ["half of 74 = [37]", "36 + [64] = 100", "double 14 = [28]", "58 + 10 = [68]", "half of 92 = [46]",
+             "6 + 6 + 6 = [18]"]
+
+WORDS_26 = [
+    ("Ava and Ben share a sandwich fairly. How much of the sandwich does each one get?",
+     "1 half + 1 half = 1 whole", "half", "of the sandwich"),
+    ("4 kids share a pizza fairly. Each kid gets 1 fourth. How many fourths make the whole pizza?",
+     "4 fourths = 1 whole", "4", "fourths"),
+    ("Dad cuts a cake into 3 equal shares. You eat 1 share. How many shares are left?",
+     "1 third + 2 thirds = 1 whole", "2", "thirds"),
+    ("A garden has 3 rows of 4 square beds. How many beds are there?", "4 + 4 + 4 = 12", "12", "beds"),
+    ("Challenge: Sam eats 1 fourth of a pizza. Kim eats 1 half of the same pizza. Who eats more?",
+     "1 half > 1 fourth", "Kim", ""),
+]
+
+
+# check-in cards for 26 (also used by the practice pages for their question keys)
+KINDS_26 = {
+    "eq_share": Kind(64, 3, lambda it: f"equal shares? {it[0]} {it[1]} {'yes' if it[2] else 'no'}", c_eq_share, 8),
+    "name_share": Kind(96, 2, lambda it: f"name share: {it[0]} {it[1]} {it[2]}", c_name_share),
+    "shade": Kind(110, 3, lambda it: f"shade: {it[0]} {it[1]} {it[2]}", c_shade),
+    "bigger_share": Kind(104, 2, lambda it: f"bigger share: {it[0]} {it[1]} {it[2]}", c_bigger_share),
+    "rows_squares": Kind(96, 2, lambda it: f"squares {it[0]} rows of {it[1]}", c_rows_squares),
+}
+KINDS.update(KINDS_26)
+BALANCE["eq_share"] = lambda it: it[2]
+BALANCE["bigger_share"] = lambda it: it[1] < it[2]
+
+_SHAPES = ("circle", "rect", "tall", "square")
+EQ_SHARE = ([(k, n, True) for k in _SHAPES + ("hsquare",) for n in (2, 3, 4)] + [("grid", 4, True), ("diag", 2, True),
+            ("diag", 4, True)] + [(k, n, False) for k in _SHAPES for n in (2, 3, 4)])
+NAME_SHARE = [(k, n, i) for k in _SHAPES + ("hsquare", "grid", "diag") for n in (2, 3, 4) for i in range(n)
+              if (k, n) not in (("grid", 2), ("grid", 3), ("diag", 3))]
+SHADE = [(k, n, j) for k in _SHAPES + ("hsquare", "grid") for n in (2, 3, 4) for j in range(1, n)
+         if (k, n) not in (("grid", 2), ("grid", 3))]
+
+
+def _share_value(text):
+    k, word = text.split()
+    n = next(n for n, names in SHARE_NAME.items() if word in names)
+    return Fraction(int(k), n)
+
+
+_SHARE_TERMS = ["1 half", "1 third", "1 fourth", "1 whole", "2 halves", "3 thirds", "4 fourths", "2 fourths",
+                "2 thirds", "3 fourths"]
+MAKE_WHOLE = ([f"{share_word(n, a)} + [{n - a}] {SHARE_NAME[n][n - a > 1]} = 1 whole" for n in (2, 3, 4)
+               for a in range(1, n)]
+              + [f"{share_word(n, a)} + {share_word(n, n - a)} = [1] whole" for n in (2, 3, 4) for a in range(1, n)]
+              + [f"{share_word(n, a)} + {share_word(n, b)} = [{a + b}] {SHARE_NAME[n][1]}" for n in (3, 4)
+                 for a in range(1, n) for b in range(1, n - a)])
+COMPARE_SHARES = [f"{a} [{sign_of(_share_value(a), _share_value(b))}] {b}" for a in _SHARE_TERMS for b in _SHARE_TERMS
+                  if a != b and ((_share_value(a).numerator == 1 and _share_value(b).numerator == 1)
+                                 or _share_value(a) == 1 or _share_value(b) == 1 or {a, b} == {"1 half", "2 fourths"})]
+
+CHECKINS["26-halves-thirds-and-fourths"] = [
+    S("Equal shares?", "Circle yes or no.", "eq_share", EQ_SHARE, 3),
+    S("Name the share", "Circle the name of the shaded part.", "name_share", NAME_SHARE, 2),
+    S("Shade it", None, "shade", SHADE, 3),
+    S("Make a whole", None, "eq2", MAKE_WHOLE, 2),
+    S("Bigger or smaller?", "Write <, > or =.", "eq2", COMPARE_SHARES, 2, balance=is_less),
+]
+_g2[-1:-1] = [
+    S("Equal shares", "Circle the name of the shaded part.", "name_share", NAME_SHARE, 2, 26),
+    S("Halves, thirds and fourths", None, "eq2", MAKE_WHOLE + COMPARE_SHARES, 2, 26),
+]
+
+
+# ====================================================================== 27. Telling Time
+
+
+def sector_pts(cx, cy, r, a0, a1, k=48):
+    """A pie slice from angle a0 to a1 (degrees, counter-clockwise from 3 o'clock)."""
+    return [(cx, cy)] + [(cx + r * math.cos(math.radians(a0 + (a1 - a0) * i / k)),
+                          cy + r * math.sin(math.radians(a0 + (a1 - a0) * i / k))) for i in range(k + 1)]
+
+
+CLOCK_SHADE = {"half": (-90, 90), "quarter": (0, 90), "three": (180, 450)}  # half past, quarter past, quarter to
+
+
+def clock_hands(bk, cx, cy, R, h, m, color=None):
+    """Short thick hour hand (blue), long thin minute hand (orange). color= draws both in one colour."""
+    c = bk.c
+    c.setLineCap(1)
+    for length, width, ang, col in ((0.5, 0.085, 90 - 30 * (h % 12 + m / 60), T.dot_a),
+                                    (0.8, 0.045, 90 - 6 * m, T.accent)):
+        c.setStrokeColor(color or col)
+        c.setLineWidth(max(1.4, R * width))
+        a = math.radians(ang)
+        c.line(cx, cy, cx + R * length * math.cos(a), cy + R * length * math.sin(a))
+    c.setLineCap(0)
+    c.setFillColor(color or T.ink)
+    c.circle(cx, cy, max(2, R * 0.06), stroke=0, fill=1)
+
+
+def clock(bk, cx, cy, R, time=None, ring=None, shaded=None, answer=False):
+    """A clock face. time = (h, m). ring = "full" (5, 10, … 55 outside the face), "quarters" (15, 30, 45)
+    or None. shaded = "half", "quarter" or "three" (the part the minute hand has swept). answer=True
+    draws the hands only on the key, in the answer colour."""
+    c = bk.c
+    if shaded:
+        shade(bk, sector_pts(cx, cy, R, *CLOCK_SHADE[shaded]))
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(max(1.2, R * 0.035))
+    c.circle(cx, cy, R, stroke=1, fill=0)
+    for i in range(60):
+        a = math.radians(90 - 6 * i)
+        big = i % 5 == 0
+        c.setStrokeColor(T.ink if big else T.muted)
+        c.setLineWidth(1 if big else 0.5)
+        r0 = R * (0.86 if big else 0.92)
+        c.line(cx + r0 * math.cos(a), cy + r0 * math.sin(a), cx + R * 0.98 * math.cos(a), cy + R * 0.98 * math.sin(a))
+    c.setFillColor(T.ink)
+    size = max(7, R * 0.2)
+    c.setFont("Rnd", size)
+    for n in range(1, 13):
+        a = math.radians(90 - 30 * n)
+        c.drawCentredString(cx + R * 0.7 * math.cos(a), cy + R * 0.7 * math.sin(a) - size * 0.36, str(n))
+    if ring:
+        rs = max(6.5, R * 0.16)
+        c.setFillColor(T.accent)
+        c.setFont("AvD", rs)
+        for n in range(1, 12):
+            if ring == "quarters" and n not in (3, 6, 9):
+                continue
+            a = math.radians(90 - 30 * n)
+            c.drawCentredString(cx + (R + rs * 0.95) * math.cos(a), cy + (R + rs * 0.95) * math.sin(a) - rs * 0.36,
+                                str(5 * n))
+    if time and (not answer or bk.key):
+        clock_hands(bk, cx, cy, R, *time, color=T.answer if answer else None)
+    elif not time or answer:
+        c.setFillColor(T.ink)
+        c.circle(cx, cy, max(2, R * 0.06), stroke=0, fill=1)
+
+
+def tstr(h, m):
+    return f"{h}:{m:02d}"
+
+
+def time_words(h, m):
+    nxt = h % 12 + 1
+    return {0: f"{h} o'clock", 15: f"quarter past {h}", 30: f"half past {h}", 45: f"quarter to {nxt}"}[m]
+
+
+def c_read_clock(bk, x, cy, w, item):
+    """item = (h, m, ring): read the clock, write the time."""
+    h, m, ring = item
+    R = 30
+    clock(bk, x + GUT + R + 6, cy + 43, R, (h, m), ring)
+    bk.eq(x + GUT + 2 * R + (40 if ring else 26), cy + 34, f"[{tstr(h, m)}]", size=18)
+
+
+def c_half_past(bk, x, cy, w, item):
+    h, m = item
+    R = 30
+    clock(bk, x + GUT + R + 6, cy + 43, R, (h, m), shaded={30: "half", 15: "quarter", 45: "three"}[m])
+    tx = x + GUT + 2 * R + 26
+    words = time_words(h, m).split()
+    hour = words.pop()
+    bk.fit_eq(tx, cy + 54, w - (tx - x) - 8, " ".join(words) + f" [{hour}]", size=14)
+    bk.fit_eq(tx, cy + 18, w - (tx - x) - 8, f"[{tstr(h, m)}]", size=16)
+
+
+def c_draw_hands(bk, x, cy, w, item):
+    h, m, ring = item
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 14)
+    bk.c.drawString(x + GUT, cy + 100, f"Draw {tstr(h, m)}")
+    R = 32
+    clock(bk, x + GUT + R + 20, cy + 48, R, (h, m), ring, answer=True)
+
+
+AMPM = [("Eat breakfast at 7:30", "a.m."), ("Go to bed at 8:00", "p.m."), ("Wake up at 6:45", "a.m."),
+        ("Eat dinner at 6:00", "p.m."), ("Start school at 8:15", "a.m."), ("See the stars at 9:00", "p.m."),
+        ("Recess at 10:30", "a.m."), ("Soccer after school at 4:00", "p.m."), ("Brush teeth before school at 7:10",
+                                                                                  "a.m."),
+        ("The sun sets at 7:45", "p.m."), ("Eat lunch at 12:30", "p.m."), ("The sun comes up at 6:20", "a.m."),
+        ("Read a bedtime story at 7:50", "p.m."), ("Walk the dog before school at 7:05", "a.m."),
+        ("Get out of school at 3:10", "p.m."), ("Eat a snack in the morning at 9:40", "a.m.")]
+
+
+def c_ampm(bk, x, cy, w, item):
+    text, right = item
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 13)
+    bk.c.drawString(x + GUT, cy + 16, text)
+    circle_choice(bk, x + w - 92, cy + 16, ["a.m.", "p.m."], right, size=12.5, gap=14)
+
+
+def sun_icon(bk, cx, cy, r):
+    c = bk.c
+    c.setStrokeColor(T.accent if T.color else T.ink)
+    c.setLineWidth(1.4)
+    for i in range(8):
+        a = math.radians(45 * i)
+        c.line(cx + r * 1.3 * math.cos(a), cy + r * 1.3 * math.sin(a), cx + r * 1.75 * math.cos(a), cy + r * 1.75 * math.sin(a))
+    if T.color:
+        c.setFillColor(T.accent)
+        c.circle(cx, cy, r, stroke=0, fill=1)
+    else:
+        c.setFillColor(white)
+        c.circle(cx, cy, r, stroke=1, fill=1)
+
+
+def moon_icon(bk, cx, cy, r):
+    c = bk.c
+    pts = ([(cx + r * math.cos(math.radians(a)), cy + r * math.sin(math.radians(a))) for a in range(60, 301, 6)]
+           + [(cx + r * 0.35 + r * 0.8 * math.cos(math.radians(a)), cy + r * 0.8 * math.sin(math.radians(a)))
+              for a in range(255, 104, -6)])
+    c.setFillColor(T.dot_a if T.color else white)
+    c.setStrokeColor(T.dot_a if T.color else T.ink)
+    c.setLineWidth(1.2)
+    c.drawPath(_poly(c, pts), stroke=1, fill=1)
+
+
+def learn_time(bk):
+    y = bk.new_page("Telling Time", "The short hand tells the hour. The long hand tells the minutes.",
+                    name_line=False, big=True, footer="WeMath  ·  Telling Time")
+    c = bk.c
+    label(bk, M, y - 6, "Two hands")
+    clock(bk, M + 70, y - 72, 46, (3, 0))
+    c.setFillColor(T.dot_a)
+    c.setFont("Rnd", 13)
+    c.drawString(M + 140, y - 64, "short hand: the hour")
+    c.setFillColor(T.accent)
+    c.drawString(M + 140, y - 84, "long hand: the minutes")
+    color_eq(bk, M + 330, y - 82, [("3", "a"), ("o'clock", None), ("=", "op"), ("3", "a"), (":00", None, "tight")], 24)
+    y -= 132
+
+    label(bk, M, y - 6, "Count by 5s around the clock")
+    clock(bk, M + 74, y - 80, 46, (2, 20), ring="full")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 13)
+    c.drawString(M + 154, y - 56, "The long hand is on the 4.")
+    c.drawString(M + 154, y - 76, "Count by 5s: 5, 10, 15, 20.")
+    c.drawString(M + 154, y - 96, "The short hand is past the 2.")
+    color_eq(bk, M + 380, y - 82, [("2", "a"), (":", None, "tight"), ("20", "b", "tight")], 30)
+    y -= 154
+
+    label(bk, M, y - 6, "Half past and quarters")
+    for i, (h, m) in enumerate(((6, 30), (9, 15), (4, 45))):
+        cx = M + 52 + i * 172
+        clock(bk, cx, y - 58, 34, (h, m), shaded={30: "half", 15: "quarter", 45: "three"}[m])
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", 12.5)
+        c.drawString(cx + 42, y - 52, time_words(h, m))
+        color_eq(bk, cx + 42, y - 74, [(str(h), "a"), (":", None, "tight"), (f"{m:02d}", "b", "tight")], 18)
+    y -= 112
+
+    bottom = your_turn(bk, y, h=104)
+    bk.ask("clock read 5:10 your turn")
+    clock(bk, M + 170, bottom + 52, 36, (5, 10), ring="full")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 13)
+    c.drawString(M + 232, bottom + 62, "What time is it?")
+    bk.eq(M + 232, bottom + 28, "[5:10]", size=20)
+    sun_icon(bk, M + 372, bottom + 62, 8)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 11)
+    c.drawString(M + 390, bottom + 58, "a.m. = morning")
+    moon_icon(bk, M + 372, bottom + 32, 9)
+    c.drawString(M + 390, bottom + 28, "p.m. = afternoon")
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: tell and write time to 5 minutes, with a.m. and p.m. (2.MD.7). Read the short hand "
+                     "first (“past the 2”), then count the long hand by 5s. Half past and quarters "
+                     "are the halves and fourths of a circle (packet 26).")
+
+
+TIME_FIVES = [(h, m) for h in rng(1, 12) for m in rng(5, 55, 5) if m not in (15, 30, 45)]
+
+
+def practice_time(bk):
+    title = "Telling Time: Practice"
+    y = bk.new_page(title, "Short hand: the hour. Long hand: count by 5s.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    read = KINDS_27["read_clock"].key
+    part(1, "O'clock", "The long hand is on the 12.",
+         [(3, 0, None), (7, 0, None), (12, 0, None), (9, 0, None), (5, 0, None), (10, 0, None)], 2, 86, 10,
+         c_read_clock, read)
+    part(2, "Half past", "The long hand went halfway around: 30 minutes.",
+         [(4, 30), (11, 30), (1, 30), (8, 30)], 2, 86, 10, c_half_past, KINDS_27["half_past"].key)
+    part(3, "Count by 5s", "Count by 5s to the long hand.",
+         [(2, 25), (8, 10), (11, 40), (1, 55), (6, 5), (3, 35), (10, 50), (7, 20)], 2, 86, 10,
+         lambda bk_, x, cy, w, it: c_read_clock(bk_, x, cy, w, (*it, "full")), lambda it: read((*it, None)))
+    part(4, "Quarter past and quarter to", "A quarter of the clock is 15 minutes.",
+         [(9, 15), (2, 45), (6, 15), (11, 45), (3, 15), (7, 45)], 2, 86, 10, c_half_past, KINDS_27["half_past"].key)
+    part(5, "The short hand is between", "Not at the next number yet? Use the number it passed.",
+         [(2, 50), (9, 40), (5, 55), (12, 45), (4, 35), (8, 50)], 2, 86, 10,
+         lambda bk_, x, cy, w, it: c_read_clock(bk_, x, cy, w, (*it, "quarters")), lambda it: read((*it, None)))
+    part(6, "Draw the hands", "Short hand for the hour, long hand for the minutes.",
+         [(7, 15, "full"), (10, 0, "full"), (1, 45, "full"), (4, 25, "quarters"), (11, 10, "quarters"),
+          (6, 50, "quarters")], 3, 120, 10, c_draw_hands, KINDS_27["draw_hands"].key)
+    part(7, "Read the clock", "No help this time.",
+         [(5, 20), (12, 10), (9, 55), (3, 40), (8, 25), (2, 5), (6, 35), (10, 20)], 2, 86, 10,
+         lambda bk_, x, cy, w, it: c_read_clock(bk_, x, cy, w, (*it, None)), lambda it: read((*it, None)))
+
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(8, "Half past and quarters", "No help this time.",
+         ["half past 8 = [8:30]", "quarter past 2 = [2:15]", "quarter to 11 = [10:45]", "half past 12 = [12:30]",
+          "quarter to 3 = [2:45]", "quarter past 10 = [10:15]", "half past 5 = [5:30]", "quarter to 7 = [6:45]",
+          "quarter past 4 = [4:15]", "half past 9 = [9:30]"], 2, 42, 8, plain, lambda t: t)
+    part(9, "Count the minutes", "No help this time. Count by 5s.",
+         [f"long hand on {n} = [{5 * n}] minutes" for n in (4, 9, 2, 11, 7, 3, 10, 5, 8, 1)], 2, 42, 8, plain,
+         lambda t: t)
+    part(10, "Hours and minutes", "No help this time.",
+         ["1 hour = [60] minutes", "half an hour = [30] minutes", "a quarter hour = [15] minutes",
+          "2 half hours = [1] hour", "15 + 15 = [30] minutes", "30 + 30 = [60] minutes"],
+         2, 42, 8, plain, lambda t: t)
+    part(11, "a.m. or p.m.?", "Morning is a.m. Afternoon and night are p.m.",
+         [AMPM[i] for i in (0, 1, 2, 3, 4, 5, 6, 7)], 1, 40, 6, c_ampm, KINDS_27["ampm"].key)
+    part(12, "Remember?", "Problems from earlier packets.", REVIEW_27, 3, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 13, "Word problems", "Draw a clock if it helps.")
+    for i, story in enumerate(WORDS_27):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 13, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_27 = ["15 + 15 + 15 = [45]", "60 + 30 = [90]", "55 + [45] = 100", "25 + 25 = [50]",
+             "double 30 = [60]", "50 + 25 = [75]"]
+
+WORDS_27 = [
+    ("Mia wakes up. The short hand is on the 7. The long hand is on the 12. What time is it?",
+     "7 o'clock = 7:00", "7:00", "a.m."),
+    ("Lunch starts at half past 11 in the morning. Write the time.", "half past 11 = 11:30", "11:30", "a.m."),
+    ("Ben's piano lesson is at quarter to 5 in the afternoon. Write the time.", "quarter to 5 = 4:45", "4:45",
+     "p.m."),
+    ("The long hand is on the 8. The short hand is just past the 3. What time is it?", "3:40", "3:40", ""),
+    ("Challenge: The bus should come at 3:00. It is half an hour late. What time does it come?",
+     "3:00 + 30 minutes = 3:30", "3:30", "p.m."),
+]
+
+KINDS_27 = {
+    "read_clock": Kind(86, 2, lambda it: f"clock read {tstr(it[0], it[1])}", c_read_clock),
+    "half_past": Kind(86, 2, lambda it: f"clock quarter {tstr(*it)}", c_half_past),
+    "draw_hands": Kind(120, 3, lambda it: f"draw hands {tstr(it[0], it[1])}", c_draw_hands),
+    "ampm": Kind(40, 1, lambda it: f"ampm: {it[0]}", c_ampm, 6),
+}
+KINDS.update(KINDS_27)
+BALANCE["ampm"] = lambda it: it[1] == "a.m."
+
+TIME_QUARTERS = [(h, m) for h in rng(1, 12) for m in (15, 30, 45)]
+TIME_WORDS = ([f"{time_words(h, m)} = [{tstr(h, m)}]" for h, m in TIME_QUARTERS]
+              + [f"long hand on {n} = [{5 * n}] minutes" for n in rng(1, 11)])
+
+CHECKINS["27-telling-time"] = [
+    S("Read the clock", None, "read_clock", [(h, m, None) for h, m in TIME_FIVES], 2),
+    S("Draw the hands", None, "draw_hands", [(h, m, None) for h, m in TIME_FIVES + TIME_QUARTERS], 3),
+    S("Write the time", None, "eq2", TIME_WORDS, 4),
+    S("a.m. or p.m.?", None, "ampm", AMPM, 2),
+]
+_g2[-1:-1] = [
+    S("Telling time", None, "read_clock", [(h, m, None) for h, m in TIME_FIVES], 2, 27),
+    S("Half past and quarters", None, "eq2", TIME_WORDS[:36], 2, 27),
+]
+
+
 # ====================================================================== build
 
 PACKETS = [
@@ -7005,6 +7744,9 @@ PACKETS = [
     ("24-counting-forward-and-backward", "counting-forward-and-backward", "Counting Forward and Backward",
      learn_counting, practice_counting, False),
     ("25-halves", "halves", "Halves", learn_halves, practice_halves, False),
+    ("26-halves-thirds-and-fourths", "halves-thirds-and-fourths", "Halves, Thirds and Fourths", learn_shares,
+     practice_shares, False),
+    ("27-telling-time", "telling-time", "Telling Time", learn_time, practice_time, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
