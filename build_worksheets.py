@@ -9324,6 +9324,183 @@ CHECKINS["33-multiplication"] = [
 ]
 
 
+# ====================================================================== 34. Multiplication Strategies
+
+# How to break each hard factor into facts from packet 33: (first part, how)
+STRATEGY = {3: (2, "add"), 4: (2, "add"), 6: (5, "add"), 7: (5, "add"), 8: (4, "add"), 9: (10, "sub")}
+STRATEGY_WORDS = {3: "×2 and one more group", 4: "double, then double again", 6: "×5 and one more group",
+                  7: "×5 and ×2", 8: "×4, then double", 9: "×10, take one group away"}
+
+
+def split_array(bk, x, top, rows, cols, split, step=8, r=3, cross_from=None):
+    """rows × cols dots; the first `split` rows blue, the rest orange, a dashed line between.
+    cross_from: rows from here on are crossed out (the ×10 − one group picture). Returns (w, h)."""
+    c = bk.c
+    for i in range(rows):
+        for j in range(cols):
+            bk.dot(x + r + j * step, top - r - i * step, r, "a" if i < split else "b")
+    w, h = r * 2 + (cols - 1) * step, r * 2 + (rows - 1) * step
+    ly = top - r - (split - 0.5) * step
+    c.setStrokeColor(T.text2)
+    c.setLineWidth(0.9)
+    c.setDash(2.5, 2)
+    c.line(x - 3, ly, x + w + 3, ly)
+    c.setDash()
+    if cross_from is not None:
+        c.setStrokeColor(T.accent)
+        c.setLineWidth(1.6)
+        for i in range(cross_from, rows):
+            yy = top - r - i * step
+            c.line(x - 3, yy, x + w + 3, yy)
+    return w, h
+
+
+def break_lines(a, b):
+    """The number sentences for breaking a × b apart (a is the hard factor)."""
+    s, how = STRATEGY[a]
+    if how == "sub":
+        return [f"10 {TIMES} {b} = [{10 * b}]", f"[{10 * b}] {MINUS} {b} = [{a * b}]"]
+    return [f"{s} {TIMES} {b} = [{s * b}]", f"{a - s} {TIMES} {b} = [{(a - s) * b}]",
+            f"[{s * b}] + [{(a - s) * b}] = [{a * b}]"]
+
+
+def c_break_array(bk, x, cy, w, item):
+    a, b = item
+    s, how = STRATEGY[a]
+    bk.fit_eq(x + GUT, cy + 126, w - GUT - 10, f"{a} {TIMES} {b} = [{a * b}]", size=16)
+    if how == "sub":
+        split_array(bk, x + GUT, cy + 104, 10, b, 9, step=8.5, r=3, cross_from=9)
+    else:
+        split_array(bk, x + GUT, cy + 104, a, b, s, step=8.5, r=3)
+    tx = x + GUT + 84
+    for i, line in enumerate(break_lines(a, b)):
+        bk.fit_eq(tx, cy + 82 - i * 28, w - (tx - x) - 8, line, size=13)
+
+
+def learn_strategies(bk):
+    y = bk.new_page("Multiplication Strategies", "Break a hard fact into facts you know.", name_line=False,
+                    big=True, footer="WeMath  ·  Multiplication Strategies")
+    c = bk.c
+    label(bk, M, y - 6, f"6 {TIMES} 7: 5 rows and 1 more row")
+    split_array(bk, M + 20, y - 24, 6, 7, 5, step=15, r=5)
+    color_eq(bk, M + 160, y - 42, [("5", "a"), (TIMES, "op"), ("7", None), ("=", "op"), ("35", "a")], 22)
+    color_eq(bk, M + 160, y - 72, [("1", "b"), (TIMES, "op"), ("7", None), ("=", "op"), ("7", "b")], 22)
+    color_eq(bk, M + 160, y - 102, [("35", "a"), ("+", "op"), ("7", "b"), ("=", "op"), ("42", None)], 22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 44, "×5 is easy: half of ×10.")
+    c.drawString(M + 340, y - 62, "Then add one more row.")
+    y -= 130
+
+    label(bk, M, y - 6, f"9 {TIMES} 4: 10 rows, then take one away")
+    split_array(bk, M + 20, y - 22, 10, 4, 9, step=10.5, r=3.6, cross_from=9)
+    color_eq(bk, M + 160, y - 52, [("10", "a"), (TIMES, "op"), ("4", None), ("=", "op"), ("40", "a")], 22)
+    color_eq(bk, M + 160, y - 82, [("40", "a"), (MINUS, "op"), ("4", "b"), ("=", "op"), ("36", None)], 22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 52, "The crossed-out row")
+    c.drawString(M + 340, y - 70, "is the group taken away.")
+    y -= 144
+
+    label(bk, M, y - 6, "A strategy for every fact")
+    for i, a in enumerate((3, 4, 6, 7, 8, 9)):
+        col, row = divmod(i, 3)
+        xx, yy = M + 14 + col * 258, y - 30 - row * 24
+        color_eq(bk, xx, yy, [(TIMES + str(a), "a")], 15)
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", 12.5)
+        c.drawString(xx + 40, yy, "= " + STRATEGY_WORDS[a])
+    y -= 100
+
+    bottom = your_turn(bk, y, h=112)
+    bk.ask("break array 3 8 your turn")
+    split_array(bk, M + 130, bottom + 92, 3, 8, 2, step=13, r=4.5)
+    tx = M + 260
+    for i, line in enumerate(break_lines(3, 8)):
+        bk.eq(tx, bottom + 80 - i * 28, line, size=16)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: use ×2, ×5 and ×10 to find the other facts by breaking an array apart "
+                     "(3.OA.5, 3.OA.7). Draw the dashed line, solve each part, then add (or take away for ×9). "
+                     "Practice a few facts a day until they are quick.")
+
+
+def practice_strategies(bk):
+    title = "Multiplication Strategies: Practice"
+    y = bk.new_page(title, "Break the array. Solve each part. Put them together.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    key = KINDS_34["break_array"].key
+    for n, (a, items) in enumerate([(3, (6, 4, 9, 7)), (4, (7, 3, 9, 6)), (6, (4, 9, 7, 3)), (9, (3, 7, 4)),
+                                    (8, (3, 6, 7)), (7, (4, 8, 7))]):
+        part(n + 1, f"Times {a}", f"{TIMES}{a} = {STRATEGY_WORDS[a]}.", [(a, b) for b in items], 2, 146, 10,
+             c_break_array, key)
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    for n, (name, facts) in enumerate(FACT_PARTS_34):
+        part(7 + n, name, "No help this time.", [X(a, b) for a, b in facts], 3, 42, 8, plain, lambda t: t)
+    part(11, "Remember?", "Problems from earlier packets.", REVIEW_34, 2, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 12, "Word problems", "Find the groups and how many in each.")
+    for i, story in enumerate(WORDS_34):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 12, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+def _fact_parts():
+    hard = (3, 4, 6, 7, 8, 9)
+    pairs = [(a, b) for a in hard for b in hard]
+    groups = [("Times 3", lambda p: 3 in p), ("Times 4", lambda p: 4 in p), ("Times 6", lambda p: 6 in p),
+              ("Times 7, 8 and 9", lambda p: True)]
+    out, used = [], set()
+    for name, test in groups:
+        facts = [p for p in pairs if test(p) and p not in used]
+        used.update(facts)
+        facts = shuf(name, facts)
+        ordered = []
+        while facts:  # no two in a row starting with the same number
+            k = next((i for i, p in enumerate(facts) if not ordered or p[0] != ordered[-1][0]), 0)
+            ordered.append(facts.pop(k))
+        out.append((name, ordered))
+    return out
+
+
+FACT_PARTS_34 = _fact_parts()
+
+REVIEW_34 = ["6 groups of 5 = [30]", "half past 2 = [2:30]", "3 dimes + 4 nickels = [50¢]",
+             "8 groups of 2 = [16]", f"502 {MINUS} 267 = [235]", "45 cm + 38 cm = [83] cm"]
+
+WORDS_34 = [
+    ("A garden has 6 rows with 7 carrots in each row. How many carrots are there?", f"6 {TIMES} 7 = 42", "42",
+     "carrots"),
+    ("A spider has 8 legs. How many legs do 4 spiders have?", f"4 {TIMES} 8 = 32", "32", "legs"),
+    ("A pack has 9 markers. How many markers are in 3 packs?", f"3 {TIMES} 9 = 27", "27", "markers"),
+    ("There are 7 days in a week. How many days are in 8 weeks?", f"8 {TIMES} 7 = 56", "56", "days"),
+    ("Challenge: A theater has 9 rows of 8 seats. 15 seats are empty. How many seats are full?",
+     f"9 {TIMES} 8 = 72, 72 {MINUS} 15 = 57", "57", "seats"),
+]
+
+KINDS_34 = {
+    "break_array": Kind(146, 2, lambda it: f"break array {it[0]} {it[1]}", c_break_array),
+}
+KINDS.update(KINDS_34)
+
+HARD_FACTS = [X(a, b) for a in (3, 4, 6, 7, 8, 9) for b in (3, 4, 6, 7, 8, 9)]
+
+CHECKINS["34-multiplication-strategies"] = [
+    S("Break it apart", None, "break_array", [(a, b) for a in (3, 4, 6, 7, 8, 9) for b in rng(3, 9)], 2),
+    S("Multiply", None, "eq3", HARD_FACTS, 9),
+]
+
+
 # ====================================================================== build
 
 PACKETS = [
@@ -9377,7 +9554,8 @@ PACKETS = [
     ("28-money", "money", "Money", learn_money, practice_money, False),
     ("29-subtracting-across-zeros", "subtracting-across-zeros", "Subtracting Across Zeros", learn_across_zeros,
      practice_across_zeros, False),    ("30-two-step-word-problems", "two-step-word-problems", "Two-Step Word Problems", learn_bar_models,
-     practice_bar_models, False),    ("31-measuring-length", "measuring-length", "Measuring Length", learn_length, practice_length, False),    ("32-graphs", "graphs", "Graphs", learn_graphs, practice_graphs, False),    ("33-multiplication", "multiplication", "Multiplication", learn_multiplication, practice_multiplication, False),
+     practice_bar_models, False),    ("31-measuring-length", "measuring-length", "Measuring Length", learn_length, practice_length, False),    ("32-graphs", "graphs", "Graphs", learn_graphs, practice_graphs, False),    ("33-multiplication", "multiplication", "Multiplication", learn_multiplication, practice_multiplication, False),    ("34-multiplication-strategies", "multiplication-strategies", "Multiplication Strategies", learn_strategies,
+     practice_strategies, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
