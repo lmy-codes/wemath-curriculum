@@ -6350,7 +6350,7 @@ GRADES = [
         S("Word problems", None, "word", stories("g1a", "add", OVER10)[:6] + stories("g1b", "sub", TEEN_SUB)[:6]
           + stories("g1c", "tens", TWO_DIG)[:6] + stories("g1d", "add", TWO_ADD_NEW)[:6], 4, "3–9"),
     ]),
-    ("grade-2", "Grade 2", "Packets 10–30", [
+    ("grade-2", "Grade 2", "Packets 10–32", [
         S("Enough ones?", "Circle yes or no. Don’t solve it.", "enough", TWO_SUB_NO + TWO_SUB_BRK, 2, 10),
         S("Subtracting two-digit numbers", None, "eq3", eqs(TWO_SUB_NO, "-"), 3, 10),
         S("Jump up", "Fill in the jumps. Add them up.", "jump_up", [(a, a + b) for a, b in TWO_ADD_NEW], 1, 11),
@@ -8775,6 +8775,366 @@ _g2[-1:-1] = [
 ]
 
 
+# ====================================================================== 32. Graphs
+
+
+def tally(bk, x, y, n, h=18, step=6, color=None):
+    """Tally marks: groups of 5 (four lines and a slash). y = bottom. Returns the width."""
+    c = bk.c
+    c.setStrokeColor(color or T.ink)
+    c.setLineWidth(1.5)
+    c.setLineCap(1)
+    cx = x
+    for g in range(0, n, 5):
+        k = min(5, n - g)
+        for i in range(min(k, 4)):
+            c.line(cx + i * step, y, cx + i * step, y + h)
+        if k == 5:
+            c.line(cx - 3, y + 3, cx + 3 * step + 3, y + h - 3)
+        cx += 4 * step + 10
+    c.setLineCap(0)
+    return cx - x - 10
+
+
+def picture_graph(bk, x, top, title, cats, counts, kind, cell=17, labw=56, show=True):
+    """Rows of icons, one row per category, each icon = 1. show=False leaves the rows empty (the key
+    fills them). Returns the bottom y."""
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("AvD", 10.5)
+    c.drawString(x, top - 10, title)
+    y = top - 22
+    for cat, n in zip(cats, counts):
+        y -= cell + 4
+        c.setFillColor(T.text2)
+        c.setFont("AvM", 10)
+        c.drawString(x, y + cell / 2 - 3.5, cat)
+        c.setStrokeColor(T.line)
+        c.setLineWidth(0.6)
+        c.line(x + labw - 6, y - 2, x + labw + 10 * cell, y - 2)
+        if show or bk.key:
+            for i in range(n):
+                icon(bk, kind, x + labw + cell / 2 + i * cell, y + cell / 2, cell * 0.82)
+    c.setFillColor(T.text2)
+    c.setFont("Av", 8.5)
+    c.drawString(x, y - 16, "Each")
+    icon(bk, kind, x + 30, y - 13, 11)
+    c.setFillColor(T.text2)
+    c.setFont("Av", 8.5)
+    c.drawString(x + 40, y - 16, "= 1")
+    return y - 22
+
+
+def bar_graph(bk, x, top, title, cats, counts, maxv=10, cell=11, barw=34, show=True):
+    """Bars on a square grid with a 0–maxv scale. show=False: an empty grid (the key colours the bars).
+    Returns the bottom y."""
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("AvD", 10.5)
+    c.drawString(x, top - 10, title)
+    gx, gy = x + 20, top - 24 - maxv * cell
+    gw = len(cats) * (barw + 10) + 10
+    if show or bk.key:
+        for i, n in enumerate(counts):
+            bx = gx + 10 + i * (barw + 10)
+            fill = (T.band if show else T.share_ans) if T.color else None
+            if fill is not None:
+                c.setFillColor(fill)
+                c.rect(bx, gy, barw, n * cell, stroke=0, fill=1)
+            elif not show:  # black-and-white key: hatch the bar
+                shade(bk, [(bx, gy), (bx + barw, gy), (bx + barw, gy + n * cell), (bx, gy + n * cell)], answer=True)
+            c.setStrokeColor(T.dot_a if show and T.color else T.answer if not show else T.ink)
+            c.setLineWidth(1.2)
+            c.rect(bx, gy, barw, n * cell, stroke=1, fill=0)
+    c.setStrokeColor(T.line)
+    c.setLineWidth(0.5)
+    for j in range(1, maxv + 1):
+        c.line(gx, gy + j * cell, gx + gw, gy + j * cell)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1)
+    c.line(gx, gy, gx + gw, gy)
+    c.line(gx, gy, gx, gy + maxv * cell)
+    c.setFillColor(T.text2)
+    c.setFont("AvD", 7.5)
+    for j in range(0, maxv + 1, 2):
+        c.drawRightString(gx - 4, gy + j * cell - 2.5, str(j))
+    c.setFont("AvM", 8.5)
+    for i, cat in enumerate(cats):
+        c.drawCentredString(gx + 10 + i * (barw + 10) + barw / 2, gy - 11, cat)
+    return gy - 16
+
+
+def x_chart(bk, x, top, title, labels, counts, colw=40, cell=13, show=True):
+    """A line plot without the line: a labelled box for each value, with an X above it for each one."""
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("AvD", 10.5)
+    c.drawString(x, top - 10, title)
+    by = top - 30 - max(counts) * cell - 4
+    for i, (lab, n) in enumerate(zip(labels, counts)):
+        bx = x + i * colw
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(0.9)
+        c.rect(bx, by - 16, colw, 16, stroke=1, fill=0)
+        c.setFillColor(T.text2)
+        c.setFont("AvM", 8.5)
+        c.drawCentredString(bx + colw / 2, by - 11.5, lab)
+        if show or bk.key:
+            c.setFillColor(T.ink if show else T.answer)
+            c.setFont("AvD", 12)
+            for j in range(n):
+                c.drawCentredString(bx + colw / 2, by + 3 + j * cell, "X")
+    return by - 20
+
+
+def graph_questions(bk, x, top, w, qs, size=12.5, gap=30):
+    """Questions with answer boxes, one per line."""
+    for i, (text, ans) in enumerate(qs):
+        yy = top - i * gap
+        bk.c.setFillColor(T.ink)
+        bk.c.setFont("AvM", 10.5)
+        bk.c.drawString(x, yy, text)
+        bw = max(30, sw(str(ans), "Rnd", size) + 14)
+        bk.box(x + w - bw, yy - 6, bw, size * 1.55, ans, size=size)
+
+
+def graph_qs(cats, counts, noun, rng_seed):
+    """Four questions about a graph: how many, how many more, in all, two together."""
+    r = random.Random(rng_seed)
+    order = sorted(range(len(cats)), key=lambda i: -counts[i])
+    big, small = order[0], order[-1]
+    a, b = r.sample(range(len(cats)), 2)
+    one = r.choice([i for i in range(len(cats)) if i not in (big, small)] or [a])
+    return [(f"How many {noun} {cats[one]}?", counts[one]),
+            (f"How many more {cats[big]} than {cats[small]}?", counts[big] - counts[small]),
+            (f"{cats[a].capitalize()} and {cats[b]} together?", counts[a] + counts[b]),
+            ("How many in all?", sum(counts))]
+
+
+def c_graph(bk, x, cy, w, item):
+    """A graph and four questions. item = (type, title, cats, counts, noun_or_kind, qs)."""
+    gtype, title, cats, counts, extra, qs = item
+    gx = x + GUT + 14  # room for a "24–27)" problem number
+    if gtype == "pic":
+        picture_graph(bk, gx, cy + 168, title, cats, counts, extra)
+    elif gtype == "bar":
+        bar_graph(bk, gx, cy + 168, title, cats, counts)
+    else:
+        x_chart(bk, gx, cy + 168, title, cats, counts)
+    graph_questions(bk, x + GUT + 236, cy + 140, w - GUT - 248, qs)
+
+
+def c_make_graph(bk, x, cy, w, item):
+    """A tally table on the left, an empty graph on the right to fill in."""
+    gtype, title, cats, counts, kind = item
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("AvD", 10.5)
+    c.drawString(x + GUT, cy + 158, title)
+    for i, (cat, n) in enumerate(zip(cats, counts)):
+        yy = cy + 128 - i * 28
+        c.setFillColor(T.text2)
+        c.setFont("AvM", 10)
+        c.drawString(x + GUT, yy + 4, cat)
+        tally(bk, x + GUT + 64, yy, n, h=16)
+    if gtype == "pic":
+        picture_graph(bk, x + GUT + 200, cy + 168, "Make the picture graph", cats, counts, kind, cell=16, labw=56,
+                      show=False)
+    else:
+        bar_graph(bk, x + GUT + 210, cy + 168, "Make the bar graph", cats, counts, show=False)
+
+
+def c_tally_read(bk, x, cy, w, n):
+    tally(bk, x + GUT, cy + 12, n, h=18)
+    bk.eq(x + w - 60, cy + 14, f"[{n}]", size=17)
+
+
+def c_tally_draw(bk, x, cy, w, n):
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 15)
+    bk.c.drawString(x + GUT, cy + 18, str(n))
+    if bk.key:
+        tally(bk, x + GUT + 36, cy + 12, n, h=18, color=T.answer)
+
+
+def c_mini_bar(bk, x, cy, w, item):
+    """Check-in card: a small bar graph and one question."""
+    title, cats, counts, (q, ans), _ = item
+    bar_graph(bk, x + GUT, cy + 168, title, cats, counts, cell=9, barw=26)
+    graph_questions(bk, x + GUT, cy + 18, w - GUT - 12, [(q, ans)])
+
+
+def learn_graphs(bk):
+    y = bk.new_page("Graphs", "Count. Show it in a graph. Ask questions.", name_line=False, big=True,
+                    footer="WeMath  ·  Graphs")
+    c = bk.c
+    cats, counts = ["apples", "cookies", "cupcakes"], [7, 4, 5]
+    label(bk, M, y - 6, "Tally marks: count by 5s")
+    for i, (cat, n) in enumerate(zip(cats, counts)):
+        yy = y - 32 - i * 24
+        c.setFillColor(T.text2)
+        c.setFont("AvM", 11)
+        c.drawString(M + 14, yy + 3, cat)
+        tally(bk, M + 90, yy, n, h=16)
+        color_eq(bk, M + 170, yy + 2, [(str(n), "a")], 15)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 240, y - 34, "4 lines and a slash is 5.")
+    c.drawString(M + 240, y - 52, "Count 5, then count on: 5, 6, 7.")
+    y -= 104
+
+    label(bk, M, y - 6, "Picture graph")
+    picture_graph(bk, M + 14, y - 14, "Our favorite snack", cats, counts, "star", cell=17)
+    label(bk, M + 280, y - 6, "Bar graph")
+    bar_graph(bk, M + 294, y - 14, "Our favorite snack", cats, counts, maxv=8, cell=11)
+    y -= 150
+
+    label(bk, M, y - 6, "Ask questions")
+    color_eq(bk, M + 14, y - 36, [("7", "a"), (MINUS, "op"), ("4", "b"), ("=", "op"), ("3", None)], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 120, y - 36, "3 more apples than cookies")
+    color_eq(bk, M + 14, y - 64, [("7", "a"), ("+", "op"), ("4", "b"), ("+", "op"), ("5", "a"), ("=", "op"),
+                                  ("16", None)], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 190, y - 64, "16 kids in all")
+    y -= 86
+
+    bottom = your_turn(bk, y, h=96)
+    bk.ask("graph your turn: cupcakes and cookies")
+    c.setFillColor(T.ink)
+    c.setFont("AvM", 12)
+    c.drawString(M + 130, bottom + 62, "How many more cupcakes than cookies?")
+    c.drawString(M + 130, bottom + 30, "How many like cupcakes or cookies?")
+    bk.box(M + 400, bottom + 54, 34, 22, 1, size=14)
+    bk.box(M + 400, bottom + 22, 34, 22, 9, size=14)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: read and make tally charts, picture graphs and bar graphs, and answer how many, how "
+                     "many more and how many in all (2.MD.10). X charts show lengths (2.MD.9). Make graphs of the "
+                     "group's real data.")
+
+
+GRAPHS_32 = [
+    ("pic", "Pets at home", ["dogs", "cats", "fish"], [6, 4, 7], "star", "kids have"),
+    ("pic", "Fruit we ate", ["apples", "pears", "plums"], [8, 3, 5], "apple", "kids ate"),
+    ("bar", "Favorite color", ["red", "blue", "green", "pink"], [5, 9, 3, 6], None, "kids like"),
+    ("bar", "Books we read", ["Mon", "Tue", "Wed", "Thu"], [4, 7, 8, 2], None, "books on"),
+    ("bar", "Birds we saw", ["robins", "crows", "ducks"], [10, 6, 3], None, "were"),
+]
+X_CHARTS_32 = [
+    ("Pencil lengths (inches)", ["3 in", "4 in", "5 in", "6 in", "7 in"], [2, 5, 3, 1, 2],
+     [("How many pencils are 4 in long?", 5), ("How many are longer than 5 in?", 3),
+      ("How many pencils in all?", 13)]),
+    ("Leaf lengths (cm)", ["5 cm", "6 cm", "7 cm", "8 cm", "9 cm"], [1, 3, 4, 4, 2],
+     [("How many leaves are 7 cm long?", 4), ("How many are shorter than 7 cm?", 4),
+      ("How many leaves in all?", 14)]),
+]
+
+
+def practice_graphs(bk):
+    title = "Graphs: Practice"
+    y = bk.new_page(title, "Read the graph carefully. Count the rows or the squares.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    part(1, "Count the tally marks", None, [7, 13, 4, 18, 11, 9, 17, 6], 2, 44, 8, c_tally_read,
+         lambda n: f"tally read {n}")
+    part(2, "Draw tally marks", "Make groups of 5.", [8, 14, 3, 12, 19, 10], 2, 44, 8, c_tally_draw,
+         lambda n: f"tally draw {n}")
+
+    def graph_items(gtype):
+        out = []
+        for i, (t, title_, cats, counts, kind, noun) in enumerate(GRAPHS_32):
+            if t == gtype:
+                out.append((t, title_, cats, counts, kind, graph_qs(cats, counts, noun, title_)))
+        return out
+
+    def graph_part(n, name, sub, items):
+        nonlocal y, num
+        if y - 14 - 180 < 46:
+            y = bk.new_page(title, first=False)
+        y = bk.part(y, n, name, sub)
+        for item in items:
+            if y - 180 < 46:
+                y = bk.new_page(title, first=False)
+                y = bk.part(y, n, name, "(continued)")
+            for q, _ in item[5]:
+                bk.ask(f"graph {item[1]}: {q}")
+            bk.card(M, y - 180, CW, 180, f"{num}–{num + len(item[5]) - 1}")
+            c_graph(bk, M, y - 180, CW, item)
+            num += len(item[5])
+            y -= 190
+        y -= 22
+
+    graph_part(3, "Picture graphs", "Each picture is 1.", graph_items("pic"))
+    part(4, "Make a picture graph", "Draw a circle for each tally mark.",
+         [("pic", "Toys in the box", ["cars", "balls", "dolls"], [5, 8, 3], "star")], 1, 180, 10, c_make_graph,
+         lambda it: f"make graph: {it[1]}")
+    graph_part(5, "Bar graphs", "Read across from the top of the bar.", graph_items("bar"))
+    part(6, "Make a bar graph", "Color one square for each tally mark.",
+         [("bar", "Snacks sold", ["chips", "fruit", "milk", "nuts"], [6, 9, 4, 7], None)], 1, 180, 10,
+         c_make_graph, lambda it: f"make graph: {it[1]}")
+    graph_part(7, "X charts", "Each X is one thing that was measured.",
+               [("x", t, labels, counts, None, qs) for t, labels, counts, qs in X_CHARTS_32])
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(8, "Remember?", "Problems from earlier packets.", REVIEW_32, 3, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 9, "Word problems", "Make a tally chart if it helps.")
+    for i, story in enumerate(WORDS_32):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 9, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_32 = ["30 cm + 25 cm = [55] cm", "half past 4 = [4:30]", "3 quarters = [75¢]", f"800 {MINUS} 356 = [444]",
+             "4 fourths = [1] whole", "half of 78 = [39]"]
+
+WORDS_32 = [
+    ("A bar graph shows 9 kids like soccer and 6 kids like tag. How many more kids like soccer?",
+     "6 + 3 = 9", "3", "kids"),
+    ("A tally chart shows 3 groups of 5 and 2 more marks. How many marks is that?", "5 + 5 + 5 + 2 = 17", "17",
+     "marks"),
+    ("A picture graph shows 7 cats and 8 dogs. How many pets in all?", "7 + 8 = 15", "15", "pets"),
+    ("A class voted: 12 for pizza, 5 for tacos. How many fewer votes did tacos get?", "5 + 7 = 12", "7", "votes"),
+    ("Challenge: 20 kids voted: 8 for red, 5 for blue, the rest for green. How many voted for green?",
+     "8 + 5 = 13, 13 + 7 = 20", "7", "kids"),
+]
+
+KINDS_32 = {
+    "tally_read": Kind(44, 2, lambda n: f"tally read {n}", c_tally_read, 8),
+    "tally_draw": Kind(44, 2, lambda n: f"tally draw {n}", c_tally_draw, 8),
+    "mini_bar": Kind(170, 2, lambda it: f"mini graph {it[4]}: {it[3][0]}", c_mini_bar),
+}
+KINDS.update(KINDS_32)
+
+_MINI_DATA = [("Pets", ["dogs", "cats", "fish"]), ("Recess games", ["tag", "ball", "jump"]),
+              ("Lunch", ["pizza", "tacos", "soup"]), ("Weather", ["sun", "rain", "snow"])]
+MINI_BARS = []
+for _i, (_t, _cats) in enumerate(_MINI_DATA * 4):
+    _r = random.Random(f"mini{_i}")
+    _counts = _r.sample(range(2, 11), 3)
+    _q = graph_qs(_cats, _counts, "kids picked", f"mini{_i}")[_i % 4]
+    MINI_BARS.append((_t, _cats, _counts, _q, _i))
+
+CHECKINS["32-graphs"] = [
+    S("Count the tally marks", None, "tally_read", list(rng(6, 18)), 3),
+    S("Draw tally marks", None, "tally_draw", list(rng(6, 18)), 3),
+    S("Read the bar graph", None, "mini_bar", MINI_BARS, 2),
+]
+_g2[-1:-1] = [
+    S("Graphs", None, "mini_bar", MINI_BARS, 2, 32),
+]
+
+
 # ====================================================================== build
 
 PACKETS = [
@@ -8828,7 +9188,7 @@ PACKETS = [
     ("28-money", "money", "Money", learn_money, practice_money, False),
     ("29-subtracting-across-zeros", "subtracting-across-zeros", "Subtracting Across Zeros", learn_across_zeros,
      practice_across_zeros, False),    ("30-two-step-word-problems", "two-step-word-problems", "Two-Step Word Problems", learn_bar_models,
-     practice_bar_models, False),    ("31-measuring-length", "measuring-length", "Measuring Length", learn_length, practice_length, False),
+     practice_bar_models, False),    ("31-measuring-length", "measuring-length", "Measuring Length", learn_length, practice_length, False),    ("32-graphs", "graphs", "Graphs", learn_graphs, practice_graphs, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
