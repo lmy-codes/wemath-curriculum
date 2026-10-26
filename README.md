@@ -1,6 +1,6 @@
 # WeMath worksheets
 
-Six packets, in teaching order. Each starts with a picture-first learning page, followed by practice.
+Thirty-one packets, in teaching order. Each starts with a picture-first learning page, followed by practice.
 
 | Folder | Topic | Pages |
 |---|---|---|
@@ -30,6 +30,11 @@ Six packets, in teaching order. Each starts with a picture-first learning page, 
 | `23-hundred-buddies/` | Pairs that make 100 (64 + 36): fill the hundred grid, jump up to the next ten then 100, tens make 9 and ones make 10; buddies of 50 and 1000 | 6 |
 | `24-counting-forward-and-backward/` | Count by 2s, 3s, 4s, 5s, 10s and 25s from any number, forward and backward, across 100 | 7 |
 | `25-halves/` | Half means 2 parts the same: share fairly, half undoes double, half the tens and ones, odd numbers (half of 7 = 3½), half of what? | 7 |
+| `26-halves-thirds-and-fourths/` | Equal shares of circles, rectangles and squares: equal or not, name the share, shade it, cut it, which share is bigger, rows and columns of squares; 1 third + 2 thirds = 1 whole | 8 |
+| `27-telling-time/` | Clocks: o'clock, half past, count by 5s, quarter past and quarter to, the short hand between numbers, draw the hands, a.m. and p.m. | 8 |
+| `28-money/` | Coins at real size: count by the coin, biggest first with running totals, 100¢ = $1, dollar bills, compare amounts, ¢ or $ | 9 |
+| `29-subtracting-across-zeros/` | 403 − 157: 403 is 40 tens + 3 ones = 39 tens + 13 ones, break once; zero in the tens, in the ones, two zeros; check by adding | 7 |
+| `30-two-step-word-problems/` | Bar models: part + part = whole, compare bars, unknown start, then two steps where the first answer becomes a part of the second bar | 9 |
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 
@@ -48,7 +53,7 @@ Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hol
 |---|---|---|---|
 | Kindergarten | 0–2: adding and taking away within 9, ten buddies, teen numbers | 44 problems | 46 problems |
 | Grade 1 | 3–9: over ten, back through ten, doubles, tens and ones, ten more/less, two-digit adding | 60 problems | 60 problems |
-| Grade 2 | 10–25: two-digit subtracting, borrowing, columns, three-digit numbers, skip counting, comparing, arrays, even/odd | 68 problems | 68 problems |
+| Grade 2 | 10–30: two-digit subtracting, borrowing, columns, three-digit numbers, skip counting, comparing, arrays, even/odd, hundred buddies, counting, halves, equal shares, time, money, across zeros, bar models | 92 problems | 92 problems |
 
 Each answer key ends with a **scoring sheet**: every part, the packet it checks, and a score line. Use the **pre-assessment** for placement: start a student at the first packet where they miss more than 1 problem in its parts. Use the **post-assessment** to see growth: a part with more than 1 miss means that packet needs review.
 
@@ -59,5 +64,7 @@ Check-in and assessment problems are chosen automatically. Problems that no prac
 ```bash
 python build_worksheets.py
 ```
+
+**Previews off a Mac.** `WEMATH_PREVIEW_FONTS=<folder> WEMATH_OUT=<folder> python build_worksheets.py` builds with stand-in fonts (Inter and Liberation Sans, as `.ttf`) into another folder, to check layouts in the cloud. Never commit PDFs built that way.
 
 Needs the packages in `requirements.txt` (`python3 -m venv .venv && .venv/bin/pip install -r requirements.txt`) and the macOS system fonts (Avenir Next, Arial Rounded). The fonts can't be committed, so the PDFs are built on a Mac; elsewhere you can edit the generator but not rebuild. The build stops with an error if any question appears twice across all the packets.
