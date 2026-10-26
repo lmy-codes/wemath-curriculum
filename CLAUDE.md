@@ -47,6 +47,7 @@ WeMath is a math tutoring program in a community center, with Mathnasium-style t
 | `34-multiplication-strategies/` | The other facts by breaking arrays (3.OA.5, 3.OA.7) | `split_array` (blue rows, dashed line, orange rows; `cross_from` crosses the extra row for ×9 = ×10 − one group), `STRATEGY`, `break_lines`. Owns all 36 facts of 3, 4, 6, 7, 8, 9 |
 | `35-division/` | Sharing and grouping (3.OA.2, 3.OA.6) | `DIV`, `D(p, d)`, `plate_row` (key fills the plates), `c_share_div`, `c_make_groups` (key rings the groups), `c_think_times` (missing factor is this packet's core skill), `c_fact_family` |
 | `36-fractions/` | Fractions as numbers (3.NF.1–3), denominators 2, 3, 4, 6, 8 | `frac_expr(text)` draws stacked fractions: "3/4 [<] 7/8", "1/2 = [2]/4" (either part can be a box); `strip` (fraction strip), the fraction wall on the learning page. No number lines |
+| `37-rounding/` | Round to 10 and 100 (3.NBT.1), **the founder's method**: find the ten (or hundred) below and above, ask which one the number is closest to | `between(n, place)`: [ten below] ← n → [ten above], a bubble on each arrow with the distance, a ten-frame under n (filled = past the ten below, empty = still to go; for 100 it counts tens), the key rings the closer one. `round_to`, `c_between` (levels: closer = tens given, boxes = all blank). Exactly in the middle rounds up |
 
 Each folder has `color/` and `black-and-white/` subfolders, each holding `<slug>-packet.pdf` and `<slug>-answer-key.pdf`. Packets 3 and 4 also include `break-apart-template.pdf`.
 
@@ -194,7 +195,7 @@ Each folder has `color/` and `black-and-white/` subfolders, each holding `<slug>
 - **Packet 0 (Adding and Taking Away):** built; waiting for the founder's review. Plan, research and the story bank are in `PLAN-0-adding-and-taking-away.md`. The founder wants it much bigger than the others (141 problems) for early retention, with real-object pictures and the cross-out method. Picture problems may reuse a fact with a different object (keys like `pic: apple 5 - 2`); plain facts never repeat and skip the doubles/near doubles packet 6 owns. Sums stay ≤ 9 (10 belongs to Ten Buddies). Within 5 first, then up to 9. Up-to-9 pictures need full-width cards (rows of 5); half-width cards made the groups wrap badly.
 - **Check-Ins and grade assessments (founder's request):**
   - **Check-In:** one page per packet (`<slug>-check-in.pdf`) with each kind of problem from the packet.
-  - **Assessments:** a pre and a post assessment per grade in `assessments/`. Kindergarten covers packets 0–2, grade 1 covers 3–9, grade 2 covers 10–32, and grade 3 covers 33–36.
+  - **Assessments:** a pre and a post assessment per grade in `assessments/`. Kindergarten covers packets 0–2, grade 1 covers 3–9, grade 2 covers 10–32, and grade 3 covers 33–37.
   - **How it's built:**
     - Defined in `CHECKINS` and `GRADES` at the end of `build_worksheets.py`. A `Section` is (name, subtitle, card kind, pool, count, packet).
     - Card kinds are in `KINDS`. Each points to a shared `c_*` drawer: the practice packets' card code, lifted out.
@@ -212,6 +213,7 @@ Each folder has `color/` and `black-and-white/` subfolders, each holding `<slug>
 - **Rulers (founder):** a tape measure or ruler can be used for measuring length. Number lines are still out everywhere else.
 - **Packets 31–32 (Measuring Length, Graphs):** finish grade 2 (all 2.MD standards except 2.MD.6, number-line sums). Line plots are "X charts". Waiting for the founder's review.
 - **Packets 33–36 (Multiplication, Multiplication Strategies, Division, Fractions):** the start of grade 3, from the research in `PLAN-26-30.md`. Multiplication is "groups of", then arrays; the hard facts come from ×2, ×5 and ×10 by breaking arrays apart; division is sharing and grouping, then a missing factor; fractions use strips and the fraction wall. New `assessments/grade-3-*` (42 problems) cover them. Waiting for the founder's review.
-- **Next up (not built):** grade 3 continued: area (arrays of squares, 3.MD.5–7), multiplying by multiples of 10 (3.NBT.3), rounding (needs a decision: it usually uses a number line), elapsed time (3.MD.1), perimeter, and two-step problems with all four operations (3.OA.8). Also mental-math warm-up cards per level, and linking packets to skills in the app.
+- **Packet 37 (Rounding):** built with the founder's method (ten below, ten above, which is closer?), no number line. Waiting for the founder's review.
+- **Next up (not built):** grade 3 continued: area (arrays of squares, 3.MD.5–7), multiplying by multiples of 10 (3.NBT.3), elapsed time (3.MD.1), perimeter, and two-step problems with all four operations (3.OA.8). Also mental-math warm-up cards per level, and linking packets to skills in the app.
 - The online Claude doc "Up to and Over Ten: Research & Practice Problems" is out of date compared with the PDFs. Don't rely on it.
 - The founder likes a short summary after each change: what changed, what was checked, and which files.

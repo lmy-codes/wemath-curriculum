@@ -1,6 +1,6 @@
 # WeMath worksheets
 
-Thirty-seven packets, in teaching order (K to grade 3). Each starts with a picture-first learning page, followed by practice.
+Thirty-eight packets, in teaching order (K to grade 3). Each starts with a picture-first learning page, followed by practice.
 
 | Folder | Topic | Pages |
 |---|---|---|
@@ -41,6 +41,7 @@ Thirty-seven packets, in teaching order (K to grade 3). Each starts with a pictu
 | `34-multiplication-strategies/` | Break-apart arrays: ×3 = ×2 + one group, ×4 = double double, ×6 = ×5 + one group, ×7 = ×5 + ×2, ×8 = double ×4, ×9 = ×10 − one group; all 36 facts of 3, 4, 6, 7, 8, 9 | 8 |
 | `35-division/` | Share it, make groups, think multiplication (missing factor), fact families, all division facts to 10 × 10 | 8 |
 | `36-fractions/` | Fraction strips and the fraction wall: name and shade fractions, compare, equal fractions, fractions equal to wholes (no number lines) | 7 |
+| `37-rounding/` | Round to the nearest 10 and 100: find the ten below and the ten above, see how far each is (a ten-frame shows it), and pick the closer one; exactly in the middle rounds up | 7 |
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 
@@ -60,7 +61,7 @@ Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hol
 | Kindergarten | 0–2: adding and taking away within 9, ten buddies, teen numbers | 44 problems | 46 problems |
 | Grade 1 | 3–9: over ten, back through ten, doubles, tens and ones, ten more/less, two-digit adding | 60 problems | 60 problems |
 | Grade 2 | 10–32: two-digit subtracting, borrowing, columns, three-digit numbers, skip counting, comparing, arrays, even/odd, hundred buddies, counting, halves, equal shares, time, money, across zeros, bar models, length, graphs | 98 problems | 98 problems |
-| Grade 3 | 33–36: multiplication, strategies, division, fractions | 42 problems | 42 problems |
+| Grade 3 | 33–37: multiplication, strategies, division, fractions, rounding | 46 problems | 46 problems |
 
 Each answer key ends with a **scoring sheet**: every part, the packet it checks, and a score line. Use the **pre-assessment** for placement: start a student at the first packet where they miss more than 1 problem in its parts. Use the **post-assessment** to see growth: a part with more than 1 miss means that packet needs review.
 

@@ -10006,7 +10006,7 @@ def stories_x(seed, kind, items):
     return out
 
 
-GRADES.append(("grade-3", "Grade 3", "Packets 33–36", [
+GRADES.append(("grade-3", "Grade 3", "Packets 33–37", [
     S("Groups of", None, "times_groups", [(g, n) for g in rng(2, 5) for n in rng(2, 5)], 2, 33),
     S("Times 2, 5 and 10", None, "eq3", FACTS_2_5_10, 6, 33),
     S("Break it apart", None, "break_array", [(a, b) for a in (3, 4, 6, 7, 8, 9) for b in rng(3, 9)], 2, 34),
@@ -10020,6 +10020,185 @@ GRADES.append(("grade-3", "Grade 3", "Packets 33–36", [
     S("Word problems", None, "word", stories_x("g3a", "times", [(g, k) for g in rng(3, 9) for k in rng(3, 9)])[:8]
       + stories_x("g3b", "share", [(g, k) for g in rng(3, 9) for k in rng(3, 9)])[:8], 4, "33–35"),
 ]))
+
+
+# ====================================================================== 37. Rounding
+
+
+def round_to(n, place):
+    return (n + place // 2) // place * place
+
+
+def between(bk, x, y, w, n, place, given=False, frame=True, cell=10, size=16, bw=44, show_dist=False):
+    """The rounding picture: [ten below] <- n -> [ten above], a bubble on each arrow with how far it is,
+    and a ten-frame under n (filled = past the ten below, empty = still to go). The key rings the closer one.
+    y = baseline of the number row. given=True prints the tens below and above."""
+    c = bk.c
+    lo, hi = n // place * place, n // place * place + place
+    d_lo, d_hi = n - lo, hi - n
+    bh = size * 1.6
+    lx, rx = x, x + w - bw
+    for bx, v in ((lx, lo), (rx, hi)):
+        bk.box(bx, y - size * 0.42, bw, bh, v, size=size * 0.85, reveal=T.ink if given else None)
+        if bk.key and v == round_to(n, place):
+            c.setStrokeColor(T.answer)
+            c.setLineWidth(1.6)
+            c.ellipse(bx - 6, y - size * 0.42 - 6, bx + bw + 6, y - size * 0.42 + bh + 6, stroke=1, fill=0)
+    mx = x + w / 2
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", size * 1.15)
+    c.drawCentredString(mx, y, str(n))
+    nw = sw(str(n), "Rnd", size * 1.15) / 2 + 6
+    ay = y + size * 0.35
+    bk.arrow(mx - nw, ay, lx + bw + 4, ay)
+    bk.arrow(mx + nw, ay, rx - 4, ay)
+    r = size * 0.72
+    for cx, d in (((mx - nw + lx + bw) / 2, d_lo), ((mx + nw + rx) / 2, d_hi)):
+        jump_circle(bk, cx, ay + r + 4, d, r=r, size=size * 0.7, reveal=T.text2 if show_dist else None)
+    if frame:
+        k = d_lo // (place // 10)
+        bk.ten_frame(mx - cell * 2.5, y - size - cell * 2 - 6, cell, ["a"] * k + [None] * (10 - k))
+    return lo, hi
+
+
+def c_between(bk, x, cy, w, item):
+    """Round one number: tens (or hundreds) below and above, how far to each, the closer one."""
+    n, place, level = item
+    frame = level != "boxes"
+    between(bk, x + GUT, cy + 76, w - GUT - 14, n, place, given=level == "closer", frame=frame, cell=9, size=15)
+    bk.fit_eq(x + GUT, cy + 10, w - GUT - 10, f"{n} rounds to [{round_to(n, place)}]", size=14)
+
+
+def learn_rounding(bk):
+    y = bk.new_page("Rounding", "Find the ten below and the ten above. Which one is closer?", name_line=False,
+                    big=True, footer="WeMath  ·  Rounding")
+    c = bk.c
+    label(bk, M, y - 6, "Round 47 to the nearest ten")
+    between(bk, M + 14, y - 54, 300, 47, 10, given=True, cell=14, size=22, bw=56, show_dist=True)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 36, "The ten below is 40.")
+    c.drawString(M + 340, y - 54, "The ten above is 50.")
+    c.drawString(M + 340, y - 72, "47 is 7 away from 40")
+    c.drawString(M + 340, y - 90, "and 3 away from 50.")
+    color_eq(bk, M + 340, y - 118, [("47", None), ("rounds to", None), ("50", "b")], 20)
+    y -= 144
+
+    label(bk, M, y - 6, "The ten-frame shows how far")
+    bk.ten_frame(M + 20, y - 54, 18, ["a"] * 7 + [None] * 3)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 130, y - 30, "Filled: 7 past the ten below.")
+    c.drawString(M + 130, y - 48, "Empty: 3 more to the ten above.")
+    c.drawString(M + 130, y - 66, "More than half full? Round up.")
+    bk.ten_frame(M + 380, y - 54, 18, ["a"] * 5 + [None] * 5)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 380, y - 74, "Exactly half: 45 rounds up to 50.")
+    y -= 96
+
+    label(bk, M, y - 6, "Round 362 to the nearest hundred: count the tens")
+    between(bk, M + 14, y - 54, 300, 362, 100, given=True, cell=14, size=22, bw=56, show_dist=True)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 40, "6 tens past 300.")
+    c.drawString(M + 340, y - 58, "Only 38 more to 400.")
+    color_eq(bk, M + 340, y - 92, [("362", None), ("rounds to", None), ("400", "b")], 20)
+    y -= 140
+
+    bottom = your_turn(bk, y, h=112)
+    bk.ask("round: 23 to 10 your turn")
+    between(bk, M + 130, bottom + 72, 230, 23, 10, cell=11, size=18, bw=48)
+    bk.eq(M + 400, bottom + 50, "23 rounds to [20]", size=16)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: round to the nearest 10 or 100 (3.NBT.1). Say “What is the ten below? The ten "
+                     "above? Which is closer?” The ten-frame shows the ones (the tens for 100). Exactly in the "
+                     "middle rounds up.")
+
+
+def practice_rounding(bk):
+    title = "Rounding: Practice"
+    y = bk.new_page(title, "Ten below, ten above. Which one is closer?")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(1, "Between which tens?", "Write the ten below and the ten above.",
+         [f"{n} is between [{n // 10 * 10}] and [{n // 10 * 10 + 10}]" for n in (36, 82, 59, 14, 73, 28, 91, 65)],
+         2, 42, 8, plain, lambda t: t)
+    key = KINDS_37["round_card"].key
+    part(2, "Which ten is closer?", "Count how far to each ten. Circle the closer one.",
+         [(43, 10, "closer"), (68, 10, "closer"), (27, 10, "closer"), (85, 10, "closer"), (52, 10, "closer"),
+          (39, 10, "closer")], 2, 112, 10, c_between, key)
+    part(3, "Fill in every box", "Find both tens, how far to each, then round.",
+         [(74, 10, "boxes"), (16, 10, "boxes"), (95, 10, "boxes"), (31, 10, "boxes"), (247, 10, "boxes"),
+          (563, 10, "boxes")], 2, 112, 10, c_between, key)
+    part(4, "Round to the nearest hundred", "The ten-frame counts the tens.",
+         [(418, 100, "closer"), (276, 100, "closer"), (650, 100, "closer"), (134, 100, "closer"),
+          (581, 100, "closer"), (749, 100, "closer")], 2, 112, 10, c_between, key)
+    part(5, "Nearest ten", "No help this time.",
+         [f"{n} rounds to [{round_to(n, 10)}]" for n in (22, 48, 63, 87, 55, 11, 79, 34, 96, 41, 17, 66)], 3, 42, 8,
+         plain, lambda t: t)
+    part(6, "Big numbers to the nearest ten", "No help this time.",
+         [f"{n} rounds to [{round_to(n, 10)}]" for n in (123, 456, 785, 312, 639, 991, 205, 574, 868, 437)], 2, 42, 8,
+         plain, lambda t: t)
+    part(7, "Nearest hundred", "No help this time.",
+         [f"{n} rounds to [{round_to(n, 100)}]" for n in (349, 712, 450, 188, 826, 561, 274, 935, 607, 143, 381, 666)],
+         2, 42, 8, plain, lambda t: t)
+    part(8, "Ten or hundred?", "No help this time. Read which one.",
+         [f"Round {n} to the nearest {p}: [{round_to(n, p)}]" for n, p in ((83, 10), (615, 100), (255, 10), (97, 100),
+                                                                          (438, 10), (850, 100))], 2, 42, 8, plain,
+         lambda t: t)
+    part(9, "Remember?", "Problems from earlier packets.", REVIEW_37, 2, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 10, "Word problems", "About how many? Round.")
+    for i, story in enumerate(WORDS_37):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 10, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_37 = ["4 groups of 9 = [36]", f"63 {DIV} 9 = [7]",
+             "half past 11 = [11:30]", "55¢ + 35¢ = [90¢]", f"604 {MINUS} 258 = [346]", "7 groups of 5 = [35]"]
+
+WORDS_37 = [
+    ("A book has 48 pages. About how many pages is that, to the nearest ten?", "48 rounds to 50", "50", "pages"),
+    ("A school has 371 kids. About how many kids is that, to the nearest hundred?", "371 rounds to 400", "400",
+     "kids"),
+    ("A bike costs $129. About how much is that, to the nearest ten dollars?", "$129 rounds to $130", "$130", ""),
+    ("A farm has 85 cows. About how many cows is that, to the nearest ten?", "85 rounds to 90", "90", "cows"),
+    ("Challenge: Mia had 38 stickers and got 24 more. About how many now, to the nearest ten?",
+     "38 + 24 = 62, 62 rounds to 60", "60", "stickers"),
+]
+
+KINDS_37 = {
+    "round_card": Kind(112, 2, lambda it: f"round: {it[0]} to {it[1]} {it[2]}", c_between),
+}
+KINDS.update(KINDS_37)
+
+ROUND_10 = [f"{n} rounds to [{round_to(n, 10)}]" for n in list(rng(11, 98)) + list(rng(102, 988, 7)) if n % 10]
+ROUND_100 = [f"{n} rounds to [{round_to(n, 100)}]" for n in rng(105, 985, 11) if n % 100]
+ROUND_MIXED = [f"Round {n} to the nearest {p}: [{round_to(n, p)}]" for n in rng(112, 988, 13) for p in (10, 100)
+               if n % 10]
+
+CHECKINS["37-rounding"] = [
+    S("Which ten is closer?", None, "round_card", [(n, 10, "closer") for n in rng(12, 98) if n % 10 and n not in (23, 47)], 2),
+    S("Nearest ten", None, "eq2", ROUND_10, 2),
+    S("Nearest hundred", None, "eq2", ROUND_100, 2),
+    S("Ten or hundred?", None, "eq2", ROUND_MIXED, 2),
+]
+_g3 = next(g for g in GRADES if g[0] == "grade-3")[3]
+_g3[-1:-1] = [
+    S("Rounding", None, "eq2", ROUND_MIXED, 4, 37),
+]
 
 
 # ====================================================================== build
@@ -10076,7 +10255,7 @@ PACKETS = [
     ("29-subtracting-across-zeros", "subtracting-across-zeros", "Subtracting Across Zeros", learn_across_zeros,
      practice_across_zeros, False),    ("30-two-step-word-problems", "two-step-word-problems", "Two-Step Word Problems", learn_bar_models,
      practice_bar_models, False),    ("31-measuring-length", "measuring-length", "Measuring Length", learn_length, practice_length, False),    ("32-graphs", "graphs", "Graphs", learn_graphs, practice_graphs, False),    ("33-multiplication", "multiplication", "Multiplication", learn_multiplication, practice_multiplication, False),    ("34-multiplication-strategies", "multiplication-strategies", "Multiplication Strategies", learn_strategies,
-     practice_strategies, False),    ("35-division", "division", "Division", learn_division, practice_division, False),    ("36-fractions", "fractions", "Fractions", learn_fractions, practice_fractions, False),
+     practice_strategies, False),    ("35-division", "division", "Division", learn_division, practice_division, False),    ("36-fractions", "fractions", "Fractions", learn_fractions, practice_fractions, False),    ("37-rounding", "rounding", "Rounding", learn_rounding, practice_rounding, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
