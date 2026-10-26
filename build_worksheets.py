@@ -9501,6 +9501,239 @@ CHECKINS["34-multiplication-strategies"] = [
 ]
 
 
+# ====================================================================== 35. Division
+
+DIV = "÷"
+
+
+def D(p, d):
+    """'12 ÷ 3 = [4]'"""
+    return f"{p} {DIV} {d} = [{p // d}]"
+
+
+def plate_row(bk, x, y, k, each, w=50, h=34, gap=12, kind=None):
+    """k plates in a row (y = bottom). On the key each plate shows `each` things (dots, or icons of kind)."""
+    c = bk.c
+    for i in range(k):
+        px = x + i * (w + gap)
+        c.setStrokeColor(T.muted)
+        c.setLineWidth(1)
+        c.ellipse(px, y, px + w, y + h, stroke=1, fill=0)
+        if bk.key:
+            cx, cy = px + w / 2, y + h / 2
+            if each <= 5 and kind is None:
+                for ox, oy in DICE[each]:
+                    bk.dot(cx + ox * 8, cy + oy * 8, 3.6, "a")
+            else:
+                cols = min(each, 3)
+                for j in range(each):
+                    r, col = divmod(j, cols)
+                    px_, py_ = cx + (col - (cols - 1) / 2) * 12, cy + 6 - r * 11
+                    if kind:
+                        icon(bk, kind, px_, py_, 10)
+                    else:
+                        bk.dot(px_, py_, 3.4, "a")
+    return k * (w + gap) - gap
+
+
+def c_share_div(bk, x, cy, w, item):
+    kind, n, k = item
+    objects(bk, kind, x + GUT, cy + 112, n, s=15, step=18, per_row=n)
+    plate_row(bk, x + GUT, cy + 44, k, n // k)
+    bk.eq(x + GUT, cy + 14, f"[{n}] {DIV} [{k}] = [{n // k}]", size=16)
+    bk.c.setFillColor(T.text2)
+    bk.c.setFont("AvM", 10)
+    bk.c.drawString(x + GUT + 180, cy + 16, f"Share {n} on {k} plates.")
+
+
+def c_make_groups(bk, x, cy, w, item):
+    n, g = item
+    step = 18
+    for i in range(n):
+        bk.dot(x + GUT + 6 + i * step, cy + 48, 5, "a")
+    if bk.key:
+        c = bk.c
+        c.setStrokeColor(T.answer)
+        c.setLineWidth(1.3)
+        for j in range(n // g):
+            x0 = x + GUT + 6 + j * g * step - 7
+            c.roundRect(x0, cy + 38, (g - 1) * step + 14, 20, 9, stroke=1, fill=0)
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 13)
+    bk.c.drawString(x + GUT, cy + 12, f"Circle groups of {g}.")
+    bk.eq(x + GUT + 170, cy + 12, f"[{n}] {DIV} [{g}] = [{n // g}]", size=15)
+
+
+def c_think_times(bk, x, cy, w, item):
+    p, d = item
+    bk.fit_eq(x + GUT, cy + 42, w - GUT - 10, f"{d} {TIMES} [{p // d}] = {p}", size=16)
+    bk.fit_eq(x + GUT, cy + 12, w - GUT - 10, f"so {p} {DIV} {d} = [{p // d}]", size=16)
+
+
+def c_fact_family(bk, x, cy, w, item):
+    a, b = item
+    p = a * b
+    c = bk.c
+    for i, n in enumerate((a, b, p)):
+        cx = x + GUT + 14 + i * 40
+        c.setStrokeColor(T.dot_a if i < 2 else T.accent)
+        c.setLineWidth(1.3)
+        c.circle(cx, cy + 128, 14, stroke=1, fill=0)
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", 12)
+        c.drawCentredString(cx, cy + 124, str(n))
+    for i, line in enumerate((f"[{a}] {TIMES} [{b}] = [{p}]", f"[{b}] {TIMES} [{a}] = [{p}]",
+                              f"[{p}] {DIV} [{a}] = [{b}]", f"[{p}] {DIV} [{b}] = [{a}]")):
+        bk.fit_eq(x + GUT, cy + 88 - i * 26, w - GUT - 10, line, size=13)
+
+
+def learn_division(bk):
+    y = bk.new_page("Division", "Share equally, or make equal groups.", name_line=False, big=True,
+                    footer="WeMath  ·  Division")
+    c = bk.c
+    label(bk, M, y - 6, "Share 12 cookies on 3 plates")
+    objects(bk, "cookie", M + 14, y - 30, 12, s=17, step=20, per_row=12)
+    for i in range(3):
+        px = M + 14 + i * 96
+        c.setStrokeColor(T.muted)
+        c.setLineWidth(1)
+        c.ellipse(px, y - 92, px + 84, y - 56, stroke=1, fill=0)
+        for j in range(4):
+            icon(bk, "cookie", px + 15 + j * 18, y - 74, 15)
+    color_eq(bk, M + 320, y - 82, [("12", "a"), (DIV, "op"), ("3", None), ("=", "op"), ("4", "b")], 26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 320, y - 104, "4 on each plate")
+    y -= 124
+
+    label(bk, M, y - 6, "How many 3s in 12? Make groups of 3")
+    for i in range(12):
+        bk.dot(M + 24 + i * 18 + (i // 3) * 12, y - 34, 6, "a" if (i // 3) % 2 == 0 else "b")
+    c.setStrokeColor(T.text2)
+    c.setLineWidth(1.1)
+    for j in range(4):
+        c.roundRect(M + 13 + j * 66, y - 46, 58, 24, 11, stroke=1, fill=0)
+    color_eq(bk, M + 320, y - 42, [("12", "a"), (DIV, "op"), ("3", None), ("=", "op"), ("4", "b")], 26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 320, y - 64, "4 groups of 3")
+    y -= 86
+
+    label(bk, M, y - 6, "Think multiplication")
+    color_eq(bk, M + 14, y - 38, [("3", None), (TIMES, "op"), ("4", "b"), ("=", "op"), ("12", "a")], 24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 13)
+    c.drawString(M + 150, y - 38, "so")
+    color_eq(bk, M + 180, y - 38, [("12", "a"), (DIV, "op"), ("3", None), ("=", "op"), ("4", "b")], 24)
+    y -= 60
+
+    label(bk, M, y - 6, "A fact family: 3, 4 and 12")
+    for i, line in enumerate([[("3", None), (TIMES, "op"), ("4", None), ("=", "op"), ("12", "a")],
+                              [("4", None), (TIMES, "op"), ("3", None), ("=", "op"), ("12", "a")],
+                              [("12", "a"), (DIV, "op"), ("3", None), ("=", "op"), ("4", None)],
+                              [("12", "a"), (DIV, "op"), ("4", None), ("=", "op"), ("3", None)]]):
+        color_eq(bk, M + 14 + (i % 2) * 150, y - 34 - (i // 2) * 28, line, 20)
+    y -= 92
+
+    bottom = your_turn(bk, y, h=98)
+    bk.ask("share: star 10 on 2 your turn")
+    objects(bk, "star", M + 130, bottom + 80, 10, s=15, step=18, per_row=10)
+    plate_row(bk, M + 130, bottom + 14, 2, 5, w=70, h=40, kind="star")
+    bk.eq(M + 330, bottom + 26, f"10 {DIV} 2 = [5]", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: division as sharing and as making groups (3.OA.2), and as a missing factor "
+                     "(3.OA.6). Read 12 ÷ 3 as “12 shared by 3” or “how many 3s in 12.” "
+                     "Every division fact has a multiplication partner.")
+
+
+def practice_division(bk):
+    title = "Division: Practice"
+    y = bk.new_page(title, "Share equally, or make groups. Think multiplication.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    part(1, "Share it", "Draw the same number on each plate.",
+         [("apple", 10, 5), ("cupcake", 12, 4), ("candy", 8, 2), ("egg", 15, 3), ("fish", 18, 6), ("flower", 20, 5)],
+         1, 132, 8, c_share_div, KINDS_35["share_div"].key)
+    part(2, "Make groups", "Circle groups. Count the groups.",
+         [(15, 3), (12, 2), (20, 4), (18, 6), (16, 8), (14, 7)], 1, 70, 8, c_make_groups,
+         lambda it: f"make groups {it[0]} by {it[1]}")
+    part(3, "Think multiplication", "Find the missing factor. It is the answer.",
+         [(20, 4), (42, 6), (27, 9), (35, 7), (24, 8), (18, 3), (40, 5), (32, 4)], 2, 70, 10, c_think_times,
+         KINDS_35["think_times"].key)
+    part(4, "Fact families", "Use all three numbers. Write 4 facts.", [(3, 7), (4, 9), (6, 8), (5, 6)], 2, 150, 10,
+         c_fact_family, lambda it: f"fact family {it[0]} {it[1]}")
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    for n, (name, facts) in enumerate(DIV_PARTS):
+        part(5 + n, name, "No help this time.", facts, 3, 42, 8, plain, lambda t: t)
+    part(8, "Missing factors", "No help this time.",
+         [f"{a} {TIMES} [{b}] = {a * b}" for a, b in ((6, 9), (8, 4), (3, 9), (7, 8), (4, 6), (9, 5), (2, 8),
+                                                       (6, 6), (5, 7))], 3, 42, 8, plain, lambda t: t)
+    part(9, "Remember?", "Problems from earlier packets.", REVIEW_35, 2, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 10, "Word problems", "Share it, or make groups?")
+    for i, story in enumerate(WORDS_35):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 10, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+def _div_parts():
+    parts = [("Divide by 2, 5 and 10", (2, 5, 10)), ("Divide by 3 and 4", (3, 4)), ("Divide by 6, 7, 8 and 9", (6, 7, 8, 9))]
+    out = []
+    for name, ds in parts:
+        pool = shuf(name, [(d * q, d) for d in ds for q in rng(2, 10)])
+        picked, seen_ans = [], []
+        for p, d in pool:
+            if len(picked) == 12:
+                break
+            if picked and (p == picked[-1][0] or p // d == picked[-1][0] // picked[-1][1]):
+                continue
+            picked.append((p, d))
+        out.append((name, [D(p, d) for p, d in picked]))
+    return out
+
+
+DIV_PARTS = _div_parts()
+
+REVIEW_35 = ["7 groups of 3 = [21]", "quarter to 12 = [11:45]", "66¢ + 25¢ = [91¢]", f"701 {MINUS} 345 = [356]",
+             f"52 cm {MINUS} 17 cm = [35] cm", "double 45 = [90]"]
+
+WORDS_35 = [
+    ("4 kids share 24 stickers equally. How many stickers does each kid get?", f"24 {DIV} 4 = 6", "6", "stickers"),
+    ("30 chairs are set up in rows of 6. How many rows are there?", f"30 {DIV} 6 = 5", "5", "rows"),
+    ("Mom has 18 cookies. She puts 3 cookies in each bag. How many bags does she fill?", f"18 {DIV} 3 = 6", "6",
+     "bags"),
+    ("56 crayons are packed into 8 boxes equally. How many crayons go in each box?", f"56 {DIV} 8 = 7", "7",
+     "crayons"),
+    ("Challenge: 28 kids make teams of 4. Each team gets 2 balls. How many balls are needed?",
+     f"28 {DIV} 4 = 7, 7 {TIMES} 2 = 14", "14", "balls"),
+]
+
+KINDS_35 = {
+    "share_div": Kind(132, 1, lambda it: f"share: {it[0]} {it[1]} on {it[2]}", c_share_div, 8),
+    "think_times": Kind(70, 2, lambda it: f"{it[1]} {TIMES} [] = {it[0]}", c_think_times),
+}
+KINDS.update(KINDS_35)
+
+DIV_FACTS = [D(d * q, d) for d in rng(2, 10) for q in rng(2, 10)]
+
+CHECKINS["35-division"] = [
+    S("Share it", None, "share_div", [(k, n * q, n) for k in ("apple", "star", "cookie", "candy")
+                                     for n in rng(3, 5) for q in rng(3, 5)], 1),
+    S("Think multiplication", None, "think_times", [(d * q, d) for d in rng(3, 9) for q in rng(3, 9)], 2),
+    S("Divide", None, "eq3", DIV_FACTS, 9),
+]
+
+
 # ====================================================================== build
 
 PACKETS = [
@@ -9555,7 +9788,7 @@ PACKETS = [
     ("29-subtracting-across-zeros", "subtracting-across-zeros", "Subtracting Across Zeros", learn_across_zeros,
      practice_across_zeros, False),    ("30-two-step-word-problems", "two-step-word-problems", "Two-Step Word Problems", learn_bar_models,
      practice_bar_models, False),    ("31-measuring-length", "measuring-length", "Measuring Length", learn_length, practice_length, False),    ("32-graphs", "graphs", "Graphs", learn_graphs, practice_graphs, False),    ("33-multiplication", "multiplication", "Multiplication", learn_multiplication, practice_multiplication, False),    ("34-multiplication-strategies", "multiplication-strategies", "Multiplication Strategies", learn_strategies,
-     practice_strategies, False),
+     practice_strategies, False),    ("35-division", "division", "Division", learn_division, practice_division, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
