@@ -7974,6 +7974,184 @@ _g2[-1:-1] = [
 ]
 
 
+# ====================================================================== 29. Subtracting Across Zeros
+
+
+def tens_break(a, b):
+    """403 − 157: 403 is 40 tens 3 ones; not enough ones, so 39 tens 13 ones. Returns (tens, ones)."""
+    t, o = a // 10, a % 10
+    if o < b % 10:
+        t, o = t - 1, o + 10
+    return t, o
+
+
+def zero_rows(bk, x, top, a, b, helped=False, size=13, gap=27, maxw=None):
+    """break / tens / ones / total rows, thinking of the top number as tens and ones."""
+    t, o = tens_break(a, b)
+    bt, bo = b // 10, b % 10
+    fmt = (lambda v: str(v)) if helped else (lambda v: f"[{v}]")
+    rows = [("break", f"{a} = {fmt(t)} tens + {fmt(o)} ones"),
+            ("tens", f"[{t}] {MINUS} {bt} = [{t - bt}]"),
+            ("ones", f"[{o}] {MINUS} {bo} = [{o - bo}]"),
+            ("total", f"[{(t - bt) * 10}] + [{o - bo}] = [{a - b}]")]
+    for i, (lab, text) in enumerate(rows):
+        yy = top - i * gap
+        bk.c.setFillColor(T.text2)
+        bk.c.setFont("AvD", 9.5)
+        bk.c.drawString(x, yy + 1, lab)
+        bk.fit_eq(x + 44, yy, (maxw or 400) - 44, text, size=size)
+    return top - (len(rows) - 1) * gap
+
+
+def c_zero_rows(bk, x, cy, w, item, helped=False):
+    a, b = item
+    bk.fit_eq(x + GUT, cy + 136, w - GUT - 10, f"{a} {MINUS} {b} = [{a - b}]", size=18)
+    zero_rows(bk, x + GUT, cy + 103, a, b, helped=helped, size=12, gap=27, maxw=w - GUT - 8)
+
+
+def c_tens_ones(bk, x, cy, w, n):
+    """403 = 40 tens + 3 ones = 39 tens + 13 ones."""
+    bk.fit_eq(x + GUT, cy + 46, w - GUT - 10, f"{n} = [{n // 10}] tens + [{n % 10}] ones", size=15)
+    bk.fit_eq(x + GUT, cy + 14, w - GUT - 10, f"{n} = [{n // 10 - 1}] tens + [{n % 10 + 10}] ones", size=15)
+
+
+def learn_across_zeros(bk):
+    y = bk.new_page("Subtracting Across Zeros", "No tens to break? Think of the number as tens and ones.",
+                    name_line=False, big=True, footer="WeMath  ·  Subtracting Across Zeros")
+    c = bk.c
+    label(bk, M, y - 6, f"403 {MINUS} 157: 3 {MINUS} 7? Break a ten. But there are 0 tens!")
+    quick_hto(bk, M + 14, y - 66, 4, 0, 3, size=18, line_h=40)
+    bk.arrow(M + 150, y - 46, M + 196, y - 46)
+    quick_hto(bk, M + 214, y - 66, 3, 9, 13, size=18, line_h=40)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 11.5)
+    c.drawString(M + 14, y - 86, "4 hundreds, 3 ones")
+    c.drawString(M + 214, y - 86, "Break a hundred into 10 tens, then a ten into 10 ones.")
+    y -= 112
+
+    label(bk, M, y - 6, "The shortcut: 403 is 40 tens and 3 ones")
+    color_eq(bk, M + 14, y - 40, [("403", None), ("=", "op"), ("40", "a"), ("tens", None), ("+", "op"), ("3", "b"),
+                                  ("ones", None)], 22)
+    color_eq(bk, M + 14, y - 72, [("403", None), ("=", "op"), ("39", "a"), ("tens", None), ("+", "op"), ("13", "b"),
+                                  ("ones", None)], 22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 330, y - 38, "Take 1 ten from the 40 tens.")
+    c.drawString(M + 330, y - 56, "Now there are 39 tens")
+    c.drawString(M + 330, y - 74, "and 13 ones. One break!")
+    y -= 100
+
+    label(bk, M, y - 6, f"Now subtract: 157 is 15 tens and 7 ones")
+    for i, (lab, parts) in enumerate([
+            ("tens", [("39", "a"), (MINUS, "op"), ("15", None), ("=", "op"), ("24", None), ("tens", None)]),
+            ("ones", [("13", "b"), (MINUS, "op"), ("7", None), ("=", "op"), ("6", None)]),
+            ("total", [("240", None), ("+", "op"), ("6", None), ("=", "op"), ("246", None)])]):
+        yy = y - 34 - i * 28
+        c.setFillColor(T.text2)
+        c.setFont("AvD", 10)
+        c.drawString(M + 14, yy + 2, lab)
+        color_eq(bk, M + 64, yy, parts, 17)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 330, y - 40, "Check by adding:")
+    color_eq(bk, M + 330, y - 66, [("246", None), ("+", "op"), ("157", None), ("=", "op"), ("403", "a")], 18)
+    y -= 116
+
+    bottom = your_turn(bk, y, h=150)
+    bk.ask(f"302 {MINUS} 145 = []")
+    bk.eq(M + 120, bottom + 116, f"302 {MINUS} 145 = [157]", size=20)
+    zero_rows(bk, M + 120, bottom + 84, 302, 145, size=13, gap=24, maxw=300)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: subtract when the top number has zeros (2.NBT.7). Say “403 is 40 tens and 3 "
+                     "ones,” then break one ten: 39 tens and 13 ones. Watch for 0 − 7 = 7 (the 0 can’t "
+                     "give). Check every answer by adding.")
+
+
+def practice_across_zeros(bk):
+    title = "Subtracting Across Zeros: Practice"
+    y = bk.new_page(title, "Think of the top number as tens and ones. Break once.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    sub_key = lambda it: f"{it[0]} {MINUS} {it[1]} = []"
+    part(1, "Tens and ones", "Write it as tens and ones, then break one ten.",
+         [403, 702, 305, 600, 801, 506, 900, 204], 2, 78, 10, c_tens_ones, KINDS_29["tens_ones"].key)
+    part(2, "Break, then subtract", "The break row is done for you.",
+         [(402, 135), (703, 248), (500, 164), (610, 253)], 2, 160, 10,
+         lambda bk_, x, cy, w, it: c_zero_rows(bk_, x, cy, w, it, helped=True), sub_key)
+    part(3, "Fill in every box", None,
+         [(804, 376), (301, 127), (900, 465), (520, 148)], 2, 160, 10, c_zero_rows, sub_key)
+    part(4, "Stack it", "Cross out the tens, write the new tens and ones on top, then subtract.",
+         [(503, 276), (400, 218), (730, 364), (901, 452)], 4, 120, 8,
+         lambda bk_, x, cy, w, it: c_col_sub3(bk_, x, cy, w, it, "boxes", True), sub_key)
+    for k, (name, sub, probs) in enumerate([
+            ("Zero in the tens", "No help this time.",
+             [(403, 157), (605, 238), (802, 465), (704, 329), (501, 286), (906, 547), (308, 159), (207, 148)]),
+            ("Zero in the ones", "No help this time.",
+             [(510, 234), (720, 385), (640, 172), (830, 456), (450, 187), (910, 538), (370, 194), (260, 175)]),
+            ("Two zeros", "No help this time.",
+             [(300, 128), (500, 246), (700, 351), (400, 163), (800, 472), (600, 289), (900, 537), (200, 146)]),
+            ("Mixed", "Break only when you need to.",
+             [(605, 302), (803, 267), (540, 315), (700, 425), (406, 138), (960, 580), (302, 185), (850, 624)])]):
+        part(5 + k, name, sub, probs, 4, 112, 8, c_col_sub3, sub_key)
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(9, "Check by adding", "No help this time. Do you get the top number back?",
+         [f"{a} + {b} = [{a + b}]" for a, b in ((246, 157), (177, 128), (365, 245), (226, 274), (318, 282),
+                                                (459, 141))], 3, 42, 8, plain, lambda t: t)
+    part(10, "Remember?", "Problems from earlier packets.", REVIEW_29, 3, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 11, "Word problems", "Break once. Check by adding.")
+    for i, story in enumerate(WORDS_29):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 11, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_29 = ["65¢ + 25¢ = [90¢]", "half past 7 = [7:30]", "352 + 216 = [568]", "64 + [36] = 100",
+             "half of 86 = [43]", "2 halves = [1] whole"]
+
+WORDS_29 = [
+    ("A school has 400 pencils. The kids use 156 of them. How many pencils are left?",
+     f"400 {MINUS} 156 = 244", "244", "pencils"),
+    ("A book has 305 pages. Mia has read 128 pages. How many pages are left to read?",
+     f"305 {MINUS} 128 = 177", "177", "pages"),
+    ("There were 610 people at a game. Then 245 people went home. How many people stayed?",
+     f"610 {MINUS} 245 = 365", "365", "people"),
+    ("A jar holds 500 beads. 274 beads are red and the rest are blue. How many beads are blue?",
+     f"500 {MINUS} 274 = 226", "226", "beads"),
+    ("Challenge: A game needs 1000 points. Kim has 455. How many more points does she need?",
+     "455 + 545 = 1000", "545", "points"),
+]
+
+KINDS_29 = {
+    "tens_ones": Kind(78, 2, lambda n: f"{n} = [] tens + [] ones", c_tens_ones),
+}
+KINDS.update(KINDS_29)
+
+ZERO_SUB = [(a, b) for a in rng(200, 990) if a % 100 and ("0" in str(a)[1:]) and a % 7 in (1, 4)
+            for b in rng(112, a - 60) if b % 13 == 5 and a % 10 < b % 10 and (a // 10 % 10) <= b // 10 % 10
+            and b % 10 and b // 10 % 10]
+ZERO_SUB += [(a, b) for a in rng(200, 900, 100) for b in rng(112, a - 60) if b % 17 == 3 and b % 10 and b // 10 % 10]
+
+CHECKINS["29-subtracting-across-zeros"] = [
+    S("Tens and ones", None, "tens_ones", [n for n in rng(201, 909) if "0" in str(n)[1:] and n % 10 != 0
+                                           and n // 10 % 10 == 0] + list(rng(200, 900, 100)), 2),
+    S("Subtract", "Break once.", "col_sub3", ZERO_SUB, 4),
+    S("Check by adding", None, "eq3", [f"{a - b} + {b} = [{a}]" for a, b in ZERO_SUB], 3),
+]
+_g2[-1:-1] = [
+    S("Subtracting across zeros", None, "col_sub3", ZERO_SUB, 2, 29),
+]
+
+
 # ====================================================================== build
 
 PACKETS = [
@@ -8025,6 +8203,8 @@ PACKETS = [
      practice_shares, False),
     ("27-telling-time", "telling-time", "Telling Time", learn_time, practice_time, False),
     ("28-money", "money", "Money", learn_money, practice_money, False),
+    ("29-subtracting-across-zeros", "subtracting-across-zeros", "Subtracting Across Zeros", learn_across_zeros,
+     practice_across_zeros, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
