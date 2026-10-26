@@ -6350,7 +6350,7 @@ GRADES = [
         S("Word problems", None, "word", stories("g1a", "add", OVER10)[:6] + stories("g1b", "sub", TEEN_SUB)[:6]
           + stories("g1c", "tens", TWO_DIG)[:6] + stories("g1d", "add", TWO_ADD_NEW)[:6], 4, "3–9"),
     ]),
-    ("grade-2", "Grade 2", "Packets 10–22", [
+    ("grade-2", "Grade 2", "Packets 10–30", [
         S("Enough ones?", "Circle yes or no. Don’t solve it.", "enough", TWO_SUB_NO + TWO_SUB_BRK, 2, 10),
         S("Subtracting two-digit numbers", None, "eq3", eqs(TWO_SUB_NO, "-"), 3, 10),
         S("Jump up", "Fill in the jumps. Add them up.", "jump_up", [(a, a + b) for a, b in TWO_ADD_NEW], 1, 11),
@@ -6473,11 +6473,12 @@ def scoring_sheet(bk, title, picked, total, when):
         c.drawString(x_, y, head)
     y -= 8
     num = 1
+    pitch = min(24, (y - 150) / len(picked))  # tighter rows when there are many parts, so it stays on one page
     for i, (s, items) in enumerate(picked):
         c.setStrokeColor(T.line)
         c.setLineWidth(0.6)
         c.line(M, y, W - M, y)
-        y -= 17
+        y -= pitch * 17 / 24
         c.setFillColor(T.ink)
         c.setFont("AvM", 10.5)
         c.drawString(cols[0], y, str(i + 1))
@@ -6486,7 +6487,7 @@ def scoring_sheet(bk, title, picked, total, when):
         c.drawString(cols[3], y, f"{num}–{num + len(items) - 1}" if len(items) > 1 else str(num))
         c.drawString(cols[4], y, f"____ / {len(items)}")
         num += len(items)
-        y -= 7
+        y -= pitch * 7 / 24
     c.line(M, y, W - M, y)
     y -= 20
     c.setFont("AvB", 11)
@@ -8152,6 +8153,339 @@ _g2[-1:-1] = [
 ]
 
 
+# ====================================================================== 30. Two-Step Word Problems (bar models)
+
+
+def bar_piece(bk, x, y, w, h, value, shown, kind, size=13):
+    """One piece of a bar: a number, or a box to fill in (the answer shows on the key)."""
+    c = bk.c
+    fill = (T.band if kind == "a" else T.strip) if T.color else None
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.1)
+    if fill is not None:
+        c.setFillColor(fill)
+    c.rect(x, y, w, h, stroke=1, fill=1 if fill is not None else 0)
+    if shown:
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", size)
+        c.drawCentredString(x + w / 2, y + h / 2 - size * 0.36, str(value))
+    else:
+        bw = max(28, sw(str(value), "Rnd", size) + 12)
+        bk.box(x + w / 2 - bw / 2, y + (h - size * 1.45) / 2, bw, size * 1.45, value, size=size)
+
+
+def bar_model(bk, x, y, w, parts, whole, h=24, size=13):
+    """Part-part-whole bar. parts = [(value, shown)], whole = (value, shown) on a bracket above.
+    y = bottom of the bar. Returns the top of the bracket label."""
+    c = bk.c
+    total = sum(v for v, _ in parts)
+    widths = [max(40, w * v / total) for v, _ in parts]
+    k = w / sum(widths)
+    px = x
+    for i, ((v, shown), pw) in enumerate(zip(parts, widths)):
+        bar_piece(bk, px, y, pw * k, h, v, shown, "a" if i % 2 == 0 else "b", size)
+        px += pw * k
+    by = y + h + 7
+    c.setStrokeColor(T.text2)
+    c.setLineWidth(1)
+    c.line(x, by, x + w, by)
+    c.line(x, by, x, by - 5)
+    c.line(x + w, by, x + w, by - 5)
+    v, shown = whole
+    if shown:
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", size)
+        c.drawCentredString(x + w / 2, by + 5, str(v))
+    else:
+        bw = max(28, sw(str(v), "Rnd", size) + 12)
+        bk.box(x + w / 2 - bw / 2, by + 3, bw, size * 1.45, v, size=size)
+    return by + 3 + size * 1.45
+
+
+def compare_bars(bk, x, y, w, big, small, unknown, h=22, size=13, names=None):
+    """Two bars, the bigger one on top. The gap at the end of the smaller bar is the difference (dashed).
+    unknown: "diff", "big" or "small". names = (top label, bottom label), drawn left of the bars."""
+    c = bk.c
+    lw = 0
+    if names:
+        c.setFillColor(T.text2)
+        c.setFont("AvD", 9.5)
+        lw = max(sw(n, "AvD", 9.5) for n in names) + 8
+        c.drawString(x, y + h + 8 + h / 2 - 3.5, names[0])
+        c.drawString(x, y + h / 2 - 3.5, names[1])
+    x += lw
+    w -= lw
+    ws = max(40, w * small / big)
+    bar_piece(bk, x, y + h + 8, w, h, big, unknown != "big", "a", size)
+    bar_piece(bk, x, y, ws, h, small, unknown != "small", "b", size)
+    c.setStrokeColor(T.text2)
+    c.setLineWidth(1)
+    c.setDash(3, 2.5)
+    c.rect(x + ws, y, w - ws, h, stroke=1, fill=0)
+    c.setDash()
+    d = big - small
+    if unknown == "diff":
+        bw = max(28, sw(str(d), "Rnd", size) + 12)
+        bk.box(x + ws + (w - ws) / 2 - bw / 2, y + (h - size * 1.45) / 2, bw, size * 1.45, d, size=size)
+    else:
+        c.setFillColor(T.text2)
+        c.setFont("Rnd", size)
+        c.drawCentredString(x + ws + (w - ws) / 2, y + h / 2 - size * 0.36, str(d))
+    return y + 2 * h + 8
+
+
+def draw_model(bk, x, y, w, model, size=13):
+    """model = ("pw", a, b, unknown) with unknown "whole" or "part" (the second part),
+    or ("cmp", big, small, unknown, names)."""
+    if model[0] == "pw":
+        _, a, b, unknown = model
+        return bar_model(bk, x, y, w, [(a, True), (b, unknown != "part")], (a + b, unknown != "whole"), size=size)
+    _, big, small, unknown, *names = model
+    return compare_bars(bk, x, y, w, big, small, unknown, size=size, names=names[0] if names else None)
+
+
+def model_answer(model):
+    if model[0] == "pw":
+        return model[1] + model[2] if model[3] == "whole" else model[2]
+    _, big, small, unknown, *_ = model
+    return {"diff": big - small, "big": big, "small": small}[unknown]
+
+
+def c_bar(bk, x, cy, w, model):
+    draw_model(bk, x + GUT, cy + 16, w - GUT - 16, model)
+
+
+def sentence_line(bk, x, y, w, label_, sentence):
+    c = bk.c
+    c.setFillColor(T.text2)
+    c.setFont("AvM", 8.5)
+    c.drawString(x, y, label_)
+    lx = x + sw(label_, "AvM", 8.5) + 6
+    c.setStrokeColor(T.muted)
+    c.setLineWidth(0.7)
+    c.line(lx, y - 2, x + w, y - 2)
+    if bk.key:
+        bk.fit_eq(lx + 4, y + 1, x + w - lx - 4, sentence, size=12, color=T.answer)
+
+
+def answer_box(bk, x, y, answer, unit):
+    c = bk.c
+    c.setFillColor(T.text2)
+    c.setFont("AvM", 8.5)
+    c.drawString(x, y + 9, "Answer")
+    bw = max(46, sw(str(answer), "Rnd", 17) + 16)
+    bk.box(x + 38, y, bw, 28, answer, size=17)
+    c.setFillColor(T.ink)
+    c.setFont("AvM", 11)
+    c.drawString(x + 46 + bw, y + 10, unit)
+
+
+def c_story_bar(bk, x, cy, w, item):
+    """A one-step story with its bar model drawn (some numbers missing), a number sentence and an answer."""
+    story, model, sentence, unit = item
+    tx = x + GUT
+    bk.paragraph(tx, cy + 122, w - GUT - 16, story, size=11.5, leading=15, font="AvM")
+    draw_model(bk, tx, cy + 18, 246, model)
+    rx = tx + 270
+    sentence_line(bk, rx, cy + 58, w - (rx - x) - 14, "Number sentence", sentence)
+    answer_box(bk, rx, cy + 14, model_answer(model), unit)
+
+
+def c_two_step(bk, x, cy, w, item):
+    """Two steps: bars for each step (or a space to draw them), two number sentences, the answer."""
+    story, (s1, m1), (s2, m2), answer, unit, bars = item
+    tx = x + GUT
+    bk.paragraph(tx, cy + 208, w - GUT - 16, story, size=11.5, leading=15, font="AvM")
+    c = bk.c
+    if bars:
+        for j, (m, yy) in enumerate(((m1, cy + 96), (m2, cy + 18))):
+            c.setFillColor(T.text2)
+            c.setFont("AvD", 9)
+            c.drawString(tx, yy + 60 if m[0] == "pw" else yy + 56, f"Step {j + 1}")
+            draw_model(bk, tx, yy, 246, m)
+    else:
+        bk.work(tx, cy + 12, 250, 140, "Draw the bars")
+    rx = tx + 270
+    sentence_line(bk, rx, cy + 120, w - (rx - x) - 14, "Step 1", s1)
+    sentence_line(bk, rx, cy + 80, w - (rx - x) - 14, "Step 2", s2)
+    answer_box(bk, rx, cy + 22, answer, unit)
+
+
+def learn_bar_models(bk):
+    y = bk.new_page("Two-Step Word Problems", "Draw a bar. Find the missing part. Then do the next step.",
+                    name_line=False, big=True, footer="WeMath  ·  Two-Step Word Problems")
+    c = bk.c
+    label(bk, M, y - 6, "Part + part = whole")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 26, "Mia has 35 red beads and 27 blue beads. How many beads?")
+    bar_model(bk, M + 14, y - 82, 300, [(35, True), (27, True)], (62, True), size=14)
+    color_eq(bk, M + 350, y - 76, [("35", "a"), ("+", "op"), ("27", "b"), ("=", "op"), ("62", None)], 22)
+    y -= 104
+
+    label(bk, M, y - 6, "Compare: how many more?")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 26, "Ben has 52 cards. Kim has 34 cards. How many more does Ben have?")
+    compare_bars(bk, M + 14, y - 92, 300, 52, 34, "diff", size=14, names=("Ben", "Kim"))
+    color_eq(bk, M + 350, y - 76, [("34", "b"), ("+", "op"), ("18", None), ("=", "op"), ("52", "a")], 22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 11)
+    c.drawString(M + 350, y - 96, "Jump up from 34 to 52.")
+    y -= 118
+
+    label(bk, M, y - 6, "Two steps: the first answer is a part of the second bar")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 26, "Leo has 24 stickers. He gets 18 more. Then he gives 15 away. How many now?")
+    c.setFont("AvD", 9.5)
+    c.drawString(M + 14, y - 48, "Step 1")
+    bar_model(bk, M + 60, y - 84, 220, [(24, True), (18, True)], (42, True), size=13)
+    color_eq(bk, M + 330, y - 76, [("24", "a"), ("+", "op"), ("18", "b"), ("=", "op"), ("42", None)], 18)
+    c.setFillColor(T.text2)
+    c.setFont("AvD", 9.5)
+    c.drawString(M + 14, y - 106, "Step 2")
+    bar_model(bk, M + 60, y - 142, 220, [(27, True), (15, True)], (42, True), size=13)
+    color_eq(bk, M + 330, y - 134, [("42", "a"), (MINUS, "op"), ("15", "b"), ("=", "op"), ("27", None)], 18)
+    y -= 164
+
+    bottom = your_turn(bk, y, h=96)
+    bk.ask("bar: your turn pw 46 ? 80")
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 12.5)
+    c.drawString(M + 120, bottom + 70, "80 kids. 46 are boys. How many girls?")
+    bar_model(bk, M + 120, bottom + 14, 240, [(46, True), (34, False)], (80, True), size=14)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 11)
+    c.drawString(M + 390, bottom + 40, "Read. Draw.")
+    c.drawString(M + 390, bottom + 24, "Write. Answer.")
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: solve one- and two-step word problems within 100 with a bar model (2.OA.1). Ask "
+                     "“What is the whole? What are the parts?” “Fewer” can mean add. In two steps, "
+                     "the first answer is a part of the second bar.")
+
+
+def practice_bar_models(bk):
+    title = "Two-Step Word Problems: Practice"
+    y = bk.new_page(title, "Read. Draw the bar. Write the number sentence. Answer.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    part(1, "Read the bar", "Find the number that goes in the box.",
+         [("pw", 34, 25, "whole"), ("cmp", 64, 39, "diff"), ("pw", 45, 27, "part"), ("cmp", 45, 28, "big"),
+          ("pw", 48, 37, "whole"), ("cmp", 81, 55, "small"), ("pw", 36, 54, "part"), ("cmp", 70, 46, "diff")],
+         2, 84, 10, c_bar, KINDS_30["bar"].key)
+    story_key = lambda it: f"story: {it[2]}"
+    part(2, "Part and part", "The bar is drawn for you.", [
+        ("Ava has 38 red beads and 26 blue beads. How many beads does she have?",
+         ("pw", 38, 26, "whole"), "38 + 26 = 64", "beads"),
+        ("There are 52 kids at the park. 27 kids are on the swings. The rest are in the sandbox. How many are in "
+         "the sandbox?", ("pw", 27, 25, "part"), f"52 {MINUS} 27 = 25", "kids"),
+        ("Leo picked 45 apples. Then he picked some more. Now he has 81 apples. How many more did he pick?",
+         ("pw", 45, 36, "part"), "45 + 36 = 81", "apples"),
+        ("Some birds sat in a tree. 18 birds flew away. Now 47 birds are left. How many birds were there at first?",
+         ("pw", 47, 18, "whole"), "47 + 18 = 65", "birds"),
+    ], 1, 132, 10, c_story_bar, story_key)
+    part(3, "Compare", "The longer bar is the bigger number.", [
+        ("Mia has 63 stickers. Sam has 38 stickers. How many more stickers does Mia have?",
+         ("cmp", 63, 38, "diff", ("Mia", "Sam")), "38 + 25 = 63", "stickers"),
+        ("Ben scored 56 points. Kim scored 19 fewer points than Ben. How many points did Kim score?",
+         ("cmp", 56, 37, "small", ("Ben", "Kim")), f"56 {MINUS} 19 = 37", "points"),
+        ("Zoe read 28 books. Omar read 17 more books than Zoe. How many books did Omar read?",
+         ("cmp", 45, 28, "big", ("Omar", "Zoe")), "28 + 17 = 45", "books"),
+        ("Room 2 has 41 kids. That is 16 fewer kids than Room 3. How many kids are in Room 3?",
+         ("cmp", 57, 41, "big", ("Room 3", "Room 2")), "41 + 16 = 57", "kids"),
+    ], 1, 132, 10, c_story_bar, story_key)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 4, "Draw the bar", "Draw it yourself. Is the whole missing, or a part?")
+    for i, story in enumerate(WORDS_30_ONE):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 4, "Draw the bar", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+    num += len(WORDS_30_ONE)
+    y -= 22
+
+    two_key = lambda it: f"story: {it[1][0]}; {it[2][0]}"
+    part(5, "Two steps", "The bars are drawn for you. Step 1 helps with step 2.", [
+        ("Ava had 25 stickers. She got 18 more. Then she gave 9 away. How many stickers does she have now?",
+         ("25 + 18 = 43", ("pw", 25, 18, "whole")), (f"43 {MINUS} 9 = 34", ("pw", 34, 9, "part")), 34, "stickers",
+         True),
+        ("A class has 14 boys and 16 girls. Then 8 kids go home. How many kids are left?",
+         ("14 + 16 = 30", ("pw", 14, 16, "whole")), (f"30 {MINUS} 8 = 22", ("pw", 22, 8, "part")), 22, "kids",
+         True),
+        ("Sam has 32 marbles. Leo has 15 more than Sam. How many marbles do they have together?",
+         ("32 + 15 = 47", ("cmp", 47, 32, "big", ("Leo", "Sam"))), ("32 + 47 = 79", ("pw", 32, 47, "whole")), 79,
+         "marbles", True),
+    ], 1, 218, 10, c_two_step, two_key)
+    part(6, "Two steps on your own", "Draw a bar for each step.", [
+        ("A baker made 40 rolls in the morning and 35 in the afternoon. She sold 58. How many rolls are left?",
+         ("40 + 35 = 75", None), (f"75 {MINUS} 58 = 17", None), 17, "rolls", False),
+        ("Kim had 50¢. She bought a pencil for 25¢ and an eraser for 15¢. How much money is left?",
+         ("25¢ + 15¢ = 40¢", None), (f"50¢ {MINUS} 40¢ = 10¢", None), "10¢", "",
+         False),
+        ("There were 36 kids on a bus. At the first stop, 12 got off. At the next stop, 9 got on. How many kids "
+         "are on the bus now?", (f"36 {MINUS} 12 = 24", None), ("24 + 9 = 33", None), 33, "kids", False),
+        ("Mia read 23 pages on Monday and 19 pages on Tuesday. Her book has 60 pages. How many pages are left?",
+         ("23 + 19 = 42", None), (f"60 {MINUS} 42 = 18", None), 18, "pages", False),
+        ("Challenge: Ben has 28 cards. Kai has 9 more than Ben. Zoe has 5 fewer than Kai. How many cards does "
+         "Zoe have?", ("28 + 9 = 37", None), (f"37 {MINUS} 5 = 32", None), 32, "cards", False),
+    ], 1, 218, 10, c_two_step, two_key)
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(7, "Remember?", "Problems from earlier packets.", REVIEW_30, 3, 42, 8, plain, lambda t: t)
+
+
+WORDS_30_ONE = [
+    ("A box has 75 crayons. 48 of them are broken. How many crayons are not broken?",
+     f"75 {MINUS} 48 = 27", "27", "crayons"),
+    ("Nia had some shells. She found 26 more. Now she has 60 shells. How many did she have at first?",
+     f"60 {MINUS} 26 = 34", "34", "shells"),
+    ("Jay has 37 cards. Kai has 29 more cards than Jay. How many cards does Kai have?", "37 + 29 = 66", "66",
+     "cards"),
+    ("A train has 92 seats. 55 seats are full. How many seats are empty?", f"92 {MINUS} 55 = 37", "37", "seats"),
+]
+
+REVIEW_30 = ["503 − 268 = [235]", "quarter to 9 = [8:45]", "45¢ + 45¢ = [90¢]", "6 thirds = [2] wholes",
+             "half of 64 = [32]", "406 − 179 = [227]"]
+
+TWO_STEP = []
+for _i, (_a, _b, _c) in enumerate([(a, b, c) for a in rng(14, 48, 3) for b in rng(11, 29, 4) for c in rng(6, 19, 4)
+                                   if c < a + b]):
+    _n = NAMES[_i % len(NAMES)]
+    _t = THINGS[_i % len(THINGS)]
+    TWO_STEP.append((f"{_n} had {_a} {_t}. {_n} got {_b} more, then gave {_c} away. How many {_t} are left?",
+                     (f"{_a} + {_b} = {_a + _b}", ("pw", _a, _b, "whole")),
+                     (f"{_a + _b} {MINUS} {_c} = {_a + _b - _c}", ("pw", _a + _b - _c, _c, "part")),
+                     _a + _b - _c, _t, True))
+
+KINDS_30 = {
+    "bar": Kind(84, 2, lambda m: f"bar: {' '.join(map(str, m[:4]))}", c_bar),
+    "two_step": Kind(218, 1, lambda it: f"story: {it[1][0]}; {it[2][0]}", c_two_step, 8),
+}
+KINDS.update(KINDS_30)
+
+BARS = ([("pw", a, b, u) for a in rng(23, 58, 5) for b in rng(14, 41, 3) for u in ("whole", "part")]
+        + [("cmp", big, small, u) for big in rng(41, 95, 6) for small in rng(17, 38, 4) if big - small > 8
+           for u in ("diff", "big", "small")])
+
+CHECKINS["30-two-step-word-problems"] = [
+    S("Read the bar", "Find the number that goes in the box.", "bar", BARS, 4),
+    S("Two steps", None, "two_step", TWO_STEP, 1),
+    S("One step", "Draw a bar if it helps.", "word", stories("w30a", "compare", [(a, b) for a in rng(40, 95, 7) for b in rng(15, 38, 5)])
+      + stories("w30b", "sub", [(a, b) for a in rng(41, 96, 5) for b in rng(13, 39, 6)]), 1),
+]
+_g2[-1:-1] = [
+    S("Read the bar", None, "bar", BARS, 2, 30),
+]
+
+
 # ====================================================================== build
 
 PACKETS = [
@@ -8204,7 +8538,8 @@ PACKETS = [
     ("27-telling-time", "telling-time", "Telling Time", learn_time, practice_time, False),
     ("28-money", "money", "Money", learn_money, practice_money, False),
     ("29-subtracting-across-zeros", "subtracting-across-zeros", "Subtracting Across Zeros", learn_across_zeros,
-     practice_across_zeros, False),
+     practice_across_zeros, False),    ("30-two-step-word-problems", "two-step-word-problems", "Two-Step Word Problems", learn_bar_models,
+     practice_bar_models, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
