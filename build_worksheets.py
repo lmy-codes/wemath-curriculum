@@ -8767,7 +8767,7 @@ LENGTH_EQS = ([f"{a} cm + {b} cm = [{a + b}] cm" for a in rng(13, 58, 5) for b i
 CHECKINS["31-measuring-length"] = [
     S("Read the tape", None, "read_tape", TAPES, 3),
     S("Which unit?", None, "unit_choice", ESTIMATES, 3),
-    S("Add and subtract lengths", None, "eq2", LENGTH_EQS, 4),
+    S("Add and subtract lengths", None, "eq2", LENGTH_EQS, 2),
 ]
 _g2[-1:-1] = [
     S("Measuring length", None, "read_tape", TAPES, 2, 31),
