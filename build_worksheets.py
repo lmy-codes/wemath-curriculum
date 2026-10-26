@@ -8486,6 +8486,295 @@ _g2[-1:-1] = [
 ]
 
 
+# ====================================================================== 31. Measuring Length
+
+INCH = 72.0            # a PDF point is 1/72 inch, so these are true size when printed at 100%
+CM = 72.0 / 2.54
+UNIT = {"in": (INCH, "inches", "inch"), "cm": (CM, "centimeters", "centimeter")}
+LENGTH_COLORS = {"pencil": ("#ffd43b", "#c99a00"), "crayon": ("#4c8df6", "#2a62c9"), "ribbon": ("#f783ac", "#c2255c"),
+                 "straw": ("#69db7c", "#2b8a3e"), "tape": ("#fff3bf", "#d9a400")}
+
+
+def length_object(bk, kind, x, y, length, h=12):
+    """Something to measure, lying flat: its left end at x, centred on y."""
+    c = bk.c
+    fill, line = LENGTH_COLORS[kind]
+    _paint(c, fill, line, 1)
+    if kind == "pencil":
+        tip = min(14, length * 0.2)
+        c.rect(x, y - h / 2, 6, h, stroke=1, fill=0)                    # eraser end
+        c.rect(x + 6, y - h / 2, length - tip - 6, h, stroke=1, fill=1)
+        c.drawPath(_poly(c, [(x + length - tip, y - h / 2), (x + length, y), (x + length - tip, y + h / 2)]),
+                   stroke=1, fill=0)
+    elif kind == "crayon":
+        tip = min(10, length * 0.15)
+        c.roundRect(x, y - h / 2, length - tip, h, 2, stroke=1, fill=1)
+        c.drawPath(_poly(c, [(x + length - tip, y - h / 2 + 2), (x + length, y), (x + length - tip, y + h / 2 - 2)]),
+                   stroke=1, fill=1)
+        c.setStrokeColor(white if T.color else T.ink)
+        c.line(x + 8, y - h / 2 + 2, x + 8, y + h / 2 - 2)
+    elif kind == "ribbon":
+        c.drawPath(_poly(c, [(x, y - h / 2), (x + length, y - h / 2), (x + length - 5, y), (x + length, y + h / 2),
+                             (x, y + h / 2), (x + 5, y)]), stroke=1, fill=1)
+    else:  # straw
+        c.roundRect(x, y - h * 0.3, length, h * 0.6, h * 0.3, stroke=1, fill=1)
+
+
+def tape_measure(bk, x, y, n, unit, h=24, start_label=True):
+    """A measuring tape from 0 to n, its 0 at x; y = bottom. Halves get short ticks."""
+    c = bk.c
+    u = UNIT[unit][0]
+    fill, line = LENGTH_COLORS["tape"]
+    _paint(c, fill, line, 0.9)
+    c.rect(x - 6, y, n * u + 12, h, stroke=1, fill=1)
+    c.setStrokeColor(T.ink)
+    for i in range(2 * n + 1):
+        tx = x + i * u / 2
+        whole = i % 2 == 0
+        c.setLineWidth(0.9 if whole else 0.6)
+        c.line(tx, y + h, tx, y + h - (h * 0.45 if whole else h * 0.25))
+    c.setFillColor(T.ink)
+    size = 9 if unit == "cm" else 10
+    c.setFont("AvD", size)
+    for i in range(n + 1):
+        c.drawCentredString(x + i * u, y + 4, str(i))
+    c.setFillColor(T.text2)
+    c.setFont("Av", 7.5)
+    c.drawString(x + n * u + 10, y + h / 2 - 3, unit)
+
+
+def clip(bk, x, y, w=36, h=11):
+    """A paper clip lying flat; left end at x, centred on y."""
+    c = bk.c
+    c.setStrokeColor(T.text2)
+    c.setLineWidth(1.3)
+    c.roundRect(x, y - h / 2, w, h, h / 2, stroke=1, fill=0)
+    c.roundRect(x + 4, y - h / 2 + 2.5, w - 11, h - 5, (h - 5) / 2, stroke=1, fill=0)
+
+
+def c_clips(bk, x, cy, w, item):
+    kind, n = item
+    clip_w = 36
+    length_object(bk, kind, x + GUT, cy + 52, n * clip_w)
+    for i in range(n):
+        clip(bk, x + GUT + i * clip_w, cy + 34, clip_w)
+    bk.fit_eq(x + GUT, cy + 8, w - GUT - 10, f"[{n}] paper clips", size=15)
+
+
+def c_read_tape(bk, x, cy, w, item):
+    """Read the length off a tape. item = (kind, length, unit, start)."""
+    kind, n, unit, start = item
+    u = UNIT[unit][0]
+    tape_measure(bk, x + GUT, cy + 10, max(start + n + 1, 6 if unit == "in" else 12), unit)
+    length_object(bk, kind, x + GUT + start * u, cy + 48, n * u)
+    for sx in (start, start + n):
+        bk.c.setStrokeColor(T.muted)
+        bk.c.setLineWidth(0.6)
+        bk.c.setDash(2, 2)
+        bk.c.line(x + GUT + sx * u, cy + 34, x + GUT + sx * u, cy + 56)
+        bk.c.setDash()
+    bk.eq(x + GUT, cy + 70, f"[{n}] {UNIT[unit][1]}", size=15)
+
+
+def c_two_units(bk, x, cy, w, item):
+    """The same thing on an inch tape and a centimeter tape."""
+    kind, inches = item
+    cms = round(inches * 2.54)
+    length_object(bk, kind, x + GUT, cy + 128, inches * INCH)
+    tape_measure(bk, x + GUT, cy + 92, 6, "in", h=22)
+    tape_measure(bk, x + GUT, cy + 62, 15, "cm", h=22)
+    bk.eq(x + GUT, cy + 38, f"[{inches}] inches", size=14)
+    bk.eq(x + GUT + 120, cy + 38, f"about [{cms}] centimeters", size=14)
+    bk.c.setFillColor(T.text2)
+    bk.c.setFont("Av", 10)
+    bk.c.drawString(x + GUT, cy + 12, "Which needs more units?")
+    circle_choice(bk, x + GUT + 130, cy + 12, ["inches", "centimeters"], "centimeters", size=11, gap=12)
+
+
+def c_measure_real(bk, x, cy, w, item):
+    """True size: measure with a real ruler or tape measure."""
+    kind, n, unit = item
+    length_object(bk, kind, x + GUT, cy + 22, n * UNIT[unit][0], h=10)
+    bk.eq(x + w - 84, cy + 15, f"[{n}] {'in' if unit == 'in' else 'cm'}", size=16)
+
+
+def c_unit_choice(bk, x, cy, w, item):
+    text, choices, right = item
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 13)
+    bk.c.drawString(x + GUT, cy + 15, text)
+    circle_choice(bk, x + w - 166, cy + 15, choices, right, size=11.5, gap=12)
+
+
+def c_longer(bk, x, cy, w, item):
+    """Two things on one centimeter tape: read both, then how much longer."""
+    (k1, a), (k2, b) = item
+    tape_measure(bk, x + GUT, cy + 8, 15, "cm")
+    length_object(bk, k1, x + GUT, cy + 62, a * CM)
+    length_object(bk, k2, x + GUT, cy + 42, b * CM)
+    bk.eq(x + GUT, cy + 86, f"{k1} [{a}] cm", size=13)
+    bk.eq(x + GUT + 130, cy + 86, f"{k2} [{b}] cm", size=13)
+    bk.eq(x + GUT + 260, cy + 86, f"The {k1} is [{a - b}] cm longer", size=13)
+
+
+def learn_length(bk):
+    y = bk.new_page("Measuring Length", "Line up the end with 0. Count the units.", name_line=False, big=True,
+                    footer="WeMath  ·  Measuring Length")
+    c = bk.c
+    label(bk, M, y - 6, "Start at 0")
+    length_object(bk, "pencil", M + 20, y - 28, 4 * INCH, h=13)
+    tape_measure(bk, M + 20, y - 66, 5, "in", h=26)
+    color_eq(bk, M + 430, y - 50, [("4", "b"), ("inches", None)], 22)
+    y -= 92
+
+    label(bk, M, y - 6, "No gaps, no overlaps")
+    length_object(bk, "crayon", M + 20, y - 28, 3 * 36)
+    for i in range(3):
+        clip(bk, M + 20 + i * 36, y - 46, 36)
+    color_eq(bk, M + 200, y - 44, [("3", "b"), ("paper clips", None)], 22)
+    y -= 80
+
+    label(bk, M, y - 6, "Same ribbon, two units")
+    length_object(bk, "ribbon", M + 20, y - 28, 2 * INCH, h=13)
+    tape_measure(bk, M + 20, y - 64, 3, "in", h=22)
+    tape_measure(bk, M + 20, y - 94, 7, "cm", h=22)
+    color_eq(bk, M + 260, y - 46, [("2", "a"), ("inches", None)], 20)
+    color_eq(bk, M + 260, y - 76, [("about", None), ("5", "b"), ("centimeters", None)], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 11.5)
+    c.drawString(M + 260, y - 96, "Smaller units, so more of them.")
+    y -= 118
+
+    label(bk, M, y - 6, "Not at 0? Count the units")
+    tape_measure(bk, M + 20, y - 66, 10, "cm", h=24)
+    length_object(bk, "straw", M + 20 + 3 * CM, y - 30, 5 * CM, h=13)
+    color_eq(bk, M + 340, y - 50, [("8", None), (MINUS, "op"), ("3", None), ("=", "op"), ("5", "b"), ("cm", None)], 20)
+    y -= 88
+
+    bottom = your_turn(bk, y, h=92)
+    bk.ask("tape: crayon 7 cm your turn")
+    tape_measure(bk, M + 120, bottom + 14, 9, "cm", h=24)
+    length_object(bk, "crayon", M + 120, bottom + 54, 7 * CM)
+    bk.eq(M + 120 + 9 * CM + 36, bottom + 30, "[7] cm", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: measure in inches and centimeters with a ruler or tape measure (2.MD.1–4). Line "
+                     "the end up with 0, not 1. Print at 100% so the true-size problems match a real ruler. Say: "
+                     "“smaller units, so more of them.”")
+
+
+def practice_length(bk):
+    title = "Measuring Length: Practice"
+    y = bk.new_page(title, "Line up the end with 0. Count the units.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    part(1, "Paper clips", "Count the clips. No gaps, no overlaps.",
+         [("pencil", 4), ("straw", 3), ("crayon", 5), ("ribbon", 2), ("pencil", 3), ("straw", 5)], 2, 74, 10, c_clips,
+         lambda it: f"clips: {it[0]} {it[1]}")
+    tape_key = KINDS_31["read_tape"].key
+    part(2, "Inches", "Read the tape at the end of the object.",
+         [("pencil", 5, "in", 0), ("ribbon", 3, "in", 0), ("straw", 4, "in", 0), ("crayon", 2, "in", 0)],
+         1, 92, 8, c_read_tape, tape_key)
+    part(3, "Centimeters", None,
+         [("crayon", 9, "cm", 0), ("pencil", 13, "cm", 0), ("ribbon", 6, "cm", 0), ("straw", 11, "cm", 0)],
+         1, 92, 8, c_read_tape, tape_key)
+    part(4, "Not at 0", "Count the units between the ends.",
+         [("straw", 6, "cm", 2), ("pencil", 3, "in", 1), ("ribbon", 8, "cm", 4), ("crayon", 4, "cm", 5)],
+         1, 92, 8, c_read_tape, tape_key)
+    part(5, "Two units", "Same thing, two tapes. Which needs more units?",
+         [("ribbon", 4), ("straw", 6), ("pencil", 2)], 1, 150, 8, c_two_units, KINDS_31["two_units"].key)
+    part(6, "Measure with your ruler", "Use a ruler or a tape measure. Start at 0.",
+         [("pencil", 3, "in"), ("straw", 12, "cm"), ("ribbon", 5, "in"), ("crayon", 8, "cm"), ("pencil", 10, "cm"),
+          ("straw", 2, "in")], 1, 44, 8, c_measure_real, lambda it: f"measure: {it[0]} {it[1]} {it[2]}")
+    part(7, "How much longer?", "Read both. Then find how much longer.",
+         [(("ribbon", 12), ("straw", 7)), (("pencil", 14), ("crayon", 9)), (("straw", 10), ("ribbon", 4))],
+         1, 108, 8, c_longer, lambda it: f"longer: {it[0][1]} {it[1][1]}")
+    part(8, "Which unit?", "Circle the unit that makes sense.", ESTIMATES[:10], 1, 40, 6, c_unit_choice,
+         KINDS_31["unit_choice"].key)
+
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(9, "Add and subtract lengths", "No help this time. Keep the unit.",
+         ["12 cm + 9 cm = [21] cm", "35 in + 18 in = [53] in", f"40 cm {MINUS} 16 cm = [24] cm",
+          "27 cm + 27 cm = [54] cm", f"60 in {MINUS} 35 in = [25] in", "48 cm + 15 cm = [63] cm",
+          f"91 cm {MINUS} 46 cm = [45] cm", "19 in + 33 in = [52] in", f"75 cm {MINUS} 38 cm = [37] cm"],
+         2, 42, 8, plain, lambda t: t)
+    part(10, "Feet, inches and meters", "No help this time.",
+         ["1 foot = [12] inches", "1 meter = [100] centimeters", "6 inches + 6 inches = [1] foot",
+          "50 cm + 50 cm = [1] meter", "1 foot + 1 foot = [24] inches", "1 yard = [3] feet"], 2, 42, 8, plain,
+         lambda t: t)
+    part(11, "Remember?", "Problems from earlier packets.", REVIEW_31, 3, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 12, "Word problems", "Draw a bar. Keep the unit.")
+    for i, story in enumerate(WORDS_31):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 12, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+ESTIMATES = [("A door is about 2", ["centimeters", "meters"], "meters"),
+             ("A crayon is about 9", ["centimeters", "meters"], "centimeters"),
+             ("A car is about 4", ["centimeters", "meters"], "meters"),
+             ("A book is about 10", ["inches", "feet"], "inches"),
+             ("A bed is about 6", ["inches", "feet"], "feet"),
+             ("A paper clip is about 3", ["centimeters", "meters"], "centimeters"),
+             ("A classroom is about 30", ["inches", "feet"], "feet"),
+             ("A spoon is about 6", ["inches", "feet"], "inches"),
+             ("A school bus is about 12", ["centimeters", "meters"], "meters"),
+             ("A shoe is about 8", ["inches", "feet"], "inches"),
+             ("A tall tree is about 15", ["centimeters", "meters"], "meters"),
+             ("An eraser is about 5", ["centimeters", "meters"], "centimeters"),
+             ("A couch is about 7", ["inches", "feet"], "feet"),
+             ("A cell phone is about 6", ["inches", "feet"], "inches")]
+
+REVIEW_31 = ["quarter past 11 = [11:15]", "70¢ + 25¢ = [95¢]", f"600 {MINUS} 237 = [363]",
+             "2 thirds + 1 third = [1] whole", "57 + [43] = 100", "half of 38 = [19]"]
+
+WORDS_31 = [
+    ("A red ribbon is 45 cm long. A blue ribbon is 28 cm long. How much longer is the red ribbon?",
+     "28 cm + 17 cm = 45 cm", "17", "cm"),
+    ("Mia's desk is 36 inches tall. Her chair is 18 inches tall. How much taller is the desk?",
+     f"36 in {MINUS} 18 in = 18 in", "18", "inches"),
+    ("Leo tapes two strings together. One is 24 cm and the other is 39 cm. How long is the new string?",
+     "24 cm + 39 cm = 63 cm", "63", "cm"),
+    ("A plant was 15 cm tall. Now it is 42 cm tall. How many centimeters did it grow?",
+     "15 cm + 27 cm = 42 cm", "27", "cm"),
+    ("Challenge: A path is 80 m long. Ben walks 35 m, then 25 m more. How far is the rest of the path?",
+     "35 + 25 = 60, 80 − 60 = 20", "20", "m"),
+]
+
+KINDS_31 = {
+    "read_tape": Kind(92, 1, lambda it: f"tape: {it[0]} {it[1]} {it[2]} from {it[3]}", c_read_tape, 8),
+    "two_units": Kind(150, 1, lambda it: f"two units: {it[0]} {it[1]}", c_two_units, 8),
+    "unit_choice": Kind(40, 1, lambda it: f"unit: {it[0]}", c_unit_choice, 6),
+}
+KINDS.update(KINDS_31)
+BALANCE["unit_choice"] = lambda it: it[2] == it[1][0]
+
+TAPES = ([(k, n, "cm", s) for k in ("pencil", "crayon", "ribbon", "straw") for n in rng(3, 12) for s in (0, 0, 2, 3)
+          if s + n <= 14] + [(k, n, "in", s) for k in ("pencil", "crayon", "ribbon", "straw") for n in rng(2, 5)
+                             for s in (0, 1) if s + n <= 6])
+LENGTH_EQS = ([f"{a} cm + {b} cm = [{a + b}] cm" for a in rng(13, 58, 5) for b in rng(11, 39, 4)]
+              + [f"{a} cm {MINUS} {b} cm = [{a - b}] cm" for a in rng(41, 96, 5) for b in rng(12, 38, 3)])
+
+CHECKINS["31-measuring-length"] = [
+    S("Read the tape", None, "read_tape", TAPES, 3),
+    S("Which unit?", None, "unit_choice", ESTIMATES, 3),
+    S("Add and subtract lengths", None, "eq2", LENGTH_EQS, 4),
+]
+_g2[-1:-1] = [
+    S("Measuring length", None, "read_tape", TAPES, 2, 31),
+    S("Adding and subtracting lengths", None, "eq2", LENGTH_EQS, 2, 31),
+]
+
+
 # ====================================================================== build
 
 PACKETS = [
@@ -8539,7 +8828,7 @@ PACKETS = [
     ("28-money", "money", "Money", learn_money, practice_money, False),
     ("29-subtracting-across-zeros", "subtracting-across-zeros", "Subtracting Across Zeros", learn_across_zeros,
      practice_across_zeros, False),    ("30-two-step-word-problems", "two-step-word-problems", "Two-Step Word Problems", learn_bar_models,
-     practice_bar_models, False),
+     practice_bar_models, False),    ("31-measuring-length", "measuring-length", "Measuring Length", learn_length, practice_length, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
