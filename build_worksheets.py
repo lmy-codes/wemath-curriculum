@@ -67,6 +67,7 @@ def theme(color):
             band=HexColor("#dbe8fd"), panel=HexColor("#f3f7fe"), panel_line=HexColor("#c9defc"),
             strip=HexColor("#fff6e8"), strip_line=HexColor("#f5d9a8"),
             share=HexColor("#bcd3fb"), share_ans=HexColor("#ffc9c9"),  # shaded parts of a shape
+            copper=HexColor("#eebf98"), silver=HexColor("#e4e9ef"), bill=HexColor("#dcf1df"),  # money
         )
     return SimpleNamespace(
         color=False,
@@ -77,6 +78,7 @@ def theme(color):
         band=None, panel=None, panel_line=HexColor("#c4c4c4"),
         strip=None, strip_line=HexColor("#c4c4c4"),
         share=None, share_ans=None,  # None = diagonal hatching
+        copper=None, silver=None, bill=None,
     )
 
 
@@ -7697,6 +7699,281 @@ _g2[-1:-1] = [
 ]
 
 
+# ====================================================================== 28. Money
+
+COIN = {  # letter: (value in cents, real diameter in mm, name, plural)
+    "Q": (25, 24.3, "quarter", "quarters"), "D": (10, 17.9, "dime", "dimes"),
+    "N": (5, 21.2, "nickel", "nickels"), "P": (1, 19.05, "penny", "pennies"),
+}
+
+
+def cents(coins):
+    return sum(COIN[k][0] for k in coins)
+
+
+def coin(bk, cx, cy, kind, k=1.3):
+    """One coin at its real relative size (k points per mm), value printed on it. Returns the radius."""
+    c = bk.c
+    value, mm = COIN[kind][:2]
+    r = mm * k / 2
+    fill = T.copper if kind == "P" else T.silver
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.1)
+    c.setFillColor(fill if fill is not None else white)
+    c.circle(cx, cy, r, stroke=1, fill=1)
+    c.setStrokeColor(T.muted)
+    c.setLineWidth(0.5)
+    c.circle(cx, cy, r * 0.84, stroke=1, fill=0)
+    size = r * 0.74 if value < 10 else r * (0.7 if value == 10 else 0.6)
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", size)
+    c.drawCentredString(cx, cy - size * 0.36, f"{value}¢")
+    return r
+
+
+def coin_row(bk, x, cy, coins, k=1.3, step=None, totals=None, box_y=None, tsize=11):
+    """Coins left to right, centred on cy. totals: None, "boxes" (running totals to fill in; shown on the key)
+    or "given" (running totals printed). Returns the width."""
+    step = step or 24.3 * k + 7
+    run = 0
+    for i, kind in enumerate(coins):
+        cx = x + 24.3 * k / 2 + i * step
+        coin(bk, cx, cy, kind, k)
+        run += COIN[kind][0]
+        if totals:
+            bw, bh = step - 6, tsize * 1.7
+            by = box_y if box_y is not None else cy - 24.3 * k / 2 - bh - 6
+            if totals == "boxes":
+                bk.box(cx - bw / 2, by, bw, bh, run, size=tsize)
+            else:
+                bk.c.setFillColor(T.text2)
+                bk.c.setFont("Rnd", tsize)
+                bk.c.drawCentredString(cx, by + bh / 2 - tsize * 0.36, str(run))
+    return (len(coins) - 1) * step + 24.3 * k
+
+
+def bill(bk, x, y, value, w=58, h=28):
+    """A dollar bill; (x, y) = bottom-left."""
+    c = bk.c
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1)
+    c.setFillColor(T.bill if T.bill is not None else white)
+    c.roundRect(x, y, w, h, 3, stroke=1, fill=1)
+    c.setStrokeColor(T.muted)
+    c.setLineWidth(0.5)
+    c.roundRect(x + 3, y + 3, w - 6, h - 6, 2, stroke=1, fill=0)
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 13)
+    c.drawCentredString(x + w / 2, y + h / 2 - 4.5, f"${value}")
+
+
+def greedy(amount):
+    out = ""
+    for kind in "QDNP":
+        while amount >= COIN[kind][0]:
+            out += kind
+            amount -= COIN[kind][0]
+    return out
+
+
+def c_coins_running(bk, x, cy, w, coins):
+    """Coins in order (biggest first) with a running-total box under each, then the total."""
+    coin_row(bk, x + GUT, cy + 50, coins, totals="boxes", box_y=cy + 10)
+    bk.c.setFillColor(T.text2)
+    bk.c.setFont("AvM", 10)
+    bk.c.drawString(x + w - 140, cy + 46, "In all:")
+    bk.eq(x + w - 100, cy + 40, f"[{cents(coins)}¢]", size=18)
+
+
+def c_coins(bk, x, cy, w, coins):
+    """Coins in any order, no help: sort them in your head, then count on."""
+    k = 1.15
+    width = coin_row(bk, x + GUT, cy + 58, coins, k=k, step=24.3 * k + 4)
+    bk.fit_eq(x + GUT, cy + 14, w - GUT - 10, f"[{cents(coins)}¢]", size=18)
+
+
+def c_show_amount(bk, x, cy, w, amount):
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 14)
+    bk.c.drawString(x + GUT, cy + 92, f"Show {amount}¢.")
+    bk.work(x + GUT, cy + 10, w - GUT - 12, 70, "Draw the coins")
+    if bk.key:
+        coin_row(bk, x + GUT + 12, cy + 44, greedy(amount), k=1.05)
+
+
+def c_bills(bk, x, cy, w, bills):
+    for i, v in enumerate(bills):
+        bill(bk, x + GUT + i * 64, cy + 44, v)
+    bk.fit_eq(x + GUT, cy + 14, w - GUT - 10, f"[${sum(bills)}]", size=18)
+
+
+def c_compare_coins(bk, x, cy, w, item):
+    a, b = item
+    k = 1.05
+    wa = coin_row(bk, x + GUT, cy + 52, a, k=k, step=24.3 * k + 3)
+    bk.eq(x + GUT + wa / 2 - 20, cy + 14, f"[{cents(a)}¢]", size=15)
+    sx = x + GUT + 250
+    bk.eq(sx - 66, cy + 36, f"[{sign_of(cents(a), cents(b))}]", size=18)
+    wb = coin_row(bk, sx, cy + 52, b, k=k, step=24.3 * k + 3)
+    bk.eq(sx + wb / 2 - 20, cy + 14, f"[{cents(b)}¢]", size=15)
+
+
+def c_symbol(bk, x, cy, w, item):
+    text, sym = item
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 13)
+    bk.c.drawString(x + GUT, cy + 15, text)
+    circle_choice(bk, x + w - 64, cy + 15, ["¢", "$"], sym, size=15, gap=18)
+
+
+def learn_money(bk):
+    y = bk.new_page("Money", "Count the biggest coins first. Then count on.", name_line=False, big=True,
+                    footer="WeMath  ·  Money")
+    c = bk.c
+    label(bk, M, y - 6, "Meet the coins")
+    for i, kind in enumerate("PNDQ"):
+        cx = M + 44 + i * 112
+        coin(bk, cx, y - 46, kind, k=2.1)
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", 13)
+        c.drawCentredString(cx, y - 90, COIN[kind][2])
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 440, y - 40, "A dime is small,")
+    c.drawString(M + 440, y - 56, "but it is worth")
+    c.drawString(M + 440, y - 72, "more than a nickel.")
+    y -= 116
+
+    label(bk, M, y - 6, "Same coins: count by the coin")
+    coin_row(bk, M + 14, y - 40, "DDD", k=1.6, totals="given", tsize=14)
+    color_eq(bk, M + 170, y - 46, [("10,", None), ("20,", None), ("30", "b"), ("=", "op"), ("30¢", None)], 20)
+    y -= 108
+
+    label(bk, M, y - 6, "Mixed coins: biggest first, then count on")
+    coin_row(bk, M + 14, y - 42, "QDDNPP", k=1.6, step=46, totals="given", tsize=14)
+    color_eq(bk, M + 300, y - 50, [("25,", "a"), ("35,", None), ("45,", None), ("50,", None), ("51,", None),
+                                   ("52¢", "b")], 20)
+    y -= 108
+
+    label(bk, M, y - 6, "100¢ is 1 dollar")
+    coin_row(bk, M + 14, y - 42, "QQQQ", k=1.6, step=46, totals="given", tsize=14)
+    color_eq(bk, M + 210, y - 50, [("100¢", "a"), ("=", "op"), ("$1", "b")], 24)
+    bill(bk, M + 330, y - 64, 1, w=72, h=34)
+    y -= 102
+
+    bottom = your_turn(bk, y, h=96)
+    bk.ask("coins: DDNPPP your turn")
+    coin_row(bk, M + 130, bottom + 58, "DDNPPP", k=1.4, totals="boxes", box_y=bottom + 14)
+    bk.eq(M + 400, bottom + 42, "[38¢]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: count coins and bills and write ¢ and $ (2.MD.8). Size is not value: a dime is "
+                     "small but worth 10¢. Sort the coins biggest first, say the running total out loud, then "
+                     "count on by 5s and 1s. Real coins help a lot.")
+
+
+def practice_money(bk):
+    title = "Money: Practice"
+    y = bk.new_page(title, "Biggest coins first. Say the running total.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    run_key = lambda co: f"coins running: {co}"
+    part(1, "Same coins", "Count by the coin. Write the running totals.",
+         ["NNNNNN", "DDDDD", "QQQ", "PPPPPPP", "DDDDDDD", "NNNNNNN"], 1, 84, 8, c_coins_running, run_key)
+    part(2, "Count on", "Start with the big coin. Then count on.",
+         ["QPPPP", "DNNN", "QDDD", "QNNN", "DDPPP", "QQNN"], 1, 84, 8, c_coins_running, run_key)
+    part(3, "Mixed coins", "Biggest first. Write the running totals.",
+         ["QDNPP", "DDNNP", "QQDPP", "QDDNN", "DNPPPP", "QQDDN"], 1, 84, 8, c_coins_running, run_key)
+    part(4, "Count the coins", "No help this time. Find the biggest coins first.",
+         ["PDNQ", "NPDD", "PPQN", "DQPD", "NNPQ", "PDQD", "QPNPD", "DPNQQ"], 2, 96, 10, c_coins,
+         KINDS_28["coins"].key)
+    part(5, "Show the amount", "Draw the fewest coins you can.", [35, 60, 42, 76], 2, 110, 10, c_show_amount, KINDS_28["show_amount"].key)
+    part(6, "Dollars", "Count the bills. Biggest first.",
+         [(5, 1, 1), (10, 5, 1), (10, 5, 5), (5, 5, 1)], 2, 84, 10, c_bills, lambda b: f"bills: {b}")
+    part(7, "Which is more?", "Count each side. Write <, > or =.",
+         [("QD", "DDDN"), ("QNP", "DDD"), ("DDD", "QN"), ("QQ", "DDDDN")], 1, 84, 8, c_compare_coins,
+         KINDS_28["compare_coins"].key)
+
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(8, "Coins in words", "No help this time.",
+         ["3 dimes + 2 nickels = [40¢]", "1 quarter + 3 pennies = [28¢]", "4 nickels + 1 dime = [30¢]",
+          "2 quarters + 1 dime = [60¢]", "5 dimes + 4 pennies = [54¢]", "1 quarter + 2 nickels = [35¢]",
+          "3 quarters + 1 nickel = [80¢]", "6 nickels + 2 pennies = [32¢]", "2 dimes + 7 pennies = [27¢]",
+          "4 quarters = [100¢]"], 2, 42, 8, plain, lambda t: t)
+    part(9, "Add the prices", "No help this time. Write ¢ in your answer.",
+         ["25¢ + 30¢ = [55¢]", "40¢ + 35¢ = [75¢]", "15¢ + 50¢ = [65¢]",
+          "45¢ + 25¢ = [70¢]", "60¢ + 18¢ = [78¢]", "35¢ + 35¢ = [70¢]",
+          "22¢ + 45¢ = [67¢]", "50¢ + 50¢ = [100¢]", "75¢ + 15¢ = [90¢]"],
+         3, 42, 8, plain, lambda t: t)
+    part(10, "Make a dollar", "No help this time. 100¢ = $1.",
+         ["65¢ + [35¢] = 100¢", "40¢ + [60¢] = 100¢", "85¢ + [15¢] = 100¢",
+          "20¢ + [80¢] = 100¢", "55¢ + [45¢] = 100¢", "90¢ + [10¢] = 100¢",
+          "45¢ + [55¢] = 100¢", "30¢ + [70¢] = 100¢", "95¢ + [5¢] = 100¢"],
+         3, 42, 8, plain, lambda t: t)
+    part(11, "¢ or $?", "Cents for small prices. Dollars for big ones.",
+         SYMBOLS[:8], 2, 42, 8, c_symbol, KINDS_28["symbol"].key)
+    part(12, "Remember?", "Problems from earlier packets.", REVIEW_28, 3, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 13, "Word problems", "Draw the coins.")
+    for i, story in enumerate(WORDS_28):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 13, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+SYMBOLS = [("A pencil costs 40", "¢"), ("A bike costs 90", "$"), ("A gumball costs 25", "¢"),
+           ("A new TV costs 300", "$"), ("A sticker costs 10", "¢"), ("A bed costs 200", "$"),
+           ("An apple costs 60", "¢"), ("A tablet costs 150", "$"), ("A swing set costs 250", "$"),
+           ("A stamp costs 70", "¢"), ("A big tent costs 80", "$"), ("A banana costs 30", "¢"),
+           ("New shoes cost 45", "$"), ("An eraser costs 15", "¢")]
+
+REVIEW_28 = ["half past 3 = [3:30]", "double 25 = [50]", "46 + 25 = [71]", "double 35 = [70]", "37 + 25 = [62]",
+             "75 + 25 = [100]"]
+
+WORDS_28 = [
+    ("Ava has 2 dimes and 3 nickels. How much money does she have?", "20¢ + 15¢ = 35¢", "35¢", ""),
+    ("A juice costs 45¢. A cookie costs 30¢. How much do they cost together?", "45¢ + 30¢ = 75¢", "75¢", ""),
+    ("Leo pays with $1 for a ball that costs 65¢. How much change does he get?", "65¢ + 35¢ = 100¢", "35¢", ""),
+    ("Mia has a $5 bill and three $1 bills. How many dollars does she have?", "$5 + $3 = $8", "$8", ""),
+    ("Challenge: Kim has 3 quarters. A toy costs 90¢. How much more money does she need?",
+     "75¢ + 15¢ = 90¢", "15¢", ""),
+]
+
+KINDS_28 = {
+    "coins": Kind(96, 2, lambda co: f"coins: {co}", c_coins),
+    "show_amount": Kind(110, 2, lambda a: f"show {a} cents", c_show_amount),
+    "compare_coins": Kind(84, 1, lambda it: f"compare coins: {it[0]} {it[1]}", c_compare_coins, 8),
+    "symbol": Kind(42, 2, lambda it: f"symbol: {it[0]}", c_symbol, 8),
+}
+KINDS.update(KINDS_28)
+BALANCE["symbol"] = lambda it: it[1] == "$"
+
+COIN_SETS = ["".join(p) for q in range(3) for d in range(4) for n in range(3) for p_ in range(5)
+             if 3 <= q + d + n + p_ <= 6 and len({x for x, k in zip("QDNP", (q, d, n, p_)) if k}) >= 2
+             for p in [shuf(f"cs{q}{d}{n}{p_}", "Q" * q + "D" * d + "N" * n + "P" * p_)]]
+PRICES = [f"{a}¢ + {b}¢ = [{a + b}¢]" for a in rng(15, 70, 5) for b in rng(12, 45) if a + b <= 100]
+DOLLAR_BUDDIES = [f"{a}¢ + [{100 - a}¢] = 100¢" for a in rng(5, 95, 5)]
+
+CHECKINS["28-money"] = [
+    S("Count the coins", None, "coins", COIN_SETS, 4),
+    S("¢ or $?", None, "symbol", SYMBOLS, 2),
+    S("Add the prices", None, "eq3", PRICES, 3),
+    S("Make a dollar", None, "eq3", DOLLAR_BUDDIES, 3),
+]
+_g2[-1:-1] = [
+    S("Money", "Count the coins.", "coins", COIN_SETS, 2, 28),
+    S("Adding money", None, "eq3", PRICES, 2, 28),
+]
+
+
 # ====================================================================== build
 
 PACKETS = [
@@ -7747,6 +8024,7 @@ PACKETS = [
     ("26-halves-thirds-and-fourths", "halves-thirds-and-fourths", "Halves, Thirds and Fourths", learn_shares,
      practice_shares, False),
     ("27-telling-time", "telling-time", "Telling Time", learn_time, practice_time, False),
+    ("28-money", "money", "Money", learn_money, practice_money, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
