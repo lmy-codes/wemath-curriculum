@@ -87,7 +87,7 @@ T = theme(True)
 W, H = letter
 M = 48
 CW = W - 2 * M
-OPS = {"+", "−", "=", "-"}
+OPS = {"+", "−", "=", "-", "×", "÷"}
 GUT = 46  # content in a numbered card starts at least this far from the card's left edge
 
 
@@ -9135,6 +9135,195 @@ _g2[-1:-1] = [
 ]
 
 
+# ====================================================================== 33. Multiplication
+
+TIMES = "×"
+
+
+def X(a, b):
+    """'3 × 4 = [12]'"""
+    return f"{a} {TIMES} {b} = [{a * b}]"
+
+
+def c_times_groups(bk, x, cy, w, item):
+    g, n = item
+    groups_picture(bk, x + GUT, cy + 82, [n] * g, R=15, gap=7)
+    bk.fit_eq(x + GUT, cy + 42, w - GUT - 10, f"[{g}] groups of [{n}]", size=15)
+    bk.fit_eq(x + GUT, cy + 12, w - GUT - 10, f"[{g}] {TIMES} [{n}] = [{g * n}]", size=15)
+
+
+def c_times_add(bk, x, cy, w, item):
+    n, g = item
+    bk.fit_eq(x + GUT, cy + 40, w - GUT - 10, " + ".join([str(n)] * g) + f" = [{n * g}]", size=15)
+    bk.fit_eq(x + GUT, cy + 12, w - GUT - 10, f"[{g}] {TIMES} [{n}] = [{n * g}]", size=15)
+
+
+def c_times_array(bk, x, cy, w, item):
+    r, k = item
+    array_picture(bk, x + GUT, cy + 74, r, k, step=13, r=4.4)
+    tx = x + GUT + 90
+    bk.fit_eq(tx, cy + 50, w - (tx - x) - 8, f"[{r}] rows of [{k}]", size=15)
+    bk.fit_eq(tx, cy + 18, w - (tx - x) - 8, f"[{r}] {TIMES} [{k}] = [{r * k}]", size=15)
+
+
+def c_times_turn(bk, x, cy, w, item):
+    r, k = item
+    array_picture(bk, x + GUT, cy + 84, r, k, step=13, r=4.4)
+    tx = x + GUT + 112
+    for j, (lab, a, b) in enumerate((("rows", r, k), ("columns", k, r))):
+        bk.c.setFillColor(T.text2)
+        bk.c.setFont("AvD", 9)
+        bk.c.drawString(tx, cy + 66 - j * 36, lab)
+        bk.fit_eq(tx, cy + 48 - j * 36, w - (tx - x) - 8, f"{a} {TIMES} {b} = [{a * b}]", size=14)
+
+
+def c_times_draw(bk, x, cy, w, item):
+    g, n = item
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 13)
+    bk.c.drawString(x + GUT, cy + 100, f"Draw {g} groups of {n}.")
+    bk.work(x + GUT, cy + 42, w - GUT - 12, 50, "Draw it")
+    if bk.key:
+        groups_picture(bk, x + GUT + 10, cy + 66, [n] * g, R=13, gap=6)
+    bk.fit_eq(x + GUT, cy + 12, w - GUT - 10, f"[{g}] {TIMES} [{n}] = [{g * n}]", size=15)
+
+
+def c_times_count(bk, x, cy, w, item):
+    n, g = item
+    seq = [n * (i + 1) for i in range(g)]
+    blanks = tuple(i for i in range(g) if i % 2 == 1 or i == g - 1)
+    bk.c.setFillColor(T.text2)
+    bk.c.setFont("AvD", 10)
+    bk.c.drawString(x + GUT, cy + 44, f"Count by {n}s, {g} times:")
+    count_chain(bk, x + GUT + 130, cy + 42, seq, blanks, spacing=42, size=15, bw=34, arcs=False)
+    bk.eq(x + GUT, cy + 12, f"{g} {TIMES} {n} = [{g * n}]", size=16)
+
+
+def learn_multiplication(bk):
+    y = bk.new_page("Multiplication", "Equal groups: count the groups, then how many in each.", name_line=False,
+                    big=True, footer="WeMath  ·  Multiplication")
+    c = bk.c
+    label(bk, M, y - 6, "3 groups of 4")
+    groups_picture(bk, M + 14, y - 46, [4, 4, 4], R=22, gap=14)
+    color_eq(bk, M + 230, y - 38, [("4", "a"), ("+", "op"), ("4", "b"), ("+", "op"), ("4", "a"), ("=", "op"),
+                                   ("12", None)], 22)
+    color_eq(bk, M + 230, y - 70, [("3", "a"), (TIMES, "op"), ("4", "b"), ("=", "op"), ("12", None)], 26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 360, y - 70, "say “3 groups of 4”")
+    y -= 104
+
+    label(bk, M, y - 6, "An array: rows × how many in each row")
+    w_, h_ = array_picture(bk, M + 20, y - 22, 2, 5, step=20, r=6.5, color_by="row")
+    color_eq(bk, M + 230, y - 46, [("2", "a"), (TIMES, "op"), ("5", "b"), ("=", "op"), ("10", None)], 26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 360, y - 46, "2 rows of 5")
+    y -= 80
+
+    label(bk, M, y - 6, "Turn it around: same dots, same answer")
+    array_picture(bk, M + 20, y - 22, 2, 5, step=20, r=6.5, color_by="col")
+    color_eq(bk, M + 230, y - 46, [("5", "a"), (TIMES, "op"), ("2", "b"), ("=", "op"), ("10", None)], 26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 360, y - 46, "5 columns of 2")
+    y -= 80
+
+    label(bk, M, y - 6, "Count by to multiply")
+    count_chain(bk, M + 30, y - 58, [5, 10, 15, 20], (), step="+5", spacing=56, size=20)
+    color_eq(bk, M + 270, y - 58, [("4", "a"), (TIMES, "op"), ("5", "b"), ("=", "op"), ("20", None)], 26)
+    y -= 88
+
+    bottom = your_turn(bk, y, h=96)
+    bk.ask("times groups 4 groups of 2 your turn")
+    groups_picture(bk, M + 120, bottom + 62, [2, 2, 2, 2], R=15, gap=8)
+    bk.eq(M + 120, bottom + 20, f"[4] {TIMES} [2] = [8]", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: multiplication means equal groups (3.OA.1). Read 3 × 4 as “3 groups of 4.” "
+                     "Build on packet 21: 4 + 4 + 4 is 3 × 4. Turnarounds give the same answer. Learn ×2, "
+                     "×5 and ×10 by counting by.")
+
+
+def practice_multiplication(bk):
+    title = "Multiplication: Practice"
+    y = bk.new_page(title, "Count the groups. Count how many in each. Multiply.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    part(1, "Groups of", "Write the groups, then the multiplication.",
+         [(3, 4), (5, 2), (4, 5), (2, 3), (4, 3), (5, 5)], 2, 110, 10, c_times_groups,
+         KINDS_33["times_groups"].key)
+    part(2, "Add, then multiply", "The same groups, written two ways.",
+         [(5, 3), (2, 4), (10, 3), (3, 5), (4, 2), (6, 3), (10, 2), (2, 6)], 2, 70, 10, c_times_add,
+         lambda it: f"times add {it[0]} {it[1]}")
+    part(3, "Arrays", "Rows times how many in each row.",
+         [(2, 4), (3, 5), (4, 4), (5, 2), (2, 6), (3, 3)], 2, 92, 10, c_times_array, KINDS_33["times_array"].key)
+    part(4, "Turn it around", "Read the rows, then the columns.",
+         [(4, 3), (2, 7), (3, 6), (5, 4)], 2, 100, 10, c_times_turn, lambda it: f"times turn {it[0]} {it[1]}")
+    part(5, "Draw it", None, [(2, 5), (3, 2), (5, 3), (4, 4)], 2, 120, 10, c_times_draw,
+         lambda it: f"times draw {it[0]} {it[1]}")
+    part(6, "Count by", "Fill in the count. The last number is the answer.",
+         [(5, 6), (10, 4), (2, 8), (5, 7), (10, 7), (2, 6)], 1, 66, 8, c_times_count,
+         lambda it: f"times count {it[0]} {it[1]}")
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(7, "Times 2", "No help this time. Times 2 is a double.",
+         [X(*p) for p in ((2, 6), (7, 2), (2, 9), (4, 2), (2, 3), (8, 2), (2, 7), (6, 2), (2, 4))], 3, 42, 8,
+         plain, lambda t: t)
+    part(8, "Times 10", "No help this time. Count by 10s.",
+         [X(*p) for p in ((10, 4), (6, 10), (10, 8), (3, 10), (10, 7), (9, 10), (10, 2), (5, 10), (10, 6))], 3, 42,
+         8, plain, lambda t: t)
+    part(9, "Times 5", "No help this time. Times 5 is half of times 10.",
+         [X(*p) for p in ((5, 3), (8, 5), (5, 6), (4, 5), (5, 9), (7, 5), (5, 2), (6, 5), (5, 8))], 3, 42, 8,
+         plain, lambda t: t)
+    part(10, "Mixed", "No help this time.",
+         [X(*p) for p in ((10, 10), (9, 2), (5, 7), (10, 3), (2, 2), (5, 5), (7, 10), (3, 2), (5, 4), (10, 9),
+                          (2, 8), (9, 5))], 3, 42, 8, plain, lambda t: t)
+    part(11, "Remember?", "Problems from earlier packets.", REVIEW_33, 2, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 12, "Word problems", "Find the groups and how many in each.")
+    for i, story in enumerate(WORDS_33):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 12, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_33 = ["36 cm + 47 cm = [83] cm", "quarter to 2 = [1:45]", "2 quarters + 2 dimes = [70¢]",
+             f"900 {MINUS} 418 = [482]", "3 thirds = [1] whole", "57 + 38 = [95]"]
+
+WORDS_33 = [
+    ("Mia has 4 bags. Each bag has 5 apples. How many apples does she have?", f"4 {TIMES} 5 = 20", "20", "apples"),
+    ("A box of crayons has 3 rows with 10 crayons in each row. How many crayons are in the box?",
+     f"3 {TIMES} 10 = 30", "30", "crayons"),
+    ("6 kids each wear 2 shoes. How many shoes is that?", f"6 {TIMES} 2 = 12", "12", "shoes"),
+    ("Ben buys 7 packs of gum. Each pack has 5 pieces. How many pieces does he have?", f"7 {TIMES} 5 = 35", "35",
+     "pieces"),
+    ("Challenge: A spider has 8 legs and an ant has 6. How many legs do 2 spiders and 1 ant have?",
+     f"2 {TIMES} 8 = 16, 16 + 6 = 22", "22", "legs"),
+]
+
+KINDS_33 = {
+    "times_groups": Kind(110, 2, lambda it: f"times groups {it[0]} groups of {it[1]}", c_times_groups),
+    "times_array": Kind(92, 2, lambda it: f"times array {it[0]} rows of {it[1]}", c_times_array),
+}
+KINDS.update(KINDS_33)
+
+FACTS_2_5_10 = [X(a, b) for a in rng(2, 10) for b in (2, 5, 10)] + [X(b, a) for a in rng(2, 10) for b in (2, 5, 10)]
+
+CHECKINS["33-multiplication"] = [
+    S("Groups of", None, "times_groups", [(g, n) for g in rng(2, 5) for n in rng(2, 5)], 2),
+    S("Arrays", None, "times_array", [(r, k) for r in rng(2, 5) for k in rng(2, 6)], 2),
+    S("Times 2, 5 and 10", None, "eq3", FACTS_2_5_10, 6),
+]
+
+
 # ====================================================================== build
 
 PACKETS = [
@@ -9188,7 +9377,7 @@ PACKETS = [
     ("28-money", "money", "Money", learn_money, practice_money, False),
     ("29-subtracting-across-zeros", "subtracting-across-zeros", "Subtracting Across Zeros", learn_across_zeros,
      practice_across_zeros, False),    ("30-two-step-word-problems", "two-step-word-problems", "Two-Step Word Problems", learn_bar_models,
-     practice_bar_models, False),    ("31-measuring-length", "measuring-length", "Measuring Length", learn_length, practice_length, False),    ("32-graphs", "graphs", "Graphs", learn_graphs, practice_graphs, False),
+     practice_bar_models, False),    ("31-measuring-length", "measuring-length", "Measuring Length", learn_length, practice_length, False),    ("32-graphs", "graphs", "Graphs", learn_graphs, practice_graphs, False),    ("33-multiplication", "multiplication", "Multiplication", learn_multiplication, practice_multiplication, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
