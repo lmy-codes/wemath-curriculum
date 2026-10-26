@@ -1,6 +1,6 @@
 # WeMath worksheets
 
-Thirty-one packets, in teaching order. Each starts with a picture-first learning page, followed by practice.
+Thirty-seven packets, in teaching order (K to grade 3). Each starts with a picture-first learning page, followed by practice.
 
 | Folder | Topic | Pages |
 |---|---|---|
@@ -35,6 +35,12 @@ Thirty-one packets, in teaching order. Each starts with a picture-first learning
 | `28-money/` | Coins at real size: count by the coin, biggest first with running totals, 100¢ = $1, dollar bills, compare amounts, ¢ or $ | 9 |
 | `29-subtracting-across-zeros/` | 403 − 157: 403 is 40 tens + 3 ones = 39 tens + 13 ones, break once; zero in the tens, in the ones, two zeros; check by adding | 7 |
 | `30-two-step-word-problems/` | Bar models: part + part = whole, compare bars, unknown start, then two steps where the first answer becomes a part of the second bar | 9 |
+| `31-measuring-length/` | Rulers and tape measures: start at 0, paper clips with no gaps, inches and centimeters (smaller units, more of them), not starting at 0, true-size things to measure with a real ruler, which unit, adding lengths | 9 |
+| `32-graphs/` | Tally marks, picture graphs, bar graphs and X charts (line plots without a line): read them, make them, how many more, in all | 7 |
+| `33-multiplication/` | Grade 3. Equal groups to the × sign, arrays, turnarounds, count by; the ×2, ×5 and ×10 facts | 8 |
+| `34-multiplication-strategies/` | Break-apart arrays: ×3 = ×2 + one group, ×4 = double double, ×6 = ×5 + one group, ×7 = ×5 + ×2, ×8 = double ×4, ×9 = ×10 − one group; all 36 facts of 3, 4, 6, 7, 8, 9 | 8 |
+| `35-division/` | Share it, make groups, think multiplication (missing factor), fact families, all division facts to 10 × 10 | 8 |
+| `36-fractions/` | Fraction strips and the fraction wall: name and shade fractions, compare, equal fractions, fractions equal to wholes (no number lines) | 7 |
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 
@@ -53,7 +59,8 @@ Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hol
 |---|---|---|---|
 | Kindergarten | 0–2: adding and taking away within 9, ten buddies, teen numbers | 44 problems | 46 problems |
 | Grade 1 | 3–9: over ten, back through ten, doubles, tens and ones, ten more/less, two-digit adding | 60 problems | 60 problems |
-| Grade 2 | 10–30: two-digit subtracting, borrowing, columns, three-digit numbers, skip counting, comparing, arrays, even/odd, hundred buddies, counting, halves, equal shares, time, money, across zeros, bar models | 92 problems | 92 problems |
+| Grade 2 | 10–32: two-digit subtracting, borrowing, columns, three-digit numbers, skip counting, comparing, arrays, even/odd, hundred buddies, counting, halves, equal shares, time, money, across zeros, bar models, length, graphs | 98 problems | 98 problems |
+| Grade 3 | 33–36: multiplication, strategies, division, fractions | 42 problems | 42 problems |
 
 Each answer key ends with a **scoring sheet**: every part, the packet it checks, and a score line. Use the **pre-assessment** for placement: start a student at the first packet where they miss more than 1 problem in its parts. Use the **post-assessment** to see growth: a part with more than 1 miss means that packet needs review.
 

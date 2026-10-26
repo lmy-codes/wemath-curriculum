@@ -2,7 +2,7 @@
 
 How to build WeMath math packets fast and the way the founder (the person who runs WeMath) wants them. Read this before touching `build_worksheets.py`.
 
-WeMath is a math tutoring program in a community center, with Mathnasium-style teaching. The audience is **very young kids (K–2)**. These packets are the start of a home-grown curriculum.
+WeMath is a math tutoring program in a community center, with Mathnasium-style teaching. The audience is **young kids (K–3)**. These packets are the start of a home-grown curriculum.
 
 ---
 
@@ -41,6 +41,12 @@ WeMath is a math tutoring program in a community center, with Mathnasium-style t
 | `28-money/` | Coins and bills (2.MD.8): cents or whole dollars, no decimals | `coin(kind, k)` at real relative size (a dime is smaller than a penny), `coin_row(coins, totals="boxes"/"given")` (running totals under each coin), `bill`, `greedy` (fewest coins). Coins are letters: Q, D, N, P |
 | `29-subtracting-across-zeros/` | 403 − 157 (finishes 2.NBT.7) | `tens_break` and `zero_rows`: 403 = 40 tens + 3 ones = 39 tens + 13 ones, then tens / ones / total rows; reuses `stacked` for columns (it already breaks twice) and `quick_hto` |
 | `30-two-step-word-problems/` | Bar models (2.OA.1) | `bar_model(parts, whole)` (blue and orange pieces, bracket above), `compare_bars(big, small, unknown, names)` (difference dashed), `draw_model(("pw", a, b, "whole"/"part"))` / `("cmp", big, small, "diff"/"big"/"small", names)`, `c_story_bar`, `c_two_step` (step 1 and step 2 bars or a space to draw them) |
+| `31-measuring-length/` | Length with rulers and tape measures (2.MD.1–5) | `tape_measure(n, unit)` (0 at the left, half ticks), `length_object(kind, length)` (pencil / crayon / ribbon / straw), `clip` (paper clips), `INCH = 72` and `CM`: true size when printed at 100%, so kids can measure with a real ruler. **Answer boxes with units: write `[21] cm`, never `[21 cm]`** (a space inside brackets breaks the box) |
+| `32-graphs/` | Data (2.MD.9–10) | `tally`, `picture_graph` (one symbol for every row, "Each ★ = 1"), `bar_graph` (square grid, 0–10 scale; `show=False` for "make it", the key fills it), `x_chart` (line plot without a line), `graph_qs` (how many, how many more, together, in all), `c_graph` (one card numbered "15–18)" for 4 questions) |
+| `33-multiplication/` | Grade 3 starts: × as equal groups (3.OA.1, 3.OA.5) | `TIMES`, `X(a, b)`, `c_times_groups`, `c_times_array`, `c_times_turn`, `c_times_count`. Owns the ×2, ×5, ×10 facts as plain problems. `×` and `÷` are in `OPS` (drawn in Avenir) |
+| `34-multiplication-strategies/` | The other facts by breaking arrays (3.OA.5, 3.OA.7) | `split_array` (blue rows, dashed line, orange rows; `cross_from` crosses the extra row for ×9 = ×10 − one group), `STRATEGY`, `break_lines`. Owns all 36 facts of 3, 4, 6, 7, 8, 9 |
+| `35-division/` | Sharing and grouping (3.OA.2, 3.OA.6) | `DIV`, `D(p, d)`, `plate_row` (key fills the plates), `c_share_div`, `c_make_groups` (key rings the groups), `c_think_times` (missing factor is this packet's core skill), `c_fact_family` |
+| `36-fractions/` | Fractions as numbers (3.NF.1–3), denominators 2, 3, 4, 6, 8 | `frac_expr(text)` draws stacked fractions: "3/4 [<] 7/8", "1/2 = [2]/4" (either part can be a box); `strip` (fraction strip), the fraction wall on the learning page. No number lines |
 
 Each folder has `color/` and `black-and-white/` subfolders, each holding `<slug>-packet.pdf` and `<slug>-answer-key.pdf`. Packets 3 and 4 also include `break-apart-template.pdf`.
 
@@ -188,7 +194,7 @@ Each folder has `color/` and `black-and-white/` subfolders, each holding `<slug>
 - **Packet 0 (Adding and Taking Away):** built; waiting for the founder's review. Plan, research and the story bank are in `PLAN-0-adding-and-taking-away.md`. The founder wants it much bigger than the others (141 problems) for early retention, with real-object pictures and the cross-out method. Picture problems may reuse a fact with a different object (keys like `pic: apple 5 - 2`); plain facts never repeat and skip the doubles/near doubles packet 6 owns. Sums stay ≤ 9 (10 belongs to Ten Buddies). Within 5 first, then up to 9. Up-to-9 pictures need full-width cards (rows of 5); half-width cards made the groups wrap badly.
 - **Check-Ins and grade assessments (founder's request):**
   - **Check-In:** one page per packet (`<slug>-check-in.pdf`) with each kind of problem from the packet.
-  - **Assessments:** a pre and a post assessment per grade in `assessments/`. Kindergarten covers packets 0–2, grade 1 covers 3–9, and grade 2 covers 10–22.
+  - **Assessments:** a pre and a post assessment per grade in `assessments/`. Kindergarten covers packets 0–2, grade 1 covers 3–9, grade 2 covers 10–32, and grade 3 covers 33–36.
   - **How it's built:**
     - Defined in `CHECKINS` and `GRADES` at the end of `build_worksheets.py`. A `Section` is (name, subtitle, card kind, pool, count, packet).
     - Card kinds are in `KINDS`. Each points to a shared `c_*` drawer: the practice packets' card code, lifted out.
@@ -203,6 +209,9 @@ Each folder has `color/` and `black-and-white/` subfolders, each holding `<slug>
 - **Packets 13–22:** built in one go from `PLAN-13-22.md` (research, sources and the plan for each); all waiting for the founder's review. Left for later: money, time, measurement, two-step bar-model word problems, subtracting across zeros (403 − 157), fractions.
 - **Packets 23–25 (Hundred Buddies, Counting Forward and Backward, Halves):** built from Mathnasium research (counting from any number by any number both ways; wholes and parts: halves first, then complements). Waiting for the founder's review. In teaching order they can come earlier: Hundred Buddies after 11, Counting after 16, Halves after 22. Each has a Check-In, and they're in the grade 2 assessments.
 - **Packets 26–30 (Halves, Thirds and Fourths · Telling Time · Money · Subtracting Across Zeros · Two-Step Word Problems):** built from `PLAN-26-30.md` (research, sources, the order and why). Waiting for the founder's review. The order changed from the old plan: shapes before time (half past and quarter past are halves and fourths of a circle), and across zeros before two-step problems. Each ends with a short **"Remember?"** part: 6 fresh problems from earlier packets (spaced review; research in the plan). Each has a Check-In and parts in the grade 2 assessments, which now cover packets 10–30 (92 problems; the scoring sheet tightens its rows to stay on one page).
-- **Next up (researched, not built):** Measuring Length and Graphs need a decision first: **a ruler is a number line**, which the founder removed. Options in `PLAN-26-30.md`. Then grade 3: Multiplication → Division as Sharing → Fractions as Numbers (fraction strips instead of number lines). Also mental-math warm-up cards per level, and linking packets to skills in the app.
+- **Rulers (founder):** a tape measure or ruler can be used for measuring length. Number lines are still out everywhere else.
+- **Packets 31–32 (Measuring Length, Graphs):** finish grade 2 (all 2.MD standards except 2.MD.6, number-line sums). Line plots are "X charts". Waiting for the founder's review.
+- **Packets 33–36 (Multiplication, Multiplication Strategies, Division, Fractions):** the start of grade 3, from the research in `PLAN-26-30.md`. Multiplication is "groups of", then arrays; the hard facts come from ×2, ×5 and ×10 by breaking arrays apart; division is sharing and grouping, then a missing factor; fractions use strips and the fraction wall. New `assessments/grade-3-*` (42 problems) cover them. Waiting for the founder's review.
+- **Next up (not built):** grade 3 continued: area (arrays of squares, 3.MD.5–7), multiplying by multiples of 10 (3.NBT.3), rounding (needs a decision: it usually uses a number line), elapsed time (3.MD.1), perimeter, and two-step problems with all four operations (3.OA.8). Also mental-math warm-up cards per level, and linking packets to skills in the app.
 - The online Claude doc "Up to and Over Ten: Research & Practice Problems" is out of date compared with the PDFs. Don't rely on it.
 - The founder likes a short summary after each change: what changed, what was checked, and which files.

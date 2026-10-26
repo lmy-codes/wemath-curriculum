@@ -9985,6 +9985,43 @@ CHECKINS["36-fractions"] = [
 ]
 
 
+# ---------------------------------------------------------------------- grade 3 assessments (packets 33-36)
+
+
+def stories_x(seed, kind, items):
+    """Multiplication and division story problems (grade 3)."""
+    r = random.Random(seed)
+    items = list(items)
+    r.shuffle(items)
+    out = []
+    for g, k in items:
+        n = r.choice(NAMES)
+        t = r.choice(THINGS)
+        if kind == "times":
+            out.append((f"{n} has {g} bags with {k} {t} in each bag. How many {t} are there in all?",
+                        f"{g} {TIMES} {k} = {g * k}", g * k, t))
+        else:
+            out.append((f"{n} shares {g * k} {t} equally among {g} friends. How many {t} does each friend get?",
+                        f"{g * k} {DIV} {g} = {k}", k, t))
+    return out
+
+
+GRADES.append(("grade-3", "Grade 3", "Packets 33–36", [
+    S("Groups of", None, "times_groups", [(g, n) for g in rng(2, 5) for n in rng(2, 5)], 2, 33),
+    S("Times 2, 5 and 10", None, "eq3", FACTS_2_5_10, 6, 33),
+    S("Break it apart", None, "break_array", [(a, b) for a in (3, 4, 6, 7, 8, 9) for b in rng(3, 9)], 2, 34),
+    S("Multiply", None, "eq3", HARD_FACTS, 9, 34),
+    S("Think multiplication", None, "think_times", [(d * q, d) for d in rng(3, 9) for q in rng(3, 9)], 2, 35),
+    S("Divide", None, "eq3", DIV_FACTS, 9, 35),
+    S("Name the fraction", None, "name_frac", [(k, n, a) for k in ("strip", "circle") for n in (2, 3, 4, 6, 8)
+                                               for a in rng(1, n - 1) if k == "strip" or n <= 4], 2, 36),
+    S("Compare fractions", "Write <, > or =.", "frac3", FRAC_COMPARE, 3, 36, balance=is_less),
+    S("Equal fractions", None, "frac3", FRAC_EQUIV, 3, 36),
+    S("Word problems", None, "word", stories_x("g3a", "times", [(g, k) for g in rng(3, 9) for k in rng(3, 9)])[:8]
+      + stories_x("g3b", "share", [(g, k) for g in rng(3, 9) for k in rng(3, 9)])[:8], 4, "33–35"),
+]))
+
+
 # ====================================================================== build
 
 PACKETS = [
