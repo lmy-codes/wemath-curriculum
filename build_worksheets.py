@@ -127,6 +127,7 @@ class Book:
         self.subtitle = subtitle
         self.footer = ""
         self.asked = {} if asked is None else asked  # shared across packets
+        self.rec = None  # a list while a check-in or assessment card is drawn: its answers (curriculum.json)
         self.c.setTitle(f"{subtitle}: " + ("Answer Key" if key else "Student Workbook"))
         self.c.setAuthor("WeMath")
 
@@ -268,6 +269,8 @@ class Book:
 
     def value(self, cx, cy, value, size=16, reveal=None):
         """An answer centred at (cx, cy): shown on the key, or always in `reveal` colour."""
+        if self.rec is not None and reveal is None and value not in (None, ""):
+            self.rec.append(str(value))
         if value in (None, "") or not (reveal or self.key):
             return
         self.c.setFillColor(reveal or T.answer)
@@ -6412,16 +6415,24 @@ def spread(items):
     return out
 
 
-def place_sections(bk, title, y, picked):
+def place_sections(bk, title, y, picked, record=None):
+    """Draws each section's cards. record (a list) gets one entry per problem, in number order, for
+    curriculum.json: (section, item, answers written in its boxes)."""
     num = 1
     for i, (s, items) in enumerate(picked):
         kind = KINDS[s.kind]
-        y, num = flow(bk, title, y, i + 1, s.name, s.sub, spread(items), num, kind.cols, kind.h, kind.gap,
-                      lambda x, cy, w, it, k=kind: k.draw(bk, x, cy, w, it))
+
+        def draw(x, cy, w, it, k=kind, s=s):
+            bk.rec = [] if record is not None else None
+            k.draw(bk, x, cy, w, it)
+            if record is not None:
+                record.append((s, it, bk.rec))
+            bk.rec = None
+        y, num = flow(bk, title, y, i + 1, s.name, s.sub, spread(items), num, kind.cols, kind.h, kind.gap, draw)
     return y
 
 
-def build_check_in(packet, ink_folder, key, picker):
+def build_check_in(packet, ink_folder, key, picker, manifest=None):
     folder, slug, name = packet[:3]
     sections = CHECKINS[folder]
     path = ROOT / folder / ink_folder / f"{slug}-check-in{'-key' if key else ''}.pdf"
@@ -6433,14 +6444,19 @@ def build_check_in(packet, ink_folder, key, picker):
     title = f"Check-In: {name}"
     y = bk.new_page(title, "Show what you know. No help this time.", footer=f"WeMath  ·  {name} Check-In")
     score_tag(bk, total)
-    place_sections(bk, title, y, picked)
+    record = [] if manifest is not None else None
+    place_sections(bk, title, y, picked, record)
     if bk.page > 1:
         print(f"WARNING: {folder} check-in runs onto {bk.page} pages")
     bk.save()
+    if record is not None:
+        manifest.append(manifest_entry(f"check-in:{folder.split('-', 1)[1]}", "check-in", f"{name} Check-In",
+                                       record, packet=int(folder.split("-")[0]),
+                                       file=f"{folder}/color/{slug}-check-in-key.pdf"))
     return path
 
 
-def build_assessment(grade, when, ink_folder, key, picker):
+def build_assessment(grade, when, ink_folder, key, picker, manifest=None):
     slug, name, packets, sections = grade
     path = ROOT / "assessments" / ink_folder / f"{slug}-{when}-assessment{'-key' if key else ''}.pdf"
     label_ = "Pre-Assessment" if when == "pre" else "Post-Assessment"
@@ -6454,10 +6470,14 @@ def build_assessment(grade, when, ink_folder, key, picker):
             else "Show everything you learned this year.")
     y = bk.new_page(title, goal, footer=f"WeMath  ·  {name} {label_}  ·  {packets}")
     score_tag(bk, total)
-    place_sections(bk, title, y, picked)
+    record = [] if manifest is not None else None
+    place_sections(bk, title, y, picked, record)
     if key:
         scoring_sheet(bk, title, picked, total, when)
     bk.save()
+    if record is not None:
+        manifest.append(manifest_entry(f"{slug}-{when}", when, title, record, grade=GRADE_CODE[slug],
+                                       file=f"assessments/color/{slug}-{when}-assessment-key.pdf"))
     return path
 
 
@@ -10201,6 +10221,117 @@ _g3[-1:-1] = [
 ]
 
 
+# ====================================================================== curriculum.json (for the website)
+# Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
+# so tutors can mark them question by question online and the site can recommend packets. Written by every
+# full build, so it always matches the PDFs.
+
+import hashlib
+import json
+
+# Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
+TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
+                  26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37]
+GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3"}
+
+# Cards whose key circles a choice (no answer box): the answer in words.
+_yes = lambda b: "yes" if b else "no"
+ANSWER_OF = {
+    "buddy_yesno": lambda it: _yes(it[1]),
+    "enough": lambda it: _yes(it[0] % 10 >= it[1] % 10),
+    "which_more": lambda it: str(max(it)),
+    "eq_groups": lambda it: _yes(len(set(it)) == 1),
+    "pairs_eo": lambda n: "even" if n % 2 == 0 else "odd",
+    "eo_ones": lambda n: "even" if n % 2 == 0 else "odd",
+    "eq_share": lambda it: _yes(it[2]),
+    "name_share": lambda it: SHARE_NAME[it[1]][0],
+    "bigger_share": lambda it: share_word(min(it[1], it[2])),
+    "shade": lambda it: f"{it[2]} of {it[1]} parts shaded",
+    "ampm": lambda it: it[1],
+    "symbol": lambda it: it[1],
+    "unit_choice": lambda it: it[2],
+    "draw_hands": lambda it: f"hands at {tstr(it[0], it[1])}",
+    "tally_draw": lambda n: f"{n} tally marks",
+    "show_amount": lambda a: " ".join(COIN[k][2] for k in greedy(a)),
+    "round_card": lambda it: str(round_to(it[0], it[1])),
+    "shade_frac": lambda it: f"{it[1]} of {it[0]} parts shaded",
+}
+
+
+def packet_grades():
+    """Packet number -> grade code, from the grade assessments' sections."""
+    out = {}
+    for slug, _, _, sections in GRADES:
+        for s in sections:
+            if isinstance(s.packet, int):
+                out[s.packet] = GRADE_CODE[slug]
+    return out
+
+
+def solve(prompt):
+    """The answer to a plain arithmetic prompt like "25 + 29 = ?", "28 + ? = 47" or "6 × ? = 48"."""
+    m = re.fullmatch(r"(\d+|\?) ([+\u2212\u00d7\u00f7]) (\d+|\?) = (\d+|\?)", prompt.strip())
+    if not m or [m.group(1), m.group(3), m.group(4)].count("?") != 1:
+        return None
+    a, op, b, c = m.group(1), m.group(2), m.group(3), m.group(4)
+    f = {"+": lambda x, y: x + y, "\u2212": lambda x, y: x - y, "\u00d7": lambda x, y: x * y,
+         "\u00f7": lambda x, y: x // y}[op]
+    if c == "?":
+        return str(f(int(a), int(b)))
+    if b == "?":  # a op ? = c
+        return str(int(a) - int(c) if op == "\u2212" else int(a) // int(c) if op == "\u00f7"
+                   else {"+": lambda: int(c) - int(a), "\u00d7": lambda: int(c) // int(a)}[op]())
+    return str({"+": lambda: int(c) - int(b), "\u2212": lambda: int(c) + int(b), "\u00d7": lambda: int(c) // int(b),
+                "\u00f7": lambda: int(c) * int(b)}[op]())
+
+
+def manifest_entry(id_, type_, title, record, packet=None, grade=None, file=None):
+    parts, num = [], 0
+    for s, item, answers in record:
+        num += 1
+        if not parts or parts[-1]["name"] != s.name:
+            p = s.packet if s.packet is not None else packet
+            parts.append({"part": len(parts) + 1, "name": s.name, "kind": s.kind,
+                          "packet": p if isinstance(p, int) else None,
+                          "packets": str(p) if p is not None else None, "questions": []})
+        prompt = KINDS[s.kind].key(item)
+        if s.kind == "word":
+            prompt = item[0]
+        prompt = re.sub(r"\[[^\]]*\]", "?", re.sub(r"^story: ", "", prompt))
+        solved = solve(prompt)
+        if solved and len(answers) == 1 and answers[0] != solved:
+            raise ValueError(f"{id_} #{num}: the key says {answers[0]} but {prompt} is {solved}")
+        answer = ANSWER_OF[s.kind](item) if s.kind in ANSWER_OF else solved or " · ".join(answers)
+        if s.kind == "word":
+            answer = f"{item[2]} {item[3]}".strip()
+        parts[-1]["questions"].append({"n": num, "prompt": prompt, "answer": answer})
+    entry = {"id": id_, "type": type_, "title": title, "total": num, "file": file, "parts": parts}
+    if packet is not None:
+        entry["packet"] = packet
+    if grade is not None:
+        entry["grade"] = grade
+    return entry
+
+
+def write_manifest(entries):
+    grades = packet_grades()
+    by_number = {int(p[0].split("-")[0]): p for p in PACKETS}
+    packets = [{"number": n, "slug": by_number[n][0].split("-", 1)[1], "folder": by_number[n][0],
+                "file": by_number[n][1], "title": by_number[n][2], "grade": grades.get(n)}
+               for n in TEACHING_ORDER if n in by_number]
+    missing = set(by_number) - set(TEACHING_ORDER)
+    if missing:
+        raise ValueError(f"Packets {sorted(missing)} are missing from TEACHING_ORDER")
+    order = {"pre": 0, "post": 1, "check-in": 2}
+    tests = sorted(entries, key=lambda e: (order[e["type"]], e.get("grade") or "", e["id"]))
+    body = {"packets": packets, "tests": tests}
+    data = json.dumps(body, ensure_ascii=False, sort_keys=True)
+    body = {"version": hashlib.sha256(data.encode()).hexdigest()[:12], **body}
+    path = ROOT / "curriculum.json"
+    path.write_text(json.dumps(body, ensure_ascii=False, indent=1) + "\n")
+    return path
+
+
 # ====================================================================== build
 
 PACKETS = [
@@ -10285,11 +10416,14 @@ if __name__ == "__main__":
             for packet in OPTIONS:
                 print(build_packet(packet, ink_folder, key, dict(asked)))
             picker = Picker(asked)  # check-ins and assessments: fresh problems first, none repeated
+            manifest = [] if color and key else None
             for packet in PACKETS:
-                build_check_in(packet, ink_folder, key, picker)
+                build_check_in(packet, ink_folder, key, picker, manifest)
             for grade in GRADES:
                 for when in ("pre", "post"):
-                    print(build_assessment(grade, when, ink_folder, key, picker))
+                    print(build_assessment(grade, when, ink_folder, key, picker, manifest))
+            if manifest is not None:
+                print(write_manifest(manifest))
         for packet in PACKETS:
             if packet[5]:
                 print(build_template(ROOT / packet[0] / ink_folder))

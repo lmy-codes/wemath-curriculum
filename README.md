@@ -67,6 +67,10 @@ Each answer key ends with a **scoring sheet**: every part, the packet it checks,
 
 Check-in and assessment problems are chosen automatically. Problems that no practice packet used come first, and none is repeated across all the check-ins and assessments. The only exception is the ten buddies, where there are only 11 facts.
 
+## curriculum.json (for the website)
+
+Every build also writes `curriculum.json`: the packets in teaching order and every Check-In and assessment question as printed (number, part, the packet it checks, a short prompt and the answer). The website reads it so tutors can mark tests question by question and get a recommended next packet. Copy it over with the PDFs (`npm run sync:curriculum` in the website repo). It only depends on the problems, not the fonts, and the build stops if an answer it works out ever disagrees with the answer key.
+
 ## Rebuilding
 
 ```bash
