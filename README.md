@@ -42,6 +42,11 @@ Thirty-eight packets, in teaching order (K to grade 3). Each starts with a pictu
 | `35-division/` | Share it, make groups, think multiplication (missing factor), fact families, all division facts to 10 × 10 | 8 |
 | `36-fractions/` | Fraction strips and the fraction wall: name and shade fractions, compare, equal fractions, fractions equal to wholes (no number lines) | 7 |
 | `37-rounding/` | Round to the nearest 10 and 100: find the ten below and the ten above, see how far each is (a ten-frame shows it), and pick the closer one; exactly in the middle rounds up | 7 |
+| `38-multiplying-by-tens/` | 4 × 30 as 4 groups of 3 tens = 12 tens = 120: groups of ten-sticks, how many tens, the fact then the tens, careful with 5s (5 × 40 = 20 tens = 200) | 6 |
+| `39-area/` | Cover with unit squares and count, rows × columns, side lengths with no squares, break a rectangle apart (7 × 7 = 7 × 5 + 7 × 2), two rectangles (L shapes), find a missing side | 8 |
+| `40-perimeter/` | Walk around the edge and count, add the sides of rectangles and other shapes, find a missing side, area and perimeter of the same rectangle | 8 |
+| `41-elapsed-time/` | Time to the minute, then how long: jump to the next o'clock, then to the end, and add the jumps (packet 11's route, no number line); what time will it be; hours and minutes | 7 |
+| `42-four-operations/` | Two-step problems with +, −, × and ÷: bars with equal pieces (× finds the whole, ÷ finds a piece), two steps, round to check the answer makes sense | 9 |
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 
@@ -61,7 +66,7 @@ Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hol
 | Kindergarten | 0–2: adding and taking away within 9, ten buddies, teen numbers | 44 problems | 46 problems |
 | Grade 1 | 3–9: over ten, back through ten, doubles, tens and ones, ten more/less, two-digit adding | 60 problems | 60 problems |
 | Grade 2 | 10–32: two-digit subtracting, borrowing, columns, three-digit numbers, skip counting, comparing, arrays, even/odd, hundred buddies, counting, halves, equal shares, time, money, across zeros, bar models, length, graphs | 98 problems | 98 problems |
-| Grade 3 | 33–37: multiplication, strategies, division, fractions, rounding | 46 problems | 46 problems |
+| Grade 3 | 33–42: multiplication, strategies, division, fractions, rounding, multiplying by tens, area, perimeter, elapsed time, two-step problems | 59 problems | 59 problems |
 
 Each answer key ends with a **scoring sheet**: every part, the packet it checks, and a score line. Use the **pre-assessment** for placement: start a student at the first packet where they miss more than 1 problem in its parts. Use the **post-assessment** to see growth: a part with more than 1 miss means that packet needs review.
 

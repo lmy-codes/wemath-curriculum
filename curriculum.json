@@ -1,5 +1,5 @@
 {
- "version": "1df408f46000",
+ "version": "e317e5ac8bae",
  "packets": [
   {
    "number": 0,
@@ -303,6 +303,46 @@
    "folder": "37-rounding",
    "file": "rounding",
    "title": "Rounding",
+   "grade": "3"
+  },
+  {
+   "number": 38,
+   "slug": "multiplying-by-tens",
+   "folder": "38-multiplying-by-tens",
+   "file": "multiplying-by-tens",
+   "title": "Multiplying by Tens",
+   "grade": "3"
+  },
+  {
+   "number": 39,
+   "slug": "area",
+   "folder": "39-area",
+   "file": "area",
+   "title": "Area",
+   "grade": "3"
+  },
+  {
+   "number": 40,
+   "slug": "perimeter",
+   "folder": "40-perimeter",
+   "file": "perimeter",
+   "title": "Perimeter",
+   "grade": "3"
+  },
+  {
+   "number": 41,
+   "slug": "elapsed-time",
+   "folder": "41-elapsed-time",
+   "file": "elapsed-time",
+   "title": "Elapsed Time",
+   "grade": "3"
+  },
+  {
+   "number": 42,
+   "slug": "four-operations",
+   "folder": "42-four-operations",
+   "file": "four-operations",
+   "title": "All Four Operations",
    "grade": "3"
   }
  ],
@@ -1571,7 +1611,7 @@
    "id": "grade-3-pre",
    "type": "pre",
    "title": "Grade 3 Pre-Assessment",
-   "total": 46,
+   "total": 59,
    "file": "assessments/color/grade-3-pre-assessment-key.pdf",
    "parts": [
     {
@@ -1876,28 +1916,147 @@
     },
     {
      "part": 11,
+     "name": "Multiply by tens",
+     "kind": "eq3",
+     "packet": 38,
+     "packets": "38",
+     "questions": [
+      {
+       "n": 43,
+       "prompt": "5 × 20 = ?",
+       "answer": "100"
+      },
+      {
+       "n": 44,
+       "prompt": "2 × 60 = ?",
+       "answer": "120"
+      },
+      {
+       "n": 45,
+       "prompt": "5 × 60 = ?",
+       "answer": "300"
+      }
+     ]
+    },
+    {
+     "part": 12,
+     "name": "Area",
+     "kind": "eq2",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 46,
+       "prompt": "7 in by 5 in: area = ? sq in",
+       "answer": "35"
+      },
+      {
+       "n": 47,
+       "prompt": "3 in by 8 in: area = ? sq in",
+       "answer": "24"
+      }
+     ]
+    },
+    {
+     "part": 13,
+     "name": "Perimeter",
+     "kind": "eq2",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 48,
+       "prompt": "10 cm by 8 cm: perimeter = ? cm",
+       "answer": "36"
+      },
+      {
+       "n": 49,
+       "prompt": "14 ft by 8 ft: perimeter = ? ft",
+       "answer": "44"
+      }
+     ]
+    },
+    {
+     "part": 14,
+     "name": "Elapsed time",
+     "kind": "eq2",
+     "packet": 41,
+     "packets": "41",
+     "questions": [
+      {
+       "n": 50,
+       "prompt": "7:15 to 7:30 = ? minutes",
+       "answer": "15"
+      },
+      {
+       "n": 51,
+       "prompt": "10:40 to 11:15 = ? minutes",
+       "answer": "35"
+      }
+     ]
+    },
+    {
+     "part": 15,
+     "name": "Equal pieces",
+     "kind": "bar",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 52,
+       "prompt": "bar: eq 4 7 each",
+       "answer": "7"
+      },
+      {
+       "n": 53,
+       "prompt": "bar: eq 6 5 whole",
+       "answer": "30"
+      }
+     ]
+    },
+    {
+     "part": 16,
+     "name": "Two-step word problems",
+     "kind": "word",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 54,
+       "prompt": "15 pencils are shared equally by 5 kids. Then each kid gets 10 more. How many does each kid have now?",
+       "answer": "13 pencils"
+      },
+      {
+       "n": 55,
+       "prompt": "Ava has 4 boxes of 7 buttons. Ava uses 16 of them. How many buttons are left?",
+       "answer": "12 buttons"
+      }
+     ]
+    },
+    {
+     "part": 17,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "33–35",
      "questions": [
       {
-       "n": 43,
+       "n": 56,
        "prompt": "Kim shares 36 toy cars equally among 4 friends. How many toy cars does each friend get?",
        "answer": "9 toy cars"
       },
       {
-       "n": 44,
+       "n": 57,
        "prompt": "Sam shares 63 shells equally among 7 friends. How many shells does each friend get?",
        "answer": "9 shells"
       },
       {
-       "n": 45,
+       "n": 58,
        "prompt": "Sam has 6 bags with 8 stickers in each bag. How many stickers are there in all?",
        "answer": "48 stickers"
       },
       {
-       "n": 46,
+       "n": 59,
        "prompt": "Jay has 8 bags with 9 stickers in each bag. How many stickers are there in all?",
        "answer": "72 stickers"
       }
@@ -3518,7 +3677,7 @@
    "id": "grade-3-post",
    "type": "post",
    "title": "Grade 3 Post-Assessment",
-   "total": 46,
+   "total": 59,
    "file": "assessments/color/grade-3-post-assessment-key.pdf",
    "parts": [
     {
@@ -3823,28 +3982,147 @@
     },
     {
      "part": 11,
+     "name": "Multiply by tens",
+     "kind": "eq3",
+     "packet": 38,
+     "packets": "38",
+     "questions": [
+      {
+       "n": 43,
+       "prompt": "5 × 40 = ?",
+       "answer": "200"
+      },
+      {
+       "n": 44,
+       "prompt": "4 × 20 = ?",
+       "answer": "80"
+      },
+      {
+       "n": 45,
+       "prompt": "6 × 20 = ?",
+       "answer": "120"
+      }
+     ]
+    },
+    {
+     "part": 12,
+     "name": "Area",
+     "kind": "eq2",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 46,
+       "prompt": "3 ft by 8 ft: area = ? sq ft",
+       "answer": "24"
+      },
+      {
+       "n": 47,
+       "prompt": "6 in by 4 in: area = ? sq in",
+       "answer": "24"
+      }
+     ]
+    },
+    {
+     "part": 13,
+     "name": "Perimeter",
+     "kind": "eq2",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 48,
+       "prompt": "12 cm by 4 cm: perimeter = ? cm",
+       "answer": "32"
+      },
+      {
+       "n": 49,
+       "prompt": "9 cm by 4 cm: perimeter = ? cm",
+       "answer": "26"
+      }
+     ]
+    },
+    {
+     "part": 14,
+     "name": "Elapsed time",
+     "kind": "eq2",
+     "packet": 41,
+     "packets": "41",
+     "questions": [
+      {
+       "n": 50,
+       "prompt": "12:05 to 1:00 = ? minutes",
+       "answer": "55"
+      },
+      {
+       "n": 51,
+       "prompt": "5:55 to 6:30 = ? minutes",
+       "answer": "35"
+      }
+     ]
+    },
+    {
+     "part": 15,
+     "name": "Equal pieces",
+     "kind": "bar",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 52,
+       "prompt": "bar: eq 7 5 each",
+       "answer": "5"
+      },
+      {
+       "n": 53,
+       "prompt": "bar: eq 3 3 whole",
+       "answer": "9"
+      }
+     ]
+    },
+    {
+     "part": 16,
+     "name": "Two-step word problems",
+     "kind": "word",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 54,
+       "prompt": "12 cards are shared equally by 3 kids. Then each kid gets 7 more. How many does each kid have now?",
+       "answer": "11 cards"
+      },
+      {
+       "n": 55,
+       "prompt": "Lily has 8 boxes of 3 books. Lily uses 13 of them. How many books are left?",
+       "answer": "11 books"
+      }
+     ]
+    },
+    {
+     "part": 17,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "33–35",
      "questions": [
       {
-       "n": 43,
+       "n": 56,
        "prompt": "Theo has 4 bags with 6 books in each bag. How many books are there in all?",
        "answer": "24 books"
       },
       {
-       "n": 44,
+       "n": 57,
        "prompt": "Ben shares 45 acorns equally among 9 friends. How many acorns does each friend get?",
        "answer": "5 acorns"
       },
       {
-       "n": 45,
+       "n": 58,
        "prompt": "Tess shares 25 books equally among 5 friends. How many books does each friend get?",
        "answer": "5 books"
       },
       {
-       "n": 46,
+       "n": 59,
        "prompt": "Leo has 6 bags with 9 blocks in each bag. How many blocks are there in all?",
        "answer": "54 blocks"
       }
@@ -4718,6 +4996,97 @@
    "packet": 9
   },
   {
+   "id": "check-in:area",
+   "type": "check-in",
+   "title": "Area Check-In",
+   "total": 9,
+   "file": "39-area/color/area-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Rows times columns",
+     "kind": "area_rows",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "area rows 2 5",
+       "answer": "10 square units"
+      },
+      {
+       "n": 2,
+       "prompt": "area rows 3 3",
+       "answer": "9 square units"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Break it apart",
+     "kind": "area_split",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "area split 5 5 4",
+       "answer": "45"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Area",
+     "kind": "eq2",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "9 ft by 4 ft: area = ? sq ft",
+       "answer": "36"
+      },
+      {
+       "n": 5,
+       "prompt": "6 in by 8 in: area = ? sq in",
+       "answer": "48"
+      },
+      {
+       "n": 6,
+       "prompt": "9 in by 8 in: area = ? sq in",
+       "answer": "72"
+      },
+      {
+       "n": 7,
+       "prompt": "6 in by 7 in: area = ? sq in",
+       "answer": "42"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Find the missing side",
+     "kind": "eq2",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 8,
+       "prompt": "5 cm × ? cm = 25 sq cm",
+       "answer": "5"
+      },
+      {
+       "n": 9,
+       "prompt": "3 cm × ? cm = 21 sq cm",
+       "answer": "7"
+      }
+     ]
+    }
+   ],
+   "packet": 39
+  },
+  {
    "id": "check-in:back-through-ten",
    "type": "check-in",
    "title": "Back Through Ten Check-In",
@@ -5225,6 +5594,92 @@
    "packet": 6
   },
   {
+   "id": "check-in:elapsed-time",
+   "type": "check-in",
+   "title": "Elapsed Time Check-In",
+   "total": 8,
+   "file": "41-elapsed-time/color/elapsed-time-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Time to the minute",
+     "kind": "read_minute",
+     "packet": 41,
+     "packets": "41",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "clock read 7:12",
+       "answer": "7:12"
+      },
+      {
+       "n": 2,
+       "prompt": "clock read 8:46",
+       "answer": "8:46"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Find the stops",
+     "kind": "jump_time",
+     "packet": 41,
+     "packets": "41",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "elapsed find 9:45 10:30",
+       "answer": "45 minutes"
+      },
+      {
+       "n": 4,
+       "prompt": "elapsed find 6:40 7:10",
+       "answer": "30 minutes"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "How long?",
+     "kind": "eq2",
+     "packet": 41,
+     "packets": "41",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "12:45 to 1:10 = ? minutes",
+       "answer": "25"
+      },
+      {
+       "n": 6,
+       "prompt": "7:55 to 8:20 = ? minutes",
+       "answer": "25"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "What time will it be?",
+     "kind": "eq2",
+     "packet": 41,
+     "packets": "41",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "50 minutes after 8:15 = ?",
+       "answer": "9:05"
+      },
+      {
+       "n": 8,
+       "prompt": "35 minutes after 9:30 = ?",
+       "answer": "10:05"
+      }
+     ]
+    }
+   ],
+   "packet": 41
+  },
+  {
    "id": "check-in:equal-groups-and-arrays",
    "type": "check-in",
    "title": "Equal Groups and Arrays Check-In",
@@ -5464,6 +5919,73 @@
     }
    ],
    "packet": 22
+  },
+  {
+   "id": "check-in:four-operations",
+   "type": "check-in",
+   "title": "All Four Operations Check-In",
+   "total": 6,
+   "file": "42-four-operations/color/four-operations-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Equal pieces",
+     "kind": "bar",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "bar: eq 4 7 whole",
+       "answer": "28"
+      },
+      {
+       "n": 2,
+       "prompt": "bar: eq 7 4 each",
+       "answer": "4"
+      },
+      {
+       "n": 3,
+       "prompt": "bar: eq 8 7 each",
+       "answer": "7"
+      },
+      {
+       "n": 4,
+       "prompt": "bar: eq 7 9 each",
+       "answer": "9"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Two steps",
+     "kind": "two_step",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "7 × 4 = 28; 28 − 5 = 23",
+       "answer": "28 · 23 · 23"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Two-step word problems",
+     "kind": "word",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "Ben has 5 boxes of 5 buttons. Ben uses 16 of them. How many buttons are left?",
+       "answer": "9 buttons"
+      }
+     ]
+    }
+   ],
+   "packet": 42
   },
   {
    "id": "check-in:fractions",
@@ -6520,6 +7042,93 @@
    "packet": 34
   },
   {
+   "id": "check-in:multiplying-by-tens",
+   "type": "check-in",
+   "title": "Multiplying by Tens Check-In",
+   "total": 10,
+   "file": "38-multiplying-by-tens/color/multiplying-by-tens-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Groups of tens",
+     "kind": "tens_groups",
+     "packet": 38,
+     "packets": "38",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "tens groups 3 4",
+       "answer": "12 tens = 120"
+      },
+      {
+       "n": 2,
+       "prompt": "tens groups 3 2",
+       "answer": "6 tens = 60"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "The fact, then the tens",
+     "kind": "eq2",
+     "packet": 38,
+     "packets": "38",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "2 × 6 = ? so 2 × 60 = ?",
+       "answer": "12 · 120"
+      },
+      {
+       "n": 4,
+       "prompt": "9 × 5 = ? so 9 × 50 = ?",
+       "answer": "45 · 450"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Multiply",
+     "kind": "eq3",
+     "packet": 38,
+     "packets": "38",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "8 × 70 = ?",
+       "answer": "560"
+      },
+      {
+       "n": 6,
+       "prompt": "6 × 60 = ?",
+       "answer": "360"
+      },
+      {
+       "n": 7,
+       "prompt": "4 × 60 = ?",
+       "answer": "240"
+      },
+      {
+       "n": 8,
+       "prompt": "7 × 50 = ?",
+       "answer": "350"
+      },
+      {
+       "n": 9,
+       "prompt": "6 × 40 = ?",
+       "answer": "240"
+      },
+      {
+       "n": 10,
+       "prompt": "8 × 20 = ?",
+       "answer": "160"
+      }
+     ]
+    }
+   ],
+   "packet": 38
+  },
+  {
    "id": "check-in:over-the-next-ten",
    "type": "check-in",
    "title": "Over the Next Ten Check-In",
@@ -6619,6 +7228,102 @@
     }
    ],
    "packet": 4
+  },
+  {
+   "id": "check-in:perimeter",
+   "type": "check-in",
+   "title": "Perimeter Check-In",
+   "total": 10,
+   "file": "40-perimeter/color/perimeter-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Add the sides",
+     "kind": "perim_add",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "perimeter add 12 3 m",
+       "answer": "30 m"
+      },
+      {
+       "n": 2,
+       "prompt": "perimeter add 12 4 m",
+       "answer": "32 m"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Area and perimeter",
+     "kind": "area_perim",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "area perimeter 2 8",
+       "answer": "area 16, perimeter 20"
+      },
+      {
+       "n": 4,
+       "prompt": "area perimeter 3 5",
+       "answer": "area 15, perimeter 16"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Perimeter",
+     "kind": "eq2",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "8 m by 5 m: perimeter = ? m",
+       "answer": "26"
+      },
+      {
+       "n": 6,
+       "prompt": "11 in by 5 in: perimeter = ? in",
+       "answer": "32"
+      },
+      {
+       "n": 7,
+       "prompt": "7 cm by 6 cm: perimeter = ? cm",
+       "answer": "26"
+      },
+      {
+       "n": 8,
+       "prompt": "11 cm by 5 cm: perimeter = ? cm",
+       "answer": "32"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Find the missing side",
+     "kind": "eq2",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 9,
+       "prompt": "5 cm by ? cm: perimeter = 18 cm",
+       "answer": "4"
+      },
+      {
+       "n": 10,
+       "prompt": "10 cm by ? cm: perimeter = 30 cm",
+       "answer": "5"
+      }
+     ]
+    }
+   ],
+   "packet": 40
   },
   {
    "id": "check-in:rounding",

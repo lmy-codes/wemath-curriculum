@@ -8256,7 +8256,10 @@ def compare_bars(bk, x, y, w, big, small, unknown, h=22, size=13, names=None):
 
 def draw_model(bk, x, y, w, model, size=13):
     """model = ("pw", a, b, unknown) with unknown "whole" or "part" (the second part),
-    or ("cmp", big, small, unknown, names)."""
+    or ("cmp", big, small, unknown, names), or ("eq", pieces, each, unknown) with unknown "whole" or "each"
+    (equal pieces, packet 42)."""
+    if model[0] == "eq":
+        return equal_bar(bk, x, y, w, model[1], model[2], model[3], size=size)
     if model[0] == "pw":
         _, a, b, unknown = model
         return bar_model(bk, x, y, w, [(a, True), (b, unknown != "part")], (a + b, unknown != "whole"), size=size)
@@ -8265,6 +8268,8 @@ def draw_model(bk, x, y, w, model, size=13):
 
 
 def model_answer(model):
+    if model[0] == "eq":
+        return model[1] * model[2] if model[3] == "whole" else model[2]
     if model[0] == "pw":
         return model[1] + model[2] if model[3] == "whole" else model[2]
     _, big, small, unknown, *_ = model
@@ -8321,7 +8326,7 @@ def c_two_step(bk, x, cy, w, item):
         for j, (m, yy) in enumerate(((m1, cy + 96), (m2, cy + 18))):
             c.setFillColor(T.text2)
             c.setFont("AvD", 9)
-            c.drawString(tx, yy + 60 if m[0] == "pw" else yy + 56, f"Step {j + 1}")
+            c.drawString(tx, yy + 56 if m[0] == "cmp" else yy + 60, f"Step {j + 1}")
             draw_model(bk, tx, yy, 246, m)
     else:
         bk.work(tx, cy + 12, 250, 140, "Draw the bars")
@@ -10026,7 +10031,7 @@ def stories_x(seed, kind, items):
     return out
 
 
-GRADES.append(("grade-3", "Grade 3", "Packets 33–37", [
+GRADES.append(("grade-3", "Grade 3", "Packets 33–42", [
     S("Groups of", None, "times_groups", [(g, n) for g in rng(2, 5) for n in rng(2, 5)], 2, 33),
     S("Times 2, 5 and 10", None, "eq3", FACTS_2_5_10, 6, 33),
     S("Break it apart", None, "break_array", [(a, b) for a in (3, 4, 6, 7, 8, 9) for b in rng(3, 9)], 2, 34),
@@ -10221,6 +10226,1120 @@ _g3[-1:-1] = [
 ]
 
 
+# ====================================================================== 38. Multiplying by Tens
+
+
+def tens_groups(bk, x, y, groups, tens, h=60, w=STICK_W, gap=5, ggap=18):
+    """`groups` rings of `tens` ten-sticks, the rings alternating blue and orange. y = bottom of the sticks.
+    Returns the width."""
+    c = bk.c
+    gw = tens * w + (tens - 1) * gap
+    for g in range(groups):
+        gx = x + g * (gw + ggap)
+        c.setStrokeColor(T.line)
+        c.setLineWidth(0.9)
+        c.roundRect(gx - 4, y - 4, gw + 8, h + 8, 6, stroke=1, fill=0)
+        for i in range(tens):
+            ten_stick(bk, gx + i * (w + gap), y, h, w, kind="a" if g % 2 == 0 else "b")
+    return groups * gw + (groups - 1) * ggap
+
+
+def c_tens_groups(bk, x, cy, w, item):
+    g, t = item
+    tens_groups(bk, x + GUT, cy + 74, g, t, h=40, w=9, gap=3.5, ggap=12)
+    bk.fit_eq(x + GUT, cy + 38, w - GUT - 10, f"[{g}] groups of [{t}] tens = [{g * t}] tens", size=14)
+    bk.fit_eq(x + GUT, cy + 12, w - GUT - 10, f"[{g}] {TIMES} [{t * 10}] = [{g * t * 10}]", size=14)
+
+
+def tens_fact(g, t):
+    """'6 × 4 = [24] so 6 × 40 = [240]'"""
+    return f"{g} {TIMES} {t} = [{g * t}] so {g} {TIMES} {t * 10} = [{g * t * 10}]"
+
+
+def learn_times_tens(bk):
+    y = bk.new_page("Multiplying by Tens", "Groups of tens: use the fact you know, then count tens.",
+                    name_line=False, big=True, footer="WeMath  ·  Multiplying by Tens")
+    c = bk.c
+    label(bk, M, y - 6, "3 groups of 4 tens")
+    tens_groups(bk, M + 18, y - 92, 3, 4, h=60)
+    color_eq(bk, M + 300, y - 50, [("3", "a"), (TIMES, "op"), ("40", "b"), ("=", "op"), ("120", None)], 26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 300, y - 76, "3 groups of 4 tens = 12 tens")
+    c.drawString(M + 300, y - 94, "12 tens is 120.")
+    y -= 124
+
+    label(bk, M, y - 6, "Use a fact you know")
+    color_eq(bk, M + 14, y - 42, [("6", "a"), (TIMES, "op"), ("7", "b"), ("=", "op"), ("42", None)], 24)
+    color_eq(bk, M + 14, y - 78, [("6", "a"), (TIMES, "op"), ("70", "b"), ("=", "op"), ("42 tens", None),
+                                  ("=", "op"), ("420", None)], 24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 330, y - 42, "Same fact, but now")
+    c.drawString(M + 330, y - 60, "it counts tens.")
+    y -= 108
+
+    label(bk, M, y - 6, "Careful with 5s")
+    color_eq(bk, M + 14, y - 42, [("5", "a"), (TIMES, "op"), ("4", "b"), ("=", "op"), ("20", None)], 24)
+    color_eq(bk, M + 14, y - 78, [("5", "a"), (TIMES, "op"), ("40", "b"), ("=", "op"), ("20 tens", None),
+                                  ("=", "op"), ("200", None)], 24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 330, y - 42, "The fact already ends in 0.")
+    c.drawString(M + 330, y - 60, "20 tens is 200: two zeros.")
+    y -= 112
+
+    bottom = your_turn(bk, y, h=118)
+    bk.ask("tens groups 2 3 your turn")
+    bk.ask(f"2 {TIMES} 30 = [60]")
+    tens_groups(bk, M + 110, bottom + 30, 2, 3, h=52, w=12, gap=5, ggap=16)
+    bk.fit_eq(M + 270, bottom + 72, CW - 270 - 16, f"[2] groups of [3] tens = [6] tens", size=15)
+    bk.eq(M + 270, bottom + 34, f"2 {TIMES} 30 = [60]", size=18)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: multiply a one-digit number by a multiple of 10 (3.NBT.3). Say “6 × 70 is 6 groups "
+                     "of 7 tens. 6 × 7 = 42, so it is 42 tens, 420.” Avoid “just add a zero”: 5 × 40 = 20 tens "
+                     "= 200 shows why.")
+
+
+def practice_times_tens(bk):
+    title = "Multiplying by Tens: Practice"
+    y = bk.new_page(title, "Use the fact you know. Count the tens.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(1, "Groups of tens", "Count the groups and the tens in each group.",
+         [(2, 4), (3, 3), (2, 6), (5, 2), (4, 3), (2, 5)], 2, 134, 10, c_tens_groups, KINDS_38["tens_groups"].key)
+    part(2, "How many tens?", "Multiply, then write how many tens.",
+         [f"{g} {TIMES} {t} tens = [{g * t}] tens" for g, t in
+          ((3, 5), (4, 4), (6, 2), (7, 3), (2, 8), (5, 3), (8, 2), (3, 7), (4, 6))], 3, 42, 8, plain, lambda t: t)
+    part(3, "The fact, then the tens", "The first answer helps with the second.",
+         [tens_fact(g, t) for g, t in ((6, 4), (3, 8), (7, 5), (4, 9), (9, 3), (5, 6), (8, 7), (6, 8))],
+         2, 42, 8, plain, lambda t: t)
+    for n, (name, sub, pairs) in enumerate(TENS_PARTS_38):
+        part(4 + n, name, sub, [f"{a} {TIMES} {b} = [{a * b}]" for a, b in pairs], 3, 42, 8, plain, lambda t: t)
+    part(8, "Remember?", "Problems from earlier packets.", REVIEW_38, 2, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 9, "Word problems", "How many groups? How many in each?")
+    for i, story in enumerate(WORDS_38):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 9, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+TENS_PARTS_38 = [
+    ("Times 2 and times 5", "No help this time.",
+     [(2, 70), (5, 80), (9, 20), (5, 50), (2, 90), (7, 20), (5, 90), (4, 50), (6, 50)]),
+    ("Harder facts", "No help this time. Find the fact first.",
+     [(6, 70), (8, 40), (7, 90), (9, 60), (3, 60), (8, 80), (4, 70), (9, 90), (7, 60), (6, 90), (3, 90), (8, 30)]),
+    ("Tens first", "No help this time. 30 × 4 is the same as 4 × 30.",
+     [(30, 4), (60, 3), (70, 8), (90, 4), (80, 5), (20, 3), (50, 7), (40, 8), (60, 6)]),
+    ("Mixed", "No help this time.",
+     [(7, 70), (4, 80), (9, 40), (2, 20), (8, 90), (3, 40), (6, 30), (9, 70), (5, 70), (8, 50), (7, 40), (3, 20)]),
+]
+
+REVIEW_38 = ["7 groups of 6 = [42]", "Round 64 to the nearest ten: [60]", "half of 18 = [9]",
+             f"703 {MINUS} 245 = [458]", "348 + 275 = [623]", "4 groups of 8 = [32]"]
+
+WORDS_38 = [
+    ("A box holds 50 crayons. How many crayons are in 3 boxes?", f"3 {TIMES} 50 = 150", "150", "crayons"),
+    ("Each train car holds 70 people. How many people fit in 3 cars?", f"3 {TIMES} 70 = 210", "210", "people"),
+    ("A game gives 20 points for each star. Ben gets 6 stars. How many points is that?", f"6 {TIMES} 20 = 120",
+     "120", "points"),
+    ("A farmer plants 4 rows with 60 seeds in each row. How many seeds is that?", f"4 {TIMES} 60 = 240", "240",
+     "seeds"),
+    ("Challenge: A store has 9 boxes of 50 pencils. It sells 75 pencils. How many pencils are left?",
+     f"9 {TIMES} 50 = 450, 450 {MINUS} 75 = 375", "375", "pencils"),
+]
+
+KINDS_38 = {
+    "tens_groups": Kind(134, 2, lambda it: f"tens groups {it[0]} {it[1]}", c_tens_groups),
+}
+KINDS.update(KINDS_38)
+
+TENS_FACTS = [f"{g} {TIMES} {t * 10} = [{g * t * 10}]" for g in rng(2, 9) for t in rng(2, 9)]
+
+CHECKINS["38-multiplying-by-tens"] = [
+    S("Groups of tens", None, "tens_groups", [(g, t) for g in rng(2, 4) for t in rng(2, 6) if g * t <= 12 and (g, t) != (2, 3)], 2),
+    S("The fact, then the tens", None, "eq2", [tens_fact(g, t) for g in rng(2, 9) for t in rng(2, 9)], 2),
+    S("Multiply", None, "eq3", TENS_FACTS, 6),
+]
+_g3[-1:-1] = [
+    S("Multiply by tens", None, "eq3", TENS_FACTS, 3, 38),
+]
+
+
+# ====================================================================== 39. Area
+
+
+def side_label(bk, x, y, text, anchor="center", size=10):
+    c = bk.c
+    c.setFillColor(T.text2)
+    c.setFont("AvD", size)
+    if anchor == "center":
+        c.drawCentredString(x, y, text)
+    else:
+        c.drawString(x, y, text)
+
+
+def area_rect(bk, x, y, rows, cols, cell, grid=True, unit=None, split=None, numbers=False, fill=None):
+    """A rows × cols rectangle of unit squares; y = bottom. grid=False draws only the outline.
+    unit: label the bottom and right sides ("6 cm"). split: a dashed line after that many columns, the two
+    parts shaded blue and orange (colour only), each part labelled on the bottom. numbers: count the squares.
+    fill: "a" or "b" shades the whole rectangle. Returns (width, height)."""
+    c = bk.c
+    w, h = cols * cell, rows * cell
+    fills = []
+    if split:
+        fills = [(x, split * cell, T.band), (x + split * cell, (cols - split) * cell, T.strip)]
+    elif fill:
+        fills = [(x, w, T.band if fill == "a" else T.strip)]
+    for fx, fw, col in fills:
+        if T.color and col is not None:
+            c.setFillColor(col)
+            c.rect(fx, y, fw, h, stroke=0, fill=1)
+    if grid:
+        c.setStrokeColor(T.text2)
+        c.setLineWidth(0.7)
+        for i in range(1, cols):
+            c.line(x + i * cell, y, x + i * cell, y + h)
+        for j in range(1, rows):
+            c.line(x, y + j * cell, x + w, y + j * cell)
+    if split:
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(1.4)
+        c.setDash(3, 2.5)
+        c.line(x + split * cell, y - 4, x + split * cell, y + h + 4)
+        c.setDash()
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.6)
+    c.rect(x, y, w, h, stroke=1, fill=0)
+    if numbers:
+        c.setFillColor(T.text2)
+        c.setFont("AvD", cell * 0.38)
+        for j in range(rows):
+            for i in range(cols):
+                c.drawCentredString(x + (i + 0.5) * cell, y + h - (j + 0.5) * cell - cell * 0.14,
+                                    str(j * cols + i + 1))
+    if unit:
+        if split:
+            side_label(bk, x + split * cell / 2, y - 12, f"{split} {unit}")
+            side_label(bk, x + split * cell + (cols - split) * cell / 2, y - 12, f"{cols - split} {unit}")
+        else:
+            side_label(bk, x + w / 2, y - 12, f"{cols} {unit}")
+        side_label(bk, x + w + 5, y + h / 2 - 3.5, f"{rows} {unit}", anchor="left")
+    return w, h
+
+
+def area_L(bk, x, y, r1, c1, r2, c2, cell):
+    """Two rectangles side by side, bottoms lined up (an L shape): the left one blue, the right one orange,
+    a dashed line between. Returns the width."""
+    area_rect(bk, x, y, r1, c1, cell, fill="a")
+    area_rect(bk, x + c1 * cell, y, r2, c2, cell, fill="b")
+    c = bk.c
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.4)
+    c.setDash(3, 2.5)
+    c.line(x + c1 * cell, y, x + c1 * cell, y + r2 * cell)
+    c.setDash()
+    return (c1 + c2) * cell
+
+
+def c_area_count(bk, x, cy, w, item):
+    rows, cols = item
+    cell = 12
+    bk.fit_eq(x + GUT, cy + 94, w - GUT - 10, f"Area = [{rows * cols}] square units", size=15)
+    area_rect(bk, x + GUT, cy + 12 + (64 - rows * cell) / 2, rows, cols, cell)
+
+
+def c_area_rows(bk, x, cy, w, item):
+    rows, cols = item
+    cell = 11
+    bk.fit_eq(x + GUT, cy + 104, w - GUT - 10, f"[{rows}] {TIMES} [{cols}] = [{rows * cols}] square units", size=15)
+    area_rect(bk, x + GUT, cy + 24 + (60 - rows * cell) / 2, rows, cols, cell, unit="units")
+
+
+def c_area_sides(bk, x, cy, w, item):
+    rows, cols, unit = item
+    cell = min(11, 120 / cols, 60 / rows)
+    bk.fit_eq(x + GUT, cy + 104, w - GUT - 10, f"[{rows}] {TIMES} [{cols}] = [{rows * cols}] square {unit}",
+              size=15)
+    area_rect(bk, x + GUT, cy + 24 + (60 - rows * cell) / 2, rows, cols, cell, grid=False, unit=unit)
+
+
+def c_area_split(bk, x, cy, w, item):
+    rows, a, b = item
+    cell = 10
+    area_rect(bk, x + GUT, cy + 12 + (80 - rows * cell) / 2, rows, a + b, cell, split=a)
+    tx = x + GUT + 130
+    lines = [f"{rows} {TIMES} {a} = [{rows * a}]", f"{rows} {TIMES} {b} = [{rows * b}]",
+             f"[{rows * a}] + [{rows * b}] = [{rows * (a + b)}]"]
+    bk.fit_eq(x + GUT, cy + 112, w - GUT - 10, f"{rows} {TIMES} {a + b} = [{rows * (a + b)}]", size=16)
+    for i, line in enumerate(lines):
+        bk.fit_eq(tx, cy + 76 - i * 30, w - (tx - x) - 8, line, size=15)
+
+
+def c_area_L(bk, x, cy, w, item):
+    r1, c1, r2, c2 = item
+    cell = 12
+    area_L(bk, x + GUT, cy + 18 + (90 - r1 * cell) / 2, r1, c1, r2, c2, cell)
+    tx = x + GUT + 130
+    lines = [f"[{r1}] {TIMES} [{c1}] = [{r1 * c1}]", f"[{r2}] {TIMES} [{c2}] = [{r2 * c2}]",
+             f"[{r1 * c1}] + [{r2 * c2}] = [{r1 * c1 + r2 * c2}]"]
+    for i, line in enumerate(lines):
+        bk.fit_eq(tx, cy + 92 - i * 34, w - (tx - x) - 8, line, size=16)
+
+
+def learn_area(bk):
+    y = bk.new_page("Area", "Area is how many squares cover a shape.", name_line=False, big=True,
+                    footer="WeMath  ·  Area")
+    c = bk.c
+    label(bk, M, y - 6, "Cover it with squares, then count")
+    area_rect(bk, M + 20, y - 92, 3, 5, 24, numbers=True)
+    color_eq(bk, M + 220, y - 50, [("Area", None), ("=", "op"), ("15", "b"), ("square units", None)], 22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 220, y - 76, "Each square is 1 square unit.")
+    y -= 118
+
+    label(bk, M, y - 6, "Rows × columns: no need to count one by one")
+    area_rect(bk, M + 20, y - 102, 4, 6, 18, unit="cm")
+    color_eq(bk, M + 220, y - 50, [("4", "a"), (TIMES, "op"), ("6", "b"), ("=", "op"), ("24", None)], 26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 220, y - 76, "4 rows of 6 squares: 24 square cm.")
+    c.drawString(M + 220, y - 94, "Multiply the side lengths.")
+    y -= 132
+
+    label(bk, M, y - 6, "Break it apart: 4 × 8 is 4 × 5 and 4 × 3")
+    area_rect(bk, M + 20, y - 94, 4, 8, 16, unit="cm", split=5)
+    color_eq(bk, M + 220, y - 38, [("4", None), (TIMES, "op"), ("5", "a"), ("=", "op"), ("20", "a")], 20)
+    color_eq(bk, M + 220, y - 64, [("4", None), (TIMES, "op"), ("3", "b"), ("=", "op"), ("12", "b")], 20)
+    color_eq(bk, M + 220, y - 90, [("20", "a"), ("+", "op"), ("12", "b"), ("=", "op"), ("32", None),
+                                   ("square cm", None)], 20)
+    y -= 124
+
+    bottom = your_turn(bk, y, h=104)
+    bk.ask("area rows 3 7 your turn")
+    area_rect(bk, M + 130, bottom + 26, 3, 7, 16)
+    bk.fit_eq(M + 280, bottom + 46, CW - 280 - 16, f"[3] {TIMES} [7] = [21] square units", size=16)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: area as unit squares that cover a shape, then rows × columns (3.MD.5–7). Say "
+                     "“How many rows? How many in each row?” Area is inside; the edge is perimeter (next "
+                     "packet). Link breaking apart to packet 34.")
+
+
+def practice_area(bk):
+    title = "Area: Practice"
+    y = bk.new_page(title, "Count the squares, or multiply rows × columns.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(1, "Count the squares", "Each square is 1 square unit.",
+         [(3, 4), (2, 7), (4, 5), (3, 7), (5, 3), (2, 8)], 2, 116, 10, c_area_count,
+         lambda it: f"area count {it[0]} {it[1]}")
+    part(2, "Rows times columns", "Multiply instead of counting.",
+         [(3, 6), (5, 4), (4, 7), (6, 3), (2, 9), (5, 5)], 2, 126, 10, c_area_rows, KINDS_39["area_rows"].key)
+    part(3, "Use the side lengths", "No squares drawn this time. Multiply the sides.",
+         [(5, 8, "cm"), (7, 4, "in"), (6, 9, "m"), (3, 8, "ft"), (9, 7, "cm"), (8, 6, "in")], 2, 126, 10,
+         c_area_sides, lambda it: f"area sides {it[0]} {it[1]} {it[2]}")
+    part(4, "Break it apart", "Find the area of each part. Add them.",
+         [(7, 5, 2), (6, 5, 3), (3, 5, 4), (8, 5, 1)], 1, 136, 10, c_area_split, KINDS_39["area_split"].key)
+    part(5, "Two rectangles", "Find each area. Add them.",
+         [(4, 3, 2, 4), (5, 2, 3, 4), (3, 4, 1, 3), (4, 5, 2, 2)], 1, 120, 10, c_area_L,
+         lambda it: "area L " + " ".join(map(str, it)))
+    part(6, "Rectangles", "No help this time. Multiply the sides.",
+         [area_eq(a, b, "cm") for a, b in ((6, 7), (8, 3), (9, 4), (5, 6), (7, 8), (3, 9), (5, 9), (2, 8), (4, 8),
+                                            (9, 8))], 2, 42, 8, plain, lambda t: t)
+    part(7, "Squares", "No help this time. All four sides are the same.",
+         [square_area_eq(s, u) for s, u in ((6, "m"), (3, "in"), (8, "cm"), (4, "ft"), (9, "m"), (7, "in"))],
+         2, 42, 8, plain, lambda t: t)
+    part(8, "Find the missing side", "No help this time. Side × side = area. What is the other side?",
+         [missing_side_eq(A, a) for A, a in ((24, 4), (35, 5), (27, 3), (48, 6), (28, 7), (45, 9), (16, 2), (42, 6))],
+         2, 42, 8, plain, lambda t: t)
+    part(9, "Remember?", "Problems from earlier packets.", REVIEW_39, 2, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 10, "Word problems", "Draw the rectangle if it helps.")
+    for i, story in enumerate(WORDS_39):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 10, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+def area_eq(a, b, unit):
+    return f"{a} {unit} by {b} {unit}: area = [{a * b}] sq {unit}"
+
+
+def square_area_eq(s, unit):
+    return f"{s} {unit} by {s} {unit} square: area = [{s * s}] sq {unit}"
+
+
+def missing_side_eq(A, a, unit="cm"):
+    return f"{a} {unit} {TIMES} [{A // a}] {unit} = {A} sq {unit}"
+
+
+REVIEW_39 = ["8 × 60 = [480]", "Round 347 to the nearest hundred: [300]", "9 groups of 4 = [36]",
+             "6 sixths = [1] whole", f"618 {MINUS} 349 = [269]", "2 fourths = [1] half"]
+
+WORDS_39 = [
+    ("A rug is 7 feet long and 3 feet wide. What is its area?", f"7 {TIMES} 3 = 21", "21", "square feet"),
+    ("A patio has 8 rows of square tiles with 4 tiles in each row. How many tiles cover it?", f"8 {TIMES} 4 = 32",
+     "32", "tiles"),
+    ("A poster is 9 inches long and 6 inches wide. What is its area?", f"9 {TIMES} 6 = 54", "54", "square inches"),
+    ("A room is 10 feet long and 9 feet wide. What is its area?", f"10 {TIMES} 9 = 90", "90", "square feet"),
+    ("Challenge: A room is 8 feet by 6 feet. A rug covers 20 square feet. How much floor is not covered?",
+     f"8 {TIMES} 6 = 48, 48 {MINUS} 20 = 28", "28", "square feet"),
+]
+
+KINDS_39 = {
+    "area_rows": Kind(126, 2, lambda it: f"area rows {it[0]} {it[1]}", c_area_rows),
+    "area_split": Kind(136, 1, lambda it: f"area split {it[0]} {it[1]} {it[2]}", c_area_split),
+}
+KINDS.update(KINDS_39)
+
+AREA_EQS = [area_eq(a, b, u) for a in rng(3, 9) for b in rng(3, 9) if a != b for u in ("cm", "in", "m", "ft")]
+MISSING_SIDES = [missing_side_eq(a * b, a, u) for a in rng(3, 9) for b in rng(3, 9) for u in ("cm", "in")]
+
+CHECKINS["39-area"] = [
+    S("Rows times columns", None, "area_rows", [(r, k) for r in rng(2, 6) for k in rng(3, 8) if (r, k) != (3, 7)], 2),
+    S("Break it apart", None, "area_split", [(r, 5, b) for r in rng(3, 8) for b in rng(1, 4)], 1),
+    S("Area", None, "eq2", AREA_EQS, 4),
+    S("Find the missing side", None, "eq2", MISSING_SIDES, 2),
+]
+_g3[-1:-1] = [
+    S("Area", None, "eq2", AREA_EQS, 2, 39),
+]
+
+
+# ====================================================================== 40. Perimeter
+
+
+def edge_numbers(bk, x, y, rows, cols, cell, size=9):
+    """Number the unit lengths around a rectangle (1, 2, 3 … clockwise from the top-left), just outside it."""
+    c = bk.c
+    c.setFillColor(T.accent)
+    c.setFont("AvB", size)
+    k = 0
+    top, right = y + rows * cell, x + cols * cell
+    for i in range(cols):
+        k += 1
+        c.drawCentredString(x + (i + 0.5) * cell, top + 4, str(k))
+    for j in range(rows):
+        k += 1
+        c.drawString(right + 4, top - (j + 0.5) * cell - size * 0.36, str(k))
+    for i in range(cols):
+        k += 1
+        c.drawCentredString(right - (i + 0.5) * cell, y - size - 3, str(k))
+    for j in range(rows):
+        k += 1
+        c.drawRightString(x - 4, y + (j + 0.5) * cell - size * 0.36, str(k))
+
+
+def rect_sides(bk, x, y, w, h, top, right, bottom, left, size=10):
+    """A rectangle (no grid) with a label on every side; y = bottom."""
+    c = bk.c
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.6)
+    c.rect(x, y, w, h, stroke=1, fill=0)
+    side_label(bk, x + w / 2, y + h + 5, top, size=size)
+    side_label(bk, x + w / 2, y - 12, bottom, size=size)
+    side_label(bk, x + w + 5, y + h / 2 - 3.5, right, anchor="left", size=size)
+    c.setFillColor(T.text2)
+    c.setFont("AvD", size)
+    c.drawRightString(x - 5, y + h / 2 - 3.5, left)
+
+
+def polygon_sides(bk, cx, cy, R, sides, unit, size=10):
+    """A shape with len(sides) sides (drawn regular, flat bottom), each side labelled outside."""
+    c = bk.c
+    n = len(sides)
+    start = -90 - 180 / n
+    pts = [(cx + R * math.cos(math.radians(start + 360 * i / n)), cy + R * math.sin(math.radians(start + 360 * i / n)))
+           for i in range(n)]
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.6)
+    c.drawPath(_poly(c, pts), stroke=1, fill=0)
+    for i, s in enumerate(sides):
+        (x0, y0), (x1, y1) = pts[i], pts[(i + 1) % n]
+        mx, my = (x0 + x1) / 2, (y0 + y1) / 2
+        d = math.hypot(mx - cx, my - cy) or 1
+        nx, ny = (mx - cx) / d, (my - cy) / d
+        text = f"{s} {unit}"
+        tw = sw(text, "AvD", size)
+        lx, ly = mx + nx * (6 + tw / 2 * abs(nx)), my + ny * (6 + size * 0.5 * abs(ny))
+        c.setFillColor(T.text2)
+        c.setFont("AvD", size)
+        c.drawCentredString(lx, ly - size * 0.36, text)
+
+
+def perimeter(a, b):
+    return 2 * (a + b)
+
+
+def c_perim_count(bk, x, cy, w, item):
+    rows, cols = item
+    cell = 12
+    bk.fit_eq(x + GUT, cy + 94, w - GUT - 10, f"Perimeter = [{perimeter(rows, cols)}] units", size=15)
+    area_rect(bk, x + GUT, cy + 12 + (64 - rows * cell) / 2, rows, cols, cell)
+
+
+def c_perim_add(bk, x, cy, w, item):
+    a, b, unit = item
+    bk.fit_eq(x + GUT, cy + 104, w - GUT - 10, f"[{a}] + [{b}] + [{a}] + [{b}] = [{perimeter(a, b)}] {unit}", size=15)
+    rw, rh = min(110, 9 * a), min(46, 7 * b)
+    rect_sides(bk, x + GUT + 44, cy + 24 + (50 - rh) / 2, rw, rh, f"{a} {unit}", f"{b} {unit}", f"{a} {unit}",
+               f"{b} {unit}")
+
+
+def c_perim_poly(bk, x, cy, w, item):
+    sides, unit = item
+    bk.fit_eq(x + GUT, cy + 116, w - GUT - 10, " + ".join(map(str, sides)) + f" = [{sum(sides)}] {unit}", size=15)
+    polygon_sides(bk, x + GUT + 90, cy + 50, 30, sides, unit)
+
+
+def c_perim_missing(bk, x, cy, w, item):
+    a, b, unit = item
+    P = perimeter(a, b)
+    rw, rh = 9 * a, 9 * b
+    ry = cy + 18 + (70 - rh) / 2
+    rect_sides(bk, x + GUT + 40, ry, rw, rh, "", "", f"{a} {unit}", "")
+    c = bk.c
+    c.setFillColor(T.accent)
+    c.setFont("AvB", 15)
+    c.drawString(x + GUT + 40 + rw + 6, ry + rh / 2 - 5, "?")
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 13)
+    c.drawString(x + GUT, cy + 98, f"Perimeter = {P} {unit}. Find the missing side.")
+    tx = x + GUT + 200
+    lines = [f"{a} + {a} = [{2 * a}]", f"{P} {MINUS} [{2 * a}] = [{2 * b}]", f"half of [{2 * b}] = [{b}] {unit}"]
+    for i, line in enumerate(lines):
+        bk.fit_eq(tx, cy + 70 - i * 28, w - (tx - x) - 8, line, size=15)
+
+
+def c_area_perim(bk, x, cy, w, item):
+    rows, cols = item
+    cell = 11
+    bk.fit_eq(x + GUT, cy + 116, w - GUT - 10, f"Area = [{rows * cols}] square units", size=14)
+    bk.fit_eq(x + GUT, cy + 86, w - GUT - 10, f"Perimeter = [{perimeter(rows, cols)}] units", size=14)
+    area_rect(bk, x + GUT, cy + 12 + (56 - rows * cell) / 2, rows, cols, cell)
+
+
+def learn_perimeter(bk):
+    y = bk.new_page("Perimeter", "Perimeter is the distance all the way around.", name_line=False, big=True,
+                    footer="WeMath  ·  Perimeter")
+    c = bk.c
+    label(bk, M, y - 6, "Walk around the edge and count")
+    area_rect(bk, M + 34, y - 100, 3, 5, 22)
+    edge_numbers(bk, M + 34, y - 100, 3, 5, 22, size=10)
+    color_eq(bk, M + 240, y - 54, [("Perimeter", None), ("=", "op"), ("16", "b"), ("units", None)], 22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 240, y - 80, "Count each edge of a square once.")
+    y -= 132
+
+    label(bk, M, y - 6, "Add the sides")
+    rect_sides(bk, M + 50, y - 96, 120, 60, "6 cm", "4 cm", "6 cm", "4 cm", size=11)
+    color_eq(bk, M + 240, y - 54, [("6", "a"), ("+", "op"), ("4", "b"), ("+", "op"), ("6", "a"), ("+", "op"),
+                                   ("4", "b"), ("=", "op"), ("20", None), ("cm", None)], 22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 240, y - 80, "Opposite sides are the same length.")
+    y -= 128
+
+    label(bk, M, y - 6, "Area is inside. Perimeter is around.")
+    area_rect(bk, M + 50, y - 96, 3, 4, 20, fill="a")
+    edge_numbers(bk, M + 50, y - 96, 3, 4, 20, size=9)
+    color_eq(bk, M + 240, y - 44, [("Area", None), ("=", "op"), ("12", "a"), ("square units", None)], 20)
+    color_eq(bk, M + 240, y - 76, [("Perimeter", None), ("=", "op"), ("14", "b"), ("units", None)], 20)
+    y -= 122
+
+    bottom = your_turn(bk, y, h=104)
+    bk.ask("perimeter add 7 2 cm your turn")
+    rect_sides(bk, M + 140, bottom + 30, 84, 26, "7 cm", "2 cm", "7 cm", "2 cm")
+    bk.fit_eq(M + 300, bottom + 40, CW - 300 - 16, "[7] + [2] + [7] + [2] = [18] cm", size=16)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: perimeter is the length around a shape (3.MD.8). Trace the edge with a finger "
+                     "while counting. Then add the side lengths. Keep asking “inside or around?” so area and "
+                     "perimeter don't get mixed up.")
+
+
+def practice_perimeter(bk):
+    title = "Perimeter: Practice"
+    y = bk.new_page(title, "Go all the way around. Add every side.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(1, "Count around", "Count every edge on the outside.",
+         [(2, 5), (3, 3), (4, 6), (1, 7), (3, 6), (2, 9)], 2, 116, 10, c_perim_count,
+         lambda it: f"perimeter count {it[0]} {it[1]}")
+    part(2, "Add the sides", "Write each side, then add.",
+         [(8, 3, "cm"), (6, 5, "in"), (9, 4, "m"), (7, 7, "ft"), (12, 5, "cm"), (10, 6, "in")], 2, 126, 10,
+         c_perim_add, KINDS_40["perim_add"].key)
+    part(3, "More sides", "Add all the sides.",
+         [((5, 7, 6), "cm"), ((4, 4, 4, 4, 4), "in"), ((8, 6, 9), "m"), ((5, 9, 4, 7), "cm"), ((3, 3, 3, 3, 3, 3), "ft"),
+          ((6, 5, 7, 4, 8), "cm")], 2, 140, 10, c_perim_poly,
+         lambda it: "perimeter shape " + "-".join(map(str, it[0])) + f" {it[1]}")
+    part(4, "Find the missing side", "The perimeter is given. Take away the sides you know.",
+         [(8, 5, "cm"), (6, 3, "in"), (9, 7, "m"), (10, 4, "cm")], 1, 120, 10, c_perim_missing,
+         lambda it: f"perimeter missing {it[0]} {it[1]} {it[2]}")
+    part(5, "Area and perimeter", "Inside, then around.",
+         [(2, 6), (4, 5), (3, 7), (5, 5)], 2, 140, 10, c_area_perim, KINDS_40["area_perim"].key)
+    part(6, "Rectangles", "No help this time. Add all four sides.",
+         [perim_eq(a, b, "cm") for a, b in ((5, 3), (9, 2), (7, 4), (12, 6), (11, 3), (6, 4), (15, 5), (10, 7), (9, 6),
+                                            (14, 2))], 2, 42, 8, plain, lambda t: t)
+    part(7, "Squares", "No help this time. All four sides are the same.",
+         [square_perim_eq(s, u) for s, u in ((5, "m"), (8, "in"), (3, "cm"), (10, "ft"), (6, "m"), (9, "cm"))],
+         2, 42, 8, plain, lambda t: t)
+    part(8, "Add the sides", "No help this time.",
+         ["15 + 8 + 15 + 8 = [46]", "7 + 9 + 11 = [27]", "13 + 6 + 13 + 6 = [38]", "12 + 12 + 12 = [36]",
+          "9 + 14 + 9 + 14 = [46]", "6 + 8 + 5 + 9 = [28]"], 2, 42, 8, plain, lambda t: t)
+    part(9, "Find the missing side", "No help this time. Rectangles only.",
+         [perim_missing_eq(a, b, u) for a, b, u in ((7, 3, "cm"), (5, 4, "in"), (9, 2, "m"), (8, 6, "ft"),
+                                                    (11, 4, "cm"), (6, 5, "in"))], 2, 42, 8, plain, lambda t: t)
+    part(10, "Remember?", "Problems from earlier packets.", REVIEW_40, 2, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 11, "Word problems", "Draw the shape and label the sides.")
+    for i, story in enumerate(WORDS_40):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 11, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+def perim_eq(a, b, unit):
+    return f"{a} {unit} by {b} {unit}: perimeter = [{perimeter(a, b)}] {unit}"
+
+
+def square_perim_eq(s, unit):
+    return f"{s} {unit} by {s} {unit} square: perimeter = [{4 * s}] {unit}"
+
+
+def perim_missing_eq(a, b, unit):
+    return f"{a} {unit} by [{b}] {unit}: perimeter = {perimeter(a, b)} {unit}"
+
+
+REVIEW_40 = ["9 × 30 = [270]", "Round 452 to the nearest ten: [450]", "5 cm by 7 cm: area = [35] sq cm",
+             "8 eighths = [1] whole", f"500 {MINUS} 238 = [262]", "8 groups of 7 = [56]"]
+
+WORDS_40 = [
+    ("A garden is 9 feet long and 5 feet wide. How much fence goes all the way around it?",
+     "9 + 5 + 9 + 5 = 28", "28", "feet"),
+    ("A square picture frame has sides of 9 inches. What is its perimeter?", "9 + 9 + 9 + 9 = 36", "36", "inches"),
+    ("A triangle has sides of 6 cm, 8 cm and 10 cm. What is its perimeter?", "6 + 8 + 10 = 24", "24", "cm"),
+    ("A rug is 6 feet long. Its perimeter is 20 feet. How wide is it?", f"20 {MINUS} 12 = 8, half of 8 = 4", "4",
+     "feet"),
+    ("Challenge: A playground is 10 m long and 8 m wide. Kim walks around it 2 times. How far does Kim walk?",
+     "10 + 8 + 10 + 8 = 36, 36 + 36 = 72", "72", "m"),
+]
+
+KINDS_40 = {
+    "perim_add": Kind(126, 2, lambda it: f"perimeter add {it[0]} {it[1]} {it[2]}", c_perim_add),
+    "area_perim": Kind(140, 2, lambda it: f"area perimeter {it[0]} {it[1]}", c_area_perim),
+}
+KINDS.update(KINDS_40)
+
+PERIM_EQS = [perim_eq(a, b, u) for a in rng(3, 15) for b in rng(2, 9) if a > b for u in ("cm", "in", "m", "ft")]
+PERIM_MISSING = [perim_missing_eq(a, b, u) for a in rng(4, 12) for b in rng(2, 8) if a > b for u in ("cm", "m")]
+
+CHECKINS["40-perimeter"] = [
+    S("Add the sides", None, "perim_add", [(a, b, u) for a in rng(5, 12) for b in rng(2, 6) if a > b
+                                            for u in ("cm", "in", "m", "ft")], 2),
+    S("Area and perimeter", None, "area_perim", [(r, k) for r in rng(2, 5) for k in rng(3, 8) if r < k], 2),
+    S("Perimeter", None, "eq2", PERIM_EQS, 4),
+    S("Find the missing side", None, "eq2", PERIM_MISSING, 2),
+]
+_g3[-1:-1] = [
+    S("Perimeter", None, "eq2", PERIM_EQS, 2, 40),
+]
+
+
+# ====================================================================== 41. Elapsed Time
+
+
+def tadd(t, mins):
+    """(h, m) + minutes on a 12-hour clock."""
+    total = (t[0] % 12) * 60 + t[1] + mins
+    return (total // 60 % 12 or 12, total % 60)
+
+
+def tdiff(a, b):
+    """Minutes from a to b (forward, less than 12 hours)."""
+    return ((b[0] % 12) * 60 + b[1] - (a[0] % 12) * 60 - a[1]) % 720
+
+
+def time_stops(start, end):
+    """Jumping up in time: the start, the next o'clock (when the hour changes), the end."""
+    if start[1] == 0 or tdiff(start, end) <= 60 - start[1]:
+        return [start, end]
+    return [start, tadd(start, 60 - start[1]), end]
+
+
+def jump_times(bk, x, base, stops, spacing, size=15, given=None, example=False, H=18, r=11, vsize=11):
+    """Packet 11's jump picture with times: the stops in a row, a curved arrow over each jump with the
+    minutes in a bubble. given = indices of the stops printed (the others are boxes); default all."""
+    c = bk.c
+    given = range(len(stops)) if given is None else given
+    xs = [x + i * spacing for i in range(len(stops))]
+    for i, (sx, t) in enumerate(zip(xs, stops)):
+        if i in given:
+            c.setFillColor(T.ink)
+            c.setFont("Rnd", size)
+            c.drawCentredString(sx, base, tstr(*t))
+        else:
+            bw = sw(tstr(*t), "Rnd", size) + 14
+            bk.box(sx - bw / 2, base - size * 0.42, bw, size * 1.5, tstr(*t), size=size * 0.85)
+    lift = size * 1.2
+    reveal = T.accent if example else None
+    for i in range(len(stops) - 1):
+        p0 = (xs[i] + size * 0.6, base + lift)
+        p3 = (xs[i + 1] - size * 0.6, base + lift)
+        p1 = (p0[0] + 4, base + lift + H)
+        p2 = (p3[0] - 4, base + lift + H)
+        curve_arrow(bk, p0, p1, p2, p3)
+        bx, by = bezier_point(p0, p1, p2, p3, 0.5)
+        c.setFillColor(white)
+        c.setStrokeColor(T.accent)
+        c.setLineWidth(1.4)
+        c.circle(bx, by, r, stroke=1, fill=1)
+        bk.value(bx, by, tdiff(stops[i], stops[i + 1]), vsize, reveal)
+
+
+def c_jump_time(bk, x, cy, w, item):
+    """mode "given": every time printed, find the jumps. "find": the o'clock is a box too.
+    "end": start + minutes, find the o'clock and the end time."""
+    start, b, mode = item
+    end = tadd(start, b) if mode == "end" else b
+    stops = time_stops(start, end)
+    total = tdiff(start, end)
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 13)
+    head = (f"Start at {tstr(*start)}. {total} minutes later?" if mode == "end"
+            else f"From {tstr(*start)} to {tstr(*end)}. How long?")
+    c.drawString(x + GUT, cy + 118, head)
+    given = {"given": None, "find": (0, len(stops) - 1), "end": (0,)}[mode]
+    spacing = (w - GUT - 70) / max(1, len(stops) - 1)
+    jump_times(bk, x + GUT + 22, cy + 52, stops, spacing, given=given)
+    jumps = [f"[{tdiff(p, q)}]" for p, q in zip(stops, stops[1:])]
+    if mode == "end":
+        line = " + ".join(jumps) + f" = {total} minutes"
+    else:
+        line = " + ".join(jumps) + f" = [{total}] minutes"
+    bk.fit_eq(x + GUT, cy + 14, w - GUT - 10, line, size=14)
+
+
+def c_how_long(bk, x, cy, w, item):
+    """Two clocks in the same hour: how many minutes from the first to the second?"""
+    a, b = item
+    R = 32
+    c = bk.c
+    for i, (t, lab) in enumerate(((a, "start"), (b, "end"))):
+        cx = x + GUT + 40 + i * 130
+        clock(bk, cx, cy + 102, R, t, "quarters")
+        c.setFillColor(T.text2)
+        c.setFont("AvD", 10)
+        c.drawCentredString(cx, cy + 44, lab)
+    bk.arrow(x + GUT + 40 + R + 16, cy + 102, x + GUT + 170 - R - 16, cy + 102)
+    bk.fit_eq(x + GUT, cy + 14, w - GUT - 10, f"[{tdiff(a, b)}] minutes", size=15)
+
+
+def c_read_minute(bk, x, cy, w, item):
+    """A big clock to read to the minute."""
+    h, m, ring = item
+    clock(bk, x + GUT + 52, cy + 58, 42, (h, m), ring)
+    bk.eq(x + GUT + 130, cy + 50, f"[{tstr(h, m)}]", size=20)
+
+
+def elapsed_eq(a, b):
+    return f"{tstr(*a)} to {tstr(*b)} = [{tdiff(a, b)}] minutes"
+
+
+def later_eq(a, mins):
+    return f"{mins} minutes after {tstr(*a)} = [{tstr(*tadd(a, mins))}]"
+
+
+def learn_elapsed(bk):
+    y = bk.new_page("Elapsed Time", "How long? Jump to the next o'clock, then to the end.", name_line=False,
+                    big=True, footer="WeMath  ·  Elapsed Time")
+    c = bk.c
+    label(bk, M, y - 6, "Tell time to the minute")
+    clock(bk, M + 70, y - 72, 46, (4, 37), "full")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 160, y - 44, "Count by 5s to the 7: 5, 10, 15 … 35.")
+    c.drawString(M + 160, y - 62, "Then count the little marks: 36, 37.")
+    color_eq(bk, M + 160, y - 98, [("4", "a"), (":", None, "tight"), ("37", "b", "tight")], 28)
+    y -= 146
+
+    label(bk, M, y - 6, "How long from 3:40 to 4:25?")
+    jump_times(bk, M + 40, y - 84, [(3, 40), (4, 0), (4, 25)], 110, size=20, example=True, H=24, r=14, vsize=13)
+    color_eq(bk, M + 300, y - 50, [("20", "b"), ("+", "op"), ("25", "b"), ("=", "op"), ("45 minutes", None)], 22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 300, y - 76, "Jump to 4:00 first. Then to the end.")
+    y -= 116
+
+    label(bk, M, y - 6, "What time is it 25 minutes after 2:50?")
+    jump_times(bk, M + 40, y - 84, [(2, 50), (3, 0), (3, 15)], 110, size=20, example=True, H=24, r=14, vsize=13)
+    color_eq(bk, M + 300, y - 50, [("10", "b"), ("+", "op"), ("15", "b"), ("=", "op"), ("25", None)], 22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 300, y - 76, "10 minutes gets to 3:00.")
+    c.drawString(M + 300, y - 94, "15 more: it is 3:15.")
+    y -= 120
+
+    bottom = your_turn(bk, y, h=108)
+    bk.ask("elapsed given 5:35 6:10 your turn")
+    jump_times(bk, M + 140, bottom + 40, [(5, 35), (6, 0), (6, 10)], 80, size=17)
+    bk.fit_eq(M + 330, bottom + 40, CW - 330 - 16, "[25] + [10] = [35] minutes", size=16)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: time to the minute and intervals in minutes (3.MD.1). Same route as packet 11: jump "
+                     "to the next o'clock, then to the end, and add the jumps. Ask “How many minutes to the next "
+                     "o'clock?”")
+
+
+def practice_elapsed(bk):
+    title = "Elapsed Time: Practice"
+    y = bk.new_page(title, "Jump to the next o'clock. Then jump to the end. Add the jumps.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(1, "Time to the minute", "Count by 5s, then by 1s.",
+         [(4, 37, "full"), (9, 12, "full"), (2, 48, "full"), (7, 3, "full"), (11, 26, "full"), (6, 54, "full"),
+          (1, 19, "full"), (8, 41, "full")], 2, 116, 10, c_read_minute, KINDS_41["read_minute"].key)
+    part(2, "Draw the hands", "The long hand points to the minute mark.",
+         [(3, 22, "full"), (10, 8, "full"), (5, 46, "full")], 3, 120, 10, c_draw_hands, KINDS_27["draw_hands"].key)
+    part(3, "How long? Same hour", "Count the minutes from start to end.",
+         [((1, 10), (1, 45)), ((8, 5), (8, 30)), ((4, 20), (4, 40)), ((10, 15), (10, 55))], 2, 154, 10,
+         c_how_long, lambda it: f"how long {tstr(*it[0])} {tstr(*it[1])}")
+    key = KINDS_41["jump_time"].key
+    part(4, "Jump to the hour", "The stops are given. How big is each jump?",
+         [((2, 45), (3, 20), "given"), ((6, 30), (7, 15), "given"), ((9, 50), (10, 30), "given"),
+          ((11, 35), (12, 5), "given")], 2, 140, 10, c_jump_time, key)
+    part(5, "Find the stops", "Write the o'clock. Then find the jumps.",
+         [((1, 25), (2, 10), "find"), ((7, 55), (8, 20), "find"), ((4, 15), (5, 5), "find"),
+          ((12, 40), (1, 15), "find")], 2, 140, 10, c_jump_time, key)
+    part(6, "What time will it be?", "Jump to the o'clock, then the rest of the minutes.",
+         [((5, 45), 30, "end"), ((8, 50), 20, "end"), ((3, 35), 40, "end"), ((10, 40), 35, "end")], 2, 140, 10,
+         c_jump_time, key)
+    part(7, "How long?", "No help this time.",
+         [elapsed_eq(a, b) for a, b in (((4, 5), (4, 50)), ((2, 40), (3, 15)), ((9, 25), (9, 55)),
+                                        ((6, 50), (7, 30)), ((12, 10), (12, 45)), ((3, 55), (4, 35)),
+                                        ((7, 15), (8, 0)), ((1, 35), (2, 20)), ((5, 20), (5, 48)),
+                                        ((10, 45), (11, 12)))], 2, 42, 8, plain, lambda t: t)
+    part(8, "What time will it be?", "No help this time.",
+         [later_eq(a, n) for a, n in (((2, 15), 30), ((6, 45), 25), ((11, 20), 35), ((4, 50), 40), ((8, 35), 45),
+                                      ((1, 5), 50), ((9, 40), 15), ((3, 25), 55), ((7, 50), 30), ((12, 30), 45))],
+         2, 42, 8, plain, lambda t: t)
+    part(9, "Hours and minutes", "No help this time. 1 hour is 60 minutes.",
+         ["1 hour 15 minutes = [75] minutes", "1 hour 40 minutes = [100] minutes", "2 hours = [120] minutes",
+          "90 minutes = 1 hour [30] minutes", "1 hour 25 minutes = [85] minutes", "70 minutes = 1 hour [10] minutes"],
+         2, 42, 8, plain, lambda t: t)
+    part(10, "Remember?", "Problems from earlier packets.", REVIEW_41, 2, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 11, "Word problems", "Jump to the o'clock if it helps.")
+    for i, story in enumerate(WORDS_41):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 11, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_41 = ["7 × 80 = [560]", "4 m by 9 m: area = [36] sq m", "8 in by 3 in: perimeter = [22] in",
+             "Round 75 to the nearest ten: [80]", "3 groups of 9 = [27]", f"804 {MINUS} 367 = [437]"]
+
+WORDS_41 = [
+    ("Soccer practice starts at 3:15 and ends at 4:00. How long is practice?", "3:15 to 4:00 = 45 minutes", "45",
+     "minutes"),
+    ("A movie starts at 6:40. It lasts 50 minutes. What time does it end?", "20 + 30 = 50, so 7:30", "7:30", "p.m."),
+    ("Mia gets on the bus at 7:52 and gets to school at 8:15. How long is the ride?", "8 + 15 = 23", "23",
+     "minutes"),
+    ("Ben starts reading at 4:35. He reads for 35 minutes. What time does he stop?", "25 + 10 = 35, so 5:10", "5:10",
+     "p.m."),
+    ("Challenge: School starts at 8:30. Kim needs 10 minutes to get ready and 25 minutes to walk. When should she "
+     "start?", f"10 + 25 = 35, 8:30 {MINUS} 35 minutes = 7:55", "7:55", "a.m."),
+]
+
+KINDS_41 = {
+    "read_minute": Kind(116, 2, KINDS_27["read_clock"].key, c_read_minute),
+    "jump_time": Kind(140, 2, lambda it: f"elapsed {it[2]} {tstr(*it[0])} "
+                      + (str(it[1]) if it[2] == "end" else tstr(*it[1])), c_jump_time),
+}
+KINDS.update(KINDS_41)
+
+ELAPSED_EQS = [elapsed_eq((h, m), tadd((h, m), d)) for h in rng(1, 12) for m in rng(5, 55, 5) for d in rng(15, 55, 10)]
+LATER_EQS = [later_eq((h, m), d) for h in rng(1, 12) for m in rng(10, 55, 5) for d in rng(20, 50, 5) if m + d > 60]
+
+CHECKINS["41-elapsed-time"] = [
+    S("Time to the minute", None, "read_minute", [(h, m, "full") for h in rng(1, 12) for m in rng(1, 59) if m % 5], 2),
+    S("Find the stops", None, "jump_time", [((h, m), tadd((h, m), d), "find") for h in rng(1, 11) for m in rng(35, 55, 5)
+                                       for d in rng(25, 45, 5) if m + d > 60], 2),
+    S("How long?", None, "eq2", ELAPSED_EQS, 2),
+    S("What time will it be?", None, "eq2", LATER_EQS, 2),
+]
+_g3[-1:-1] = [
+    S("Elapsed time", None, "eq2", ELAPSED_EQS, 2, 41),
+]
+
+
+# ====================================================================== 42. Word Problems with All Four Operations
+
+
+def equal_bar(bk, x, y, w, n, each, unknown, h=24, size=13, show_all=False):
+    """A bar cut into n equal pieces (packet 30's bars, now for × and ÷). unknown "whole": every piece shows
+    `each`, the whole is a box on the bracket. unknown "each": the whole is shown, the first piece is a box.
+    show_all prints every number (learning page). y = bottom. Returns the top of the bracket label."""
+    c = bk.c
+    pw = w / n
+    for i in range(n):
+        if unknown == "whole" or show_all:
+            value, shown = each, True
+        else:
+            value, shown = (each, False) if i == 0 else ("", True)
+        if not shown and pw < 36:  # a narrow piece: a smaller box that stays inside it
+            bar_piece(bk, x + i * pw, y, pw, h, "", True, "a" if i % 2 == 0 else "b", size)
+            bk.box(x + i * pw + 3, y + 3, pw - 6, h - 6, value, size=size * 0.9)
+            continue
+        bar_piece(bk, x + i * pw, y, pw, h, value, shown, "a" if i % 2 == 0 else "b", size)
+    by = y + h + 7
+    c.setStrokeColor(T.text2)
+    c.setLineWidth(1)
+    c.line(x, by, x + w, by)
+    c.line(x, by, x, by - 5)
+    c.line(x + w, by, x + w, by - 5)
+    whole = n * each
+    if unknown == "each" or show_all:
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", size)
+        c.drawCentredString(x + w / 2, by + 5, str(whole))
+    else:
+        bw = max(28, sw(str(whole), "Rnd", size) + 12)
+        bk.box(x + w / 2 - bw / 2, by + 3, bw, size * 1.45, whole, size=size)
+    return by + 3 + size * 1.45
+
+
+def two_step_x(seed):
+    """Two-step stories with × or ÷ first (check-ins)."""
+    r = random.Random(seed)
+    out = []
+    for n, e, k in [(n, e, k) for n in rng(3, 7) for e in rng(4, 9) for k in rng(5, 13, 4) if k < n * e]:
+        name, t = r.choice(NAMES), r.choice(THINGS)
+        out.append((f"{name} has {n} bags with {e} {t} in each bag. {name} gives away {k} {t}. How many {t} are "
+                    f"left?", (f"{n} {TIMES} {e} = {n * e}", ("eq", n, e, "whole")),
+                    (f"{n * e} {MINUS} {k} = {n * e - k}", ("pw", k, n * e - k, "part")), n * e - k, t, True))
+    r.shuffle(out)
+    return out
+
+
+def stories_two(seed):
+    """Two-step word problems, no help (assessments): multiply then subtract, or share then add."""
+    r = random.Random(seed)
+    out = []
+    for n, e, k in [(n, e, k) for n in rng(3, 8) for e in rng(3, 9) for k in rng(4, 16, 3) if k < n * e]:
+        name, t = r.choice(NAMES), r.choice(THINGS)
+        if (n + e + k) % 2 or k > 10:
+            out.append((f"{name} has {n} boxes of {e} {t}. {name} uses {k} of them. How many {t} are left?",
+                        f"{n} {TIMES} {e} = {n * e}, {n * e} {MINUS} {k} = {n * e - k}", n * e - k, t))
+        else:
+            out.append((f"{n * e} {t} are shared equally by {n} kids. Then each kid gets {k} more. How many does "
+                        f"each kid have now?", f"{n * e} {DIV} {n} = {e}, {e} + {k} = {e + k}", e + k, t))
+    r.shuffle(out)
+    return out
+
+
+def about_eq(a, op, b):
+    ra, rb = round_to(a, 10), round_to(b, 10)
+    return f"{a} {op} {b} is about [{ra + rb if op == '+' else ra - rb}]"
+
+
+def learn_four_ops(bk):
+    y = bk.new_page("All Four Operations", "Two-step problems with +, −, × and ÷. Draw the bar.",
+                    name_line=False, big=True, footer="WeMath  ·  All Four Operations")
+    c = bk.c
+    label(bk, M, y - 6, "4 bags with 6 apples in each: equal pieces")
+    equal_bar(bk, M + 14, y - 72, 240, 4, 6, "whole", h=28, size=15, show_all=True)
+    color_eq(bk, M + 300, y - 50, [("4", "a"), (TIMES, "op"), ("6", "b"), ("=", "op"), ("24", None)], 24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 300, y - 72, "Know the pieces? Multiply.")
+    y -= 92
+
+    label(bk, M, y - 6, "30 stickers shared by 5 kids")
+    equal_bar(bk, M + 14, y - 72, 240, 5, 6, "each", h=28, size=15, show_all=True)
+    color_eq(bk, M + 300, y - 50, [("30", None), (DIV, "op"), ("5", "a"), ("=", "op"), ("6", "b")], 24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 300, y - 72, "Know the whole? Divide.")
+    y -= 92
+
+    label(bk, M, y - 6, "Two steps: 3 packs of 8 pencils. 5 get lost. How many are left?")
+    c.setFillColor(T.text2)
+    c.setFont("AvD", 9)
+    c.drawString(M + 14, y - 30, "Step 1")
+    equal_bar(bk, M + 14, y - 76, 200, 3, 8, "whole", size=13, show_all=True)
+    c.setFillColor(T.text2)
+    c.setFont("AvD", 9)
+    c.drawString(M + 264, y - 30, "Step 2")
+    bar_model(bk, M + 264, y - 76, 200, [(5, True), (19, True)], (24, True))
+    color_eq(bk, M + 14, y - 104, [("3", "a"), (TIMES, "op"), ("8", "b"), ("=", "op"), ("24", None)], 18)
+    color_eq(bk, M + 264, y - 104, [("24", None), (MINUS, "op"), ("5", "a"), ("=", "op"), ("19", "b")], 18)
+    y -= 126
+
+    label(bk, M, y - 6, "Does it make sense? Round to check.")
+    color_eq(bk, M + 14, y - 38, [("38", None), ("+", "op"), ("47", None), ("=", "op"), ("85", None)], 20)
+    color_eq(bk, M + 200, y - 38, [("about", None), ("40", "a"), ("+", "op"), ("50", "b"), ("=", "op"),
+                                   ("90", None)], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 60, "85 is close to 90, so it makes sense. 58 would not.")
+    y -= 78
+
+    bottom = your_turn(bk, y, h=96)
+    bk.ask("bar: eq 5 7 whole your turn")
+    equal_bar(bk, M + 120, bottom + 22, 220, 5, 7, "whole")
+    bk.fit_eq(M + 370, bottom + 30, CW - 370 - 16, f"[5] {TIMES} [7] = [35]", size=17)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: two-step problems with +, −, × and ÷ (3.OA.8). Equal pieces mean × (whole missing) "
+                     "or ÷ (a piece missing). Solve step 1, then use it in step 2. Round to check the answer "
+                     "makes sense.")
+
+
+def practice_four_ops(bk):
+    title = "All Four Operations: Practice"
+    y = bk.new_page(title, "Read. Draw the bar. Write the number sentence. Answer.")
+    num = 1
+
+    def part(n, name, sub, items, cols, h, gap, draw, key):
+        nonlocal y, num
+        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
+                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+
+    story_key = lambda it: f"story: {it[2]}"
+    part(1, "Equal pieces: find the whole", "Every piece is the same. Multiply.", [
+        ("Tia buys 8 boxes of crayons. Each box has 6 crayons. How many crayons does she have?",
+         ("eq", 8, 6, "whole"), f"8 {TIMES} 6 = 48", "crayons"),
+        ("There are 4 tables. 7 kids sit at each table. How many kids are there?", ("eq", 4, 7, "whole"),
+         f"4 {TIMES} 7 = 28", "kids"),
+        ("There are 9 vases with 7 flowers in each vase. How many flowers is that?", ("eq", 9, 7, "whole"),
+         f"9 {TIMES} 7 = 63", "flowers"),
+        ("Each pack has 8 juice boxes. Ms. Lee buys 5 packs. How many juice boxes is that?", ("eq", 5, 8, "whole"),
+         f"5 {TIMES} 8 = 40", "juice boxes"),
+    ], 1, 132, 10, c_story_bar, story_key)
+    part(2, "Equal pieces: find one piece", "The whole is shared equally. Divide.", [
+        ("27 kids make 3 equal teams. How many kids are on each team?", ("eq", 3, 9, "each"), f"27 {DIV} 3 = 9",
+         "kids"),
+        ("A ribbon 40 inches long is cut into 5 equal pieces. How long is each piece?", ("eq", 5, 8, "each"),
+         f"40 {DIV} 5 = 8", "inches"),
+        ("63 apples are packed into 9 equal bags. How many apples are in each bag?", ("eq", 9, 7, "each"),
+         f"63 {DIV} 9 = 7", "apples"),
+        ("Dad shares 48 grapes equally among 6 kids. How many grapes does each kid get?", ("eq", 6, 8, "each"),
+         f"48 {DIV} 6 = 8", "grapes"),
+    ], 1, 132, 10, c_story_bar, story_key)
+    two_key = lambda it: f"story: {it[1][0]}; {it[2][0]}"
+    part(3, "Two steps", "The bars are drawn for you. Step 1 helps with step 2.", [
+        ("Ben buys 4 packs of 6 cookies. He eats 5 cookies. How many cookies are left?",
+         (f"4 {TIMES} 6 = 24", ("eq", 4, 6, "whole")), (f"24 {MINUS} 5 = 19", ("pw", 5, 19, "part")), 19,
+         "cookies", True),
+        ("28 kids sit at 4 tables, the same number at each. Then 3 more kids join each table. How many kids are at "
+         "each table now?", (f"28 {DIV} 4 = 7", ("eq", 4, 7, "each")), ("7 + 3 = 10", ("pw", 7, 3, "whole")), 10,
+         "kids", True),
+        ("Mia has 3 bags of 9 marbles. Sam has 15 marbles. How many more marbles does Mia have?",
+         (f"3 {TIMES} 9 = 27", ("eq", 3, 9, "whole")), ("15 + 12 = 27", ("cmp", 27, 15, "diff", ("Mia", "Sam"))),
+         12, "marbles", True),
+    ], 1, 218, 10, c_two_step, two_key)
+    part(4, "Two steps on your own", "Draw a bar for each step.", [
+        ("A class has 5 rows of 6 desks. 8 desks are empty. How many desks have kids at them?",
+         (f"5 {TIMES} 6 = 30", None), (f"30 {MINUS} 8 = 22", None), 22, "desks", False),
+        ("Kim shares 45 beads equally among 5 friends. Each friend uses 3 beads. How many beads does each friend "
+         "have left?", (f"45 {DIV} 5 = 9", None), (f"9 {MINUS} 3 = 6", None), 6, "beads", False),
+        ("Stickers cost $4 a pack. Leo buys 6 packs and pays with $30. How much change does he get?",
+         (f"6 {TIMES} $4 = $24", None), (f"$30 {MINUS} $24 = $6", None), "$6", "", False),
+        ("A farmer has 7 rows of 8 corn plants and 20 tomato plants. How many plants are there in all?",
+         (f"7 {TIMES} 8 = 56", None), ("56 + 20 = 76", None), 76, "plants", False),
+    ], 1, 218, 10, c_two_step, two_key)
+    plain = lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t)
+    part(5, "Does it make sense?", "Round each number to the nearest ten. About how much?",
+         [about_eq(a, op, b) for a, op, b in ((38, "+", 47), (24, "+", 33), (82, MINUS, 37), (56, "+", 41),
+                                              (93, MINUS, 21), (66, "+", 12), (58, MINUS, 33), (71, MINUS, 49))],
+         2, 42, 8, plain, lambda t: t)
+    part(6, "Remember?", "Problems from earlier packets.", REVIEW_42, 2, 42, 8, plain, lambda t: t)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 7, "Word problems", "No help this time. Two steps each.")
+    for i, story in enumerate(WORDS_42):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 7, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_42 = ["3 × 80 = [240]", "6 cm by 9 cm: area = [54] sq cm", "7 m by 2 m: perimeter = [18] m",
+             "20 minutes after 3:50 = [4:10]", "Round 438 to the nearest hundred: [400]",
+             "1 hour 30 minutes = [90] minutes"]
+
+WORDS_42 = [
+    ("A box holds 6 eggs. Mom buys 5 boxes and uses 12 eggs. How many eggs are left?",
+     f"5 {TIMES} 6 = 30, 30 {MINUS} 12 = 18", "18", "eggs"),
+    ("Ana has 32 stickers. She gives 4 friends 5 stickers each. How many stickers are left?",
+     f"4 {TIMES} 5 = 20, 32 {MINUS} 20 = 12", "12", "stickers"),
+    ("24 kids stand in 3 equal lines. 2 kids leave each line. How many kids are in each line now?",
+     f"24 {DIV} 3 = 8, 8 {MINUS} 2 = 6", "6", "kids"),
+    ("Tickets cost $7 each. Ben buys 3 tickets and a $9 snack. How much does he spend?",
+     f"3 {TIMES} $7 = $21, $21 + $9 = $30", "$30", ""),
+    ("A garden has 9 rows of 4 plants. Then 10 more plants are added. How many plants are there now?",
+     f"9 {TIMES} 4 = 36, 36 + 10 = 46", "46", "plants"),
+    ("Challenge: Leo reads 8 pages a day for 7 days. His book has 100 pages. How many pages are left?",
+     f"7 {TIMES} 8 = 56, 100 {MINUS} 56 = 44", "44", "pages"),
+]
+
+EQUAL_BARS = [("eq", n, e, u) for n in rng(3, 8) for e in rng(3, 9) for u in ("whole", "each") if (n, e) != (5, 7)]
+
+CHECKINS["42-four-operations"] = [
+    S("Equal pieces", "Find the number that goes in the box.", "bar", EQUAL_BARS, 4),
+    S("Two steps", None, "two_step", two_step_x("c42"), 1),
+    S("Two-step word problems", None, "word", stories_two("w42"), 1),
+]
+_g3[-1:-1] = [
+    S("Equal pieces", None, "bar", EQUAL_BARS, 2, 42),
+    S("Two-step word problems", None, "word", stories_two("g42"), 2, 42),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -10231,7 +11350,7 @@ import json
 
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
-                  26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37]
+                  26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -10255,6 +11374,13 @@ ANSWER_OF = {
     "show_amount": lambda a: " ".join(COIN[k][2] for k in greedy(a)),
     "round_card": lambda it: str(round_to(it[0], it[1])),
     "shade_frac": lambda it: f"{it[1]} of {it[0]} parts shaded",
+    "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
+    "area_rows": lambda it: f"{it[0] * it[1]} square units",
+    "area_split": lambda it: str(it[0] * (it[1] + it[2])),
+    "perim_add": lambda it: f"{perimeter(it[0], it[1])} {it[2]}",
+    "area_perim": lambda it: f"area {it[0] * it[1]}, perimeter {perimeter(it[0], it[1])}",
+    "read_minute": lambda it: tstr(it[0], it[1]),
+    "jump_time": lambda it: (tstr(*tadd(it[0], it[1])) if it[2] == "end" else f"{tdiff(it[0], it[1])} minutes"),
 }
 
 
@@ -10387,6 +11513,12 @@ PACKETS = [
      practice_across_zeros, False),    ("30-two-step-word-problems", "two-step-word-problems", "Two-Step Word Problems", learn_bar_models,
      practice_bar_models, False),    ("31-measuring-length", "measuring-length", "Measuring Length", learn_length, practice_length, False),    ("32-graphs", "graphs", "Graphs", learn_graphs, practice_graphs, False),    ("33-multiplication", "multiplication", "Multiplication", learn_multiplication, practice_multiplication, False),    ("34-multiplication-strategies", "multiplication-strategies", "Multiplication Strategies", learn_strategies,
      practice_strategies, False),    ("35-division", "division", "Division", learn_division, practice_division, False),    ("36-fractions", "fractions", "Fractions", learn_fractions, practice_fractions, False),    ("37-rounding", "rounding", "Rounding", learn_rounding, practice_rounding, False),
+    ("38-multiplying-by-tens", "multiplying-by-tens", "Multiplying by Tens", learn_times_tens,
+     practice_times_tens, False),
+    ("39-area", "area", "Area", learn_area, practice_area, False),
+    ("40-perimeter", "perimeter", "Perimeter", learn_perimeter, practice_perimeter, False),
+    ("41-elapsed-time", "elapsed-time", "Elapsed Time", learn_elapsed, practice_elapsed, False),
+    ("42-four-operations", "four-operations", "All Four Operations", learn_four_ops, practice_four_ops, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
