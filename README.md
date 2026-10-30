@@ -50,14 +50,14 @@ Thirty-eight packets, in teaching order (K to grade 3). Each starts with a pictu
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 
-- `<topic>-packet.pdf`: the student packet
-- `<topic>-answer-key.pdf`: the same pages filled in, with a short teacher note on the learning page
+- `<topic>-packet.pdf`: the student packet, ending with its Check-In page
+- `<topic>-answer-key.pdf`: the same pages filled in (the Check-In too), with a short teacher note on the learning page
 
 ## Rebuilding
 
 ## Check-Ins and assessments
 
-**Check-Ins.** Every packet folder also has a one-page `<slug>-check-in.pdf` (and `-check-in-key.pdf`) in both inks. It has one or two problems of each kind from that packet, with no help. The key shows the mastery line: 80% of the problems correct.
+**Check-Ins.** The last page of every packet (and answer key) is its Check-In. The same page is also saved on its own as `<slug>-check-in.pdf` (and `-check-in-key.pdf`) in both inks, for a retake. It has one or two problems of each kind from that packet, with no help. The key shows the mastery line: 80% of the problems correct.
 
 **Grade-level assessments** are in `assessments/`, in color and black-and-white:
 

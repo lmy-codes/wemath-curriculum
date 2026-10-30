@@ -54,7 +54,7 @@ WeMath is a math tutoring program in a community center, with Mathnasium-style t
 | `41-elapsed-time/` | Time to the minute and intervals (3.MD.1) | `jump_times` (packet 11's jump picture with times: start → next o'clock → end, minutes in the bubbles; **not a number line**), `time_stops`, `tadd`, `tdiff`, `c_read_minute` (big clock), `c_how_long` (two clocks), `c_jump_time` (modes given / find / end) |
 | `42-four-operations/` | Two-step problems with all four operations (3.OA.8) | `equal_bar(n, each, unknown)` (bar of equal pieces; also `("eq", n, each, "whole"/"each")` in `draw_model`, so `c_story_bar`, `c_two_step` and the "bar" check-in kind take it), `about_eq` (round to check), `two_step_x`, `stories_two` |
 
-Each folder has `color/` and `black-and-white/` subfolders, each holding `<slug>-packet.pdf` and `<slug>-answer-key.pdf`. Packets 3 and 4 also include `break-apart-template.pdf`.
+Each folder has `color/` and `black-and-white/` subfolders, each holding `<slug>-packet.pdf` and `<slug>-answer-key.pdf`. **The Check-In is the last page of both** (founder's request): `build_check_in(..., into=bk)` draws it into the still-open packet Book, so the main loop builds every packet with `save=False`, runs the `Picker`, then adds each Check-In and saves. The standalone `-check-in.pdf` files are the same pages. Packets 3 and 4 also include `break-apart-template.pdf`.
 
 **Rebuild everything:** `python build_worksheets.py`, run from this folder.
 - Needs `reportlab` (plus `pypdfium2` and `pypdf` for checking). If they're missing, create a venv outside the PDF folders: `python3 -m venv .venv && .venv/bin/pip install reportlab pypdfium2 pypdf`.

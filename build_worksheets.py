@@ -6432,7 +6432,9 @@ def place_sections(bk, title, y, picked, record=None):
     return y
 
 
-def build_check_in(packet, ink_folder, key, picker, manifest=None):
+def build_check_in(packet, ink_folder, key, picker, manifest=None, into=None):
+    """The Check-In as its own PDF. into = the packet's open Book: the same Check-In is also added at the end
+    of the packet (or of its answer key), so it prints with the packet."""
     folder, slug, name = packet[:3]
     sections = CHECKINS[folder]
     path = ROOT / folder / ink_folder / f"{slug}-check-in{'-key' if key else ''}.pdf"
@@ -6442,12 +6444,19 @@ def build_check_in(packet, ink_folder, key, picker, manifest=None):
     picked = [(s, picker.pick(s.kind, s.pool, s.count, doc)) for s in sections]
     total = sum(len(items) for _, items in picked)
     title = f"Check-In: {name}"
-    y = bk.new_page(title, "Show what you know. No help this time.", footer=f"WeMath  ·  {name} Check-In")
-    score_tag(bk, total)
     record = [] if manifest is not None else None
-    place_sections(bk, title, y, picked, record)
-    if bk.page > 1:
-        print(f"WARNING: {folder} check-in runs onto {bk.page} pages")
+    for target, rec in ((bk, record), (into, None)):
+        if target is None:
+            continue
+        first = target.page
+        asked, target.asked = target.asked, {}  # the packet's no-repeat registry doesn't apply to its Check-In
+        target.subtitle = f"{name} Check-In"  # the header names the Check-In, as in its own PDF
+        y = target.new_page(title, "Show what you know. No help this time.", footer=f"WeMath  ·  {name} Check-In")
+        score_tag(target, total)
+        place_sections(target, title, y, picked, rec)
+        target.asked = asked
+        if target is bk and bk.page - first > 1:
+            print(f"WARNING: {folder} check-in runs onto {bk.page - first} pages")
     bk.save()
     if record is not None:
         manifest.append(manifest_entry(f"check-in:{folder.split('-', 1)[1]}", "check-in", f"{name} Check-In",
@@ -11526,7 +11535,7 @@ PACKETS = [
 OPTIONS = []  # e.g. packet 12 was built as "rows" and "columns"; the founder chose rows
 
 
-def build_packet(packet, ink_folder, key, asked, suffix=""):
+def build_packet(packet, ink_folder, key, asked, suffix="", save=True):
     folder, slug, name, learn, practice, _ = packet
     out = ROOT / folder / ink_folder
     path = out / f"{slug}-{'answer-key' if key else 'packet'}{suffix}.pdf"
@@ -11534,6 +11543,8 @@ def build_packet(packet, ink_folder, key, asked, suffix=""):
     bk.c.setTitle(f"{name}: " + ("Answer Key" if key else "Packet"))
     learn(bk)
     practice(bk)
+    if not save:
+        return bk  # still open: the Check-In is added at the end, then saved
     bk.save()
     return path
 
@@ -11543,14 +11554,15 @@ if __name__ == "__main__":
         T = theme(color)
         for key in (False, True):
             asked = {}  # one registry across all four packets: no question twice
-            for packet in PACKETS:
-                print(build_packet(packet, ink_folder, key, asked))
+            books = [build_packet(packet, ink_folder, key, asked, save=False) for packet in PACKETS]
             for packet in OPTIONS:
                 print(build_packet(packet, ink_folder, key, dict(asked)))
             picker = Picker(asked)  # check-ins and assessments: fresh problems first, none repeated
             manifest = [] if color and key else None
-            for packet in PACKETS:
-                build_check_in(packet, ink_folder, key, picker, manifest)
+            for packet, bk in zip(PACKETS, books):
+                build_check_in(packet, ink_folder, key, picker, manifest, into=bk)  # also ends the packet
+                bk.save()
+                print(bk.path if hasattr(bk, "path") else packet[0])
             for grade in GRADES:
                 for when in ("pre", "post"):
                     print(build_assessment(grade, when, ink_folder, key, picker, manifest))
