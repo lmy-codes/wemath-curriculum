@@ -10538,6 +10538,169 @@ CHECKINS["41-fractions-and-wholes"] = [
 ]
 
 
+def fraction_wall(bk, x, top, w, dens=(1, 2, 3, 4, 6, 8), row=20, gap=4, labels=True, size=11):
+    """The fraction wall: one strip per denominator, all the same length, each piece labelled."""
+    c = bk.c
+    for i, n in enumerate(dens):
+        yy = top - row - i * (row + gap)
+        strip(bk, x, yy, w, row, n, lw=1)
+        if labels:
+            for j in range(n):
+                frac_expr(bk, x + w * (j + 0.5) / n - (size * 0.8 + 6) / 2 if n > 1 else x + w / 2 - 4,
+                          yy + row / 2 - size * 0.2, f"1/{n}" if n > 1 else "1", size=size * (0.85 if n >= 8 else 1))
+    return len(dens) * (row + gap) - gap
+
+
+def c_same_amount(bk, x, cy, w, item):
+    """Two strips of the same whole: same amount shaded? The key rings yes or no."""
+    a, b, p, q = item
+    sw_ = w - GUT - 112
+    for j, (k, n) in enumerate(((a, b), (p, q))):
+        yy = cy + 46 - j * 30
+        frac_expr(bk, x + GUT, yy + 2, f"{k}/{n}", size=14)
+        strip(bk, x + GUT + 30, yy, sw_, 18, n, shaded=k)
+    yes_no_choice(bk, x, cy + 6, w, a * q == b * p)
+
+
+def c_match_frac(bk, x, cy, w, item):
+    """Top strip shaded; the bottom strip has different pieces. Shade the same amount, then name it."""
+    (a, b), q = item
+    k = a * q // b
+    sw_ = w - GUT - 170
+    strip(bk, x + GUT, cy + 50, sw_, 20, b, shaded=a)
+    strip(bk, x + GUT, cy + 20, sw_, 20, q, answer=k)
+    frac_expr(bk, x + GUT + sw_ + 22, cy + 38, f"{a}/{b} = [{k}]/{q}", size=22)
+
+
+def learn_equal_fractions(bk):
+    y = bk.new_page("Equal Fractions", "Different pieces, same amount.", name_line=False, big=True,
+                    footer="WeMath  ·  Equal Fractions")
+    c = bk.c
+    label(bk, M, y - 6, "The fraction wall")
+    hh = fraction_wall(bk, M + 14, y - 20, 300)
+    c.setStrokeColor(T.accent)
+    c.setLineWidth(1.4)
+    c.setDash(3, 2.5)
+    c.line(M + 164, y - 16, M + 164, y - 24 - hh)
+    c.setDash()
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 36, "Follow the dashed line:")
+    frac_expr(bk, M + 340, y - 66, "1/2 = 2/4 = 3/6 = 4/8", size=16)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 100, "Same length, so they are")
+    c.drawString(M + 340, y - 116, "equal fractions.")
+    y -= hh + 44
+
+    label(bk, M, y - 6, "Cut every piece in two")
+    strip(bk, M + 14, y - 52, 240, 26, 3, shaded=1)
+    frac_expr(bk, M + 272, y - 46, "1/3", size=22)
+    strip(bk, M + 14, y - 88, 240, 26, 6, shaded=2)
+    frac_expr(bk, M + 272, y - 82, "2/6", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 330, y - 42, "Twice as many pieces,")
+    c.drawString(M + 330, y - 58, "each half as big.")
+    frac_expr(bk, M + 330, y - 90, "1/3 = 2/6", size=18)
+    y -= 112
+
+    bottom = your_turn(bk, y, h=104)
+    bk.ask("equal fractions: 3/4 in eighths your turn")
+    strip(bk, M + 130, bottom + 58, 200, 22, 4, shaded=3)
+    strip(bk, M + 130, bottom + 26, 200, 22, 8, answer=6)
+    frac_expr(bk, M + 360, bottom + 44, "3/4 = [6]/8", size=24)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: equal fractions name the same amount of the same whole (3.NF.3a–b). Line the strips up: "
+                     "“Is the shaded part the same length?” Cutting every piece in two doubles the top and the "
+                     "bottom.")
+
+
+def practice_equal_fractions(bk):
+    title = "Equal Fractions: Practice"
+    y = bk.new_page(title, "Same whole, same amount shaded: the fractions are equal.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Same amount?", "Same whole. Is the same amount shaded? Circle yes or no.", "same_amount",
+         [(1, 2, 3, 6), (2, 3, 3, 4), (1, 4, 2, 8), (3, 5, 6, 10), (2, 6, 1, 4), (3, 4, 6, 8), (1, 3, 3, 8),
+          (4, 10, 2, 5)])
+    part(2, "Line them up", "Count the shaded pieces in the second strip.", "equiv_frac",
+         [((1, 2), 4), ((1, 3), 6), ((3, 4), 8), ((2, 5), 10), ((2, 3), 6), ((1, 4), 8)])
+    part(3, "Shade to match", "Shade the same amount in the second strip, then write the fraction.", "match_frac",
+         [((1, 2), 8), ((1, 5), 10), ((2, 4), 8), ((1, 2), 6), ((3, 5), 10), ((1, 2), 10)])
+    part(4, "Find the top number", "No help this time. Picture the wall.", "frac3",
+         ["1/2 = [4]/8", "2/3 = [4]/6", "1/4 = [2]/8", "4/5 = [8]/10", "1/2 = [5]/10", "3/4 = [6]/8",
+          "1/5 = [2]/10", "1/3 = [2]/6", "2/4 = [4]/8", "3/5 = [6]/10", "1/2 = [3]/6", "2/5 = [4]/10"])
+    part(5, "Fewer, bigger pieces", "No help this time. Same amount with bigger pieces.", "frac3",
+         ["4/8 = [1]/2", "2/6 = [1]/3", "6/8 = [3]/4", "8/10 = [4]/5", "2/8 = [1]/4", "5/10 = [1]/2",
+          "4/6 = [2]/3", "6/10 = [3]/5", "3/6 = [1]/2", "2/10 = [1]/5", "2/4 = [1]/2", "4/10 = [2]/5"])
+    part(6, "Find the bottom number", "No help this time.", "frac3",
+         ["1/2 = 2/[4]", "1/3 = 2/[6]", "3/4 = 6/[8]", "1/5 = 2/[10]", "2/3 = 4/[6]", "1/2 = 4/[8]",
+          "4/8 = 1/[2]", "6/10 = 3/[5]", "2/8 = 1/[4]"])
+    part(7, "Halves in disguise", "No help this time. Each one is the same as 1/2.", "frac3",
+         ["2/4 = [3]/6", "3/6 = [4]/8", "4/8 = [5]/10", "2/4 = [5]/10", "3/6 = [5]/10", "5/10 = [4]/8"])
+    part(8, "Keep going", "No help this time.", "frac2",
+         ["1/2 = [2]/4 = [4]/8", "3/6 = [2]/4 = [1]/2", "1/2 = [3]/6 = [5]/10", "8/8 = [4]/4 = [2]/2",
+          "1/2 = [2]/4 = [3]/6 = [4]/8", "2/2 = [3]/3 = [5]/5"])
+    part(9, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_EQUALF)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 10, "Word problems", "Draw strips to check.")
+    for i, story in enumerate(WORDS_EQUALF):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 10, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_EQUALF = ["Round 655 to the nearest ten: [660]", "8 m by 6 m: area = [48] sq m", "three fifths = [3]/5",
+                 "10/2 = [5]", "7/4 = 1 whole and [3]/4", "8 groups of 6 = [48]"]
+
+WORDS_EQUALF = [
+    ("Ana ate 2/4 of a pizza. Ben ate 1/2 of a same-size pizza. Did they eat the same amount?",
+     "2/4 = 1/2", "yes", ""),
+    ("A ribbon has 8 equal parts. Mia uses 4 of them. What fraction of the ribbon is that, in halves?",
+     "4/8 = 1/2", "1/2", "of the ribbon"),
+    ("Leo shades 1/3 of a bar. Kim's same-size bar has 6 parts. How many should Kim shade?",
+     "1/3 = 2/6", "2", "parts"),
+    ("A cake is cut into 10 equal slices. Half of the cake is eaten. How many slices is that?",
+     "1/2 = 5/10", "5", "slices"),
+    ("Challenge: Sam ran 3/4 of a mile. Jo ran 6/8 of a mile. Who ran farther?", "3/4 = 6/8",
+     "same", "distance"),
+]
+
+KINDS_EQUALF = {
+    "same_amount": Kind(78, 2, lambda it: f"same amount? {it[0]}/{it[1]} and {it[2]}/{it[3]}", c_same_amount),
+    "match_frac": Kind(84, 1, lambda it: f"shade to match: {it[0][0]}/{it[0][1]} in {it[1]}ths", c_match_frac, 8),
+}
+KINDS.update(KINDS_EQUALF)
+BALANCE["same_amount"] = lambda it: it[0] * it[3] == it[1] * it[2]
+
+_E_PAIRS = [(n, m) for n in (2, 3, 4, 5) for m in (4, 6, 8, 10) if m % n == 0 and m > n]
+EQUAL_TOP = [f"{a}/{n} = [{a * m // n}]/{m}" for n, m in _E_PAIRS for a in rng(1, n - 1)]
+EQUAL_DOWN = [f"{a * m // n}/{m} = [{a}]/{n}" for n, m in _E_PAIRS for a in rng(1, n - 1)]
+EQUAL_BOTTOM = ([f"{a}/{n} = {a * m // n}/[{m}]" for n, m in _E_PAIRS for a in rng(1, n - 1)]
+                + [f"{a * m // n}/{m} = {a}/[{n}]" for n, m in _E_PAIRS for a in rng(1, n - 1)])
+SAME_AMOUNT = ([(a, n, a * m // n, m) for n, m in _E_PAIRS for a in rng(1, n - 1)]
+               + [(a, n, b, m) for n, m in _E_PAIRS for a in rng(1, n - 1) for b in rng(1, m - 1)
+                  if b * n != a * m and abs(b * n - a * m) <= n])
+
+CHECKINS["42-equal-fractions"] = [
+    S("Same amount?", "Circle yes or no.", "same_amount", SAME_AMOUNT, 2),
+    S("Shade to match", None, "match_frac", [((a, n), m) for n, m in _E_PAIRS for a in rng(1, n - 1)], 1),
+    S("Find the top number", None, "frac3", EQUAL_TOP + EQUAL_DOWN, 3),
+    S("Find the bottom number", None, "frac3", EQUAL_BOTTOM, 3),
+]
+
+
 KINDS_36 = {
     "name_frac": Kind(72, 2, lambda it: f"frac name {it[0]} {it[1]} {it[2]}", c_name_frac),
     "shade_frac": Kind(72, 2, lambda it: f"frac shade {it[0]} {it[1]}", c_shade_frac),
@@ -11160,6 +11323,7 @@ _g3[-1:-1] = [
     S("Pieces and fractions", None, "frac2", COUNTF_FACTS, 2, 40),
     S("Less than, equal to, or more than 1?", None, "vs_one", VS_ONE, 2, 41),
     S("Fractions and wholes", None, "frac3", WHOLE_FACTS, 3, 41),
+    S("Equal fractions", None, "frac3", EQUAL_TOP + EQUAL_DOWN + EQUAL_BOTTOM, 3, 42),
 ]
 
 
@@ -13984,6 +14148,8 @@ ANSWER_OF = {
     "more_whole": lambda it: f"{it[1]}/{it[0]} = " + whole_text(it[1], it[0]).replace('[', '').replace(']', ''),
     "shade_more": lambda it: f"{it[1]} of the {it[0]}-part pieces shaded",
     "vs_one": lambda it: one_side(it[0], it[1]),
+    "same_amount": lambda it: _yes(it[0] * it[3] == it[1] * it[2]),
+    "match_frac": lambda it: f"{it[0][0] * it[1] // it[0][1]}/{it[1]}",
     "shade_frac": lambda it: f"{it[1]} of {it[0]} parts shaded",
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -14159,6 +14325,8 @@ PACKETS = [
     ("40-counting-fractions", "counting-fractions", "Counting Fractions", learn_counting_fractions, practice_counting_fractions,
      False),
     ("41-fractions-and-wholes", "fractions-and-wholes", "Fractions and Wholes", learn_fractions_wholes, practice_fractions_wholes,
+     False),
+    ("42-equal-fractions", "equal-fractions", "Equal Fractions", learn_equal_fractions, practice_equal_fractions,
      False),
     ("45-perimeter", "perimeter", "Perimeter", learn_perimeter, practice_perimeter, False),
     ("46-elapsed-time", "elapsed-time", "Elapsed Time", learn_elapsed, practice_elapsed, False),
