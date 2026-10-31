@@ -10701,6 +10701,173 @@ CHECKINS["42-equal-fractions"] = [
 ]
 
 
+def frac_sign(a, b, p, q):
+    return sign_of(Fraction(a, b), Fraction(p, q))
+
+
+def c_compare_shapes(bk, x, cy, w, item):
+    """Two same-size shapes, a sign box between, each fraction written under its shape."""
+    kind, (a, b), (p, q) = item
+    s = 50 if kind == "circle" else 44
+    sw_, sh_ = share_size(kind, s)
+    x1 = x + GUT
+    x2 = x1 + sw_ + 66
+    share_shape(bk, kind, x1, cy + 30, s, b, shaded=range(a))
+    share_shape(bk, kind, x2, cy + 30, s, q, shaded=range(p))
+    bk.box(x1 + sw_ + 15, cy + 30 + sh_ / 2 - 14, 36, 28, frac_sign(a, b, p, q), size=18)
+    frac_expr(bk, x1 + sw_ / 2 - 9, cy + 9, f"{a}/{b}", size=13)
+    frac_expr(bk, x2 + sw_ / 2 - 9, cy + 9, f"{p}/{q}", size=13)
+
+
+def c_biggest(bk, x, cy, w, item):
+    """Three fractions; the key rings the biggest."""
+    c = bk.c
+    best = max(item, key=lambda f: Fraction(*f))
+    fx = x + GUT + 6
+    for a, b in item:
+        frac_expr(bk, fx, cy + 16, f"{a}/{b}", size=18)
+        if bk.key and (a, b) == best:
+            c.setStrokeColor(T.answer)
+            c.setLineWidth(1.5)
+            c.ellipse(fx - 9, cy + 2, fx + 27, cy + 42, stroke=1, fill=0)
+        fx += 56
+
+
+def learn_comparing_fractions(bk):
+    y = bk.new_page("Comparing Fractions", "Same whole? Then look at the pieces.", name_line=False, big=True,
+                    footer="WeMath  ·  Comparing Fractions")
+    c = bk.c
+    label(bk, M, y - 6, "Same bottom number: same size pieces")
+    strip(bk, M + 14, y - 46, 200, 22, 8, shaded=3)
+    strip(bk, M + 14, y - 76, 200, 22, 8, shaded=5)
+    frac_expr(bk, M + 236, y - 62, "3/8 < 5/8", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 370, y - 50, "More pieces of the")
+    c.drawString(M + 370, y - 66, "same size is more.")
+    y -= 98
+
+    label(bk, M, y - 6, "Same top number: look at the size")
+    strip(bk, M + 14, y - 46, 200, 22, 3, shaded=2)
+    strip(bk, M + 14, y - 76, 200, 22, 6, shaded=2)
+    frac_expr(bk, M + 236, y - 62, "2/3 > 2/6", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 370, y - 50, "Same number of pieces,")
+    c.drawString(M + 370, y - 66, "but thirds are bigger.")
+    y -= 98
+
+    label(bk, M, y - 6, "Only compare the same whole")
+    share_shape(bk, "circle", M + 20, y - 66, 40, 2, shaded=[0])
+    share_shape(bk, "circle", M + 100, y - 86, 70, 2, shaded=[0])
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 236, y - 40, "Half of a small pizza is less")
+    c.drawString(M + 236, y - 56, "than half of a big pizza.")
+    c.drawString(M + 236, y - 80, "Compare fractions of the same whole.")
+    y -= 104
+
+    label(bk, M, y - 6, "Equal? The strips line up.")
+    frac_expr(bk, M + 14, y - 42, "2/4 = 1/2", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 160, y - 38, "Use the fraction wall from Equal Fractions.")
+    y -= 62
+
+    bottom = your_turn(bk, y, h=94)
+    bk.ask("compare fractions: 3/5 and 4/5 your turn")
+    strip(bk, M + 130, bottom + 50, 160, 18, 5, shaded=3)
+    strip(bk, M + 130, bottom + 22, 160, 18, 5, shaded=4)
+    frac_expr(bk, M + 320, bottom + 38, "3/5 [<] 4/5", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: compare two fractions of the same whole with <, > or = (3.NF.3d). Ask “Same size "
+                     "pieces? Then who has more pieces?” or “Same number of pieces? Then whose pieces are bigger?”")
+
+
+def practice_comparing_fractions(bk):
+    title = "Comparing Fractions: Practice"
+    y = bk.new_page(title, "Same whole. Write <, > or =.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Compare with strips", "Look at how much is shaded.", "compare_frac",
+         [((3, 8), (5, 8)), ((2, 3), (2, 6)), ((4, 5), (2, 5)), ((1, 2), (2, 4)), ((3, 10), (3, 4)),
+          ((5, 6), (1, 6)), ((2, 8), (2, 3)), ((3, 6), (1, 2))])
+    part(2, "Compare with shapes", "Same size shapes.", "compare_shapes",
+         [("circle", (2, 4), (3, 4)), ("rect", (1, 3), (1, 5)), ("circle", (5, 6), (4, 6)),
+          ("square", (2, 4), (2, 3)), ("circle", (1, 2), (3, 6)), ("rect", (3, 5), (4, 5))])
+    plain = "frac3"
+    part(3, "Same bottom number", "No help this time. Same size pieces: more pieces is more.", plain,
+         ["4/6 [>] 3/6", "2/5 [<] 3/5", "7/8 [>] 3/8", "1/4 [<] 3/4", "6/10 [>] 4/10", "2/3 [>] 1/3",
+          "3/10 [<] 9/10", "5/8 [>] 1/8", "1/5 [<] 4/5", "5/6 [>] 2/6", "2/8 [<] 6/8", "7/10 [>] 2/10"])
+    part(4, "Same top number", "No help this time. Same number of pieces: bigger pieces is more.", plain,
+         ["2/5 [>] 2/8", "3/10 [<] 3/4", "3/8 [<] 3/5", "2/3 [>] 2/4", "4/6 [>] 4/10", "2/10 [<] 2/6",
+          "4/8 [<] 4/5", "3/4 [>] 3/6", "3/6 [<] 3/5", "2/4 [>] 2/10", "2/8 [<] 2/5", "5/8 [>] 5/10"])
+    part(5, "Unit fractions", "No help this time.", plain,
+         ["1/3 [>] 1/8", "1/10 [<] 1/2", "1/6 [<] 1/3", "1/4 [>] 1/5", "1/2 [>] 1/4", "1/8 [<] 1/6",
+          "1/3 [<] 1/2", "1/5 [>] 1/10", "1/6 [>] 1/8"])
+    part(6, "Equal or not?", "No help this time. Some are equal fractions.", plain,
+         ["2/4 [=] 1/2", "3/8 [<] 4/8", "2/6 [=] 1/3", "4/5 [>] 3/5", "6/8 [=] 3/4", "5/10 [=] 1/2",
+          "2/10 [=] 1/5", "4/8 [=] 2/4", "5/8 [>] 3/8"])
+    part(7, "Circle the biggest", "No help this time.", "biggest",
+         [((5, 6), (2, 6), (3, 6)), ((1, 4), (1, 8), (1, 2)), ((3, 10), (3, 4), (3, 5)), ((7, 8), (4, 8), (2, 8)),
+          ((2, 5), (2, 10), (2, 3)), ((1, 6), (1, 3), (1, 10))])
+    part(8, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_COMPAREF)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 9, "Word problems", "Draw strips to compare.")
+    for i, story in enumerate(WORDS_COMPAREF):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 9, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_COMPAREF = ["4/5 = 8/[10]", "12/3 = [4]", "Round 384 to the nearest hundred: [400]", "3 groups of 8 = [24]",
+                   "9 m by 4 m: area = [36] sq m", "two eighths = [2]/8"]
+
+WORDS_COMPAREF = [
+    ("Kim ate 3/8 of a pizza. Leo ate 5/8 of the same pizza. Who ate more?", "3/8 < 5/8", "Leo", ""),
+    ("Ana ran 2/3 of a mile. Ben ran 2/6 of a mile. Who ran farther?", "2/3 > 2/6", "Ana", ""),
+    ("A red ribbon is 1/4 of a yard. A blue ribbon is 1/2 of a yard. Which one is shorter?", "1/4 < 1/2",
+     "red", "ribbon"),
+    ("Mia's glass is 4/6 full. Sam's same-size glass is 2/3 full. Who has more juice?", "4/6 = 2/3", "same", ""),
+    ("Challenge: Jo says half of a small pizza is as much as half of a big pizza. Is Jo right?",
+     "1/2 of different wholes", "no", ""),
+]
+
+KINDS_COMPAREF = {
+    "compare_shapes": Kind(90, 2, lambda it: f"compare shapes: {it[0]} {it[1][0]}/{it[1][1]} and {it[2][0]}/{it[2][1]}",
+                           c_compare_shapes),
+    "biggest": Kind(48, 2, lambda it: "biggest: " + " ".join(f"{a}/{b}" for a, b in it), c_biggest, 8),
+}
+KINDS.update(KINDS_COMPAREF)
+BALANCE["compare_shapes"] = lambda it: frac_sign(*it[1], *it[2]) == "<"
+
+_C_DENS = (3, 4, 5, 6, 8, 10)
+SAME_BOTTOM = [f"{a}/{n} [{sign_of(a, b)}] {b}/{n}" for n in _C_DENS for a in rng(1, n - 1) for b in rng(1, n - 1)
+               if a != b]
+SAME_TOP = [f"{a}/{n} [{frac_sign(a, n, a, m)}] {a}/{m}" for a in (1, 2, 3, 4, 5) for n in _C_DENS for m in _C_DENS
+            if n != m and a < min(n, m)]
+BIGGEST = [tuple((a, n) for a in t) for n in (5, 6, 8, 10) for t in ((1, 4, 2), (3, 1, 2), (2, 3, 4)) if max(t) < n]
+
+CHECKINS["43-comparing-fractions"] = [
+    S("Compare with strips", None, "compare_frac", [((a, n), (b, n)) for n in (4, 5, 6, 8) for a in rng(1, n - 1)
+                                                    for b in rng(1, n - 1) if a < b] +
+      [((a, n), (a, m)) for a in (1, 2, 3) for n in (3, 4, 6, 8) for m in (3, 4, 6, 8) if n < m and a < n], 1),
+    S("Same bottom number", "Write <, > or =.", "frac3", SAME_BOTTOM, 3, balance=is_less),
+    S("Same top number", "Write <, > or =.", "frac3", SAME_TOP, 3, balance=is_less),
+    S("Circle the biggest", None, "biggest", BIGGEST, 2),
+]
+
+
 KINDS_36 = {
     "name_frac": Kind(72, 2, lambda it: f"frac name {it[0]} {it[1]} {it[2]}", c_name_frac),
     "shade_frac": Kind(72, 2, lambda it: f"frac shade {it[0]} {it[1]}", c_shade_frac),
@@ -11324,6 +11491,7 @@ _g3[-1:-1] = [
     S("Less than, equal to, or more than 1?", None, "vs_one", VS_ONE, 2, 41),
     S("Fractions and wholes", None, "frac3", WHOLE_FACTS, 3, 41),
     S("Equal fractions", None, "frac3", EQUAL_TOP + EQUAL_DOWN + EQUAL_BOTTOM, 3, 42),
+    S("Compare fractions", "Write <, > or =.", "frac3", SAME_BOTTOM + SAME_TOP, 3, 43, balance=is_less),
 ]
 
 
@@ -14150,6 +14318,9 @@ ANSWER_OF = {
     "vs_one": lambda it: one_side(it[0], it[1]),
     "same_amount": lambda it: _yes(it[0] * it[3] == it[1] * it[2]),
     "match_frac": lambda it: f"{it[0][0] * it[1] // it[0][1]}/{it[1]}",
+    "compare_frac": lambda it: frac_sign(*it[0], *it[1]),
+    "compare_shapes": lambda it: frac_sign(*it[1], *it[2]),
+    "biggest": lambda it: "%d/%d" % max(it, key=lambda f: Fraction(*f)),
     "shade_frac": lambda it: f"{it[1]} of {it[0]} parts shaded",
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -14327,6 +14498,8 @@ PACKETS = [
     ("41-fractions-and-wholes", "fractions-and-wholes", "Fractions and Wholes", learn_fractions_wholes, practice_fractions_wholes,
      False),
     ("42-equal-fractions", "equal-fractions", "Equal Fractions", learn_equal_fractions, practice_equal_fractions,
+     False),
+    ("43-comparing-fractions", "comparing-fractions", "Comparing Fractions", learn_comparing_fractions, practice_comparing_fractions,
      False),
     ("45-perimeter", "perimeter", "Perimeter", learn_perimeter, practice_perimeter, False),
     ("46-elapsed-time", "elapsed-time", "Elapsed Time", learn_elapsed, practice_elapsed, False),
