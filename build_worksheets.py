@@ -10118,6 +10118,17 @@ KINDS_UNIT = {
     "frac2": Kind(48, 2, lambda t: t, c_frac, 8),
 }
 KINDS.update(KINDS_UNIT)
+
+
+def c_rev(bk, x, cy, w, text):
+    """A "Remember?" problem: fractions drawn stacked, everything else as a plain equation."""
+    if "/" in text:
+        frac_fit(bk, x + GUT, cy + 15, w - GUT - 8, text, size=18)
+    else:
+        c_eq(bk, x, cy, w, text)
+
+
+KINDS["rev2"] = Kind(42, 2, lambda t: t, c_rev, 8)
 KINDS["bigger_unit_plain"] = Kind(48, 3, KINDS_UNIT["bigger_unit"].key, c_bigger_piece, 8)
 BALANCE["bigger_unit"] = BALANCE["bigger_unit_plain"] = lambda it: it[0] < it[1]
 
@@ -10326,6 +10337,204 @@ CHECKINS["40-counting-fractions"] = [
     S("Count by fractions", None, "frac2", COUNT_BY, 2),
     S("Pieces and fractions", None, "frac2", COUNTF_FACTS, 2),
     S("How much is left?", None, "frac2", LEFT_FACTS, 2),
+]
+
+
+def strips(bk, x, top, w, n, count, shaded=0, answer=0, h=18, gap=6):
+    """count strips of n parts stacked from y = top down; the first `shaded` parts filled across them
+    (or `answer` parts on the key). Returns the height used."""
+    for j in range(count):
+        strip(bk, x, top - h - j * (h + gap), w, h, n, shaded=max(0, min(n, shaded - j * n)),
+              answer=max(0, min(n, answer - j * n)))
+    return count * h + (count - 1) * gap
+
+
+def whole_text(t, n):
+    """7/4 -> "1 whole and [3]/4"; 11/4 -> "2 wholes and [3]/4"."""
+    q, r = divmod(t, n)
+    return f"{q} whole{'s' if q > 1 else ''} and [{r}]/{n}"
+
+
+def c_one_whole(bk, x, cy, w, item):
+    kind, n = item
+    ph = FRAC_PIC_H[kind]
+    frac_pic(bk, kind, x + GUT, cy + (72 - ph) / 2, n, shaded=range(n), s=96 if kind == "strip" else None)
+    frac_expr(bk, x + w - 96, cy + 30, f"[{n}]/{n} = 1", size=18)
+
+
+def c_wholes(bk, x, cy, w, item):
+    """k full strips of n: how many pieces, how many wholes."""
+    n, k = item
+    hh = strips(bk, x + GUT, cy + 42 + k * 12, 108, n, k, shaded=n * k, h=16, gap=6)
+    frac_fit(bk, x + GUT + 124, cy + 36, w - GUT - 132, f"[{n * k}]/{n} = [{k}]", size=18)
+
+
+def c_more_whole(bk, x, cy, w, item):
+    """Fractions bigger than 1: full strips, then a part strip."""
+    n, t = item
+    k = -(-t // n)
+    strips(bk, x + GUT, cy + 40 + k * 12, 150, n, k, shaded=t, h=16, gap=6)
+    frac_fit(bk, x + GUT + 172, cy + 34, w - GUT - 182, f"[{t}]/{n} = " + whole_text(t, n), size=17)
+
+
+def c_shade_more(bk, x, cy, w, item):
+    n, t = item
+    k = -(-t // n)
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 13)
+    bk.c.drawString(x + GUT, cy + 38, "Shade")
+    frac_expr(bk, x + GUT + 46, cy + 37, f"{t}/{n}", size=18)
+    strips(bk, x + GUT + 94, cy + 42 + k * 12, w - GUT - 106, n, k, answer=t, h=16, gap=6)
+
+
+ONE_WORDS = ("less than 1", "= 1", "more than 1")
+
+
+def one_side(a, b):
+    return ONE_WORDS[0] if a < b else ONE_WORDS[1] if a == b else ONE_WORDS[2]
+
+
+def c_vs_one(bk, x, cy, w, item):
+    a, b = item
+    frac_expr(bk, x + GUT, cy + 16, f"{a}/{b}", size=18)
+    circle_choice(bk, x + GUT + 40, cy + 17, ONE_WORDS, one_side(a, b), size=11, gap=13)
+
+
+def learn_fractions_wholes(bk):
+    y = bk.new_page("Fractions and Wholes", "All the pieces make 1 whole. More pieces go past 1.", name_line=False,
+                    big=True, footer="WeMath  ·  Fractions and Wholes")
+    c = bk.c
+    label(bk, M, y - 6, "All the pieces: 1 whole")
+    strip(bk, M + 14, y - 54, 200, 28, 4, shaded=4)
+    frac_expr(bk, M + 236, y - 48, "4/4 = 1", size=24)
+    strip(bk, M + 14, y - 92, 200, 28, 6, shaded=6)
+    frac_expr(bk, M + 236, y - 86, "6/6 = 1", size=24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 370, y - 50, "Top and bottom the same?")
+    c.drawString(M + 370, y - 68, "Then it's 1 whole.")
+    y -= 118
+
+    label(bk, M, y - 6, "More than 1 whole")
+    strips(bk, M + 14, y - 22, 200, 4, 2, shaded=7, h=26, gap=8)
+    frac_expr(bk, M + 236, y - 58, "7/4 = 1 whole and 3/4", size=20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 236, y - 86, "Count on past 4/4: 5/4, 6/4, 7/4.")
+    y -= 112
+
+    label(bk, M, y - 6, "Whole numbers are fractions too")
+    strips(bk, M + 14, y - 22, 200, 4, 2, shaded=8, h=22, gap=6)
+    frac_expr(bk, M + 236, y - 50, "8/4 = 2", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 46, "8 fourths fill 2 bars.")
+    for j in range(3):
+        strip(bk, M + 14 + j * 70, y - 104, 60, 22, 1, shaded=1)
+    frac_expr(bk, M + 236, y - 98, "3/1 = 3", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 94, "3 pieces, each a whole.")
+    y -= 126
+
+    bottom = your_turn(bk, y, h=100)
+    bk.ask("how many wholes: 2 strips of 3 your turn")
+    strips(bk, M + 130, bottom + 72, 160, 3, 2, shaded=6, h=20, gap=6)
+    frac_expr(bk, M + 320, bottom + 44, "[6]/3 = [2]", size=24)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: b/b = 1, fractions bigger than 1, and whole numbers as fractions (3.NF.3c). Say "
+                     "“How many pieces make one whole bar? Count on past it.” No mixed-number rules yet: 7/4 is "
+                     "1 whole and 3/4.")
+
+
+def practice_fractions_wholes(bk):
+    title = "Fractions and Wholes: Practice"
+    y = bk.new_page(title, "When the top number matches the bottom, that's 1 whole.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "One whole", "Every part is shaded. How many pieces?", "one_whole",
+         [("circle", 6), ("strip", 5), ("rect", 8), ("tall", 3), ("circle", 10), ("square", 4)])
+    part(2, "How many wholes?", "Count the pieces, then the whole bars.", "wholes",
+         [(3, 2), (4, 3), (2, 3), (6, 2), (5, 2), (8, 2), (2, 2), (3, 3)])
+    part(3, "More than one whole", "Full bars first, then the pieces left.", "more_whole",
+         [(4, 5), (3, 5), (6, 8), (8, 11), (5, 7), (2, 3), (4, 10), (3, 7)])
+    part(4, "Shade it", None, "shade_more",
+         [(3, 4), (4, 6), (6, 9), (2, 5), (5, 8), (8, 10)])
+    part(5, "Less than, equal to, or more than 1?", "Circle one.", "vs_one",
+         [(5, 4), (3, 8), (6, 6), (2, 3), (9, 8), (10, 10), (7, 5), (4, 6), (3, 3), (12, 10)])
+    part(6, "One whole", "No help this time.", "frac3",
+         ["5/5 = [1]", "[8]/8 = 1", "10/10 = [1]", "[3]/3 = 1", "2/2 = [1]", "[6]/6 = 1"])
+    part(7, "Whole numbers", "No help this time.", "frac3",
+         ["12/4 = [3]", "10/5 = [2]", "6/2 = [3]", "9/3 = [3]", "16/8 = [2]", "12/6 = [2]", "8/2 = [4]",
+          "15/5 = [3]", "20/10 = [2]", "4/1 = [4]", "18/6 = [3]", "6/3 = [2]"])
+    part(8, "Write the whole number as a fraction", "No help this time.", "frac3",
+         ["[8]/2 = 4", "[12]/3 = 4", "[16]/4 = 4", "[10]/2 = 5", "[24]/8 = 3", "[30]/10 = 3", "[6]/1 = 6",
+          "[20]/5 = 4", "[24]/6 = 4"])
+    part(9, "More than one whole", "No help this time.", "frac2",
+         ["9/8 = 1 whole and [1]/8", "7/5 = 1 whole and [2]/5", "11/4 = 2 wholes and [3]/4",
+          "8/6 = 1 whole and [2]/6", "13/10 = 1 whole and [3]/10", "5/2 = 2 wholes and [1]/2",
+          "10/3 = 3 wholes and [1]/3", "11/6 = 1 whole and [5]/6", "17/8 = 2 wholes and [1]/8",
+          "9/4 = 2 wholes and [1]/4"])
+    part(10, "Count past 1", "No help this time.", "frac2",
+         ["3/4 4/4 [5]/4 [6]/4 7/4", "4/5 5/5 [6]/5 [7]/5", "2/3 3/3 4/3 [5]/3 [6]/3", "7/8 8/8 [9]/8 [10]/8",
+          "1/2 2/2 [3]/2 [4]/2 5/2", "5/6 6/6 7/6 [8]/6 [9]/6"])
+    part(11, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_WHOLES)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 12, "Word problems", "Draw the bars.")
+    for i, story in enumerate(WORDS_WHOLES):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 12, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_WHOLES = ["9 cm by 3 cm: area = [27] sq cm", "Round 436 to the nearest ten: [440]", "two tenths = [2]/10",
+                 "6 groups of 8 = [48]", "4 pieces of 1/8 = [4]/8", "Round 819 to the nearest hundred: [800]"]
+
+WORDS_WHOLES = [
+    ("Ana has 2 pizzas. Each one is cut into 4 equal slices. How many fourths are there in all?",
+     "2 wholes = 8/4", "8", "fourths"),
+    ("Lee needs 1 cup of milk but only has a 1/3 cup scoop. How many scoops make 1 cup?",
+     "3/3 = 1", "3", "scoops"),
+    ("Max eats 6 halves of apples. How many whole apples is that?", "6/2 = 3", "3", "apples"),
+    ("Sam has 7 pieces of two same-size bars. Each bar has 4 pieces. Is that more than 1 bar?",
+     "7/4 = 1 whole and 3/4", "yes", ""),
+    ("Challenge: Jo has 10 eighths of a pie. How many whole pies is that, and how many eighths?",
+     "10/8 = 1 whole and 2/8", "1 and 2/8", "pies"),
+]
+
+KINDS_WHOLES = {
+    "one_whole": Kind(72, 2, lambda it: f"one whole: {it[0]} cut in {it[1]}, all shaded", c_one_whole),
+    "wholes": Kind(84, 2, lambda it: f"how many wholes: {it[1]} strips of {it[0]}", c_wholes),
+    "more_whole": Kind(84, 1, lambda it: f"more than one whole: {it[1]}/{it[0]} in strips", c_more_whole, 8),
+    "shade_more": Kind(84, 2, lambda it: f"shade more than one: {it[1]}/{it[0]}", c_shade_more),
+    "vs_one": Kind(48, 2, lambda it: f"less, equal or more than 1: {it[0]}/{it[1]}", c_vs_one, 8),
+}
+KINDS.update(KINDS_WHOLES)
+BALANCE["vs_one"] = lambda it: it[0] > it[1]
+
+_W_DENS = (2, 3, 4, 5, 6, 8, 10)
+WHOLE_FACTS = ([f"{n * k}/{n} = [{k}]" for n in _W_DENS for k in rng(2, 4)]
+               + [f"[{n * k}]/{n} = {k}" for n in _W_DENS for k in rng(2, 5)]
+               + [f"{n}/{n} = [1]" for n in _W_DENS] + [f"{k}/1 = [{k}]" for k in rng(2, 9)])
+MORE_FACTS = [f"{t}/{n} = " + whole_text(t, n) for n in _W_DENS for t in rng(n + 1, 3 * n - 1) if t % n]
+VS_ONE = [(a, b) for b in (3, 4, 5, 6, 8) for a in rng(1, 2 * b) if a != b]
+
+CHECKINS["41-fractions-and-wholes"] = [
+    S("How many wholes?", None, "wholes", [(n, k) for n in (2, 3, 4, 5, 6, 8) for k in (2, 3)], 2),
+    S("More than one whole", None, "more_whole", [(n, t) for n in (3, 4, 5, 6) for t in rng(n + 1, 2 * n - 1)], 1),
+    S("Less than, equal to, or more than 1?", None, "vs_one", VS_ONE, 2),
+    S("Wholes", None, "frac3", WHOLE_FACTS, 3),
+    S("Past one whole", None, "frac2", MORE_FACTS, 2),
 ]
 
 
@@ -10949,6 +11158,8 @@ _g3[-1:-1] = [
     S("Bigger piece", "Circle the bigger piece.", "bigger_unit_plain", UNIT_BIGGER, 3, 39),
     S("Name the fraction", None, "frac_name", FRAC_PICS, 2, 40),
     S("Pieces and fractions", None, "frac2", COUNTF_FACTS, 2, 40),
+    S("Less than, equal to, or more than 1?", None, "vs_one", VS_ONE, 2, 41),
+    S("Fractions and wholes", None, "frac3", WHOLE_FACTS, 3, 41),
 ]
 
 
@@ -13768,6 +13979,11 @@ ANSWER_OF = {
     "frac_name": lambda it: f"{it[2]}/{it[1]}",
     "frac_shade": lambda it: f"{it[2]} of {it[1]} parts shaded",
     "shaded_not": lambda it: f"{it[2]}/{it[1]} shaded, {it[1] - it[2]}/{it[1]} not",
+    "one_whole": lambda it: f"{it[1]}/{it[1]} = 1",
+    "wholes": lambda it: f"{it[0] * it[1]}/{it[0]} = {it[1]}",
+    "more_whole": lambda it: f"{it[1]}/{it[0]} = " + whole_text(it[1], it[0]).replace('[', '').replace(']', ''),
+    "shade_more": lambda it: f"{it[1]} of the {it[0]}-part pieces shaded",
+    "vs_one": lambda it: one_side(it[0], it[1]),
     "shade_frac": lambda it: f"{it[1]} of {it[0]} parts shaded",
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -13941,6 +14157,8 @@ PACKETS = [
     ("39-unit-fractions", "unit-fractions", "Unit Fractions", learn_unit_fractions, practice_unit_fractions,
      False),
     ("40-counting-fractions", "counting-fractions", "Counting Fractions", learn_counting_fractions, practice_counting_fractions,
+     False),
+    ("41-fractions-and-wholes", "fractions-and-wholes", "Fractions and Wholes", learn_fractions_wholes, practice_fractions_wholes,
      False),
     ("45-perimeter", "perimeter", "Perimeter", learn_perimeter, practice_perimeter, False),
     ("46-elapsed-time", "elapsed-time", "Elapsed Time", learn_elapsed, practice_elapsed, False),
