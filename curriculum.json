@@ -1,5 +1,5 @@
 {
- "version": "e317e5ac8bae",
+ "version": "4ac64e22025a",
  "packets": [
   {
    "number": 0,
@@ -344,6 +344,86 @@
    "file": "four-operations",
    "title": "All Four Operations",
    "grade": "3"
+  },
+  {
+   "number": 43,
+   "slug": "patterns-in-the-times-table",
+   "folder": "43-patterns-in-the-times-table",
+   "file": "times-table-patterns",
+   "title": "Patterns in the Times Table",
+   "grade": "3"
+  },
+  {
+   "number": 44,
+   "slug": "mass-and-liquid-volume",
+   "folder": "44-mass-and-liquid-volume",
+   "file": "mass-and-liquid-volume",
+   "title": "Mass and Liquid Volume",
+   "grade": "3"
+  },
+  {
+   "number": 45,
+   "slug": "scaled-graphs",
+   "folder": "45-scaled-graphs",
+   "file": "scaled-graphs",
+   "title": "Scaled Graphs",
+   "grade": "3"
+  },
+  {
+   "number": 46,
+   "slug": "measuring-to-the-quarter-inch",
+   "folder": "46-measuring-to-the-quarter-inch",
+   "file": "quarter-inch",
+   "title": "Measuring to the Quarter Inch",
+   "grade": "3"
+  },
+  {
+   "number": 47,
+   "slug": "shapes-and-quadrilaterals",
+   "folder": "47-shapes-and-quadrilaterals",
+   "file": "quadrilaterals",
+   "title": "Shapes and Quadrilaterals",
+   "grade": "3"
+  },
+  {
+   "number": 48,
+   "slug": "thousands",
+   "folder": "48-thousands",
+   "file": "thousands",
+   "title": "Thousands",
+   "grade": "4"
+  },
+  {
+   "number": 49,
+   "slug": "rounding-big-numbers",
+   "folder": "49-rounding-big-numbers",
+   "file": "rounding-big-numbers",
+   "title": "Rounding Big Numbers",
+   "grade": "4"
+  },
+  {
+   "number": 50,
+   "slug": "adding-and-subtracting-big-numbers",
+   "folder": "50-adding-and-subtracting-big-numbers",
+   "file": "big-add-subtract",
+   "title": "Adding and Subtracting Big Numbers",
+   "grade": "4"
+  },
+  {
+   "number": 51,
+   "slug": "multiplying-by-one-digit",
+   "folder": "51-multiplying-by-one-digit",
+   "file": "multiplying-by-one-digit",
+   "title": "Multiplying by One Digit",
+   "grade": "4"
+  },
+  {
+   "number": 52,
+   "slug": "division-with-remainders",
+   "folder": "52-division-with-remainders",
+   "file": "division-with-remainders",
+   "title": "Division with Remainders",
+   "grade": "4"
   }
  ],
  "tests": [
@@ -1611,7 +1691,7 @@
    "id": "grade-3-pre",
    "type": "pre",
    "title": "Grade 3 Pre-Assessment",
-   "total": 59,
+   "total": 69,
    "file": "assessments/color/grade-3-pre-assessment-key.pdf",
    "parts": [
     {
@@ -1803,18 +1883,18 @@
       },
       {
        "n": 28,
-       "prompt": "56 ÷ 7 = ?",
-       "answer": "8"
-      },
-      {
-       "n": 29,
        "prompt": "15 ÷ 3 = ?",
        "answer": "5"
       },
       {
-       "n": 30,
+       "n": 29,
        "prompt": "60 ÷ 6 = ?",
        "answer": "10"
+      },
+      {
+       "n": 30,
+       "prompt": "20 ÷ 5 = ?",
+       "answer": "4"
       }
      ]
     },
@@ -2035,28 +2115,123 @@
     },
     {
      "part": 17,
+     "name": "Times table patterns",
+     "kind": "eo_product",
+     "packet": 43,
+     "packets": "43",
+     "questions": [
+      {
+       "n": 56,
+       "prompt": "even odd product 3 4",
+       "answer": "even"
+      },
+      {
+       "n": 57,
+       "prompt": "even odd product 3 5",
+       "answer": "odd"
+      }
+     ]
+    },
+    {
+     "part": 18,
+     "name": "Mass and liquid volume",
+     "kind": "beaker",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 58,
+       "prompt": "beaker 3 of 10",
+       "answer": "3 liters"
+      },
+      {
+       "n": 59,
+       "prompt": "beaker 9 of 10",
+       "answer": "9 liters"
+      }
+     ]
+    },
+    {
+     "part": 19,
+     "name": "Scaled graphs",
+     "kind": "eq2",
+     "packet": 45,
+     "packets": "45",
+     "questions": [
+      {
+       "n": 60,
+       "prompt": "each picture = 2: 4 pictures = ?",
+       "answer": "8"
+      },
+      {
+       "n": 61,
+       "prompt": "each picture = 5: 5 pictures = ?",
+       "answer": "25"
+      }
+     ]
+    },
+    {
+     "part": 20,
+     "name": "Quarter inches",
+     "kind": "eq2",
+     "packet": 46,
+     "packets": "46",
+     "questions": [
+      {
+       "n": 62,
+       "prompt": "4½ inches = ? quarter inches",
+       "answer": "18"
+      },
+      {
+       "n": 63,
+       "prompt": "2¼ inches = ? quarter inches",
+       "answer": "9"
+      }
+     ]
+    },
+    {
+     "part": 21,
+     "name": "Quadrilaterals",
+     "kind": "is_quad",
+     "packet": 47,
+     "packets": "47",
+     "questions": [
+      {
+       "n": 64,
+       "prompt": "is quadrilateral kite 0",
+       "answer": "yes"
+      },
+      {
+       "n": 65,
+       "prompt": "is quadrilateral parallelogram 25",
+       "answer": "yes"
+      }
+     ]
+    },
+    {
+     "part": 22,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "33–35",
      "questions": [
       {
-       "n": 56,
+       "n": 66,
        "prompt": "Kim shares 36 toy cars equally among 4 friends. How many toy cars does each friend get?",
        "answer": "9 toy cars"
       },
       {
-       "n": 57,
+       "n": 67,
        "prompt": "Sam shares 63 shells equally among 7 friends. How many shells does each friend get?",
        "answer": "9 shells"
       },
       {
-       "n": 58,
+       "n": 68,
        "prompt": "Sam has 6 bags with 8 stickers in each bag. How many stickers are there in all?",
        "answer": "48 stickers"
       },
       {
-       "n": 59,
+       "n": 69,
        "prompt": "Jay has 8 bags with 9 stickers in each bag. How many stickers are there in all?",
        "answer": "72 stickers"
       }
@@ -2064,6 +2239,267 @@
     }
    ],
    "grade": "3"
+  },
+  {
+   "id": "grade-4-pre",
+   "type": "pre",
+   "title": "Grade 4 Pre-Assessment",
+   "total": 34,
+   "file": "assessments/color/grade-4-pre-assessment-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Read big numbers",
+     "kind": "eq2",
+     "packet": 48,
+     "packets": "48",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "9,000 + 400 + 40 + 8 = ?",
+       "answer": "9,448"
+      },
+      {
+       "n": 2,
+       "prompt": "5,000 + 80 + 3 = ?",
+       "answer": "5,083"
+      },
+      {
+       "n": 3,
+       "prompt": "9,000 + 300 + 50 + 1 = ?",
+       "answer": "9,351"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Compare",
+     "kind": "eq2",
+     "packet": 48,
+     "packets": "48",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "6,384 ? 6,474",
+       "answer": "<"
+      },
+      {
+       "n": 5,
+       "prompt": "2,494 ? 2,485",
+       "answer": ">"
+      },
+      {
+       "n": 6,
+       "prompt": "4,828 ? 5,728",
+       "answer": "<"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Round",
+     "kind": "eq2",
+     "packet": 49,
+     "packets": "49",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "8,240 to the nearest thousand = ?",
+       "answer": "8,000"
+      },
+      {
+       "n": 8,
+       "prompt": "3,924 to the nearest thousand = ?",
+       "answer": "4,000"
+      },
+      {
+       "n": 9,
+       "prompt": "3,177 to the nearest thousand = ?",
+       "answer": "3,000"
+      },
+      {
+       "n": 10,
+       "prompt": "3,509 to the nearest thousand = ?",
+       "answer": "4,000"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Add",
+     "kind": "eq2",
+     "packet": 50,
+     "packets": "50",
+     "questions": [
+      {
+       "n": 11,
+       "prompt": "3,152 + 1,158 = ?",
+       "answer": "4,310"
+      },
+      {
+       "n": 12,
+       "prompt": "5,547 + 1,158 = ?",
+       "answer": "6,705"
+      },
+      {
+       "n": 13,
+       "prompt": "3,631 + 2,993 = ?",
+       "answer": "6,624"
+      }
+     ]
+    },
+    {
+     "part": 5,
+     "name": "Subtract",
+     "kind": "eq2",
+     "packet": 50,
+     "packets": "50",
+     "questions": [
+      {
+       "n": 14,
+       "prompt": "8,821 − 1,736 = ?",
+       "answer": "7,085"
+      },
+      {
+       "n": 15,
+       "prompt": "7,468 − 1,736 = ?",
+       "answer": "5,732"
+      },
+      {
+       "n": 16,
+       "prompt": "7,468 − 2,903 = ?",
+       "answer": "4,565"
+      }
+     ]
+    },
+    {
+     "part": 6,
+     "name": "Multiply",
+     "kind": "eq3",
+     "packet": 51,
+     "packets": "51",
+     "questions": [
+      {
+       "n": 17,
+       "prompt": "17 × 8 = ?",
+       "answer": "136"
+      },
+      {
+       "n": 18,
+       "prompt": "92 × 8 = ?",
+       "answer": "736"
+      },
+      {
+       "n": 19,
+       "prompt": "37 × 3 = ?",
+       "answer": "111"
+      },
+      {
+       "n": 20,
+       "prompt": "16 × 9 = ?",
+       "answer": "144"
+      },
+      {
+       "n": 21,
+       "prompt": "61 × 4 = ?",
+       "answer": "244"
+      },
+      {
+       "n": 22,
+       "prompt": "28 × 7 = ?",
+       "answer": "196"
+      }
+     ]
+    },
+    {
+     "part": 7,
+     "name": "Multiply three digits",
+     "kind": "eq2",
+     "packet": 51,
+     "packets": "51",
+     "questions": [
+      {
+       "n": 23,
+       "prompt": "228 × 4 = ?",
+       "answer": "912"
+      },
+      {
+       "n": 24,
+       "prompt": "286 × 2 = ?",
+       "answer": "572"
+      }
+     ]
+    },
+    {
+     "part": 8,
+     "name": "Divide",
+     "kind": "eq3",
+     "packet": 52,
+     "packets": "52",
+     "questions": [
+      {
+       "n": 25,
+       "prompt": "36 ÷ 5 = ? R ?",
+       "answer": "7 R 1"
+      },
+      {
+       "n": 26,
+       "prompt": "61 ÷ 7 = ? R ?",
+       "answer": "8 R 5"
+      },
+      {
+       "n": 27,
+       "prompt": "39 ÷ 8 = ? R ?",
+       "answer": "4 R 7"
+      },
+      {
+       "n": 28,
+       "prompt": "60 ÷ 8 = ? R ?",
+       "answer": "7 R 4"
+      },
+      {
+       "n": 29,
+       "prompt": "67 ÷ 7 = ? R ?",
+       "answer": "9 R 4"
+      },
+      {
+       "n": 30,
+       "prompt": "16 ÷ 3 = ? R ?",
+       "answer": "5 R 1"
+      }
+     ]
+    },
+    {
+     "part": 9,
+     "name": "Word problems",
+     "kind": "word",
+     "packet": null,
+     "packets": "51–52",
+     "questions": [
+      {
+       "n": 31,
+       "prompt": "Kai puts 33 beads into bags of 9. How many beads are left over?",
+       "answer": "6 beads"
+      },
+      {
+       "n": 32,
+       "prompt": "Ella puts 25 stickers into bags of 8. How many stickers are left over?",
+       "answer": "1 stickers"
+      },
+      {
+       "n": 33,
+       "prompt": "Rosa has 4 bags with 41 leaves in each bag. How many leaves are there in all?",
+       "answer": "164 leaves"
+      },
+      {
+       "n": 34,
+       "prompt": "Ravi has 3 bags with 48 rocks in each bag. How many rocks are there in all?",
+       "answer": "144 rocks"
+      }
+     ]
+    }
+   ],
+   "grade": "4"
   },
   {
    "id": "kindergarten-pre",
@@ -3677,7 +4113,7 @@
    "id": "grade-3-post",
    "type": "post",
    "title": "Grade 3 Post-Assessment",
-   "total": 59,
+   "total": 69,
    "file": "assessments/color/grade-3-post-assessment-key.pdf",
    "parts": [
     {
@@ -3839,48 +4275,48 @@
      "questions": [
       {
        "n": 22,
-       "prompt": "20 ÷ 5 = ?",
-       "answer": "4"
-      },
-      {
-       "n": 23,
        "prompt": "40 ÷ 4 = ?",
        "answer": "10"
       },
       {
-       "n": 24,
+       "n": 23,
        "prompt": "70 ÷ 7 = ?",
        "answer": "10"
       },
       {
-       "n": 25,
-       "prompt": "81 ÷ 9 = ?",
-       "answer": "9"
-      },
-      {
-       "n": 26,
+       "n": 24,
        "prompt": "24 ÷ 8 = ?",
        "answer": "3"
       },
       {
-       "n": 27,
+       "n": 25,
        "prompt": "4 ÷ 2 = ?",
        "answer": "2"
       },
       {
-       "n": 28,
+       "n": 26,
        "prompt": "18 ÷ 3 = ?",
        "answer": "6"
       },
       {
-       "n": 29,
+       "n": 27,
        "prompt": "21 ÷ 7 = ?",
        "answer": "3"
       },
       {
-       "n": 30,
+       "n": 28,
        "prompt": "30 ÷ 6 = ?",
        "answer": "5"
+      },
+      {
+       "n": 29,
+       "prompt": "35 ÷ 7 = ?",
+       "answer": "5"
+      },
+      {
+       "n": 30,
+       "prompt": "64 ÷ 8 = ?",
+       "answer": "8"
       }
      ]
     },
@@ -3994,13 +4430,13 @@
       },
       {
        "n": 44,
-       "prompt": "4 × 20 = ?",
-       "answer": "80"
+       "prompt": "6 × 20 = ?",
+       "answer": "120"
       },
       {
        "n": 45,
-       "prompt": "6 × 20 = ?",
-       "answer": "120"
+       "prompt": "3 × 30 = ?",
+       "answer": "90"
       }
      ]
     },
@@ -4037,8 +4473,8 @@
       },
       {
        "n": 49,
-       "prompt": "9 cm by 4 cm: perimeter = ? cm",
-       "answer": "26"
+       "prompt": "3 in by 2 in: perimeter = ? in",
+       "answer": "10"
       }
      ]
     },
@@ -4101,28 +4537,123 @@
     },
     {
      "part": 17,
+     "name": "Times table patterns",
+     "kind": "eo_product",
+     "packet": 43,
+     "packets": "43",
+     "questions": [
+      {
+       "n": 56,
+       "prompt": "even odd product 5 4",
+       "answer": "even"
+      },
+      {
+       "n": 57,
+       "prompt": "even odd product 5 3",
+       "answer": "odd"
+      }
+     ]
+    },
+    {
+     "part": 18,
+     "name": "Mass and liquid volume",
+     "kind": "beaker",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 58,
+       "prompt": "beaker 7 of 10",
+       "answer": "7 liters"
+      },
+      {
+       "n": 59,
+       "prompt": "beaker 5 of 10",
+       "answer": "5 liters"
+      }
+     ]
+    },
+    {
+     "part": 19,
+     "name": "Scaled graphs",
+     "kind": "eq2",
+     "packet": 45,
+     "packets": "45",
+     "questions": [
+      {
+       "n": 60,
+       "prompt": "each picture = 10: 7 pictures = ?",
+       "answer": "70"
+      },
+      {
+       "n": 61,
+       "prompt": "each picture = 2: 6 pictures = ?",
+       "answer": "12"
+      }
+     ]
+    },
+    {
+     "part": 20,
+     "name": "Quarter inches",
+     "kind": "eq2",
+     "packet": 46,
+     "packets": "46",
+     "questions": [
+      {
+       "n": 62,
+       "prompt": "4¾ inches = ? quarter inches",
+       "answer": "19"
+      },
+      {
+       "n": 63,
+       "prompt": "1¾ inches = ? quarter inches",
+       "answer": "7"
+      }
+     ]
+    },
+    {
+     "part": 21,
+     "name": "Quadrilaterals",
+     "kind": "is_quad",
+     "packet": 47,
+     "packets": "47",
+     "questions": [
+      {
+       "n": 64,
+       "prompt": "is quadrilateral kite 10",
+       "answer": "yes"
+      },
+      {
+       "n": 65,
+       "prompt": "is quadrilateral hexagon 10",
+       "answer": "no"
+      }
+     ]
+    },
+    {
+     "part": 22,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "33–35",
      "questions": [
       {
-       "n": 56,
+       "n": 66,
        "prompt": "Theo has 4 bags with 6 books in each bag. How many books are there in all?",
        "answer": "24 books"
       },
       {
-       "n": 57,
+       "n": 67,
        "prompt": "Ben shares 45 acorns equally among 9 friends. How many acorns does each friend get?",
        "answer": "5 acorns"
       },
       {
-       "n": 58,
+       "n": 68,
        "prompt": "Tess shares 25 books equally among 5 friends. How many books does each friend get?",
        "answer": "5 books"
       },
       {
-       "n": 59,
+       "n": 69,
        "prompt": "Leo has 6 bags with 9 blocks in each bag. How many blocks are there in all?",
        "answer": "54 blocks"
       }
@@ -4130,6 +4661,267 @@
     }
    ],
    "grade": "3"
+  },
+  {
+   "id": "grade-4-post",
+   "type": "post",
+   "title": "Grade 4 Post-Assessment",
+   "total": 34,
+   "file": "assessments/color/grade-4-post-assessment-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Read big numbers",
+     "kind": "eq2",
+     "packet": 48,
+     "packets": "48",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "2,000 + 700 + 50 + 5 = ?",
+       "answer": "2,755"
+      },
+      {
+       "n": 2,
+       "prompt": "6,000 + 900 + 20 + 6 = ?",
+       "answer": "6,926"
+      },
+      {
+       "n": 3,
+       "prompt": "6,000 + 600 + 30 + 5 = ?",
+       "answer": "6,635"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Compare",
+     "kind": "eq2",
+     "packet": 48,
+     "packets": "48",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "7,551 ? 7,461",
+       "answer": ">"
+      },
+      {
+       "n": 5,
+       "prompt": "8,718 ? 8,808",
+       "answer": "<"
+      },
+      {
+       "n": 6,
+       "prompt": "3,661 ? 3,652",
+       "answer": ">"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Round",
+     "kind": "eq2",
+     "packet": 49,
+     "packets": "49",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "5,999 to the nearest thousand = ?",
+       "answer": "6,000"
+      },
+      {
+       "n": 8,
+       "prompt": "9,485 to the nearest thousand = ?",
+       "answer": "9,000"
+      },
+      {
+       "n": 9,
+       "prompt": "5,667 to the nearest thousand = ?",
+       "answer": "6,000"
+      },
+      {
+       "n": 10,
+       "prompt": "8,987 to the nearest thousand = ?",
+       "answer": "9,000"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Add",
+     "kind": "eq2",
+     "packet": 50,
+     "packets": "50",
+     "questions": [
+      {
+       "n": 11,
+       "prompt": "6,026 + 2,993 = ?",
+       "answer": "9,019"
+      },
+      {
+       "n": 12,
+       "prompt": "1,715 + 1,892 = ?",
+       "answer": "3,607"
+      },
+      {
+       "n": 13,
+       "prompt": "5,547 + 3,727 = ?",
+       "answer": "9,274"
+      }
+     ]
+    },
+    {
+     "part": 5,
+     "name": "Subtract",
+     "kind": "eq2",
+     "packet": 50,
+     "packets": "50",
+     "questions": [
+      {
+       "n": 14,
+       "prompt": "6,115 − 3,292 = ?",
+       "answer": "2,823"
+      },
+      {
+       "n": 15,
+       "prompt": "9,723 − 1,736 = ?",
+       "answer": "7,987"
+      },
+      {
+       "n": 16,
+       "prompt": "6,115 − 1,347 = ?",
+       "answer": "4,768"
+      }
+     ]
+    },
+    {
+     "part": 6,
+     "name": "Multiply",
+     "kind": "eq3",
+     "packet": 51,
+     "packets": "51",
+     "questions": [
+      {
+       "n": 17,
+       "prompt": "86 × 9 = ?",
+       "answer": "774"
+      },
+      {
+       "n": 18,
+       "prompt": "31 × 9 = ?",
+       "answer": "279"
+      },
+      {
+       "n": 19,
+       "prompt": "52 × 8 = ?",
+       "answer": "416"
+      },
+      {
+       "n": 20,
+       "prompt": "41 × 4 = ?",
+       "answer": "164"
+      },
+      {
+       "n": 21,
+       "prompt": "81 × 4 = ?",
+       "answer": "324"
+      },
+      {
+       "n": 22,
+       "prompt": "74 × 6 = ?",
+       "answer": "444"
+      }
+     ]
+    },
+    {
+     "part": 7,
+     "name": "Multiply three digits",
+     "kind": "eq2",
+     "packet": 51,
+     "packets": "51",
+     "questions": [
+      {
+       "n": 23,
+       "prompt": "228 × 6 = ?",
+       "answer": "1,368"
+      },
+      {
+       "n": 24,
+       "prompt": "460 × 6 = ?",
+       "answer": "2,760"
+      }
+     ]
+    },
+    {
+     "part": 8,
+     "name": "Divide",
+     "kind": "eq3",
+     "packet": 52,
+     "packets": "52",
+     "questions": [
+      {
+       "n": 25,
+       "prompt": "50 ÷ 8 = ? R ?",
+       "answer": "6 R 2"
+      },
+      {
+       "n": 26,
+       "prompt": "39 ÷ 6 = ? R ?",
+       "answer": "6 R 3"
+      },
+      {
+       "n": 27,
+       "prompt": "13 ÷ 4 = ? R ?",
+       "answer": "3 R 1"
+      },
+      {
+       "n": 28,
+       "prompt": "21 ÷ 6 = ? R ?",
+       "answer": "3 R 3"
+      },
+      {
+       "n": 29,
+       "prompt": "19 ÷ 5 = ? R ?",
+       "answer": "3 R 4"
+      },
+      {
+       "n": 30,
+       "prompt": "49 ÷ 8 = ? R ?",
+       "answer": "6 R 1"
+      }
+     ]
+    },
+    {
+     "part": 9,
+     "name": "Word problems",
+     "kind": "word",
+     "packet": null,
+     "packets": "51–52",
+     "questions": [
+      {
+       "n": 31,
+       "prompt": "Omar has 8 bags with 27 buttons in each bag. How many buttons are there in all?",
+       "answer": "216 buttons"
+      },
+      {
+       "n": 32,
+       "prompt": "Ben puts 37 cards into bags of 7. How many cards are left over?",
+       "answer": "2 cards"
+      },
+      {
+       "n": 33,
+       "prompt": "Tess puts 30 stickers into bags of 8. How many stickers are left over?",
+       "answer": "6 stickers"
+      },
+      {
+       "n": 34,
+       "prompt": "Finn has 3 bags with 13 buttons in each bag. How many buttons are there in all?",
+       "answer": "39 buttons"
+      }
+     ]
+    }
+   ],
+   "grade": "4"
   },
   {
    "id": "kindergarten-post",
@@ -4579,6 +5371,92 @@
     }
    ],
    "packet": 18
+  },
+  {
+   "id": "check-in:adding-and-subtracting-big-numbers",
+   "type": "check-in",
+   "title": "Adding and Subtracting Big Numbers Check-In",
+   "total": 8,
+   "file": "50-adding-and-subtracting-big-numbers/color/big-add-subtract-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Add in columns",
+     "kind": "big_stack",
+     "packet": 50,
+     "packets": "50",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "big stack 3396 3363 + plain",
+       "answer": "6,759"
+      },
+      {
+       "n": 2,
+       "prompt": "big stack 2713 2942 + plain",
+       "answer": "5,655"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Subtract in columns",
+     "kind": "big_stack",
+     "packet": 50,
+     "packets": "50",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "big stack 9275 3204 − plain",
+       "answer": "6,071"
+      },
+      {
+       "n": 4,
+       "prompt": "big stack 7496 1376 − plain",
+       "answer": "6,120"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Add",
+     "kind": "eq2",
+     "packet": 50,
+     "packets": "50",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "4,110 + 2,993 = ?",
+       "answer": "7,103"
+      },
+      {
+       "n": 6,
+       "prompt": "6,505 + 3,727 = ?",
+       "answer": "10,232"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Subtract",
+     "kind": "eq2",
+     "packet": 50,
+     "packets": "50",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "5,664 − 4,459 = ?",
+       "answer": "1,205"
+      },
+      {
+       "n": 8,
+       "prompt": "9,723 − 4,459 = ?",
+       "answer": "5,264"
+      }
+     ]
+    }
+   ],
+   "packet": 50
   },
   {
    "id": "check-in:adding-and-taking-away",
@@ -5481,6 +6359,88 @@
     }
    ],
    "packet": 35
+  },
+  {
+   "id": "check-in:division-with-remainders",
+   "type": "check-in",
+   "title": "Division with Remainders Check-In",
+   "total": 9,
+   "file": "52-division-with-remainders/color/division-with-remainders-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Make groups",
+     "kind": "groups_rem",
+     "packet": 52,
+     "packets": "52",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "groups remainder 19 3",
+       "answer": "6 groups, 1 left over"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Use a times fact",
+     "kind": "rem_think",
+     "packet": 52,
+     "packets": "52",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "remainder think 14 3",
+       "answer": "4 R 2"
+      },
+      {
+       "n": 3,
+       "prompt": "remainder think 17 4",
+       "answer": "4 R 1"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Divide",
+     "kind": "eq3",
+     "packet": 52,
+     "packets": "52",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "18 ÷ 4 = ? R ?",
+       "answer": "4 R 2"
+      },
+      {
+       "n": 5,
+       "prompt": "21 ÷ 4 = ? R ?",
+       "answer": "5 R 1"
+      },
+      {
+       "n": 6,
+       "prompt": "77 ÷ 9 = ? R ?",
+       "answer": "8 R 5"
+      },
+      {
+       "n": 7,
+       "prompt": "73 ÷ 9 = ? R ?",
+       "answer": "8 R 1"
+      },
+      {
+       "n": 8,
+       "prompt": "11 ÷ 3 = ? R ?",
+       "answer": "3 R 2"
+      },
+      {
+       "n": 9,
+       "prompt": "51 ÷ 9 = ? R ?",
+       "answer": "5 R 6"
+      }
+     ]
+    }
+   ],
+   "packet": 52
   },
   {
    "id": "check-in:doubles-and-near-doubles",
@@ -6603,6 +7563,73 @@
    "packet": 15
   },
   {
+   "id": "check-in:mass-and-liquid-volume",
+   "type": "check-in",
+   "title": "Mass and Liquid Volume Check-In",
+   "total": 6,
+   "file": "44-mass-and-liquid-volume/color/mass-and-liquid-volume-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Grams or kilograms?",
+     "kind": "unit_choice",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "unit: A coin is about 3",
+       "answer": "grams"
+      },
+      {
+       "n": 2,
+       "prompt": "unit: An eraser is about 20",
+       "answer": "grams"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Read the balance",
+     "kind": "balance",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "balance apple 100-50-10 g",
+       "answer": "160 g"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Read the beaker",
+     "kind": "beaker",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "beaker 1 of 10",
+       "answer": "1 liter"
+      },
+      {
+       "n": 5,
+       "prompt": "beaker 8 of 10",
+       "answer": "8 liters"
+      },
+      {
+       "n": 6,
+       "prompt": "beaker 2 of 10",
+       "answer": "2 liters"
+      }
+     ]
+    }
+   ],
+   "packet": 44
+  },
+  {
    "id": "check-in:measuring-length",
    "type": "check-in",
    "title": "Measuring Length Check-In",
@@ -6678,6 +7705,78 @@
     }
    ],
    "packet": 31
+  },
+  {
+   "id": "check-in:measuring-to-the-quarter-inch",
+   "type": "check-in",
+   "title": "Measuring to the Quarter Inch Check-In",
+   "total": 7,
+   "file": "46-measuring-to-the-quarter-inch/color/quarter-inch-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Read the ruler",
+     "kind": "quarter",
+     "packet": 46,
+     "packets": "46",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "quarter inch pencil 21",
+       "answer": "5¼ inches"
+      },
+      {
+       "n": 2,
+       "prompt": "quarter inch pencil 11",
+       "answer": "2¾ inches"
+      },
+      {
+       "n": 3,
+       "prompt": "quarter inch crayon 19",
+       "answer": "4¾ inches"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Which is longer?",
+     "kind": "eq2",
+     "packet": 46,
+     "packets": "46",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "3¾ in or 4¼ in: longer is ? in",
+       "answer": "4¼"
+      },
+      {
+       "n": 5,
+       "prompt": "1½ in or 2 in: longer is ? in",
+       "answer": "2"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Quarter inches",
+     "kind": "eq2",
+     "packet": 46,
+     "packets": "46",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "5¼ inches = ? quarter inches",
+       "answer": "21"
+      },
+      {
+       "n": 7,
+       "prompt": "3¾ inches = ? quarter inches",
+       "answer": "15"
+      }
+     ]
+    }
+   ],
+   "packet": 46
   },
   {
    "id": "check-in:missing-numbers",
@@ -7042,6 +8141,92 @@
    "packet": 34
   },
   {
+   "id": "check-in:multiplying-by-one-digit",
+   "type": "check-in",
+   "title": "Multiplying by One Digit Check-In",
+   "total": 8,
+   "file": "51-multiplying-by-one-digit/color/multiplying-by-one-digit-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "The area model",
+     "kind": "area_mult",
+     "packet": 51,
+     "packets": "51",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "area mult 41 4 given",
+       "answer": "164"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Write the parts",
+     "kind": "partial",
+     "packet": 51,
+     "packets": "51",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "partial products 67 4",
+       "answer": "268"
+      },
+      {
+       "n": 3,
+       "prompt": "partial products 89 5",
+       "answer": "445"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Multiply",
+     "kind": "eq3",
+     "packet": 51,
+     "packets": "51",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "29 × 6 = ?",
+       "answer": "174"
+      },
+      {
+       "n": 5,
+       "prompt": "45 × 5 = ?",
+       "answer": "225"
+      },
+      {
+       "n": 6,
+       "prompt": "96 × 9 = ?",
+       "answer": "864"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Three digits",
+     "kind": "eq2",
+     "packet": 51,
+     "packets": "51",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "431 × 4 = ?",
+       "answer": "1,724"
+      },
+      {
+       "n": 8,
+       "prompt": "199 × 7 = ?",
+       "answer": "1,393"
+      }
+     ]
+    }
+   ],
+   "packet": 51
+  },
+  {
    "id": "check-in:multiplying-by-tens",
    "type": "check-in",
    "title": "Multiplying by Tens Check-In",
@@ -7230,6 +8415,92 @@
    "packet": 4
   },
   {
+   "id": "check-in:patterns-in-the-times-table",
+   "type": "check-in",
+   "title": "Patterns in the Times Table Check-In",
+   "total": 8,
+   "file": "43-patterns-in-the-times-table/color/times-table-patterns-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Fill in the row",
+     "kind": "table_row",
+     "packet": 43,
+     "packets": "43",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "table row 4 3-4-8-10",
+       "answer": "12 · 16 · 32 · 40"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Pieces of the table",
+     "kind": "table_piece",
+     "packet": 43,
+     "packets": "43",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "table piece 6 5 3 4 0.1-1.3-2.0",
+       "answer": "36 · 56 · 40"
+      },
+      {
+       "n": 3,
+       "prompt": "table piece 6 3 3 4 0.1-1.3-2.0",
+       "answer": "24 · 42 · 24"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Even or odd?",
+     "kind": "eo_product",
+     "packet": 43,
+     "packets": "43",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "even odd product 8 9",
+       "answer": "even"
+      },
+      {
+       "n": 5,
+       "prompt": "even odd product 7 5",
+       "answer": "odd"
+      },
+      {
+       "n": 6,
+       "prompt": "even odd product 5 8",
+       "answer": "even"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Double it",
+     "kind": "eq2",
+     "packet": 43,
+     "packets": "43",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "4 × 4 = 16 so 8 × 4 = ?",
+       "answer": "32"
+      },
+      {
+       "n": 8,
+       "prompt": "2 × 4 = 8 so 4 × 4 = ?",
+       "answer": "16"
+      }
+     ]
+    }
+   ],
+   "packet": 43
+  },
+  {
    "id": "check-in:perimeter",
    "type": "check-in",
    "title": "Perimeter Check-In",
@@ -7410,6 +8681,260 @@
     }
    ],
    "packet": 37
+  },
+  {
+   "id": "check-in:rounding-big-numbers",
+   "type": "check-in",
+   "title": "Rounding Big Numbers Check-In",
+   "total": 8,
+   "file": "49-rounding-big-numbers/color/rounding-big-numbers-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Which thousand is closer?",
+     "kind": "round_card",
+     "packet": 49,
+     "packets": "49",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "round: 3862 to 1000 closer",
+       "answer": "4,000"
+      },
+      {
+       "n": 2,
+       "prompt": "round: 8495 to 1000 closer",
+       "answer": "8,000"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Nearest thousand",
+     "kind": "eq2",
+     "packet": 49,
+     "packets": "49",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "3,343 to the nearest thousand = ?",
+       "answer": "3,000"
+      },
+      {
+       "n": 4,
+       "prompt": "8,572 to the nearest thousand = ?",
+       "answer": "9,000"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Nearest hundred",
+     "kind": "eq2",
+     "packet": 49,
+     "packets": "49",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "1,726 to the nearest hundred = ?",
+       "answer": "1,700"
+      },
+      {
+       "n": 6,
+       "prompt": "9,024 to the nearest hundred = ?",
+       "answer": "9,000"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "About how much?",
+     "kind": "eq2",
+     "packet": 49,
+     "packets": "49",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "2,244 + 2,874 is about ?",
+       "answer": "5,000"
+      },
+      {
+       "n": 8,
+       "prompt": "3,795 + 1,150 is about ?",
+       "answer": "5,000"
+      }
+     ]
+    }
+   ],
+   "packet": 49
+  },
+  {
+   "id": "check-in:scaled-graphs",
+   "type": "check-in",
+   "title": "Scaled Graphs Check-In",
+   "total": 7,
+   "file": "45-scaled-graphs/color/scaled-graphs-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Read the graph",
+     "kind": "sgraph",
+     "packet": 45,
+     "packets": "45",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "scaled graph bar Laps swum (by 2s) 12-6-16-10",
+       "answer": "10 · 10 · 22 · 44"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "How many?",
+     "kind": "eq2",
+     "packet": 45,
+     "packets": "45",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "each picture = 10: 5 pictures = ?",
+       "answer": "50"
+      },
+      {
+       "n": 3,
+       "prompt": "each picture = 2: 5 pictures = ?",
+       "answer": "10"
+      },
+      {
+       "n": 4,
+       "prompt": "each picture = 2: 3 pictures = ?",
+       "answer": "6"
+      },
+      {
+       "n": 5,
+       "prompt": "each picture = 5: 3 pictures = ?",
+       "answer": "15"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "How many pictures?",
+     "kind": "eq2",
+     "packet": 45,
+     "packets": "45",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "each picture = 2: ? pictures = 16",
+       "answer": "8"
+      },
+      {
+       "n": 7,
+       "prompt": "each picture = 2: ? pictures = 12",
+       "answer": "6"
+      }
+     ]
+    }
+   ],
+   "packet": 45
+  },
+  {
+   "id": "check-in:shapes-and-quadrilaterals",
+   "type": "check-in",
+   "title": "Shapes and Quadrilaterals Check-In",
+   "total": 10,
+   "file": "47-shapes-and-quadrilaterals/color/quadrilaterals-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Quadrilateral or not?",
+     "kind": "is_quad",
+     "packet": 47,
+     "packets": "47",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "is quadrilateral triangle 10",
+       "answer": "no"
+      },
+      {
+       "n": 2,
+       "prompt": "is quadrilateral trapezoid 25",
+       "answer": "yes"
+      },
+      {
+       "n": 3,
+       "prompt": "is quadrilateral pentagon 0",
+       "answer": "no"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Right angles",
+     "kind": "right_count",
+     "packet": 47,
+     "packets": "47",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "right angles rtri 30",
+       "answer": "1"
+      },
+      {
+       "n": 5,
+       "prompt": "right angles rtrap 5",
+       "answer": "2"
+      },
+      {
+       "n": 6,
+       "prompt": "right angles square 5",
+       "answer": "4"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Name it",
+     "kind": "name_quad",
+     "packet": 47,
+     "packets": "47",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "name quad rectangle 40",
+       "answer": "rectangle"
+      },
+      {
+       "n": 8,
+       "prompt": "name quad square 40",
+       "answer": "square"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "True or not?",
+     "kind": "quad_fact",
+     "packet": 47,
+     "packets": "47",
+     "questions": [
+      {
+       "n": 9,
+       "prompt": "quad fact: A rectangle has 4 right angles.",
+       "answer": "yes"
+      },
+      {
+       "n": 10,
+       "prompt": "quad fact: A pentagon has 4 sides.",
+       "answer": "no"
+      }
+     ]
+    }
+   ],
+   "packet": 47
   },
   {
    "id": "check-in:skip-counting",
@@ -8520,6 +10045,92 @@
     }
    ],
    "packet": 7
+  },
+  {
+   "id": "check-in:thousands",
+   "type": "check-in",
+   "title": "Thousands Check-In",
+   "total": 8,
+   "file": "48-thousands/color/thousands-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Read the quick drawing",
+     "kind": "quick_th",
+     "packet": 48,
+     "packets": "48",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "quick thousands 5097",
+       "answer": "5,097"
+      },
+      {
+       "n": 2,
+       "prompt": "quick thousands 2768",
+       "answer": "2,768"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Put the parts together",
+     "kind": "eq2",
+     "packet": 48,
+     "packets": "48",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "6,000 + 400 + 40 + 1 = ?",
+       "answer": "6,441"
+      },
+      {
+       "n": 4,
+       "prompt": "9,000 + 700 + 30 + 9 = ?",
+       "answer": "9,739"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "What is the digit worth?",
+     "kind": "eq2",
+     "packet": 48,
+     "packets": "48",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "in 3,760 the 7 is worth ?",
+       "answer": "700"
+      },
+      {
+       "n": 6,
+       "prompt": "in 8,638 the 3 is worth ?",
+       "answer": "30"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Compare",
+     "kind": "eq2",
+     "packet": 48,
+     "packets": "48",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "2,105 ? 2,195",
+       "answer": "<"
+      },
+      {
+       "n": 8,
+       "prompt": "8,329 ? 8,239",
+       "answer": ">"
+      }
+     ]
+    }
+   ],
+   "packet": 48
   },
   {
    "id": "check-in:two-step-word-problems",

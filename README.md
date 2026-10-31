@@ -47,6 +47,16 @@ Thirty-eight packets, in teaching order (K to grade 3). Each starts with a pictu
 | `40-perimeter/` | Walk around the edge and count, add the sides of rectangles and other shapes, find a missing side, area and perimeter of the same rectangle | 8 |
 | `41-elapsed-time/` | Time to the minute, then how long: jump to the next o'clock, then to the end, and add the jumps (packet 11's route, no number line); what time will it be; hours and minutes | 7 |
 | `42-four-operations/` | Two-step problems with +, −, × and ÷: bars with equal pieces (× finds the whole, ÷ finds a piece), two steps, round to check the answer makes sense | 9 |
+| `43-patterns-in-the-times-table/` | The times table: even × anything is even, odd × odd is odd, turnarounds mirror, double a number and the answer doubles, ×9 from ×10, ×5 is half of ×10 | 7 |
+| `44-mass-and-liquid-volume/` | Grams and kilograms on a pan balance (add the weights), liters in a marked beaker, how much more, problems with mass and liquid volume | 8 |
+| `45-scaled-graphs/` | Picture graphs where one picture is 2, 5 or 10, bar graphs that count by 2s or 5s, make one, how many more | 8 |
+| `46-measuring-to-the-quarter-inch/` | Rulers with half and quarter marks, true-size things to measure, X charts of the lengths | 8 |
+| `47-shapes-and-quadrilaterals/` | Sides, corners and right angles; quadrilateral or not; square, rectangle, rhombus or other; a square is a rectangle and a rhombus; draw one | 8 |
+| `48-thousands/` | Grade 4. Quick drawings with cubes, expanded form, what a digit is worth, ten times as much, compare, 1,000 more and less | 7 |
+| `49-rounding-big-numbers/` | The founder's method to the nearest 1,000 and 100: the one below, the one above, which is closer (the ten-frame counts the next place); estimate sums | 8 |
+| `50-adding-and-subtracting-big-numbers/` | Four-digit columns: carry boxes, break boxes, across zeros, then no help | 7 |
+| `51-multiplying-by-one-digit/` | The area model (23 × 4 = 80 + 12), splitting it yourself, three digits, partial products, then plain problems | 9 |
+| `52-division-with-remainders/` | Share on plates and make groups with leftovers, the biggest times fact that fits, 17 ÷ 5 = 3 R 2, what the remainder means in a story | 8 |
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 
@@ -66,7 +76,8 @@ Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hol
 | Kindergarten | 0–2: adding and taking away within 9, ten buddies, teen numbers | 44 problems | 46 problems |
 | Grade 1 | 3–9: over ten, back through ten, doubles, tens and ones, ten more/less, two-digit adding | 60 problems | 60 problems |
 | Grade 2 | 10–32: two-digit subtracting, borrowing, columns, three-digit numbers, skip counting, comparing, arrays, even/odd, hundred buddies, counting, halves, equal shares, time, money, across zeros, bar models, length, graphs | 98 problems | 98 problems |
-| Grade 3 | 33–42: multiplication, strategies, division, fractions, rounding, multiplying by tens, area, perimeter, elapsed time, two-step problems | 59 problems | 59 problems |
+| Grade 3 | 33–47: multiplication, strategies, division, fractions, rounding, multiplying by tens, area, perimeter, elapsed time, two-step problems, times-table patterns, mass and volume, scaled graphs, quarter inches, quadrilaterals | 69 problems | 69 problems |
+| Grade 4 | 48–52: thousands, rounding big numbers, adding and subtracting big numbers, multiplying by one digit, division with remainders | 34 problems | 34 problems |
 
 Each answer key ends with a **scoring sheet**: every part, the packet it checks, and a score line. Use the **pre-assessment** for placement: start a student at the first packet where they miss more than 1 problem in its parts. Use the **post-assessment** to see growth: a part with more than 1 miss means that packet needs review.
 
