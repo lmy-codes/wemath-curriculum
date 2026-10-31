@@ -7005,7 +7005,17 @@ _g2[-1:-1] = [
 
 # ====================================================================== 26. Halves, Thirds and Fourths (of shapes)
 
-SHARE_NAME = {1: ("whole", "wholes"), 2: ("half", "halves"), 3: ("third", "thirds"), 4: ("fourth", "fourths")}
+SHARE_NAME = {1: ("whole", "wholes"), 2: ("half", "halves"), 3: ("third", "thirds"), 4: ("fourth", "fourths"),
+              5: ("fifth", "fifths"), 6: ("sixth", "sixths"), 8: ("eighth", "eighths"), 10: ("tenth", "tenths")}
+
+
+def _uneven(n):
+    """Cut points (0 … 1) for n parts that look almost fair but aren't."""
+    wts = [1 + (0.42 if i % 3 == 0 else -0.24 if i % 3 == 1 else 0.06) for i in range(n)]
+    t, out = sum(wts), [0.0]
+    for w_ in wts:
+        out.append(out[-1] + w_ / t)
+    return out
 
 
 def share_word(n, k=1):
@@ -7034,7 +7044,7 @@ def share_parts(kind, x, y, s, n, equal=True):
         if not equal and n == 2:  # one straight cut that misses the middle
             a = math.acos(0.42)
             return [arc(-a, a), arc(a, 2 * math.pi - a)]
-        fr = [i / n for i in range(n)] if equal else {3: (0, 0.22, 0.55), 4: (0, 0.18, 0.5, 0.7)}[n]
+        fr = [i / n for i in range(n)] if equal else {3: (0, 0.22, 0.55), 4: (0, 0.18, 0.5, 0.7)}.get(n) or _uneven(n)[:-1]
         cuts = [math.pi / 2 - 2 * math.pi * f for f in fr] + [math.pi / 2 - 2 * math.pi]
         return [[(cx, cy)] + arc(cuts[i], cuts[i + 1]) for i in range(n)]
     if kind == "grid":
@@ -7047,7 +7057,8 @@ def share_parts(kind, x, y, s, n, equal=True):
             return [[a, b, c_], [a, c_, d]]
         o = (x + s / 2, y + s / 2)
         return [[d, c_, o], [c_, b, o], [b, a, o], [a, d, o]]
-    fr = [i / n for i in range(n + 1)] if equal else {2: [0, .32, 1], 3: [0, .2, .55, 1], 4: [0, .15, .45, .7, 1]}[n]
+    fr = [i / n for i in range(n + 1)] if equal else ({2: [0, .32, 1], 3: [0, .2, .55, 1], 4: [0, .15, .45, .7, 1]}.get(n)
+                                                      or _uneven(n))
     if kind in ("tall", "hsquare"):  # cut across, top part first
         return [[(x, y + h * (1 - fr[i + 1])), (x + w, y + h * (1 - fr[i + 1])), (x + w, y + h * (1 - fr[i])),
                  (x, y + h * (1 - fr[i]))] for i in range(n)]
@@ -9778,9 +9789,10 @@ def frac_width(tok, size):
     return max(part(num), part(den)) + 6
 
 
-def frac_expr(bk, x, base, text, size=18, color=None):
+def frac_expr(bk, x, base, text, size=18, color=None, measure=False):
     """An expression with stacked fractions: "3/4 [<] 7/8", "1/2 = [2]/4", "6/6 = [1]".
-    a/b is a fraction (either part can be a [blank]); [x] alone is an answer box; signs are grey."""
+    a/b is a fraction (either part can be a [blank]); [x] alone is an answer box; signs are grey.
+    measure=True draws nothing and returns the end x (for fitting)."""
     c = bk.c
     color = color or T.ink
     gap = size * 0.34
@@ -9789,49 +9801,61 @@ def frac_expr(bk, x, base, text, size=18, color=None):
         if "/" in tok:
             num, den = tok.split("/")
             fw = frac_width(tok, size)
-            cx = x + fw / 2
-            ly = base + size * 0.3
-            c.setStrokeColor(color)
-            c.setLineWidth(max(1, size / 14))
-            c.line(x + 1, ly, x + fw - 1, ly)
-            for part, top in ((num, True), (den, False)):
-                if part.startswith("["):
-                    bw, bh = ns * 1.5, ns * 1.3
-                    by = ly + 3 if top else ly - 3 - bh
-                    bk.box(cx - bw / 2, by, bw, bh, part[1:-1], size=ns * 0.85)
-                else:
-                    c.setFillColor(color)
-                    c.setFont("Rnd", ns)
-                    c.drawCentredString(cx, ly + 4 if top else ly - ns * 0.95, part)
+            if not measure:
+                cx = x + fw / 2
+                ly = base + size * 0.3
+                c.setStrokeColor(color)
+                c.setLineWidth(max(1, size / 14))
+                c.line(x + 1, ly, x + fw - 1, ly)
+                for part, top in ((num, True), (den, False)):
+                    if part.startswith("["):
+                        bw, bh = ns * 1.5, ns * 1.3
+                        by = ly + 3 if top else ly - 3 - bh
+                        bk.box(cx - bw / 2, by, bw, bh, part[1:-1], size=ns * 0.85)
+                    else:
+                        c.setFillColor(color)
+                        c.setFont("Rnd", ns)
+                        c.drawCentredString(cx, ly + 4 if top else ly - ns * 0.95, part)
             x += fw
         elif tok.startswith("["):
             ans = tok[1:-1]
             bw = size * 1.6 + max(len(ans) - 1, 0) * size * 0.5
-            bk.box(x, base - size * 0.42, bw, size * 1.5, ans, size=size * 0.9)
+            if not measure:
+                bk.box(x, base - size * 0.42, bw, size * 1.5, ans, size=size * 0.9)
             x += bw
         elif tok in OPS or tok in ("<", ">"):
-            c.setFillColor(T.text2)
-            c.setFont("AvD", size)
-            c.drawString(x, base, tok)
+            if not measure:
+                c.setFillColor(T.text2)
+                c.setFont("AvD", size)
+                c.drawString(x, base, tok)
             x += sw(tok, "AvD", size)
         else:
-            c.setFillColor(color)
-            c.setFont("Rnd", size)
-            c.drawString(x, base, tok)
+            if not measure:
+                c.setFillColor(color)
+                c.setFont("Rnd", size)
+                c.drawString(x, base, tok)
             x += sw(tok, "Rnd", size)
         x += gap
     return x - gap
 
 
+def frac_fit(bk, x, base, max_w, text, size=18):
+    """frac_expr, shrunk until it fits in max_w."""
+    while size > 10 and frac_expr(bk, 0, 0, text, size, measure=True) > max_w:
+        size -= 0.5
+    return frac_expr(bk, x, base, text, size)
+
+
 def strip(bk, x, y, w, h, n, shaded=0, answer=0, lw=1.2):
-    """A fraction strip: a bar cut into n equal parts; the first `shaded` filled, or `answer` filled on the key."""
+    """A fraction strip: a bar cut into n equal parts; the first `shaded` filled, or `answer` filled on the key.
+    shaded and answer can also be lists of part numbers."""
     c = bk.c
     parts = [[(x + w * i / n, y), (x + w * (i + 1) / n, y), (x + w * (i + 1) / n, y + h), (x + w * i / n, y + h)]
              for i in range(n)]
-    for i in range(shaded):
+    for i in (range(shaded) if isinstance(shaded, int) else shaded):
         shade(bk, parts[i])
     if bk.key:
-        for i in range(answer):
+        for i in (range(answer) if isinstance(answer, int) else answer):
             shade(bk, parts[i], answer=True)
     c.setStrokeColor(T.ink)
     c.setLineWidth(lw)
@@ -9875,122 +9899,244 @@ def c_equiv_frac(bk, x, cy, w, item):
 
 
 def c_frac(bk, x, cy, w, text):
-    frac_expr(bk, x + GUT, cy + 16, text, size=17)
+    frac_fit(bk, x + GUT, cy + 16, w - GUT - 10, text, size=17)
 
 
-def learn_fractions(bk):
-    y = bk.new_page("Fractions", "A fraction is equal parts of one whole.", name_line=False, big=True,
-                    footer="WeMath  ·  Fractions")
+def frac_pic(bk, kind, x, y, n, shaded=(), answer=(), s=None):
+    """A fraction picture: a strip (kind "strip") or a packet 26 shape cut into n equal parts.
+    (x, y) = bottom-left. Returns (w, h)."""
+    if kind == "strip":
+        w = s or 120
+        strip(bk, x, y, w, 24, n, shaded=list(shaded), answer=list(answer))
+        return w, 24
+    s = s or {"circle": 54, "rect": 46, "tall": 42, "square": 50}[kind]
+    return share_shape(bk, kind, x, y, s, n, shaded=shaded, answer=answer)
+
+
+FRAC_PIC_H = {"strip": 24, "circle": 54, "rect": 41, "tall": 55, "square": 50}
+
+
+def unit_word(n):
+    return f"one {SHARE_NAME[n][0]}"
+
+
+def c_unit_name(bk, x, cy, w, item):
+    """Name the unit fraction: one part shaded."""
+    kind, n, i = item
+    ph = FRAC_PIC_H[kind]
+    frac_pic(bk, kind, x + GUT, cy + (72 - ph) / 2, n, shaded=[i])
+    frac_expr(bk, x + w - 74, cy + 30, f"[1]/[{n}]", size=20)
+
+
+def c_shade_unit(bk, x, cy, w, item):
+    """Shade one part: the key fills it."""
+    kind, n, i = item
+    ph = FRAC_PIC_H[kind]
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 13)
+    bk.c.drawString(x + GUT, cy + 31, "Shade")
+    frac_expr(bk, x + GUT + 46, cy + 30, f"1/{n}", size=18)
+    frac_pic(bk, kind, x + GUT + 92, cy + (72 - ph) / 2, n, answer=[i], s=100 if kind == "strip" else None)
+
+
+def c_find_whole(bk, x, cy, w, item):
+    """One piece of a bar is shown; draw the whole bar (the key draws the other pieces)."""
+    n = item
+    whole = 216
+    pw = whole / n
     c = bk.c
-    label(bk, M, y - 6, "1 part of 4 equal parts")
-    strip(bk, M + 14, y - 52, 200, 30, 4, shaded=1)
-    frac_expr(bk, M + 250, y - 46, "1/4", size=34)
     c.setFillColor(T.text2)
     c.setFont("Rnd", 12)
-    c.drawString(M + 300, y - 26, "parts shaded")
-    c.drawString(M + 300, y - 58, "equal parts in the whole")
-    y -= 80
+    c.drawString(x + GUT, cy + 58, "This piece is")
+    frac_expr(bk, x + GUT + 82, cy + 57, f"1/{n}", size=15)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(x + GUT + 108, cy + 58, "of a bar. Draw the whole bar.")
+    strip(bk, x + GUT, cy + 18, pw, 24, 1, shaded=1)
+    if bk.key:
+        c.setStrokeColor(T.answer)
+        c.setLineWidth(1.2)
+        c.setDash(3, 2)
+        for j in range(1, n):
+            c.rect(x + GUT + j * pw, cy + 18, pw, 24, stroke=1, fill=0)
+        c.setDash()
+    bk.fit_eq(x + GUT + whole + 24, cy + 24, w - GUT - whole - 34, f"[{n}] pieces make the whole", size=14)
 
-    label(bk, M, y - 6, "3 parts of size 1/4")
-    strip(bk, M + 14, y - 52, 200, 30, 4, shaded=3)
-    frac_expr(bk, M + 250, y - 46, "3/4", size=34)
-    c.setFillColor(T.text2)
-    c.setFont("Rnd", 12)
-    c.drawString(M + 300, y - 42, "Three fourths. 4/4 is the whole bar: 1.")
-    y -= 80
 
-    label(bk, M, y - 6, "The fraction wall")
-    for i, n in enumerate((1, 2, 3, 4, 6, 8)):
-        yy = y - 40 - i * 22
-        strip(bk, M + 54, yy, 300, 18, n, shaded=1, lw=1)
-        frac_expr(bk, M + 14, yy + 3, f"1/{n}" if n > 1 else "1", size=11)
-    c.setStrokeColor(T.accent)
-    c.setLineWidth(1.4)
-    c.setDash(3, 2.5)
-    c.line(M + 54 + 150, y - 22, M + 54 + 150, y - 40 - 5 * 22 - 4)
-    c.setDash()
-    c.setFillColor(T.text2)
-    c.setFont("Rnd", 12)
-    c.drawString(M + 372, y - 40, "Same size pieces:")
-    frac_expr(bk, M + 372, y - 70, "1/2 = 2/4 = 4/8", size=16)
-    c.setFillColor(T.text2)
-    c.setFont("Rnd", 12)
-    c.drawString(M + 372, y - 104, "More parts, smaller parts:")
-    frac_expr(bk, M + 372, y - 134, "1/3 > 1/6", size=16)
-    y -= 180
+def c_bigger_piece(bk, x, cy, w, item):
+    """Two unit fractions; the key rings the bigger piece. With pics, a strip (same whole) over each one."""
+    a, b, pics = item
+    c = bk.c
+    if pics:
+        sw_ = w - GUT - 50
+        for j, n in enumerate((a, b)):
+            yy = cy + 48 - j * 36
+            fx = x + GUT
+            frac_expr(bk, fx, yy + 3, f"1/{n}", size=14)
+            strip(bk, x + GUT + 32, yy, sw_ - 6, 18, n, shaded=1)
+            if bk.key and n == min(a, b):
+                c.setStrokeColor(T.answer)
+                c.setLineWidth(1.5)
+                c.ellipse(fx - 8, yy - 8, fx + 22, yy + 26, stroke=1, fill=0)
+        return
+    fx = x + GUT + 6
+    for j, n in enumerate((a, b)):
+        frac_expr(bk, fx, cy + 16, f"1/{n}", size=18)
+        if bk.key and n == min(a, b):
+            c.setStrokeColor(T.answer)
+            c.setLineWidth(1.5)
+            c.ellipse(fx - 9, cy + 2, fx + 27, cy + 42, stroke=1, fill=0)
+        if j == 0:
+            c.setFillColor(T.text2)
+            c.setFont("Rnd", 13)
+            c.drawString(fx + 34, cy + 17, "or")
+        fx += 66
 
-    bottom = your_turn(bk, y, h=92)
-    bk.ask("frac name strip 6 2 your turn")
-    strip(bk, M + 130, bottom + 30, 200, 26, 6, shaded=2)
-    frac_expr(bk, M + 370, bottom + 36, "[2]/[6]", size=26)
+
+def learn_unit_fractions(bk):
+    y = bk.new_page("Unit Fractions", "Cut one whole into equal parts. One part is a unit fraction.",
+                    name_line=False, big=True, footer="WeMath  ·  Unit Fractions")
+    c = bk.c
+    label(bk, M, y - 6, "1 whole, 4 equal parts")
+    strip(bk, M + 14, y - 58, 220, 32, 4, shaded=1)
+    frac_expr(bk, M + 268, y - 50, "1/4", size=36)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 318, y - 30, "1 part shaded")
+    c.drawString(M + 318, y - 64, "4 equal parts in the whole")
+    c.drawString(M + 318, y - 84, "Say: one fourth.")
+    y -= 108
+
+    label(bk, M, y - 6, "The parts must be equal")
+    share_shape(bk, "rect", M + 20, y - 76, 40, 4, shaded=[0])
+    share_shape(bk, "rect", M + 200, y - 76, 40, 4, shaded=[0], equal=False)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 20, y - 94, "Equal parts: 1/4")
+    c.drawString(M + 200, y - 94, "Not equal: not fourths")
+    c.drawString(M + 372, y - 40, "Same size pieces?")
+    c.drawString(M + 372, y - 58, "Then each one is 1/4.")
+    y -= 120
+
+    label(bk, M, y - 6, "More parts, smaller pieces")
+    for i, n in enumerate((2, 3, 4, 6, 8)):
+        yy = y - 40 - i * 24
+        strip(bk, M + 54, yy, 260, 18, n, shaded=1, lw=1)
+        frac_expr(bk, M + 14, yy + 3, f"1/{n}", size=12)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 40, "Same whole bar.")
+    c.drawString(M + 340, y - 58, "Cut it into more parts,")
+    c.drawString(M + 340, y - 76, "and each piece is smaller.")
+    frac_expr(bk, M + 340, y - 110, "1/2 is bigger than 1/8", size=14)
+    y -= 168
+
+    bottom = your_turn(bk, y, h=96)
+    bk.ask("unit fraction: circle 6 parts your turn")
+    share_shape(bk, "circle", M + 150, bottom + 18, 58, 6, shaded=[0])
+    frac_expr(bk, M + 270, bottom + 40, "[1]/[6]", size=26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, bottom + 44, "How many equal parts?")
     if bottom < 112:
         print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
-    teacher_note(bk, "Goal: fractions are numbers made of equal parts (3.NF.1–3). The bottom number counts "
-                     "the equal parts, the top counts the shaded ones. Compare and find equal fractions on the "
-                     "wall: same whole, so line them up.")
+    teacher_note(bk, "Goal: 1/b is one of b equal parts of a whole (3.NF.1, 3.G.2). Say “How many equal parts? "
+                     "That's the bottom number. One part is one fourth.” Check the parts are equal first. "
+                     "More parts means smaller pieces.")
 
 
-def practice_fractions(bk):
-    title = "Fractions: Practice"
-    y = bk.new_page(title, "Bottom: equal parts in the whole. Top: parts you count.")
+def practice_unit_fractions(bk):
+    title = "Unit Fractions: Practice"
+    y = bk.new_page(title, "The bottom number tells how many equal parts.")
     num = 1
 
-    def part(n, name, sub, items, cols, h, gap, draw, key):
+    def part(n, name, sub, kind, items):
         nonlocal y, num
-        y, num = flow(bk, title, y, n, name, sub, items, num, cols, h, gap,
-                      lambda x, cy, w, it: (bk.ask(key(it)), draw(bk, x, cy, w, it)))
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
 
-    part(1, "Name the fraction", "Write the parts shaded over the equal parts.",
-         [("strip", 4, 1), ("circle", 3, 2), ("strip", 8, 5), ("circle", 4, 3), ("strip", 6, 1), ("strip", 3, 1),
-          ("circle", 2, 1), ("strip", 8, 3)], 2, 72, 10, c_name_frac, KINDS_36["name_frac"].key)
-    part(2, "Shade it", None, [(4, 3), (6, 5), (8, 2), (3, 2), (6, 4), (8, 7)], 2, 72, 10, c_shade_frac,
-         KINDS_36["shade_frac"].key)
-    part(3, "Compare", "Same whole. Write <, > or =.",
-         [((1, 3), (1, 6)), ((3, 8), (5, 8)), ((1, 2), (2, 4)), ((2, 3), (2, 6)), ((5, 6), (3, 6)), ((1, 8), (1, 4))],
-         1, 86, 8, c_compare_frac, KINDS_36["compare_frac"].key)
-    part(4, "Equal fractions", "Same amount shaded? Then the fractions are equal.",
-         [((1, 2), 4), ((1, 3), 6), ((3, 4), 8), ((2, 3), 6), ((1, 4), 8), ((1, 2), 6)], 1, 84, 8, c_equiv_frac,
-         KINDS_36["equiv_frac"].key)
-    plain = lambda bk_, x, cy, w, t: c_frac(bk_, x, cy, w, t)
-    part(5, "Same bottom number", "No help this time. More parts of the same size is more.",
-         ["3/8 [<] 5/8", "4/6 [>] 1/6", "2/4 [<] 3/4", "7/8 [>] 6/8", "1/3 [<] 2/3", "5/6 [>] 2/6", "2/8 [<] 4/8",
-          "3/4 [>] 1/4", "6/8 [=] 6/8"], 3, 48, 8, plain, lambda t: t)
-    part(6, "Same top number", "No help this time. More parts in the whole: smaller parts.",
-         ["1/2 [>] 1/4", "2/6 [<] 2/3", "1/8 [<] 1/3", "3/4 [>] 3/8", "1/6 [<] 1/2", "2/3 [>] 2/8", "1/4 [>] 1/6",
-          "3/8 [<] 3/6", "1/3 [>] 1/8"], 3, 48, 8, plain, lambda t: t)
-    part(7, "Equal fractions", "No help this time. Picture the wall.",
-         ["1/2 = [4]/8", "2/4 = [1]/2", "1/3 = [2]/6", "4/8 = [2]/4", "2/6 = [1]/3", "3/6 = [1]/2", "6/8 = [3]/4",
-          "4/6 = [2]/3", "2/8 = [1]/4"], 3, 48, 8, plain, lambda t: t)
-    part(8, "Fractions and wholes", "No help this time.",
-         ["4/4 = [1]", "6/6 = [1]", "8/4 = [2]", "3/1 = [3]", "6/3 = [2]", "8/8 = [1]"], 3, 48, 8, plain,
-         lambda t: t)
-    part(9, "Remember?", "Problems from earlier packets.", REVIEW_36, 2, 42, 8,
-         lambda bk_, x, cy, w, t: c_eq(bk_, x, cy, w, t), lambda t: t)
+    part(1, "Equal parts?", "Circle yes or no.", "eq_share",
+         [("rect", 6, True), ("circle", 8, False), ("tall", 5, True), ("square", 6, False), ("circle", 5, True),
+          ("rect", 8, False), ("tall", 6, False), ("circle", 10, True), ("square", 5, True)])
+    part(2, "Name the unit fraction", "Count the equal parts. One part is shaded.", "unit_name",
+         [("strip", 5, 2), ("circle", 8, 0), ("rect", 3, 1), ("tall", 6, 4), ("circle", 10, 3), ("square", 4, 2),
+          ("strip", 8, 5), ("circle", 6, 2), ("rect", 10, 7), ("tall", 2, 1), ("strip", 3, 0), ("circle", 4, 1)])
+    part(3, "Shade one part", None, "shade_unit",
+         [("circle", 3, 1), ("strip", 6, 3), ("rect", 5, 0), ("square", 8, 6), ("tall", 4, 2), ("circle", 2, 0),
+          ("strip", 10, 4), ("rect", 6, 5)])
+    part(4, "Find the whole", "Draw the other pieces. They are all the same size.", "find_whole",
+         [3, 6, 2, 5, 8, 4])
+    part(5, "Which piece is bigger?", "Same whole bar. Circle the bigger piece.", "bigger_unit",
+         [(5, 3, True), (2, 6, True), (4, 8, True), (6, 5, True), (3, 10, True), (8, 10, True), (6, 3, True),
+          (4, 2, True)])
+    part(6, "How many equal parts?", "No help this time.", "frac2",
+         [f"1/{n} is 1 of [{n}] equal parts" for n in (6, 3, 10, 2, 8, 5, 4)])
+    part(7, "Make one whole", "No help this time. How many pieces fill the whole?", "frac2",
+         [f"[{n}] pieces of 1/{n} make 1 whole" for n in (4, 8, 2, 5, 10, 3, 6)])
+    part(8, "Words and numbers", "No help this time.", "frac2",
+         [f"{unit_word(n)} = 1/[{n}]" for n in (8, 3, 5, 10, 2, 6, 4)])
+    part(9, "Bigger piece", "No help this time. Circle the bigger piece.", "bigger_unit_plain",
+         [(6, 4, False), (2, 5, False), (8, 5, False), (3, 4, False), (10, 6, False), (5, 4, False), (2, 8, False),
+          (4, 10, False), (2, 3, False)])
+    part(10, "Remember?", "Problems from earlier packets.", "eq2", REVIEW_UNIT)
 
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
-    y = bk.part(y, 10, "Word problems", "Draw a strip.")
-    for i, story in enumerate(WORDS_36):
+    y = bk.part(y, 11, "Word problems", "Draw a picture.")
+    for i, story in enumerate(WORDS_UNIT):
         if y - 110 < 46:
             y = bk.new_page(title, first=False)
-            y = bk.part(y, 10, "Word problems", "(continued)")
+            y = bk.part(y, 11, "Word problems", "(continued)")
         y = word_card(bk, y, num + i, *story)
 
 
-REVIEW_36 = [f"56 {DIV} 8 = [7]", "6 groups of 4 = [24]",
-             "quarter past 3 = [3:15]", "40¢ + 45¢ = [85¢]", f"300 {MINUS} 145 = [155]", "double 26 = [52]"]
+REVIEW_UNIT = ["9 × 50 = [450]", "7 cm by 4 cm: area = [28] sq cm", "Round 268 to the nearest hundred: [300]",
+             "3 sixths = [1] half", "5 groups of 9 = [45]", "Round 83 to the nearest ten: [80]"]
 
-WORDS_36 = [
-    ("A pizza is cut into 8 equal slices. Mia eats 3 slices. What fraction of the pizza does she eat?",
-     "3 out of 8 = 3/8", "3/8", "of the pizza"),
-    ("A chocolate bar has 6 equal pieces. Ben eats 1 piece. What fraction is left?", "5 out of 6 = 5/6", "5/6",
-     "of the bar"),
-    ("Kim ran 1/2 of a mile. Leo ran 1/4 of a mile. Who ran farther?", "1/2 > 1/4", "Kim", ""),
-    ("Zoe ate 2/4 of a sandwich. Sam ate 1/2 of the same size sandwich. Did they eat the same amount?",
-     "2/4 = 1/2", "yes", ""),
-    ("Challenge: A ribbon is cut into 4 equal parts. 3 parts are used. What fraction is left, in eighths?",
-     "1/4 = 2/8", "2/8", "of the ribbon"),
+WORDS_UNIT = [
+    ("A pizza is cut into 6 equal slices. Ana eats 1 slice. What fraction of the pizza does she eat?",
+     "1 of 6 equal parts = 1/6", "1/6", "of the pizza"),
+    ("A garden has 4 equal parts. Carrots grow in 1 part. What fraction of the garden is carrots?",
+     "1 of 4 equal parts = 1/4", "1/4", "of the garden"),
+    ("Two same-size cakes. Leo cuts his into 3 equal pieces, Max into 8. Whose piece is bigger?",
+     "1/3 is bigger than 1/8", "Leo's", "piece"),
+    ("A ribbon is cut into equal pieces. Each piece is 1/5 of the ribbon. How many pieces are there?",
+     "5 pieces of 1/5 make 1 whole", "5", "pieces"),
+    ("Challenge: Cut a bar in half. Then cut each half in half. What fraction of the bar is one piece?",
+     "4 equal pieces, 1 piece = 1/4", "1/4", "of the bar"),
 ]
+
+KINDS_UNIT = {
+    "unit_name": Kind(72, 2, lambda it: f"name the unit fraction: {it[0]} cut in {it[1]}, part {it[2] + 1} shaded",
+                      c_unit_name),
+    "shade_unit": Kind(72, 2, lambda it: f"shade the unit fraction: {it[0]} cut in {it[1]}, part {it[2] + 1}",
+                       c_shade_unit),
+    "find_whole": Kind(76, 1, lambda n: f"find the whole: 1/{n} piece", c_find_whole, 8),
+    "bigger_unit": Kind(84, 2, lambda it: f"bigger piece{' (strips)' if it[2] else ''}: 1/{it[0]} or 1/{it[1]}",
+                        c_bigger_piece),
+    "frac2": Kind(48, 2, lambda t: t, c_frac, 8),
+}
+KINDS.update(KINDS_UNIT)
+KINDS["bigger_unit_plain"] = Kind(48, 3, KINDS_UNIT["bigger_unit"].key, c_bigger_piece, 8)
+BALANCE["bigger_unit"] = BALANCE["bigger_unit_plain"] = lambda it: it[0] < it[1]
+
+_UNIT_DENS = (2, 3, 4, 5, 6, 8, 10)
+_UNIT_KINDS = {"strip": _UNIT_DENS, "circle": _UNIT_DENS, "rect": _UNIT_DENS, "tall": (2, 3, 4, 5, 6),
+               "square": (2, 3, 4, 5, 6, 8)}
+UNIT_NAME = [(k, n, i) for k, ns in _UNIT_KINDS.items() for n in ns for i in range(n)]
+UNIT_FACTS = ([f"1/{n} is 1 of [{n}] equal parts" for n in _UNIT_DENS]
+              + [f"[{n}] pieces of 1/{n} make 1 whole" for n in _UNIT_DENS]
+              + [f"{unit_word(n)} = 1/[{n}]" for n in _UNIT_DENS])
+UNIT_BIGGER = [(a, b, False) for a in _UNIT_DENS for b in _UNIT_DENS if a != b]
+
+CHECKINS["39-unit-fractions"] = [
+    S("Name the unit fraction", None, "unit_name", UNIT_NAME, 2),
+    S("Find the whole", None, "find_whole", list(_UNIT_DENS), 1),
+    S("Bigger piece", "Circle the bigger piece.", "bigger_unit_plain", UNIT_BIGGER, 3),
+    S("How many equal parts?", None, "frac2", UNIT_FACTS, 4),
+]
+
 
 KINDS_36 = {
     "name_frac": Kind(72, 2, lambda it: f"frac name {it[0]} {it[1]} {it[2]}", c_name_frac),
@@ -10010,13 +10156,6 @@ FRAC_EQUIV = [f"{a}/{n} = [{a * m // n}]/{m}" for n in _DENS for m in _DENS if m
               for a in rng(1, n - 1)] + [f"{a}/{m} = [{a * n // m}]/{n}" for n in _DENS for m in _DENS
                                          if m % n == 0 and m > n for a in rng(1, m - 1) if a * n % m == 0]
 
-CHECKINS["39-fractions"] = [
-    S("Name the fraction", None, "name_frac", [(k, n, a) for k in ("strip", "circle") for n in (2, 3, 4, 6, 8)
-                                               for a in rng(1, n - 1) if k == "strip" or n <= 4], 2),
-    S("Shade it", None, "shade_frac", [(n, a) for n in (3, 4, 6, 8) for a in rng(1, n - 1)], 2),
-    S("Compare", "Write <, > or =.", "frac3", FRAC_COMPARE, 3, balance=is_less),
-    S("Equal fractions", None, "frac3", FRAC_EQUIV, 3),
-]
 
 
 # ---------------------------------------------------------------------- grade 3 assessments (packets 33-36)
@@ -10047,10 +10186,6 @@ GRADES.append(("grade-3", "Grade 3", "Packets 33–52", [
     S("Multiply", None, "eq3", HARD_FACTS, 9, 34),
     S("Think multiplication", None, "think_times", [(d * q, d) for d in rng(3, 9) for q in rng(3, 9)], 2, 35),
     S("Divide", None, "eq3", DIV_FACTS, 9, 35),
-    S("Name the fraction", None, "name_frac", [(k, n, a) for k in ("strip", "circle") for n in (2, 3, 4, 6, 8)
-                                               for a in rng(1, n - 1) if k == "strip" or n <= 4], 2, 39),
-    S("Compare fractions", "Write <, > or =.", "frac3", FRAC_COMPARE, 3, 39, balance=is_less),
-    S("Equal fractions", None, "frac3", FRAC_EQUIV, 3, 39),
     S("Word problems", None, "word", stories_x("g3a", "times", [(g, k) for g in rng(3, 9) for k in rng(3, 9)])[:8]
       + stories_x("g3b", "share", [(g, k) for g in rng(3, 9) for k in rng(3, 9)])[:8], 4, "33–35"),
 ]))
@@ -10619,6 +10754,8 @@ CHECKINS["38-area"] = [
 ]
 _g3[-1:-1] = [
     S("Area", None, "eq2", AREA_EQS, 2, 38),
+    S("Unit fractions", None, "unit_name", UNIT_NAME, 2, 39),
+    S("Bigger piece", "Circle the bigger piece.", "bigger_unit_plain", UNIT_BIGGER, 3, 39),
 ]
 
 
@@ -13429,6 +13566,11 @@ ANSWER_OF = {
     "tally_draw": lambda n: f"{n} tally marks",
     "show_amount": lambda a: " ".join(COIN[k][2] for k in greedy(a)),
     "round_card": lambda it: nf(round_to(it[0], it[1])),
+    "unit_name": lambda it: f"1/{it[1]}",
+    "shade_unit": lambda it: f"1 of {it[1]} parts shaded",
+    "find_whole": lambda n: f"{n} pieces",
+    "bigger_unit": lambda it: f"1/{min(it[0], it[1])}",
+    "bigger_unit_plain": lambda it: f"1/{min(it[0], it[1])}",
     "shade_frac": lambda it: f"{it[1]} of {it[0]} parts shaded",
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -13599,7 +13741,8 @@ PACKETS = [
     ("37-multiplying-by-tens", "multiplying-by-tens", "Multiplying by Tens", learn_times_tens,
      practice_times_tens, False),
     ("38-area", "area", "Area", learn_area, practice_area, False),
-    ("39-fractions", "fractions", "Fractions", learn_fractions, practice_fractions, False),
+    ("39-unit-fractions", "unit-fractions", "Unit Fractions", learn_unit_fractions, practice_unit_fractions,
+     False),
     ("45-perimeter", "perimeter", "Perimeter", learn_perimeter, practice_perimeter, False),
     ("46-elapsed-time", "elapsed-time", "Elapsed Time", learn_elapsed, practice_elapsed, False),
     ("47-four-operations", "four-operations", "All Four Operations", learn_four_ops, practice_four_ops, False),
