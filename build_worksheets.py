@@ -10138,6 +10138,197 @@ CHECKINS["39-unit-fractions"] = [
 ]
 
 
+NUM_WORD = {1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine",
+            10: "ten", 11: "eleven", 12: "twelve"}
+
+
+def frac_words(k, n):
+    """frac_words(3, 4) = "three fourths"."""
+    return f"{NUM_WORD[k]} {SHARE_NAME[n][0 if k == 1 else 1]}"
+
+
+def c_count_pieces(bk, x, cy, w, item):
+    """k pieces of 1/n shaded: count them, then write the fraction."""
+    kind, n, k = item
+    ph = FRAC_PIC_H[kind]
+    pw, _ = frac_pic(bk, kind, x + GUT, cy + (64 - ph) / 2, n, shaded=range(k))
+    frac_fit(bk, x + GUT + 154, cy + 26, w - GUT - 164, f"[{k}] pieces of 1/{n} = [{k}]/{n}", size=17)
+
+
+def c_frac_name(bk, x, cy, w, item):
+    kind, n, k = item
+    ph = FRAC_PIC_H[kind]
+    frac_pic(bk, kind, x + GUT, cy + (72 - ph) / 2, n, shaded=range(k))
+    frac_expr(bk, x + w - 74, cy + 30, f"[{k}]/[{n}]", size=20)
+
+
+def c_frac_shade(bk, x, cy, w, item):
+    kind, n, k = item
+    ph = FRAC_PIC_H[kind]
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 13)
+    bk.c.drawString(x + GUT, cy + 31, "Shade")
+    frac_expr(bk, x + GUT + 46, cy + 30, f"{k}/{n}", size=18)
+    frac_pic(bk, kind, x + GUT + 92, cy + (72 - ph) / 2, n, answer=range(k), s=100 if kind == "strip" else None)
+
+
+def c_shaded_not(bk, x, cy, w, item):
+    """How much is shaded, how much is not."""
+    kind, n, k = item
+    ph = FRAC_PIC_H[kind]
+    frac_pic(bk, kind, x + GUT, cy + (84 - ph) / 2, n, shaded=range(k), s=76 if kind == "strip" else None)
+    tx = x + w - 118
+    for j, (word, v) in enumerate((("shaded", k), ("not shaded", n - k))):
+        yy = cy + 52 - j * 36
+        bk.c.setFillColor(T.text2)
+        bk.c.setFont("Rnd", 11)
+        bk.c.drawRightString(tx + 50, yy + 2, word)
+        frac_expr(bk, tx + 58, yy, f"[{v}]/{n}", size=16)
+
+
+def learn_counting_fractions(bk):
+    y = bk.new_page("Counting Fractions", "Count the pieces. 3 pieces of 1/4 is 3/4.", name_line=False, big=True,
+                    footer="WeMath  ·  Counting Fractions")
+    c = bk.c
+    label(bk, M, y - 6, "Put unit fractions together")
+    for j in range(3):
+        strip(bk, M + 14 + j * 62, y - 56, 52, 30, 1, shaded=1)
+        frac_expr(bk, M + 30 + j * 62, y - 82, "1/4", size=14)
+    c.setFillColor(T.text2)
+    c.setFont("AvD", 26)
+    c.drawString(M + 206, y - 50, "=")
+    strip(bk, M + 236, y - 56, 208, 30, 4, shaded=3)
+    frac_expr(bk, M + 462, y - 50, "3/4", size=34)
+    y -= 112
+
+    label(bk, M, y - 6, "Count by fourths")
+    for i in range(4):
+        yy = y - 40 - i * 34
+        strip(bk, M + 14, yy, 208, 24, 4, shaded=i + 1)
+        frac_expr(bk, M + 238, yy + 4, f"{i + 1}/4", size=18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 310, y - 36, "Top number: how many pieces.")
+    c.drawString(M + 310, y - 56, "Bottom number: how many equal")
+    c.drawString(M + 310, y - 72, "parts make the whole.")
+    c.drawString(M + 310, y - 100, "4 pieces of 1/4 fill the bar:")
+    c.drawString(M + 310, y - 116, "that's the whole.")
+    y -= 174
+
+    label(bk, M, y - 6, "Say it in words")
+    frac_expr(bk, M + 14, y - 46, "2/3", size=26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 14)
+    c.drawString(M + 56, y - 42, "two thirds")
+    frac_expr(bk, M + 214, y - 46, "5/8", size=26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 14)
+    c.drawString(M + 256, y - 42, "five eighths")
+    y -= 72
+
+    bottom = your_turn(bk, y, h=96)
+    bk.ask("count the pieces: strip cut in 6, 5 shaded your turn")
+    strip(bk, M + 130, bottom + 34, 180, 28, 6, shaded=5)
+    frac_expr(bk, M + 350, bottom + 40, "[5]/[6]", size=26)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: a/b is a pieces of size 1/b (3.NF.1). Point at each piece and count: “one fourth, two "
+                     "fourths, three fourths.” The top number counts pieces; the bottom number names their size.")
+
+
+def practice_counting_fractions(bk):
+    title = "Counting Fractions: Practice"
+    y = bk.new_page(title, "Top: how many pieces. Bottom: how many equal parts in the whole.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Count the pieces", "How many pieces are shaded? What size is each one?", "count_pieces",
+         [("strip", 5, 3), ("circle", 8, 5), ("rect", 4, 3), ("strip", 10, 7), ("circle", 6, 4), ("tall", 3, 2),
+          ("strip", 8, 6), ("square", 5, 2)])
+    part(2, "Name the fraction", None, "frac_name",
+         [("circle", 4, 3), ("strip", 6, 5), ("rect", 8, 3), ("tall", 5, 4), ("circle", 10, 3), ("square", 6, 4),
+          ("strip", 3, 2), ("circle", 5, 2), ("rect", 10, 9), ("tall", 6, 2), ("strip", 8, 7), ("circle", 6, 5)])
+    part(3, "Shade it", None, "frac_shade",
+         [("circle", 8, 3), ("strip", 5, 4), ("rect", 6, 5), ("square", 4, 2), ("tall", 6, 3), ("circle", 3, 2),
+          ("strip", 10, 6), ("rect", 8, 7)])
+    part(4, "Count by fractions", "No help this time. Fill in the missing fractions.", "frac2",
+         ["1/5 2/5 [3]/5 [4]/5 5/5", "1/8 2/8 3/8 [4]/8 [5]/8", "2/6 3/6 [4]/6 [5]/6 6/6",
+          "1/3 [2]/3 3/3", "4/10 5/10 [6]/10 [7]/10 8/10", "[1]/4 2/4 3/4 [4]/4",
+          "3/8 4/8 5/8 [6]/8 [7]/8", "1/6 [2]/6 [3]/6 4/6"])
+    part(5, "Shaded and not shaded", "Together they make the whole.", "shaded_not",
+         [("strip", 8, 3), ("circle", 5, 4), ("rect", 6, 1), ("tall", 4, 1), ("circle", 10, 6), ("strip", 6, 2)])
+    part(6, "Pieces to fractions", "No help this time.", "frac2",
+         [f"{k} pieces of 1/{n} = [{k}]/{n}" for k, n in ((4, 6), (2, 3), (7, 8), (3, 5), (6, 10), (2, 4),
+                                                          (5, 8), (9, 10), (3, 6), (4, 5), (2, 8), (5, 10))])
+    part(7, "Fractions to pieces", "No help this time.", "frac2",
+         [f"{k}/{n} = [{k}] pieces of 1/{n}" for k, n in ((3, 8), (5, 6), (2, 5), (3, 10), (6, 8), (2, 6),
+                                                          (3, 4), (8, 10), (4, 8), (2, 10), (4, 10), (7, 10))])
+    part(8, "Words and numbers", "No help this time.", "frac2",
+         [f"{frac_words(k, n)} = [{k}]/{n}" for k, n in ((2, 5), (5, 6), (3, 8), (7, 10), (3, 4), (4, 6),
+                                                          (2, 3), (5, 8), (6, 10), (4, 5))])
+    part(9, "How much is left?", "No help this time. Shaded and not shaded make the whole.", "frac2",
+         [f"{k}/{n} shaded, [{n - k}]/{n} not shaded" for k, n in ((3, 8), (1, 6), (4, 10), (2, 5), (1, 4),
+                                                                    (5, 8), (2, 3), (3, 6))])
+    part(10, "Remember?", "Problems from earlier packets.", "eq2", REVIEW_COUNTF)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 11, "Word problems", "Draw a picture.")
+    for i, story in enumerate(WORDS_COUNTF):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 11, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_COUNTF = ["8 groups of 3 = [24]", "6 cm by 8 cm: area = [48] sq cm", "Round 547 to the nearest ten: [550]",
+                 "4 groups of 7 = [28]", "Round 351 to the nearest hundred: [400]", "Round 762 to the nearest ten: [760]"]
+
+WORDS_COUNTF = [
+    ("A pizza has 8 equal slices. Tom eats 3 slices. What fraction of the pizza does he eat?",
+     "3 pieces of 1/8 = 3/8", "3/8", "of the pizza"),
+    ("A garden has 5 equal rows. 2 rows are beans. What fraction of the garden is beans?",
+     "2 pieces of 1/5 = 2/5", "2/5", "of the garden"),
+    ("A chocolate bar has 6 equal pieces. Ben eats 1 piece. What fraction of the bar is left?",
+     "1/6 eaten, 5/6 left", "5/6", "of the bar"),
+    ("Mia paints 4 of the 10 equal parts of a fence. What fraction is not painted yet?",
+     "4/10 painted, 6/10 not painted", "6/10", "of the fence"),
+    ("Challenge: Sam eats 2/8 of a pie. Kim eats 3/8 of it. How much of the pie do they eat in all?",
+     "2 eighths and 3 eighths = 5 eighths", "5/8", "of the pie"),
+]
+
+KINDS_COUNTF = {
+    "count_pieces": Kind(64, 1, lambda it: f"count the pieces: {it[0]} cut in {it[1]}, {it[2]} shaded", c_count_pieces, 8),
+    "frac_name": Kind(72, 2, lambda it: f"name the fraction: {it[0]} cut in {it[1]}, {it[2]} shaded", c_frac_name),
+    "frac_shade": Kind(72, 2, lambda it: f"shade the fraction: {it[0]} cut in {it[1]}, {it[2]} parts", c_frac_shade),
+    "shaded_not": Kind(84, 2, lambda it: f"shaded and not: {it[0]} cut in {it[1]}, {it[2]} shaded", c_shaded_not),
+}
+KINDS.update(KINDS_COUNTF)
+
+_CF_DENS = (3, 4, 5, 6, 8, 10)
+_CF_KINDS = {"strip": _CF_DENS, "circle": _CF_DENS, "rect": _CF_DENS, "tall": (3, 4, 5, 6), "square": (3, 4, 5, 6, 8)}
+FRAC_PICS = [(k, n, a) for k, ns in _CF_KINDS.items() for n in ns for a in rng(2, n - 1)]
+COUNT_BY = ([" ".join(f"{i}/{n}" if i not in (b, b + 1) else f"[{i}]/{n}" for i in rng(s, s + 3))
+             for n in (5, 6, 8, 10) for s in rng(1, n - 3) for b in (s + 1, s + 2) if b + 1 <= s + 3])
+COUNTF_FACTS = ([f"{k} pieces of 1/{n} = [{k}]/{n}" for n in _CF_DENS for k in rng(2, n - 1)]
+                + [f"{k}/{n} = [{k}] pieces of 1/{n}" for n in _CF_DENS for k in rng(2, n - 1)]
+                + [f"{frac_words(k, n)} = [{k}]/{n}" for n in _CF_DENS for k in rng(2, n - 1)])
+LEFT_FACTS = [f"{k}/{n} shaded, [{n - k}]/{n} not shaded" for n in _CF_DENS for k in rng(1, n - 1)]
+
+CHECKINS["40-counting-fractions"] = [
+    S("Name the fraction", None, "frac_name", FRAC_PICS, 2),
+    S("Shade it", None, "frac_shade", FRAC_PICS, 2),
+    S("Count by fractions", None, "frac2", COUNT_BY, 2),
+    S("Pieces and fractions", None, "frac2", COUNTF_FACTS, 2),
+    S("How much is left?", None, "frac2", LEFT_FACTS, 2),
+]
+
+
 KINDS_36 = {
     "name_frac": Kind(72, 2, lambda it: f"frac name {it[0]} {it[1]} {it[2]}", c_name_frac),
     "shade_frac": Kind(72, 2, lambda it: f"frac shade {it[0]} {it[1]}", c_shade_frac),
@@ -10756,6 +10947,8 @@ _g3[-1:-1] = [
     S("Area", None, "eq2", AREA_EQS, 2, 38),
     S("Unit fractions", None, "unit_name", UNIT_NAME, 2, 39),
     S("Bigger piece", "Circle the bigger piece.", "bigger_unit_plain", UNIT_BIGGER, 3, 39),
+    S("Name the fraction", None, "frac_name", FRAC_PICS, 2, 40),
+    S("Pieces and fractions", None, "frac2", COUNTF_FACTS, 2, 40),
 ]
 
 
@@ -13571,6 +13764,10 @@ ANSWER_OF = {
     "find_whole": lambda n: f"{n} pieces",
     "bigger_unit": lambda it: f"1/{min(it[0], it[1])}",
     "bigger_unit_plain": lambda it: f"1/{min(it[0], it[1])}",
+    "count_pieces": lambda it: f"{it[2]}/{it[1]}",
+    "frac_name": lambda it: f"{it[2]}/{it[1]}",
+    "frac_shade": lambda it: f"{it[2]} of {it[1]} parts shaded",
+    "shaded_not": lambda it: f"{it[2]}/{it[1]} shaded, {it[1] - it[2]}/{it[1]} not",
     "shade_frac": lambda it: f"{it[1]} of {it[0]} parts shaded",
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -13742,6 +13939,8 @@ PACKETS = [
      practice_times_tens, False),
     ("38-area", "area", "Area", learn_area, practice_area, False),
     ("39-unit-fractions", "unit-fractions", "Unit Fractions", learn_unit_fractions, practice_unit_fractions,
+     False),
+    ("40-counting-fractions", "counting-fractions", "Counting Fractions", learn_counting_fractions, practice_counting_fractions,
      False),
     ("45-perimeter", "perimeter", "Perimeter", learn_perimeter, practice_perimeter, False),
     ("46-elapsed-time", "elapsed-time", "Elapsed Time", learn_elapsed, practice_elapsed, False),
