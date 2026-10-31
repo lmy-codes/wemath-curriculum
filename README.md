@@ -1,6 +1,6 @@
 # WeMath worksheets
 
-Thirty-eight packets, in teaching order (K to grade 3). Each starts with a picture-first learning page, followed by practice.
+Fifty-eight packets, in teaching order (K to grade 4). Each starts with a picture-first learning page, followed by practice.
 
 | Folder | Topic | Pages |
 |---|---|---|
@@ -40,23 +40,28 @@ Thirty-eight packets, in teaching order (K to grade 3). Each starts with a pictu
 | `33-multiplication/` | Grade 3. Equal groups to the × sign, arrays, turnarounds, count by; the ×2, ×5 and ×10 facts | 8 |
 | `34-multiplication-strategies/` | Break-apart arrays: ×3 = ×2 + one group, ×4 = double double, ×6 = ×5 + one group, ×7 = ×5 + ×2, ×8 = double ×4, ×9 = ×10 − one group; all 36 facts of 3, 4, 6, 7, 8, 9 | 8 |
 | `35-division/` | Share it, make groups, think multiplication (missing factor), fact families, all division facts to 10 × 10 | 8 |
-| `36-fractions/` | Fraction strips and the fraction wall: name and shade fractions, compare, equal fractions, fractions equal to wholes (no number lines) | 7 |
-| `37-rounding/` | Round to the nearest 10 and 100: find the ten below and the ten above, and circle the closer one; exactly in the middle rounds up | 7 |
-| `38-multiplying-by-tens/` | 4 × 30 as 4 groups of 3 tens = 12 tens = 120: groups of ten-sticks, how many tens, the fact then the tens, careful with 5s (5 × 40 = 20 tens = 200) | 6 |
-| `39-area/` | Cover with unit squares and count, rows × columns, side lengths with no squares, break a rectangle apart (7 × 7 = 7 × 5 + 7 × 2), two rectangles (L shapes), find a missing side | 8 |
-| `40-perimeter/` | Walk around the edge and count, add the sides of rectangles and other shapes, find a missing side, area and perimeter of the same rectangle | 8 |
-| `41-elapsed-time/` | Time to the minute, then how long: jump to the next o'clock, then to the end, and add the jumps (packet 11's route, no number line); what time will it be; hours and minutes | 7 |
-| `42-four-operations/` | Two-step problems with +, −, × and ÷: bars with equal pieces (× finds the whole, ÷ finds a piece), two steps, round to check the answer makes sense | 9 |
-| `43-patterns-in-the-times-table/` | The times table: even × anything is even, odd × odd is odd, turnarounds mirror, double a number and the answer doubles, ×9 from ×10, ×5 is half of ×10 | 7 |
-| `44-mass-and-liquid-volume/` | Grams and kilograms on a pan balance (add the weights), liters in a marked beaker, how much more, problems with mass and liquid volume | 8 |
-| `45-scaled-graphs/` | Picture graphs where one picture is 2, 5 or 10, bar graphs that count by 2s or 5s, make one, how many more | 8 |
-| `46-measuring-to-the-quarter-inch/` | Rulers with half and quarter marks, true-size things to measure, X charts of the lengths | 8 |
-| `47-shapes-and-quadrilaterals/` | Sides, corners and right angles; quadrilateral or not; square, rectangle, rhombus or other; a square is a rectangle and a rhombus; draw one | 8 |
-| `48-thousands/` | Grade 4. Quick drawings with cubes, expanded form, what a digit is worth, ten times as much, compare, 1,000 more and less | 7 |
-| `49-rounding-big-numbers/` | The founder's method to the nearest 1,000 and 100: the one below, the one above, which is closer; estimate sums | 8 |
-| `50-adding-and-subtracting-big-numbers/` | Four-digit columns: carry boxes, break boxes, across zeros, then no help | 7 |
-| `51-multiplying-by-one-digit/` | The area model (23 × 4 = 80 + 12), splitting it yourself, three digits, partial products, then plain problems | 9 |
-| `52-division-with-remainders/` | Share on plates and make groups with leftovers, the biggest times fact that fits, 17 ÷ 5 = 3 R 2, what the remainder means in a story | 8 |
+| `36-rounding/` | Round to the nearest 10 and 100: find the ten below and the ten above, and circle the closer one; exactly in the middle rounds up | 7 |
+| `37-multiplying-by-tens/` | 4 × 30 as 4 groups of 3 tens = 12 tens = 120: groups of ten-sticks, how many tens, the fact then the tens, careful with 5s (5 × 40 = 20 tens = 200) | 6 |
+| `38-area/` | Cover with unit squares and count, rows × columns, side lengths with no squares, break a rectangle apart (7 × 7 = 7 × 5 + 7 × 2), two rectangles (L shapes), find a missing side | 8 |
+| `39-unit-fractions/` | One whole cut into equal parts: equal or not, name the unit fraction, shade one part, find the whole from one piece, which piece is bigger (more parts, smaller pieces) | 9 |
+| `40-counting-fractions/` | 3/4 is three 1/4 pieces: count the pieces, name and shade fractions, count by fractions, shaded and not shaded, fractions in words | 9 |
+| `41-fractions-and-wholes/` | 4/4 = 1, how many wholes, fractions bigger than 1 (7/4 = 1 whole and 3/4), whole numbers as fractions, less than, equal to or more than 1 | 9 |
+| `42-equal-fractions/` | The fraction wall, strips lined up, shade to match, find the top or bottom number, halves in disguise | 8 |
+| `43-comparing-fractions/` | Same bottom number, same top number, unit fractions, equal or not, only the same whole, circle the biggest | 7 |
+| `44-fractions-of-a-group/` | 1/3 of 12 by sharing into rings, count the marked groups, ring them yourself, divide then multiply, hours and dollars | 8 |
+| `45-perimeter/` | Walk around the edge and count, add the sides of rectangles and other shapes, find a missing side, area and perimeter of the same rectangle | 8 |
+| `46-elapsed-time/` | Time to the minute, then how long: jump to the next o'clock, then to the end, and add the jumps (packet 11's route, no number line); what time will it be; hours and minutes | 7 |
+| `47-four-operations/` | Two-step problems with +, −, × and ÷: bars with equal pieces (× finds the whole, ÷ finds a piece), two steps, round to check the answer makes sense | 9 |
+| `48-patterns-in-the-times-table/` | The times table: even × anything is even, odd × odd is odd, turnarounds mirror, double a number and the answer doubles, ×9 from ×10, ×5 is half of ×10 | 7 |
+| `49-mass-and-liquid-volume/` | Grams and kilograms on a pan balance (add the weights), liters in a marked beaker, how much more, problems with mass and liquid volume | 8 |
+| `50-scaled-graphs/` | Picture graphs where one picture is 2, 5 or 10, bar graphs that count by 2s or 5s, make one, how many more | 8 |
+| `51-measuring-to-the-quarter-inch/` | Rulers with half and quarter marks, true-size things to measure, X charts of the lengths | 8 |
+| `52-shapes-and-quadrilaterals/` | Sides, corners and right angles; quadrilateral or not; square, rectangle, rhombus or other; a square is a rectangle and a rhombus; draw one | 8 |
+| `53-thousands/` | Grade 4. Quick drawings with cubes, expanded form, what a digit is worth, ten times as much, compare, 1,000 more and less | 7 |
+| `54-rounding-big-numbers/` | The founder's method to the nearest 1,000 and 100: the one below, the one above, which is closer; estimate sums | 8 |
+| `55-adding-and-subtracting-big-numbers/` | Four-digit columns: carry boxes, break boxes, across zeros, then no help | 7 |
+| `56-multiplying-by-one-digit/` | The area model (23 × 4 = 80 + 12), splitting it yourself, three digits, partial products, then plain problems | 9 |
+| `57-division-with-remainders/` | Share on plates and make groups with leftovers, the biggest times fact that fits, 17 ÷ 5 = 3 R 2, what the remainder means in a story | 8 |
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 
@@ -76,8 +81,8 @@ Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hol
 | Kindergarten | 0–2: adding and taking away within 9, ten buddies, teen numbers | 44 problems | 46 problems |
 | Grade 1 | 3–9: over ten, back through ten, doubles, tens and ones, ten more/less, two-digit adding | 60 problems | 60 problems |
 | Grade 2 | 10–32: two-digit subtracting, borrowing, columns, three-digit numbers, skip counting, comparing, arrays, even/odd, hundred buddies, counting, halves, equal shares, time, money, across zeros, bar models, length, graphs | 98 problems | 98 problems |
-| Grade 3 | 33–47: multiplication, strategies, division, fractions, rounding, multiplying by tens, area, perimeter, elapsed time, two-step problems, times-table patterns, mass and volume, scaled graphs, quarter inches, quadrilaterals | 69 problems | 69 problems |
-| Grade 4 | 48–52: thousands, rounding big numbers, adding and subtracting big numbers, multiplying by one digit, division with remainders | 34 problems | 34 problems |
+| Grade 3 | 33–52: multiplication, strategies, division, rounding, multiplying by tens, area, six fraction packets (unit fractions, counting fractions, fractions and wholes, equal fractions, comparing, fractions of a group), perimeter, elapsed time, two-step problems, times-table patterns, mass and volume, scaled graphs, quarter inches, quadrilaterals | 86 problems | 86 problems |
+| Grade 4 | 53–57: thousands, rounding big numbers, adding and subtracting big numbers, multiplying by one digit, division with remainders | 34 problems | 34 problems |
 
 Each answer key ends with a **scoring sheet**: every part, the packet it checks, and a score line. Use the **pre-assessment** for placement: start a student at the first packet where they miss more than 1 problem in its parts. Use the **post-assessment** to see growth: a part with more than 1 miss means that packet needs review.
 

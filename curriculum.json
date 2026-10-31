@@ -1,5 +1,5 @@
 {
- "version": "4ac64e22025a",
+ "version": "cb5993d9295d",
  "packets": [
   {
    "number": 0,
@@ -291,136 +291,176 @@
   },
   {
    "number": 36,
-   "slug": "fractions",
-   "folder": "36-fractions",
-   "file": "fractions",
-   "title": "Fractions",
-   "grade": "3"
-  },
-  {
-   "number": 37,
    "slug": "rounding",
-   "folder": "37-rounding",
+   "folder": "36-rounding",
    "file": "rounding",
    "title": "Rounding",
    "grade": "3"
   },
   {
-   "number": 38,
+   "number": 37,
    "slug": "multiplying-by-tens",
-   "folder": "38-multiplying-by-tens",
+   "folder": "37-multiplying-by-tens",
    "file": "multiplying-by-tens",
    "title": "Multiplying by Tens",
    "grade": "3"
   },
   {
-   "number": 39,
+   "number": 38,
    "slug": "area",
-   "folder": "39-area",
+   "folder": "38-area",
    "file": "area",
    "title": "Area",
    "grade": "3"
   },
   {
+   "number": 39,
+   "slug": "unit-fractions",
+   "folder": "39-unit-fractions",
+   "file": "unit-fractions",
+   "title": "Unit Fractions",
+   "grade": "3"
+  },
+  {
    "number": 40,
+   "slug": "counting-fractions",
+   "folder": "40-counting-fractions",
+   "file": "counting-fractions",
+   "title": "Counting Fractions",
+   "grade": "3"
+  },
+  {
+   "number": 41,
+   "slug": "fractions-and-wholes",
+   "folder": "41-fractions-and-wholes",
+   "file": "fractions-and-wholes",
+   "title": "Fractions and Wholes",
+   "grade": "3"
+  },
+  {
+   "number": 42,
+   "slug": "equal-fractions",
+   "folder": "42-equal-fractions",
+   "file": "equal-fractions",
+   "title": "Equal Fractions",
+   "grade": "3"
+  },
+  {
+   "number": 43,
+   "slug": "comparing-fractions",
+   "folder": "43-comparing-fractions",
+   "file": "comparing-fractions",
+   "title": "Comparing Fractions",
+   "grade": "3"
+  },
+  {
+   "number": 44,
+   "slug": "fractions-of-a-group",
+   "folder": "44-fractions-of-a-group",
+   "file": "fractions-of-a-group",
+   "title": "Fractions of a Group",
+   "grade": "3"
+  },
+  {
+   "number": 45,
    "slug": "perimeter",
-   "folder": "40-perimeter",
+   "folder": "45-perimeter",
    "file": "perimeter",
    "title": "Perimeter",
    "grade": "3"
   },
   {
-   "number": 41,
+   "number": 46,
    "slug": "elapsed-time",
-   "folder": "41-elapsed-time",
+   "folder": "46-elapsed-time",
    "file": "elapsed-time",
    "title": "Elapsed Time",
    "grade": "3"
   },
   {
-   "number": 42,
+   "number": 47,
    "slug": "four-operations",
-   "folder": "42-four-operations",
+   "folder": "47-four-operations",
    "file": "four-operations",
    "title": "All Four Operations",
    "grade": "3"
   },
   {
-   "number": 43,
+   "number": 48,
    "slug": "patterns-in-the-times-table",
-   "folder": "43-patterns-in-the-times-table",
+   "folder": "48-patterns-in-the-times-table",
    "file": "times-table-patterns",
    "title": "Patterns in the Times Table",
    "grade": "3"
   },
   {
-   "number": 44,
+   "number": 49,
    "slug": "mass-and-liquid-volume",
-   "folder": "44-mass-and-liquid-volume",
+   "folder": "49-mass-and-liquid-volume",
    "file": "mass-and-liquid-volume",
    "title": "Mass and Liquid Volume",
    "grade": "3"
   },
   {
-   "number": 45,
+   "number": 50,
    "slug": "scaled-graphs",
-   "folder": "45-scaled-graphs",
+   "folder": "50-scaled-graphs",
    "file": "scaled-graphs",
    "title": "Scaled Graphs",
    "grade": "3"
   },
   {
-   "number": 46,
+   "number": 51,
    "slug": "measuring-to-the-quarter-inch",
-   "folder": "46-measuring-to-the-quarter-inch",
+   "folder": "51-measuring-to-the-quarter-inch",
    "file": "quarter-inch",
    "title": "Measuring to the Quarter Inch",
    "grade": "3"
   },
   {
-   "number": 47,
+   "number": 52,
    "slug": "shapes-and-quadrilaterals",
-   "folder": "47-shapes-and-quadrilaterals",
+   "folder": "52-shapes-and-quadrilaterals",
    "file": "quadrilaterals",
    "title": "Shapes and Quadrilaterals",
    "grade": "3"
   },
   {
-   "number": 48,
+   "number": 53,
    "slug": "thousands",
-   "folder": "48-thousands",
+   "folder": "53-thousands",
    "file": "thousands",
    "title": "Thousands",
    "grade": "4"
   },
   {
-   "number": 49,
+   "number": 54,
    "slug": "rounding-big-numbers",
-   "folder": "49-rounding-big-numbers",
+   "folder": "54-rounding-big-numbers",
    "file": "rounding-big-numbers",
    "title": "Rounding Big Numbers",
    "grade": "4"
   },
   {
-   "number": 50,
+   "number": 55,
    "slug": "adding-and-subtracting-big-numbers",
-   "folder": "50-adding-and-subtracting-big-numbers",
+   "folder": "55-adding-and-subtracting-big-numbers",
    "file": "big-add-subtract",
    "title": "Adding and Subtracting Big Numbers",
    "grade": "4"
   },
   {
-   "number": 51,
+   "number": 56,
    "slug": "multiplying-by-one-digit",
-   "folder": "51-multiplying-by-one-digit",
+   "folder": "56-multiplying-by-one-digit",
    "file": "multiplying-by-one-digit",
    "title": "Multiplying by One Digit",
    "grade": "4"
   },
   {
-   "number": 52,
+   "number": 57,
    "slug": "division-with-remainders",
-   "folder": "52-division-with-remainders",
+   "folder": "57-division-with-remainders",
    "file": "division-with-remainders",
    "title": "Division with Remainders",
    "grade": "4"
@@ -1691,7 +1731,7 @@
    "id": "grade-3-pre",
    "type": "pre",
    "title": "Grade 3 Pre-Assessment",
-   "total": 69,
+   "total": 86,
    "file": "assessments/color/grade-3-pre-assessment-key.pdf",
    "parts": [
     {
@@ -1900,338 +1940,486 @@
     },
     {
      "part": 7,
-     "name": "Name the fraction",
-     "kind": "name_frac",
+     "name": "Rounding",
+     "kind": "eq2",
      "packet": 36,
      "packets": "36",
      "questions": [
       {
        "n": 31,
-       "prompt": "frac name strip 6 2",
-       "answer": "2 · 6"
-      },
-      {
-       "n": 32,
-       "prompt": "frac name strip 4 2",
-       "answer": "2 · 4"
-      }
-     ]
-    },
-    {
-     "part": 8,
-     "name": "Compare fractions",
-     "kind": "frac3",
-     "packet": 36,
-     "packets": "36",
-     "questions": [
-      {
-       "n": 33,
-       "prompt": "2/8 ? 2/4",
-       "answer": "<"
-      },
-      {
-       "n": 34,
-       "prompt": "3/8 ? 2/8",
-       "answer": ">"
-      },
-      {
-       "n": 35,
-       "prompt": "3/4 ? 2/4",
-       "answer": ">"
-      }
-     ]
-    },
-    {
-     "part": 9,
-     "name": "Equal fractions",
-     "kind": "frac3",
-     "packet": 36,
-     "packets": "36",
-     "questions": [
-      {
-       "n": 36,
-       "prompt": "1/2 = ?/4",
-       "answer": "2"
-      },
-      {
-       "n": 37,
-       "prompt": "4/8 = ?/2",
-       "answer": "1"
-      },
-      {
-       "n": 38,
-       "prompt": "2/4 = ?/8",
-       "answer": "4"
-      }
-     ]
-    },
-    {
-     "part": 10,
-     "name": "Rounding",
-     "kind": "eq2",
-     "packet": 37,
-     "packets": "37",
-     "questions": [
-      {
-       "n": 39,
        "prompt": "Round 307 to the nearest 10: ?",
        "answer": "310"
       },
       {
-       "n": 40,
+       "n": 32,
        "prompt": "Round 398 to the nearest 10: ?",
        "answer": "400"
       },
       {
-       "n": 41,
+       "n": 33,
        "prompt": "Round 619 to the nearest 100: ?",
        "answer": "600"
       },
       {
-       "n": 42,
+       "n": 34,
        "prompt": "Round 216 to the nearest 10: ?",
        "answer": "220"
       }
      ]
     },
     {
-     "part": 11,
+     "part": 8,
      "name": "Multiply by tens",
      "kind": "eq3",
-     "packet": 38,
-     "packets": "38",
+     "packet": 37,
+     "packets": "37",
      "questions": [
       {
-       "n": 43,
+       "n": 35,
        "prompt": "5 × 20 = ?",
        "answer": "100"
       },
       {
-       "n": 44,
+       "n": 36,
        "prompt": "2 × 60 = ?",
        "answer": "120"
       },
       {
-       "n": 45,
+       "n": 37,
        "prompt": "5 × 60 = ?",
        "answer": "300"
       }
      ]
     },
     {
-     "part": 12,
+     "part": 9,
      "name": "Area",
      "kind": "eq2",
-     "packet": 39,
-     "packets": "39",
+     "packet": 38,
+     "packets": "38",
      "questions": [
       {
-       "n": 46,
+       "n": 38,
        "prompt": "7 in by 5 in: area = ? sq in",
        "answer": "35"
       },
       {
-       "n": 47,
+       "n": 39,
        "prompt": "3 in by 8 in: area = ? sq in",
        "answer": "24"
       }
      ]
     },
     {
-     "part": 13,
-     "name": "Perimeter",
-     "kind": "eq2",
+     "part": 10,
+     "name": "Unit fractions",
+     "kind": "unit_name",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 40,
+       "prompt": "name the unit fraction: rect cut in 5, part 4 shaded",
+       "answer": "1/5"
+      },
+      {
+       "n": 41,
+       "prompt": "name the unit fraction: square cut in 8, part 7 shaded",
+       "answer": "1/8"
+      }
+     ]
+    },
+    {
+     "part": 11,
+     "name": "Bigger piece",
+     "kind": "bigger_unit_plain",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 42,
+       "prompt": "bigger piece: 1/8 or 1/2",
+       "answer": "1/2"
+      },
+      {
+       "n": 43,
+       "prompt": "bigger piece: 1/5 or 1/6",
+       "answer": "1/5"
+      },
+      {
+       "n": 44,
+       "prompt": "bigger piece: 1/8 or 1/4",
+       "answer": "1/4"
+      }
+     ]
+    },
+    {
+     "part": 12,
+     "name": "Name the fraction",
+     "kind": "frac_name",
      "packet": 40,
      "packets": "40",
      "questions": [
       {
+       "n": 45,
+       "prompt": "name the fraction: circle cut in 8, 2 shaded",
+       "answer": "2/8"
+      },
+      {
+       "n": 46,
+       "prompt": "name the fraction: rect cut in 8, 5 shaded",
+       "answer": "5/8"
+      }
+     ]
+    },
+    {
+     "part": 13,
+     "name": "Pieces and fractions",
+     "kind": "frac2",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 47,
+       "prompt": "2/8 = ? pieces of 1/8",
+       "answer": "2"
+      },
+      {
        "n": 48,
+       "prompt": "four eighths = ?/8",
+       "answer": "4"
+      }
+     ]
+    },
+    {
+     "part": 14,
+     "name": "Less than, equal to, or more than 1?",
+     "kind": "vs_one",
+     "packet": 41,
+     "packets": "41",
+     "questions": [
+      {
+       "n": 49,
+       "prompt": "less, equal or more than 1: 7/8",
+       "answer": "less than 1"
+      },
+      {
+       "n": 50,
+       "prompt": "less, equal or more than 1: 8/4",
+       "answer": "more than 1"
+      }
+     ]
+    },
+    {
+     "part": 15,
+     "name": "Fractions and wholes",
+     "kind": "frac3",
+     "packet": 41,
+     "packets": "41",
+     "questions": [
+      {
+       "n": 51,
+       "prompt": "?/8 = 4",
+       "answer": "32"
+      },
+      {
+       "n": 52,
+       "prompt": "4/2 = ?",
+       "answer": "2"
+      },
+      {
+       "n": 53,
+       "prompt": "24/8 = ?",
+       "answer": "3"
+      }
+     ]
+    },
+    {
+     "part": 16,
+     "name": "Equal fractions",
+     "kind": "frac3",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 54,
+       "prompt": "3/6 = 1/?",
+       "answer": "2"
+      },
+      {
+       "n": 55,
+       "prompt": "1/2 = 3/?",
+       "answer": "6"
+      },
+      {
+       "n": 56,
+       "prompt": "3/5 = 6/?",
+       "answer": "10"
+      }
+     ]
+    },
+    {
+     "part": 17,
+     "name": "Compare fractions",
+     "kind": "frac3",
+     "packet": 43,
+     "packets": "43",
+     "questions": [
+      {
+       "n": 57,
+       "prompt": "1/8 ? 7/8",
+       "answer": "<"
+      },
+      {
+       "n": 58,
+       "prompt": "2/3 ? 2/5",
+       "answer": ">"
+      },
+      {
+       "n": 59,
+       "prompt": "3/8 ? 5/8",
+       "answer": "<"
+      }
+     ]
+    },
+    {
+     "part": 18,
+     "name": "Fractions of a group",
+     "kind": "frac3",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 60,
+       "prompt": "1/7 of 21 = ?",
+       "answer": "3"
+      },
+      {
+       "n": 61,
+       "prompt": "1/4 of 24 = ?",
+       "answer": "6"
+      },
+      {
+       "n": 62,
+       "prompt": "1/10 of 20 = ?",
+       "answer": "2"
+      }
+     ]
+    },
+    {
+     "part": 19,
+     "name": "More than one group",
+     "kind": "frac2",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 63,
+       "prompt": "4/8 of 64 = ?",
+       "answer": "32"
+      },
+      {
+       "n": 64,
+       "prompt": "5/6 of 12 = ?",
+       "answer": "10"
+      }
+     ]
+    },
+    {
+     "part": 20,
+     "name": "Perimeter",
+     "kind": "eq2",
+     "packet": 45,
+     "packets": "45",
+     "questions": [
+      {
+       "n": 65,
        "prompt": "10 cm by 8 cm: perimeter = ? cm",
        "answer": "36"
       },
       {
-       "n": 49,
+       "n": 66,
        "prompt": "14 ft by 8 ft: perimeter = ? ft",
        "answer": "44"
       }
      ]
     },
     {
-     "part": 14,
+     "part": 21,
      "name": "Elapsed time",
      "kind": "eq2",
-     "packet": 41,
-     "packets": "41",
+     "packet": 46,
+     "packets": "46",
      "questions": [
       {
-       "n": 50,
+       "n": 67,
        "prompt": "7:15 to 7:30 = ? minutes",
        "answer": "15"
       },
       {
-       "n": 51,
+       "n": 68,
        "prompt": "10:40 to 11:15 = ? minutes",
        "answer": "35"
       }
      ]
     },
     {
-     "part": 15,
+     "part": 22,
      "name": "Equal pieces",
      "kind": "bar",
-     "packet": 42,
-     "packets": "42",
+     "packet": 47,
+     "packets": "47",
      "questions": [
       {
-       "n": 52,
+       "n": 69,
        "prompt": "bar: eq 4 7 each",
        "answer": "7"
       },
       {
-       "n": 53,
+       "n": 70,
        "prompt": "bar: eq 6 5 whole",
        "answer": "30"
       }
      ]
     },
     {
-     "part": 16,
+     "part": 23,
      "name": "Two-step word problems",
      "kind": "word",
-     "packet": 42,
-     "packets": "42",
+     "packet": 47,
+     "packets": "47",
      "questions": [
       {
-       "n": 54,
+       "n": 71,
        "prompt": "15 pencils are shared equally by 5 kids. Then each kid gets 10 more. How many does each kid have now?",
        "answer": "13 pencils"
       },
       {
-       "n": 55,
+       "n": 72,
        "prompt": "Ava has 4 boxes of 7 buttons. Ava uses 16 of them. How many buttons are left?",
        "answer": "12 buttons"
       }
      ]
     },
     {
-     "part": 17,
+     "part": 24,
      "name": "Times table patterns",
      "kind": "eo_product",
-     "packet": 43,
-     "packets": "43",
+     "packet": 48,
+     "packets": "48",
      "questions": [
       {
-       "n": 56,
+       "n": 73,
        "prompt": "even odd product 3 4",
        "answer": "even"
       },
       {
-       "n": 57,
+       "n": 74,
        "prompt": "even odd product 3 5",
        "answer": "odd"
       }
      ]
     },
     {
-     "part": 18,
+     "part": 25,
      "name": "Mass and liquid volume",
      "kind": "beaker",
-     "packet": 44,
-     "packets": "44",
+     "packet": 49,
+     "packets": "49",
      "questions": [
       {
-       "n": 58,
+       "n": 75,
        "prompt": "beaker 3 of 10",
        "answer": "3 liters"
       },
       {
-       "n": 59,
+       "n": 76,
        "prompt": "beaker 9 of 10",
        "answer": "9 liters"
       }
      ]
     },
     {
-     "part": 19,
+     "part": 26,
      "name": "Scaled graphs",
      "kind": "eq2",
-     "packet": 45,
-     "packets": "45",
+     "packet": 50,
+     "packets": "50",
      "questions": [
       {
-       "n": 60,
+       "n": 77,
        "prompt": "each picture = 2: 4 pictures = ?",
        "answer": "8"
       },
       {
-       "n": 61,
+       "n": 78,
        "prompt": "each picture = 5: 5 pictures = ?",
        "answer": "25"
       }
      ]
     },
     {
-     "part": 20,
+     "part": 27,
      "name": "Quarter inches",
      "kind": "eq2",
-     "packet": 46,
-     "packets": "46",
+     "packet": 51,
+     "packets": "51",
      "questions": [
       {
-       "n": 62,
+       "n": 79,
        "prompt": "4½ inches = ? quarter inches",
        "answer": "18"
       },
       {
-       "n": 63,
+       "n": 80,
        "prompt": "2¼ inches = ? quarter inches",
        "answer": "9"
       }
      ]
     },
     {
-     "part": 21,
+     "part": 28,
      "name": "Quadrilaterals",
      "kind": "is_quad",
-     "packet": 47,
-     "packets": "47",
+     "packet": 52,
+     "packets": "52",
      "questions": [
       {
-       "n": 64,
+       "n": 81,
        "prompt": "is quadrilateral kite 0",
        "answer": "yes"
       },
       {
-       "n": 65,
+       "n": 82,
        "prompt": "is quadrilateral parallelogram 25",
        "answer": "yes"
       }
      ]
     },
     {
-     "part": 22,
+     "part": 29,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "33–35",
      "questions": [
       {
-       "n": 66,
+       "n": 83,
        "prompt": "Kim shares 36 toy cars equally among 4 friends. How many toy cars does each friend get?",
        "answer": "9 toy cars"
       },
       {
-       "n": 67,
+       "n": 84,
        "prompt": "Sam shares 63 shells equally among 7 friends. How many shells does each friend get?",
        "answer": "9 shells"
       },
       {
-       "n": 68,
+       "n": 85,
        "prompt": "Sam has 6 bags with 8 stickers in each bag. How many stickers are there in all?",
        "answer": "48 stickers"
       },
       {
-       "n": 69,
+       "n": 86,
        "prompt": "Jay has 8 bags with 9 stickers in each bag. How many stickers are there in all?",
        "answer": "72 stickers"
       }
@@ -2251,8 +2439,8 @@
      "part": 1,
      "name": "Read big numbers",
      "kind": "eq2",
-     "packet": 48,
-     "packets": "48",
+     "packet": 53,
+     "packets": "53",
      "questions": [
       {
        "n": 1,
@@ -2275,8 +2463,8 @@
      "part": 2,
      "name": "Compare",
      "kind": "eq2",
-     "packet": 48,
-     "packets": "48",
+     "packet": 53,
+     "packets": "53",
      "questions": [
       {
        "n": 4,
@@ -2299,8 +2487,8 @@
      "part": 3,
      "name": "Round",
      "kind": "eq2",
-     "packet": 49,
-     "packets": "49",
+     "packet": 54,
+     "packets": "54",
      "questions": [
       {
        "n": 7,
@@ -2328,8 +2516,8 @@
      "part": 4,
      "name": "Add",
      "kind": "eq2",
-     "packet": 50,
-     "packets": "50",
+     "packet": 55,
+     "packets": "55",
      "questions": [
       {
        "n": 11,
@@ -2352,8 +2540,8 @@
      "part": 5,
      "name": "Subtract",
      "kind": "eq2",
-     "packet": 50,
-     "packets": "50",
+     "packet": 55,
+     "packets": "55",
      "questions": [
       {
        "n": 14,
@@ -2376,8 +2564,8 @@
      "part": 6,
      "name": "Multiply",
      "kind": "eq3",
-     "packet": 51,
-     "packets": "51",
+     "packet": 56,
+     "packets": "56",
      "questions": [
       {
        "n": 17,
@@ -2415,8 +2603,8 @@
      "part": 7,
      "name": "Multiply three digits",
      "kind": "eq2",
-     "packet": 51,
-     "packets": "51",
+     "packet": 56,
+     "packets": "56",
      "questions": [
       {
        "n": 23,
@@ -2434,8 +2622,8 @@
      "part": 8,
      "name": "Divide",
      "kind": "eq3",
-     "packet": 52,
-     "packets": "52",
+     "packet": 57,
+     "packets": "57",
      "questions": [
       {
        "n": 25,
@@ -2474,7 +2662,7 @@
      "name": "Word problems",
      "kind": "word",
      "packet": null,
-     "packets": "51–52",
+     "packets": "56–57",
      "questions": [
       {
        "n": 31,
@@ -4113,7 +4301,7 @@
    "id": "grade-3-post",
    "type": "post",
    "title": "Grade 3 Post-Assessment",
-   "total": 69,
+   "total": 86,
    "file": "assessments/color/grade-3-post-assessment-key.pdf",
    "parts": [
     {
@@ -4300,360 +4488,508 @@
       },
       {
        "n": 27,
+       "prompt": "56 ÷ 8 = ?",
+       "answer": "7"
+      },
+      {
+       "n": 28,
        "prompt": "21 ÷ 7 = ?",
        "answer": "3"
       },
       {
-       "n": 28,
+       "n": 29,
        "prompt": "30 ÷ 6 = ?",
        "answer": "5"
       },
       {
-       "n": 29,
+       "n": 30,
        "prompt": "35 ÷ 7 = ?",
        "answer": "5"
-      },
-      {
-       "n": 30,
-       "prompt": "64 ÷ 8 = ?",
-       "answer": "8"
       }
      ]
     },
     {
      "part": 7,
-     "name": "Name the fraction",
-     "kind": "name_frac",
+     "name": "Rounding",
+     "kind": "eq2",
      "packet": 36,
      "packets": "36",
      "questions": [
       {
        "n": 31,
-       "prompt": "frac name strip 6 3",
-       "answer": "3 · 6"
-      },
-      {
-       "n": 32,
-       "prompt": "frac name strip 6 5",
-       "answer": "5 · 6"
-      }
-     ]
-    },
-    {
-     "part": 8,
-     "name": "Compare fractions",
-     "kind": "frac3",
-     "packet": 36,
-     "packets": "36",
-     "questions": [
-      {
-       "n": 33,
-       "prompt": "3/6 ? 4/6",
-       "answer": "<"
-      },
-      {
-       "n": 34,
-       "prompt": "2/8 ? 1/8",
-       "answer": ">"
-      },
-      {
-       "n": 35,
-       "prompt": "6/8 ? 1/8",
-       "answer": ">"
-      }
-     ]
-    },
-    {
-     "part": 9,
-     "name": "Equal fractions",
-     "kind": "frac3",
-     "packet": 36,
-     "packets": "36",
-     "questions": [
-      {
-       "n": 36,
-       "prompt": "1/4 = ?/8",
-       "answer": "2"
-      },
-      {
-       "n": 37,
-       "prompt": "2/8 = ?/4",
-       "answer": "1"
-      },
-      {
-       "n": 38,
-       "prompt": "4/8 = ?/4",
-       "answer": "2"
-      }
-     ]
-    },
-    {
-     "part": 10,
-     "name": "Rounding",
-     "kind": "eq2",
-     "packet": 37,
-     "packets": "37",
-     "questions": [
-      {
-       "n": 39,
        "prompt": "Round 918 to the nearest 10: ?",
        "answer": "920"
       },
       {
-       "n": 40,
+       "n": 32,
        "prompt": "Round 567 to the nearest 100: ?",
        "answer": "600"
       },
       {
-       "n": 41,
+       "n": 33,
        "prompt": "Round 853 to the nearest 10: ?",
        "answer": "850"
       },
       {
-       "n": 42,
+       "n": 34,
        "prompt": "Round 801 to the nearest 100: ?",
        "answer": "800"
       }
      ]
     },
     {
-     "part": 11,
+     "part": 8,
      "name": "Multiply by tens",
      "kind": "eq3",
-     "packet": 38,
-     "packets": "38",
+     "packet": 37,
+     "packets": "37",
      "questions": [
       {
-       "n": 43,
+       "n": 35,
        "prompt": "5 × 40 = ?",
        "answer": "200"
       },
       {
-       "n": 44,
+       "n": 36,
        "prompt": "6 × 20 = ?",
        "answer": "120"
       },
       {
-       "n": 45,
+       "n": 37,
        "prompt": "3 × 30 = ?",
        "answer": "90"
       }
      ]
     },
     {
-     "part": 12,
+     "part": 9,
      "name": "Area",
      "kind": "eq2",
-     "packet": 39,
-     "packets": "39",
+     "packet": 38,
+     "packets": "38",
      "questions": [
       {
-       "n": 46,
+       "n": 38,
        "prompt": "3 ft by 8 ft: area = ? sq ft",
        "answer": "24"
       },
       {
-       "n": 47,
+       "n": 39,
        "prompt": "6 in by 4 in: area = ? sq in",
        "answer": "24"
       }
      ]
     },
     {
-     "part": 13,
-     "name": "Perimeter",
-     "kind": "eq2",
+     "part": 10,
+     "name": "Unit fractions",
+     "kind": "unit_name",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 40,
+       "prompt": "name the unit fraction: square cut in 6, part 4 shaded",
+       "answer": "1/6"
+      },
+      {
+       "n": 41,
+       "prompt": "name the unit fraction: rect cut in 8, part 6 shaded",
+       "answer": "1/8"
+      }
+     ]
+    },
+    {
+     "part": 11,
+     "name": "Bigger piece",
+     "kind": "bigger_unit_plain",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 42,
+       "prompt": "bigger piece: 1/5 or 1/10",
+       "answer": "1/5"
+      },
+      {
+       "n": 43,
+       "prompt": "bigger piece: 1/3 or 1/8",
+       "answer": "1/3"
+      },
+      {
+       "n": 44,
+       "prompt": "bigger piece: 1/10 or 1/2",
+       "answer": "1/2"
+      }
+     ]
+    },
+    {
+     "part": 12,
+     "name": "Name the fraction",
+     "kind": "frac_name",
      "packet": 40,
      "packets": "40",
      "questions": [
       {
+       "n": 45,
+       "prompt": "name the fraction: circle cut in 10, 8 shaded",
+       "answer": "8/10"
+      },
+      {
+       "n": 46,
+       "prompt": "name the fraction: strip cut in 4, 2 shaded",
+       "answer": "2/4"
+      }
+     ]
+    },
+    {
+     "part": 13,
+     "name": "Pieces and fractions",
+     "kind": "frac2",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 47,
+       "prompt": "2/3 = ? pieces of 1/3",
+       "answer": "2"
+      },
+      {
        "n": 48,
+       "prompt": "5/8 = ? pieces of 1/8",
+       "answer": "5"
+      }
+     ]
+    },
+    {
+     "part": 14,
+     "name": "Less than, equal to, or more than 1?",
+     "kind": "vs_one",
+     "packet": 41,
+     "packets": "41",
+     "questions": [
+      {
+       "n": 49,
+       "prompt": "less, equal or more than 1: 3/4",
+       "answer": "less than 1"
+      },
+      {
+       "n": 50,
+       "prompt": "less, equal or more than 1: 14/8",
+       "answer": "more than 1"
+      }
+     ]
+    },
+    {
+     "part": 15,
+     "name": "Fractions and wholes",
+     "kind": "frac3",
+     "packet": 41,
+     "packets": "41",
+     "questions": [
+      {
+       "n": 51,
+       "prompt": "6/6 = ?",
+       "answer": "1"
+      },
+      {
+       "n": 52,
+       "prompt": "?/4 = 3",
+       "answer": "12"
+      },
+      {
+       "n": 53,
+       "prompt": "?/2 = 3",
+       "answer": "6"
+      }
+     ]
+    },
+    {
+     "part": 16,
+     "name": "Equal fractions",
+     "kind": "frac3",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 54,
+       "prompt": "1/4 = 2/?",
+       "answer": "8"
+      },
+      {
+       "n": 55,
+       "prompt": "2/10 = 1/?",
+       "answer": "5"
+      },
+      {
+       "n": 56,
+       "prompt": "8/10 = 4/?",
+       "answer": "5"
+      }
+     ]
+    },
+    {
+     "part": 17,
+     "name": "Compare fractions",
+     "kind": "frac3",
+     "packet": 43,
+     "packets": "43",
+     "questions": [
+      {
+       "n": 57,
+       "prompt": "7/8 ? 2/8",
+       "answer": ">"
+      },
+      {
+       "n": 58,
+       "prompt": "2/4 ? 3/4",
+       "answer": "<"
+      },
+      {
+       "n": 59,
+       "prompt": "3/5 ? 3/6",
+       "answer": ">"
+      }
+     ]
+    },
+    {
+     "part": 18,
+     "name": "Fractions of a group",
+     "kind": "frac3",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 60,
+       "prompt": "1/3 of 12 = ?",
+       "answer": "4"
+      },
+      {
+       "n": 61,
+       "prompt": "1/3 of 27 = ?",
+       "answer": "9"
+      },
+      {
+       "n": 62,
+       "prompt": "1/6 of 48 = ?",
+       "answer": "8"
+      }
+     ]
+    },
+    {
+     "part": 19,
+     "name": "More than one group",
+     "kind": "frac2",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 63,
+       "prompt": "3/5 of 30 = ?",
+       "answer": "18"
+      },
+      {
+       "n": 64,
+       "prompt": "7/8 of 32 = ?",
+       "answer": "28"
+      }
+     ]
+    },
+    {
+     "part": 20,
+     "name": "Perimeter",
+     "kind": "eq2",
+     "packet": 45,
+     "packets": "45",
+     "questions": [
+      {
+       "n": 65,
        "prompt": "12 cm by 4 cm: perimeter = ? cm",
        "answer": "32"
       },
       {
-       "n": 49,
+       "n": 66,
        "prompt": "3 in by 2 in: perimeter = ? in",
        "answer": "10"
       }
      ]
     },
     {
-     "part": 14,
+     "part": 21,
      "name": "Elapsed time",
      "kind": "eq2",
-     "packet": 41,
-     "packets": "41",
+     "packet": 46,
+     "packets": "46",
      "questions": [
       {
-       "n": 50,
+       "n": 67,
        "prompt": "12:05 to 1:00 = ? minutes",
        "answer": "55"
       },
       {
-       "n": 51,
+       "n": 68,
        "prompt": "5:55 to 6:30 = ? minutes",
        "answer": "35"
       }
      ]
     },
     {
-     "part": 15,
+     "part": 22,
      "name": "Equal pieces",
      "kind": "bar",
-     "packet": 42,
-     "packets": "42",
+     "packet": 47,
+     "packets": "47",
      "questions": [
       {
-       "n": 52,
+       "n": 69,
        "prompt": "bar: eq 7 5 each",
        "answer": "5"
       },
       {
-       "n": 53,
+       "n": 70,
        "prompt": "bar: eq 3 3 whole",
        "answer": "9"
       }
      ]
     },
     {
-     "part": 16,
+     "part": 23,
      "name": "Two-step word problems",
      "kind": "word",
-     "packet": 42,
-     "packets": "42",
+     "packet": 47,
+     "packets": "47",
      "questions": [
       {
-       "n": 54,
+       "n": 71,
        "prompt": "12 cards are shared equally by 3 kids. Then each kid gets 7 more. How many does each kid have now?",
        "answer": "11 cards"
       },
       {
-       "n": 55,
+       "n": 72,
        "prompt": "Lily has 8 boxes of 3 books. Lily uses 13 of them. How many books are left?",
        "answer": "11 books"
       }
      ]
     },
     {
-     "part": 17,
+     "part": 24,
      "name": "Times table patterns",
      "kind": "eo_product",
-     "packet": 43,
-     "packets": "43",
+     "packet": 48,
+     "packets": "48",
      "questions": [
       {
-       "n": 56,
+       "n": 73,
        "prompt": "even odd product 5 4",
        "answer": "even"
       },
       {
-       "n": 57,
+       "n": 74,
        "prompt": "even odd product 5 3",
        "answer": "odd"
       }
      ]
     },
     {
-     "part": 18,
+     "part": 25,
      "name": "Mass and liquid volume",
      "kind": "beaker",
-     "packet": 44,
-     "packets": "44",
+     "packet": 49,
+     "packets": "49",
      "questions": [
       {
-       "n": 58,
+       "n": 75,
        "prompt": "beaker 7 of 10",
        "answer": "7 liters"
       },
       {
-       "n": 59,
+       "n": 76,
        "prompt": "beaker 5 of 10",
        "answer": "5 liters"
       }
      ]
     },
     {
-     "part": 19,
+     "part": 26,
      "name": "Scaled graphs",
      "kind": "eq2",
-     "packet": 45,
-     "packets": "45",
+     "packet": 50,
+     "packets": "50",
      "questions": [
       {
-       "n": 60,
+       "n": 77,
        "prompt": "each picture = 10: 7 pictures = ?",
        "answer": "70"
       },
       {
-       "n": 61,
+       "n": 78,
        "prompt": "each picture = 2: 6 pictures = ?",
        "answer": "12"
       }
      ]
     },
     {
-     "part": 20,
+     "part": 27,
      "name": "Quarter inches",
      "kind": "eq2",
-     "packet": 46,
-     "packets": "46",
+     "packet": 51,
+     "packets": "51",
      "questions": [
       {
-       "n": 62,
+       "n": 79,
        "prompt": "4¾ inches = ? quarter inches",
        "answer": "19"
       },
       {
-       "n": 63,
+       "n": 80,
        "prompt": "1¾ inches = ? quarter inches",
        "answer": "7"
       }
      ]
     },
     {
-     "part": 21,
+     "part": 28,
      "name": "Quadrilaterals",
      "kind": "is_quad",
-     "packet": 47,
-     "packets": "47",
+     "packet": 52,
+     "packets": "52",
      "questions": [
       {
-       "n": 64,
+       "n": 81,
        "prompt": "is quadrilateral kite 10",
        "answer": "yes"
       },
       {
-       "n": 65,
+       "n": 82,
        "prompt": "is quadrilateral hexagon 10",
        "answer": "no"
       }
      ]
     },
     {
-     "part": 22,
+     "part": 29,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "33–35",
      "questions": [
       {
-       "n": 66,
+       "n": 83,
        "prompt": "Theo has 4 bags with 6 books in each bag. How many books are there in all?",
        "answer": "24 books"
       },
       {
-       "n": 67,
+       "n": 84,
        "prompt": "Ben shares 45 acorns equally among 9 friends. How many acorns does each friend get?",
        "answer": "5 acorns"
       },
       {
-       "n": 68,
+       "n": 85,
        "prompt": "Tess shares 25 books equally among 5 friends. How many books does each friend get?",
        "answer": "5 books"
       },
       {
-       "n": 69,
+       "n": 86,
        "prompt": "Leo has 6 bags with 9 blocks in each bag. How many blocks are there in all?",
        "answer": "54 blocks"
       }
@@ -4673,8 +5009,8 @@
      "part": 1,
      "name": "Read big numbers",
      "kind": "eq2",
-     "packet": 48,
-     "packets": "48",
+     "packet": 53,
+     "packets": "53",
      "questions": [
       {
        "n": 1,
@@ -4697,8 +5033,8 @@
      "part": 2,
      "name": "Compare",
      "kind": "eq2",
-     "packet": 48,
-     "packets": "48",
+     "packet": 53,
+     "packets": "53",
      "questions": [
       {
        "n": 4,
@@ -4721,8 +5057,8 @@
      "part": 3,
      "name": "Round",
      "kind": "eq2",
-     "packet": 49,
-     "packets": "49",
+     "packet": 54,
+     "packets": "54",
      "questions": [
       {
        "n": 7,
@@ -4750,8 +5086,8 @@
      "part": 4,
      "name": "Add",
      "kind": "eq2",
-     "packet": 50,
-     "packets": "50",
+     "packet": 55,
+     "packets": "55",
      "questions": [
       {
        "n": 11,
@@ -4774,8 +5110,8 @@
      "part": 5,
      "name": "Subtract",
      "kind": "eq2",
-     "packet": 50,
-     "packets": "50",
+     "packet": 55,
+     "packets": "55",
      "questions": [
       {
        "n": 14,
@@ -4798,8 +5134,8 @@
      "part": 6,
      "name": "Multiply",
      "kind": "eq3",
-     "packet": 51,
-     "packets": "51",
+     "packet": 56,
+     "packets": "56",
      "questions": [
       {
        "n": 17,
@@ -4837,8 +5173,8 @@
      "part": 7,
      "name": "Multiply three digits",
      "kind": "eq2",
-     "packet": 51,
-     "packets": "51",
+     "packet": 56,
+     "packets": "56",
      "questions": [
       {
        "n": 23,
@@ -4856,8 +5192,8 @@
      "part": 8,
      "name": "Divide",
      "kind": "eq3",
-     "packet": 52,
-     "packets": "52",
+     "packet": 57,
+     "packets": "57",
      "questions": [
       {
        "n": 25,
@@ -4896,7 +5232,7 @@
      "name": "Word problems",
      "kind": "word",
      "packet": null,
-     "packets": "51–52",
+     "packets": "56–57",
      "questions": [
       {
        "n": 31,
@@ -5377,14 +5713,14 @@
    "type": "check-in",
    "title": "Adding and Subtracting Big Numbers Check-In",
    "total": 8,
-   "file": "50-adding-and-subtracting-big-numbers/color/big-add-subtract-check-in-key.pdf",
+   "file": "55-adding-and-subtracting-big-numbers/color/big-add-subtract-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Add in columns",
      "kind": "big_stack",
-     "packet": 50,
-     "packets": "50",
+     "packet": 55,
+     "packets": "55",
      "questions": [
       {
        "n": 1,
@@ -5402,8 +5738,8 @@
      "part": 2,
      "name": "Subtract in columns",
      "kind": "big_stack",
-     "packet": 50,
-     "packets": "50",
+     "packet": 55,
+     "packets": "55",
      "questions": [
       {
        "n": 3,
@@ -5421,8 +5757,8 @@
      "part": 3,
      "name": "Add",
      "kind": "eq2",
-     "packet": 50,
-     "packets": "50",
+     "packet": 55,
+     "packets": "55",
      "questions": [
       {
        "n": 5,
@@ -5440,8 +5776,8 @@
      "part": 4,
      "name": "Subtract",
      "kind": "eq2",
-     "packet": 50,
-     "packets": "50",
+     "packet": 55,
+     "packets": "55",
      "questions": [
       {
        "n": 7,
@@ -5456,7 +5792,7 @@
      ]
     }
    ],
-   "packet": 50
+   "packet": 55
   },
   {
    "id": "check-in:adding-and-taking-away",
@@ -5878,14 +6214,14 @@
    "type": "check-in",
    "title": "Area Check-In",
    "total": 9,
-   "file": "39-area/color/area-check-in-key.pdf",
+   "file": "38-area/color/area-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Rows times columns",
      "kind": "area_rows",
-     "packet": 39,
-     "packets": "39",
+     "packet": 38,
+     "packets": "38",
      "questions": [
       {
        "n": 1,
@@ -5903,8 +6239,8 @@
      "part": 2,
      "name": "Break it apart",
      "kind": "area_split",
-     "packet": 39,
-     "packets": "39",
+     "packet": 38,
+     "packets": "38",
      "questions": [
       {
        "n": 3,
@@ -5917,8 +6253,8 @@
      "part": 3,
      "name": "Area",
      "kind": "eq2",
-     "packet": 39,
-     "packets": "39",
+     "packet": 38,
+     "packets": "38",
      "questions": [
       {
        "n": 4,
@@ -5946,8 +6282,8 @@
      "part": 4,
      "name": "Find the missing side",
      "kind": "eq2",
-     "packet": 39,
-     "packets": "39",
+     "packet": 38,
+     "packets": "38",
      "questions": [
       {
        "n": 8,
@@ -5962,7 +6298,7 @@
      ]
     }
    ],
-   "packet": 39
+   "packet": 38
   },
   {
    "id": "check-in:back-through-ten",
@@ -6069,6 +6405,97 @@
     }
    ],
    "packet": 5
+  },
+  {
+   "id": "check-in:comparing-fractions",
+   "type": "check-in",
+   "title": "Comparing Fractions Check-In",
+   "total": 9,
+   "file": "43-comparing-fractions/color/comparing-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Compare with strips",
+     "kind": "compare_frac",
+     "packet": 43,
+     "packets": "43",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "compare with strips: 4/8 and 6/8",
+       "answer": "<"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Same bottom number",
+     "kind": "frac3",
+     "packet": 43,
+     "packets": "43",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "5/8 ? 6/8",
+       "answer": "<"
+      },
+      {
+       "n": 3,
+       "prompt": "2/8 ? 7/8",
+       "answer": "<"
+      },
+      {
+       "n": 4,
+       "prompt": "5/10 ? 2/10",
+       "answer": ">"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Same top number",
+     "kind": "frac3",
+     "packet": 43,
+     "packets": "43",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "2/8 ? 2/4",
+       "answer": "<"
+      },
+      {
+       "n": 6,
+       "prompt": "3/10 ? 3/8",
+       "answer": "<"
+      },
+      {
+       "n": 7,
+       "prompt": "2/4 ? 2/8",
+       "answer": ">"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Circle the biggest",
+     "kind": "biggest",
+     "packet": 43,
+     "packets": "43",
+     "questions": [
+      {
+       "n": 8,
+       "prompt": "biggest: 2/8 3/8 4/8",
+       "answer": "4/8"
+      },
+      {
+       "n": 9,
+       "prompt": "biggest: 1/5 4/5 2/5",
+       "answer": "4/5"
+      }
+     ]
+    }
+   ],
+   "packet": 43
   },
   {
    "id": "check-in:comparing-numbers",
@@ -6264,6 +6691,111 @@
    "packet": 24
   },
   {
+   "id": "check-in:counting-fractions",
+   "type": "check-in",
+   "title": "Counting Fractions Check-In",
+   "total": 10,
+   "file": "40-counting-fractions/color/counting-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Name the fraction",
+     "kind": "frac_name",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "name the fraction: rect cut in 8, 6 shaded",
+       "answer": "6/8"
+      },
+      {
+       "n": 2,
+       "prompt": "name the fraction: strip cut in 10, 7 shaded",
+       "answer": "7/10"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Shade it",
+     "kind": "frac_shade",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "shade the fraction: strip cut in 5, 2 parts",
+       "answer": "2 of 5 parts shaded"
+      },
+      {
+       "n": 4,
+       "prompt": "shade the fraction: square cut in 8, 4 parts",
+       "answer": "4 of 8 parts shaded"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Count by fractions",
+     "kind": "frac2",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "1/5 ?/5 ?/5 4/5",
+       "answer": "2 · 3"
+      },
+      {
+       "n": 6,
+       "prompt": "2/10 3/10 ?/10 ?/10",
+       "answer": "4 · 5"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Pieces and fractions",
+     "kind": "frac2",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "2/4 = ? pieces of 1/4",
+       "answer": "2"
+      },
+      {
+       "n": 8,
+       "prompt": "4/6 = ? pieces of 1/6",
+       "answer": "4"
+      }
+     ]
+    },
+    {
+     "part": 5,
+     "name": "How much is left?",
+     "kind": "frac2",
+     "packet": 40,
+     "packets": "40",
+     "questions": [
+      {
+       "n": 9,
+       "prompt": "1/8 shaded, ?/8 not shaded",
+       "answer": "7"
+      },
+      {
+       "n": 10,
+       "prompt": "9/10 shaded, ?/10 not shaded",
+       "answer": "1"
+      }
+     ]
+    }
+   ],
+   "packet": 40
+  },
+  {
    "id": "check-in:division",
    "type": "check-in",
    "title": "Division Check-In",
@@ -6365,14 +6897,14 @@
    "type": "check-in",
    "title": "Division with Remainders Check-In",
    "total": 9,
-   "file": "52-division-with-remainders/color/division-with-remainders-check-in-key.pdf",
+   "file": "57-division-with-remainders/color/division-with-remainders-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Make groups",
      "kind": "groups_rem",
-     "packet": 52,
-     "packets": "52",
+     "packet": 57,
+     "packets": "57",
      "questions": [
       {
        "n": 1,
@@ -6385,8 +6917,8 @@
      "part": 2,
      "name": "Use a times fact",
      "kind": "rem_think",
-     "packet": 52,
-     "packets": "52",
+     "packet": 57,
+     "packets": "57",
      "questions": [
       {
        "n": 2,
@@ -6404,8 +6936,8 @@
      "part": 3,
      "name": "Divide",
      "kind": "eq3",
-     "packet": 52,
-     "packets": "52",
+     "packet": 57,
+     "packets": "57",
      "questions": [
       {
        "n": 4,
@@ -6440,7 +6972,7 @@
      ]
     }
    ],
-   "packet": 52
+   "packet": 57
   },
   {
    "id": "check-in:doubles-and-near-doubles",
@@ -6558,14 +7090,14 @@
    "type": "check-in",
    "title": "Elapsed Time Check-In",
    "total": 8,
-   "file": "41-elapsed-time/color/elapsed-time-check-in-key.pdf",
+   "file": "46-elapsed-time/color/elapsed-time-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Time to the minute",
      "kind": "read_minute",
-     "packet": 41,
-     "packets": "41",
+     "packet": 46,
+     "packets": "46",
      "questions": [
       {
        "n": 1,
@@ -6583,8 +7115,8 @@
      "part": 2,
      "name": "Find the stops",
      "kind": "jump_time",
-     "packet": 41,
-     "packets": "41",
+     "packet": 46,
+     "packets": "46",
      "questions": [
       {
        "n": 3,
@@ -6602,8 +7134,8 @@
      "part": 3,
      "name": "How long?",
      "kind": "eq2",
-     "packet": 41,
-     "packets": "41",
+     "packet": 46,
+     "packets": "46",
      "questions": [
       {
        "n": 5,
@@ -6621,8 +7153,8 @@
      "part": 4,
      "name": "What time will it be?",
      "kind": "eq2",
-     "packet": 41,
-     "packets": "41",
+     "packet": 46,
+     "packets": "46",
      "questions": [
       {
        "n": 7,
@@ -6637,7 +7169,98 @@
      ]
     }
    ],
-   "packet": 41
+   "packet": 46
+  },
+  {
+   "id": "check-in:equal-fractions",
+   "type": "check-in",
+   "title": "Equal Fractions Check-In",
+   "total": 9,
+   "file": "42-equal-fractions/color/equal-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Same amount?",
+     "kind": "same_amount",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "same amount? 2/4 and 4/8",
+       "answer": "yes"
+      },
+      {
+       "n": 2,
+       "prompt": "same amount? 3/5 and 7/10",
+       "answer": "no"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Shade to match",
+     "kind": "match_frac",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "shade to match: 1/3 in 6ths",
+       "answer": "2/6"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Find the top number",
+     "kind": "frac3",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "4/8 = ?/4",
+       "answer": "2"
+      },
+      {
+       "n": 5,
+       "prompt": "1/2 = ?/4",
+       "answer": "2"
+      },
+      {
+       "n": 6,
+       "prompt": "2/10 = ?/5",
+       "answer": "1"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Find the bottom number",
+     "kind": "frac3",
+     "packet": 42,
+     "packets": "42",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "4/6 = 2/?",
+       "answer": "3"
+      },
+      {
+       "n": 8,
+       "prompt": "2/4 = 1/?",
+       "answer": "2"
+      },
+      {
+       "n": 9,
+       "prompt": "1/2 = 5/?",
+       "answer": "10"
+      }
+     ]
+    }
+   ],
+   "packet": 42
   },
   {
    "id": "check-in:equal-groups-and-arrays",
@@ -6885,14 +7508,14 @@
    "type": "check-in",
    "title": "All Four Operations Check-In",
    "total": 6,
-   "file": "42-four-operations/color/four-operations-check-in-key.pdf",
+   "file": "47-four-operations/color/four-operations-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Equal pieces",
      "kind": "bar",
-     "packet": 42,
-     "packets": "42",
+     "packet": 47,
+     "packets": "47",
      "questions": [
       {
        "n": 1,
@@ -6920,8 +7543,8 @@
      "part": 2,
      "name": "Two steps",
      "kind": "two_step",
-     "packet": 42,
-     "packets": "42",
+     "packet": 47,
+     "packets": "47",
      "questions": [
       {
        "n": 5,
@@ -6934,8 +7557,8 @@
      "part": 3,
      "name": "Two-step word problems",
      "kind": "word",
-     "packet": 42,
-     "packets": "42",
+     "packet": 47,
+     "packets": "47",
      "questions": [
       {
        "n": 6,
@@ -6945,103 +7568,203 @@
      ]
     }
    ],
-   "packet": 42
+   "packet": 47
   },
   {
-   "id": "check-in:fractions",
+   "id": "check-in:fractions-and-wholes",
    "type": "check-in",
-   "title": "Fractions Check-In",
+   "title": "Fractions and Wholes Check-In",
    "total": 10,
-   "file": "36-fractions/color/fractions-check-in-key.pdf",
+   "file": "41-fractions-and-wholes/color/fractions-and-wholes-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
-     "name": "Name the fraction",
-     "kind": "name_frac",
-     "packet": 36,
-     "packets": "36",
+     "name": "How many wholes?",
+     "kind": "wholes",
+     "packet": 41,
+     "packets": "41",
      "questions": [
       {
        "n": 1,
-       "prompt": "frac name strip 2 1",
-       "answer": "1 · 2"
+       "prompt": "how many wholes: 3 strips of 8",
+       "answer": "24/8 = 3"
       },
       {
        "n": 2,
-       "prompt": "frac name strip 8 2",
-       "answer": "2 · 8"
+       "prompt": "how many wholes: 2 strips of 4",
+       "answer": "8/4 = 2"
       }
      ]
     },
     {
      "part": 2,
-     "name": "Shade it",
-     "kind": "shade_frac",
-     "packet": 36,
-     "packets": "36",
+     "name": "More than one whole",
+     "kind": "more_whole",
+     "packet": 41,
+     "packets": "41",
      "questions": [
       {
        "n": 3,
-       "prompt": "frac shade 3 1",
-       "answer": "1 of 3 parts shaded"
-      },
-      {
-       "n": 4,
-       "prompt": "frac shade 8 6",
-       "answer": "6 of 8 parts shaded"
+       "prompt": "more than one whole: 6/4 in strips",
+       "answer": "6/4 = 1 whole and 2/4"
       }
      ]
     },
     {
      "part": 3,
-     "name": "Compare",
-     "kind": "frac3",
-     "packet": 36,
-     "packets": "36",
+     "name": "Less than, equal to, or more than 1?",
+     "kind": "vs_one",
+     "packet": 41,
+     "packets": "41",
      "questions": [
       {
+       "n": 4,
+       "prompt": "less, equal or more than 1: 5/3",
+       "answer": "more than 1"
+      },
+      {
        "n": 5,
-       "prompt": "4/8 ? 5/8",
-       "answer": "<"
-      },
-      {
-       "n": 6,
-       "prompt": "1/8 ? 5/8",
-       "answer": "<"
-      },
-      {
-       "n": 7,
-       "prompt": "3/6 ? 3/8",
-       "answer": ">"
+       "prompt": "less, equal or more than 1: 11/6",
+       "answer": "more than 1"
       }
      ]
     },
     {
      "part": 4,
-     "name": "Equal fractions",
+     "name": "Wholes",
      "kind": "frac3",
-     "packet": 36,
-     "packets": "36",
+     "packet": 41,
+     "packets": "41",
      "questions": [
       {
-       "n": 8,
-       "prompt": "1/2 = ?/6",
-       "answer": "3"
+       "n": 6,
+       "prompt": "8/8 = ?",
+       "answer": "1"
       },
       {
+       "n": 7,
+       "prompt": "?/6 = 3",
+       "answer": "18"
+      },
+      {
+       "n": 8,
+       "prompt": "30/10 = ?",
+       "answer": "3"
+      }
+     ]
+    },
+    {
+     "part": 5,
+     "name": "Past one whole",
+     "kind": "frac2",
+     "packet": 41,
+     "packets": "41",
+     "questions": [
+      {
        "n": 9,
-       "prompt": "3/4 = ?/8",
-       "answer": "6"
+       "prompt": "15/8 = 1 whole and ?/8",
+       "answer": "7"
       },
       {
        "n": 10,
-       "prompt": "2/3 = ?/6",
-       "answer": "4"
+       "prompt": "8/3 = 2 wholes and ?/3",
+       "answer": "2"
       }
      ]
     }
    ],
-   "packet": 36
+   "packet": 41
+  },
+  {
+   "id": "check-in:fractions-of-a-group",
+   "type": "check-in",
+   "title": "Fractions of a Group Check-In",
+   "total": 9,
+   "file": "44-fractions-of-a-group/color/fractions-of-a-group-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Count the groups",
+     "kind": "group_frac",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "fraction of a group (marked): 3/5 of 20",
+       "answer": "12"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Make the groups",
+     "kind": "group_frac",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "fraction of a group (ring): 2/4 of 12",
+       "answer": "6"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "One group",
+     "kind": "frac3",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "1/7 of 42 = ?",
+       "answer": "6"
+      },
+      {
+       "n": 4,
+       "prompt": "1/6 of 36 = ?",
+       "answer": "6"
+      },
+      {
+       "n": 5,
+       "prompt": "1/4 of 32 = ?",
+       "answer": "8"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "More than one group",
+     "kind": "frac2",
+     "packet": 44,
+     "packets": "44",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "4/7 of 21 = ?",
+       "answer": "12"
+      },
+      {
+       "n": 7,
+       "prompt": "2/5 of 45 = ?",
+       "answer": "18"
+      },
+      {
+       "n": 8,
+       "prompt": "8/10 of 20 = ?",
+       "answer": "16"
+      },
+      {
+       "n": 9,
+       "prompt": "7/8 of 16 = ?",
+       "answer": "14"
+      }
+     ]
+    }
+   ],
+   "packet": 44
   },
   {
    "id": "check-in:graphs",
@@ -7567,14 +8290,14 @@
    "type": "check-in",
    "title": "Mass and Liquid Volume Check-In",
    "total": 6,
-   "file": "44-mass-and-liquid-volume/color/mass-and-liquid-volume-check-in-key.pdf",
+   "file": "49-mass-and-liquid-volume/color/mass-and-liquid-volume-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Grams or kilograms?",
      "kind": "unit_choice",
-     "packet": 44,
-     "packets": "44",
+     "packet": 49,
+     "packets": "49",
      "questions": [
       {
        "n": 1,
@@ -7592,8 +8315,8 @@
      "part": 2,
      "name": "Read the balance",
      "kind": "balance",
-     "packet": 44,
-     "packets": "44",
+     "packet": 49,
+     "packets": "49",
      "questions": [
       {
        "n": 3,
@@ -7606,8 +8329,8 @@
      "part": 3,
      "name": "Read the beaker",
      "kind": "beaker",
-     "packet": 44,
-     "packets": "44",
+     "packet": 49,
+     "packets": "49",
      "questions": [
       {
        "n": 4,
@@ -7627,7 +8350,7 @@
      ]
     }
    ],
-   "packet": 44
+   "packet": 49
   },
   {
    "id": "check-in:measuring-length",
@@ -7711,14 +8434,14 @@
    "type": "check-in",
    "title": "Measuring to the Quarter Inch Check-In",
    "total": 7,
-   "file": "46-measuring-to-the-quarter-inch/color/quarter-inch-check-in-key.pdf",
+   "file": "51-measuring-to-the-quarter-inch/color/quarter-inch-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Read the ruler",
      "kind": "quarter",
-     "packet": 46,
-     "packets": "46",
+     "packet": 51,
+     "packets": "51",
      "questions": [
       {
        "n": 1,
@@ -7741,8 +8464,8 @@
      "part": 2,
      "name": "Which is longer?",
      "kind": "eq2",
-     "packet": 46,
-     "packets": "46",
+     "packet": 51,
+     "packets": "51",
      "questions": [
       {
        "n": 4,
@@ -7760,8 +8483,8 @@
      "part": 3,
      "name": "Quarter inches",
      "kind": "eq2",
-     "packet": 46,
-     "packets": "46",
+     "packet": 51,
+     "packets": "51",
      "questions": [
       {
        "n": 6,
@@ -7776,7 +8499,7 @@
      ]
     }
    ],
-   "packet": 46
+   "packet": 51
   },
   {
    "id": "check-in:missing-numbers",
@@ -8145,14 +8868,14 @@
    "type": "check-in",
    "title": "Multiplying by One Digit Check-In",
    "total": 8,
-   "file": "51-multiplying-by-one-digit/color/multiplying-by-one-digit-check-in-key.pdf",
+   "file": "56-multiplying-by-one-digit/color/multiplying-by-one-digit-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "The area model",
      "kind": "area_mult",
-     "packet": 51,
-     "packets": "51",
+     "packet": 56,
+     "packets": "56",
      "questions": [
       {
        "n": 1,
@@ -8165,8 +8888,8 @@
      "part": 2,
      "name": "Write the parts",
      "kind": "partial",
-     "packet": 51,
-     "packets": "51",
+     "packet": 56,
+     "packets": "56",
      "questions": [
       {
        "n": 2,
@@ -8184,8 +8907,8 @@
      "part": 3,
      "name": "Multiply",
      "kind": "eq3",
-     "packet": 51,
-     "packets": "51",
+     "packet": 56,
+     "packets": "56",
      "questions": [
       {
        "n": 4,
@@ -8208,8 +8931,8 @@
      "part": 4,
      "name": "Three digits",
      "kind": "eq2",
-     "packet": 51,
-     "packets": "51",
+     "packet": 56,
+     "packets": "56",
      "questions": [
       {
        "n": 7,
@@ -8224,21 +8947,21 @@
      ]
     }
    ],
-   "packet": 51
+   "packet": 56
   },
   {
    "id": "check-in:multiplying-by-tens",
    "type": "check-in",
    "title": "Multiplying by Tens Check-In",
    "total": 10,
-   "file": "38-multiplying-by-tens/color/multiplying-by-tens-check-in-key.pdf",
+   "file": "37-multiplying-by-tens/color/multiplying-by-tens-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Groups of tens",
      "kind": "tens_groups",
-     "packet": 38,
-     "packets": "38",
+     "packet": 37,
+     "packets": "37",
      "questions": [
       {
        "n": 1,
@@ -8256,8 +8979,8 @@
      "part": 2,
      "name": "The fact, then the tens",
      "kind": "eq2",
-     "packet": 38,
-     "packets": "38",
+     "packet": 37,
+     "packets": "37",
      "questions": [
       {
        "n": 3,
@@ -8275,8 +8998,8 @@
      "part": 3,
      "name": "Multiply",
      "kind": "eq3",
-     "packet": 38,
-     "packets": "38",
+     "packet": 37,
+     "packets": "37",
      "questions": [
       {
        "n": 5,
@@ -8311,7 +9034,7 @@
      ]
     }
    ],
-   "packet": 38
+   "packet": 37
   },
   {
    "id": "check-in:over-the-next-ten",
@@ -8419,14 +9142,14 @@
    "type": "check-in",
    "title": "Patterns in the Times Table Check-In",
    "total": 8,
-   "file": "43-patterns-in-the-times-table/color/times-table-patterns-check-in-key.pdf",
+   "file": "48-patterns-in-the-times-table/color/times-table-patterns-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Fill in the row",
      "kind": "table_row",
-     "packet": 43,
-     "packets": "43",
+     "packet": 48,
+     "packets": "48",
      "questions": [
       {
        "n": 1,
@@ -8439,8 +9162,8 @@
      "part": 2,
      "name": "Pieces of the table",
      "kind": "table_piece",
-     "packet": 43,
-     "packets": "43",
+     "packet": 48,
+     "packets": "48",
      "questions": [
       {
        "n": 2,
@@ -8458,8 +9181,8 @@
      "part": 3,
      "name": "Even or odd?",
      "kind": "eo_product",
-     "packet": 43,
-     "packets": "43",
+     "packet": 48,
+     "packets": "48",
      "questions": [
       {
        "n": 4,
@@ -8482,8 +9205,8 @@
      "part": 4,
      "name": "Double it",
      "kind": "eq2",
-     "packet": 43,
-     "packets": "43",
+     "packet": 48,
+     "packets": "48",
      "questions": [
       {
        "n": 7,
@@ -8498,21 +9221,21 @@
      ]
     }
    ],
-   "packet": 43
+   "packet": 48
   },
   {
    "id": "check-in:perimeter",
    "type": "check-in",
    "title": "Perimeter Check-In",
    "total": 10,
-   "file": "40-perimeter/color/perimeter-check-in-key.pdf",
+   "file": "45-perimeter/color/perimeter-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Add the sides",
      "kind": "perim_add",
-     "packet": 40,
-     "packets": "40",
+     "packet": 45,
+     "packets": "45",
      "questions": [
       {
        "n": 1,
@@ -8530,8 +9253,8 @@
      "part": 2,
      "name": "Area and perimeter",
      "kind": "area_perim",
-     "packet": 40,
-     "packets": "40",
+     "packet": 45,
+     "packets": "45",
      "questions": [
       {
        "n": 3,
@@ -8549,8 +9272,8 @@
      "part": 3,
      "name": "Perimeter",
      "kind": "eq2",
-     "packet": 40,
-     "packets": "40",
+     "packet": 45,
+     "packets": "45",
      "questions": [
       {
        "n": 5,
@@ -8578,8 +9301,8 @@
      "part": 4,
      "name": "Find the missing side",
      "kind": "eq2",
-     "packet": 40,
-     "packets": "40",
+     "packet": 45,
+     "packets": "45",
      "questions": [
       {
        "n": 9,
@@ -8594,21 +9317,21 @@
      ]
     }
    ],
-   "packet": 40
+   "packet": 45
   },
   {
    "id": "check-in:rounding",
    "type": "check-in",
    "title": "Rounding Check-In",
    "total": 8,
-   "file": "37-rounding/color/rounding-check-in-key.pdf",
+   "file": "36-rounding/color/rounding-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Which ten is closer?",
      "kind": "round_card",
-     "packet": 37,
-     "packets": "37",
+     "packet": 36,
+     "packets": "36",
      "questions": [
       {
        "n": 1,
@@ -8626,8 +9349,8 @@
      "part": 2,
      "name": "Nearest ten",
      "kind": "eq2",
-     "packet": 37,
-     "packets": "37",
+     "packet": 36,
+     "packets": "36",
      "questions": [
       {
        "n": 3,
@@ -8645,8 +9368,8 @@
      "part": 3,
      "name": "Nearest hundred",
      "kind": "eq2",
-     "packet": 37,
-     "packets": "37",
+     "packet": 36,
+     "packets": "36",
      "questions": [
       {
        "n": 5,
@@ -8664,8 +9387,8 @@
      "part": 4,
      "name": "Ten or hundred?",
      "kind": "eq2",
-     "packet": 37,
-     "packets": "37",
+     "packet": 36,
+     "packets": "36",
      "questions": [
       {
        "n": 7,
@@ -8680,21 +9403,21 @@
      ]
     }
    ],
-   "packet": 37
+   "packet": 36
   },
   {
    "id": "check-in:rounding-big-numbers",
    "type": "check-in",
    "title": "Rounding Big Numbers Check-In",
    "total": 8,
-   "file": "49-rounding-big-numbers/color/rounding-big-numbers-check-in-key.pdf",
+   "file": "54-rounding-big-numbers/color/rounding-big-numbers-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Which thousand is closer?",
      "kind": "round_card",
-     "packet": 49,
-     "packets": "49",
+     "packet": 54,
+     "packets": "54",
      "questions": [
       {
        "n": 1,
@@ -8712,8 +9435,8 @@
      "part": 2,
      "name": "Nearest thousand",
      "kind": "eq2",
-     "packet": 49,
-     "packets": "49",
+     "packet": 54,
+     "packets": "54",
      "questions": [
       {
        "n": 3,
@@ -8731,8 +9454,8 @@
      "part": 3,
      "name": "Nearest hundred",
      "kind": "eq2",
-     "packet": 49,
-     "packets": "49",
+     "packet": 54,
+     "packets": "54",
      "questions": [
       {
        "n": 5,
@@ -8750,8 +9473,8 @@
      "part": 4,
      "name": "About how much?",
      "kind": "eq2",
-     "packet": 49,
-     "packets": "49",
+     "packet": 54,
+     "packets": "54",
      "questions": [
       {
        "n": 7,
@@ -8766,21 +9489,21 @@
      ]
     }
    ],
-   "packet": 49
+   "packet": 54
   },
   {
    "id": "check-in:scaled-graphs",
    "type": "check-in",
    "title": "Scaled Graphs Check-In",
    "total": 7,
-   "file": "45-scaled-graphs/color/scaled-graphs-check-in-key.pdf",
+   "file": "50-scaled-graphs/color/scaled-graphs-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Read the graph",
      "kind": "sgraph",
-     "packet": 45,
-     "packets": "45",
+     "packet": 50,
+     "packets": "50",
      "questions": [
       {
        "n": 1,
@@ -8793,8 +9516,8 @@
      "part": 2,
      "name": "How many?",
      "kind": "eq2",
-     "packet": 45,
-     "packets": "45",
+     "packet": 50,
+     "packets": "50",
      "questions": [
       {
        "n": 2,
@@ -8822,8 +9545,8 @@
      "part": 3,
      "name": "How many pictures?",
      "kind": "eq2",
-     "packet": 45,
-     "packets": "45",
+     "packet": 50,
+     "packets": "50",
      "questions": [
       {
        "n": 6,
@@ -8838,21 +9561,21 @@
      ]
     }
    ],
-   "packet": 45
+   "packet": 50
   },
   {
    "id": "check-in:shapes-and-quadrilaterals",
    "type": "check-in",
    "title": "Shapes and Quadrilaterals Check-In",
    "total": 10,
-   "file": "47-shapes-and-quadrilaterals/color/quadrilaterals-check-in-key.pdf",
+   "file": "52-shapes-and-quadrilaterals/color/quadrilaterals-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Quadrilateral or not?",
      "kind": "is_quad",
-     "packet": 47,
-     "packets": "47",
+     "packet": 52,
+     "packets": "52",
      "questions": [
       {
        "n": 1,
@@ -8875,8 +9598,8 @@
      "part": 2,
      "name": "Right angles",
      "kind": "right_count",
-     "packet": 47,
-     "packets": "47",
+     "packet": 52,
+     "packets": "52",
      "questions": [
       {
        "n": 4,
@@ -8899,8 +9622,8 @@
      "part": 3,
      "name": "Name it",
      "kind": "name_quad",
-     "packet": 47,
-     "packets": "47",
+     "packet": 52,
+     "packets": "52",
      "questions": [
       {
        "n": 7,
@@ -8918,8 +9641,8 @@
      "part": 4,
      "name": "True or not?",
      "kind": "quad_fact",
-     "packet": 47,
-     "packets": "47",
+     "packet": 52,
+     "packets": "52",
      "questions": [
       {
        "n": 9,
@@ -8934,7 +9657,7 @@
      ]
     }
    ],
-   "packet": 47
+   "packet": 52
   },
   {
    "id": "check-in:skip-counting",
@@ -10051,14 +10774,14 @@
    "type": "check-in",
    "title": "Thousands Check-In",
    "total": 8,
-   "file": "48-thousands/color/thousands-check-in-key.pdf",
+   "file": "53-thousands/color/thousands-check-in-key.pdf",
    "parts": [
     {
      "part": 1,
      "name": "Read the quick drawing",
      "kind": "quick_th",
-     "packet": 48,
-     "packets": "48",
+     "packet": 53,
+     "packets": "53",
      "questions": [
       {
        "n": 1,
@@ -10076,8 +10799,8 @@
      "part": 2,
      "name": "Put the parts together",
      "kind": "eq2",
-     "packet": 48,
-     "packets": "48",
+     "packet": 53,
+     "packets": "53",
      "questions": [
       {
        "n": 3,
@@ -10095,8 +10818,8 @@
      "part": 3,
      "name": "What is the digit worth?",
      "kind": "eq2",
-     "packet": 48,
-     "packets": "48",
+     "packet": 53,
+     "packets": "53",
      "questions": [
       {
        "n": 5,
@@ -10114,8 +10837,8 @@
      "part": 4,
      "name": "Compare",
      "kind": "eq2",
-     "packet": 48,
-     "packets": "48",
+     "packet": 53,
+     "packets": "53",
      "questions": [
       {
        "n": 7,
@@ -10130,7 +10853,7 @@
      ]
     }
    ],
-   "packet": 48
+   "packet": 53
   },
   {
    "id": "check-in:two-step-word-problems",
@@ -10198,6 +10921,102 @@
     }
    ],
    "packet": 30
+  },
+  {
+   "id": "check-in:unit-fractions",
+   "type": "check-in",
+   "title": "Unit Fractions Check-In",
+   "total": 10,
+   "file": "39-unit-fractions/color/unit-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Name the unit fraction",
+     "kind": "unit_name",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "name the unit fraction: circle cut in 2, part 2 shaded",
+       "answer": "1/2"
+      },
+      {
+       "n": 2,
+       "prompt": "name the unit fraction: square cut in 5, part 4 shaded",
+       "answer": "1/5"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Find the whole",
+     "kind": "find_whole",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "find the whole: 1/10 piece",
+       "answer": "10 pieces"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Bigger piece",
+     "kind": "bigger_unit_plain",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "bigger piece: 1/4 or 1/5",
+       "answer": "1/4"
+      },
+      {
+       "n": 5,
+       "prompt": "bigger piece: 1/4 or 1/2",
+       "answer": "1/2"
+      },
+      {
+       "n": 6,
+       "prompt": "bigger piece: 1/5 or 1/8",
+       "answer": "1/5"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "How many equal parts?",
+     "kind": "frac2",
+     "packet": 39,
+     "packets": "39",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "1/6 is 1 of ? equal parts",
+       "answer": "6"
+      },
+      {
+       "n": 8,
+       "prompt": "? pieces of 1/2 make 1 whole",
+       "answer": "2"
+      },
+      {
+       "n": 9,
+       "prompt": "1/4 is 1 of ? equal parts",
+       "answer": "4"
+      },
+      {
+       "n": 10,
+       "prompt": "? pieces of 1/6 make 1 whole",
+       "answer": "6"
+      }
+     ]
+    }
+   ],
+   "packet": 39
   },
   {
    "id": "check-in:up-to-and-over-ten",

@@ -9779,7 +9779,7 @@ CHECKINS["35-division"] = [
 ]
 
 
-# ====================================================================== 39. Fractions as Numbers
+# ====================================================================== 39–44. Fractions
 
 
 def frac_width(tok, size):
@@ -9861,24 +9861,6 @@ def strip(bk, x, y, w, h, n, shaded=0, answer=0, lw=1.2):
     c.setLineWidth(lw)
     for pts in parts:
         c.drawPath(_poly(c, pts), stroke=1, fill=0)
-
-
-def c_name_frac(bk, x, cy, w, item):
-    kind, n, k = item
-    if kind == "strip":
-        strip(bk, x + GUT, cy + 26, 120, 24, n, shaded=k)
-    else:
-        share_shape(bk, "circle", x + GUT + 20, cy + 10, 52, n, shaded=range(k))
-    frac_expr(bk, x + w - 70, cy + 30, f"[{k}]/[{n}]", size=20)
-
-
-def c_shade_frac(bk, x, cy, w, item):
-    n, k = item
-    bk.c.setFillColor(T.ink)
-    bk.c.setFont("Rnd", 13)
-    bk.c.drawString(x + GUT, cy + 50, "Shade")
-    frac_expr(bk, x + GUT + 44, cy + 48, f"{k}/{n}", size=17)
-    strip(bk, x + GUT, cy + 10, w - GUT - 16, 22, n, answer=k)
 
 
 def c_compare_frac(bk, x, cy, w, item):
@@ -10139,7 +10121,8 @@ UNIT_NAME = [(k, n, i) for k, ns in _UNIT_KINDS.items() for n in ns for i in ran
 UNIT_FACTS = ([f"1/{n} is 1 of [{n}] equal parts" for n in _UNIT_DENS]
               + [f"[{n}] pieces of 1/{n} make 1 whole" for n in _UNIT_DENS]
               + [f"{unit_word(n)} = 1/[{n}]" for n in _UNIT_DENS])
-UNIT_BIGGER = [(a, b, False) for a in _UNIT_DENS for b in _UNIT_DENS if a != b]
+# One order per pair (no 1/3-or-1/8 next to 1/8-or-1/3), with the bigger piece first or second about half the time.
+UNIT_BIGGER = [(a, b, False) for a in _UNIT_DENS for b in _UNIT_DENS if a != b and (a < b) == ((a + b) % 2 == 1)]
 
 CHECKINS["39-unit-fractions"] = [
     S("Name the unit fraction", None, "unit_name", UNIT_NAME, 2),
@@ -10868,27 +10851,176 @@ CHECKINS["43-comparing-fractions"] = [
 ]
 
 
+def group_rings(bk, x, cy, d, each, mark=0, rings=True, answer_k=0, r=4.2, step=12):
+    """d equal groups of `each` dots in a row, each group in a rounded ring (rings=False: the key draws them).
+    The first `mark` groups are drawn in the second colour (the groups you count); on the key the first
+    `answer_k` rings are drawn in red. cy = centre line. Returns the width."""
+    c = bk.c
+    cols = min(each, 3)
+    rows = -(-each // cols)
+    gw, gh = cols * step + 8, rows * step + 8
+    gx = x
+    for g in range(d):
+        for j in range(each):
+            rr, cc = divmod(j, cols)
+            bk.dot(gx + 4 + step / 2 + cc * step, cy + gh / 2 - 4 - step / 2 - rr * step, r, "b" if g < mark else "a")
+        if rings or bk.key:
+            red = bk.key and (g < answer_k or not rings)
+            c.setStrokeColor(T.answer if red else T.muted)
+            c.setLineWidth(1.5 if red else 1)
+            c.roundRect(gx, cy - gh / 2, gw, gh, 7, stroke=1, fill=0)
+        gx += gw + (8 if rings else 4)
+    return gx - x
+
+
+def c_group_frac(bk, x, cy, w, item):
+    """Fraction of a group: n dots in d rings; find k of them."""
+    n, d, k, mode = item
+    each = n // d
+    gw = group_rings(bk, x + GUT, cy + 35, d, each, mark=k if mode == "marked" else 0,
+                     rings=mode != "ring", answer_k=k if mode != "marked" else 0)
+    tail = f"{k}/{d} of {n} = [{n // d * k}]"
+    tx = x + GUT + max(gw, 150) + 26
+    frac_fit(bk, tx, cy + 28, x + w - tx - 10, tail, size=18)
+
+
+def learn_fraction_of_group(bk):
+    y = bk.new_page("Fractions of a Group", "Share the group into equal parts, then count the parts you need.",
+                    name_line=False, big=True, footer="WeMath  ·  Fractions of a Group")
+    c = bk.c
+    label(bk, M, y - 6, "1/3 of 12: make 3 equal groups")
+    group_rings(bk, M + 14, y - 46, 3, 4, mark=1)
+    frac_expr(bk, M + 230, y - 54, "1/3 of 12 = 4", size=24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 410, y - 40, "One group")
+    c.drawString(M + 410, y - 56, "out of 3.")
+    y -= 92
+
+    label(bk, M, y - 6, "Think division")
+    color_eq(bk, M + 14, y - 42, [("12", None), (DIV, "op"), ("3", None), ("=", "op"), ("4", "b")], 24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 230, y - 38, "The bottom number tells how many groups.")
+    y -= 66
+
+    label(bk, M, y - 6, "2/3 of 12: two of the groups")
+    group_rings(bk, M + 14, y - 46, 3, 4, mark=2)
+    frac_expr(bk, M + 230, y - 54, "2/3 of 12 = 8", size=24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 410, y - 40, "4 + 4 = 8,")
+    c.drawString(M + 410, y - 56, "two groups.")
+    y -= 92
+
+    label(bk, M, y - 6, "The steps")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 13)
+    c.drawString(M + 14, y - 34, "1. Divide by the bottom number: that's one group.")
+    c.drawString(M + 14, y - 56, "2. Times the top number: that many groups.")
+    frac_expr(bk, M + 14, y - 92, "3/4 of 20: 20 ÷ 4 = 5, 3 × 5 = 15", size=18)
+    y -= 118
+
+    bottom = your_turn(bk, y, h=92)
+    bk.ask("fraction of a group: 1/4 of 8 your turn")
+    group_rings(bk, M + 130, bottom + 40, 4, 2)
+    frac_expr(bk, M + 330, bottom + 34, "1/4 of 8 = [2]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: find a fraction of a group (a bridge to 4.NF.4). Say “Share it into equal groups: the "
+                     "bottom number says how many. One group is one third. Two groups are two thirds.”")
+
+
+def practice_fraction_of_group(bk):
+    title = "Fractions of a Group: Practice"
+    y = bk.new_page(title, "Bottom number: how many equal groups. Top number: how many groups to count.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "One group", "The rings show the equal groups. How many in one group?", "group_frac",
+         [(15, 3, 1, "given"), (8, 2, 1, "given"), (20, 5, 1, "given"), (18, 6, 1, "given"), (16, 4, 1, "given"),
+          (12, 6, 1, "given")])
+    part(2, "Count the groups", "Count the dots in the marked groups.", "group_frac",
+         [(12, 4, 3, "marked"), (15, 5, 2, "marked"), (18, 3, 2, "marked"), (20, 4, 3, "marked"),
+          (10, 5, 4, "marked"), (24, 6, 5, "marked")])
+    part(3, "Make the groups", "Circle equal groups first. The bottom number says how many.", "group_frac",
+         [(9, 3, 2, "ring"), (12, 4, 1, "ring"), (10, 2, 1, "ring"), (15, 5, 3, "ring"), (16, 4, 3, "ring"),
+          (14, 7, 2, "ring")])
+    part(4, "Divide, then multiply", "One group first, then the groups you need.", "frac2",
+         [f"{n} {DIV} {d} = [{n // d}] so {k}/{d} of {n} = [{n // d * k}]" for n, d, k in
+          ((24, 4, 3), (30, 5, 2), (21, 3, 2), (32, 8, 3), (36, 6, 5), (28, 4, 3), (40, 10, 7), (27, 9, 4))])
+    part(5, "One group", "No help this time.", "frac3",
+         [f"1/{d} of {n} = [{n // d}]" for n, d in ((20, 4), (35, 5), (18, 3), (48, 8), (30, 6), (14, 2),
+                                                     (60, 10), (45, 9), (28, 7), (40, 8), (24, 3), (42, 6))])
+    part(6, "More than one group", "No help this time.", "frac2",
+         [f"{k}/{d} of {n} = [{n // d * k}]" for n, d, k in ((20, 5, 3), (24, 6, 5), (16, 4, 3), (40, 8, 5),
+                                                              (30, 3, 2), (50, 10, 9), (36, 9, 2), (35, 7, 4),
+                                                              (32, 4, 3), (18, 6, 5), (45, 5, 4), (56, 8, 3))])
+    part(7, "Hours and dollars", "No help this time. 1 hour = 60 minutes, 1 dollar = 100 cents.", "frac2",
+         ["1/4 of an hour = [15] minutes", "1/2 of a dollar = [50] cents", "3/4 of an hour = [45] minutes",
+          "1/4 of a dollar = [25] cents", "1/3 of an hour = [20] minutes", "1/10 of a dollar = [10] cents",
+          "2/3 of an hour = [40] minutes", "3/4 of a dollar = [75] cents"])
+    part(8, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_GROUPF)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 9, "Word problems", "Draw the groups.")
+    for i, story in enumerate(WORDS_GROUPF):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 9, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_GROUPF = ["4/10 [<] 7/10", "4/10 = 2/[5]", "15/3 = [5]", "Round 917 to the nearest hundred: [900]",
+                 "9 groups of 2 = [18]", "1/6 [>] 1/10"]
+
+WORDS_GROUPF = [
+    ("There are 12 kids. 1/3 of them wear hats. How many kids wear hats?", f"12 {DIV} 3 = 4", "4", "kids"),
+    ("Ana has 20 stickers. She gives away 1/4 of them. How many stickers does she give away?",
+     f"20 {DIV} 4 = 5", "5", "stickers"),
+    ("A box has 18 crayons. 2/3 of them are new. How many crayons are new?", f"18 {DIV} 3 = 6, 2 {TIMES} 6 = 12",
+     "12", "crayons"),
+    ("Leo has 30 marbles. 3/5 of them are blue. How many marbles are blue?", f"30 {DIV} 5 = 6, 3 {TIMES} 6 = 18",
+     "18", "marbles"),
+    ("Challenge: Mia read 3/4 of a 40-page book. How many pages does she have left to read?",
+     f"40 {DIV} 4 = 10, 1/4 is left", "10", "pages"),
+]
+
+KINDS_GROUPF = {
+    "group_frac": Kind(70, 1, lambda it: f"fraction of a group ({it[3]}): {it[2]}/{it[1]} of {it[0]}", c_group_frac, 8),
+}
+KINDS.update(KINDS_GROUPF)
+
+_G_PAIRS = [(d * e, d) for d in rng(2, 10) for e in rng(2, 9)]
+GROUP_UNIT = [f"1/{d} of {n} = [{n // d}]" for n, d in _G_PAIRS]
+GROUP_MORE = [f"{k}/{d} of {n} = [{n // d * k}]" for n, d in _G_PAIRS if d > 2 for k in rng(2, d - 1)]
+
+CHECKINS["44-fractions-of-a-group"] = [
+    S("Count the groups", None, "group_frac", [(d * e, d, k, "marked") for d in (3, 4, 5) for e in (2, 3, 4)
+                                               for k in rng(1, d - 1)], 1),
+    S("Make the groups", None, "group_frac", [(d * e, d, k, "ring") for d in (2, 3, 4) for e in (2, 3, 4)
+                                              for k in rng(1, d - 1)], 1),
+    S("One group", None, "frac3", GROUP_UNIT, 3),
+    S("More than one group", None, "frac2", GROUP_MORE, 4),
+]
+
+
 KINDS_36 = {
-    "name_frac": Kind(72, 2, lambda it: f"frac name {it[0]} {it[1]} {it[2]}", c_name_frac),
-    "shade_frac": Kind(72, 2, lambda it: f"frac shade {it[0]} {it[1]}", c_shade_frac),
-    "compare_frac": Kind(84, 1, lambda it: f"frac compare {it[0][0]}/{it[0][1]} {it[1][0]}/{it[1][1]}", c_compare_frac, 8),
-    "equiv_frac": Kind(84, 1, lambda it: f"frac equal {it[0][0]}/{it[0][1]} in {it[1]}ths", c_equiv_frac, 8),
+    "compare_frac": Kind(84, 1, lambda it: f"compare with strips: {it[0][0]}/{it[0][1]} and {it[1][0]}/{it[1][1]}",
+                         c_compare_frac, 8),
+    "equiv_frac": Kind(84, 1, lambda it: f"line them up: {it[0][0]}/{it[0][1]} in {it[1]}ths", c_equiv_frac, 8),
     "frac3": Kind(48, 3, lambda t: t, c_frac, 8),
 }
 KINDS.update(KINDS_36)
 
-_DENS = (2, 3, 4, 6, 8)
-FRAC_COMPARE = ([f"{a}/{n} [{sign_of(a, b)}] {b}/{n}" for n in _DENS for a in rng(1, n - 1) for b in rng(1, n - 1)
-                 if a != b]
-                + [f"{a}/{n} [{sign_of(Fraction(a, n), Fraction(a, m))}] {a}/{m}" for a in (1, 2, 3) for n in _DENS
-                   for m in _DENS if n != m and a < min(n, m)])
-FRAC_EQUIV = [f"{a}/{n} = [{a * m // n}]/{m}" for n in _DENS for m in _DENS if m % n == 0 and m > n
-              for a in rng(1, n - 1)] + [f"{a}/{m} = [{a * n // m}]/{n}" for n in _DENS for m in _DENS
-                                         if m % n == 0 and m > n for a in rng(1, m - 1) if a * n % m == 0]
 
-
-
-# ---------------------------------------------------------------------- grade 3 assessments (packets 33-36)
+# ---------------------------------------------------------------------- grade 3 assessments (packets 33-52)
 
 
 def stories_x(seed, kind, items):
@@ -11492,6 +11624,8 @@ _g3[-1:-1] = [
     S("Fractions and wholes", None, "frac3", WHOLE_FACTS, 3, 41),
     S("Equal fractions", None, "frac3", EQUAL_TOP + EQUAL_DOWN + EQUAL_BOTTOM, 3, 42),
     S("Compare fractions", "Write <, > or =.", "frac3", SAME_BOTTOM + SAME_TOP, 3, 43, balance=is_less),
+    S("Fractions of a group", None, "frac3", GROUP_UNIT, 3, 44),
+    S("More than one group", None, "frac2", GROUP_MORE, 2, 44),
 ]
 
 
@@ -14321,7 +14455,7 @@ ANSWER_OF = {
     "compare_frac": lambda it: frac_sign(*it[0], *it[1]),
     "compare_shapes": lambda it: frac_sign(*it[1], *it[2]),
     "biggest": lambda it: "%d/%d" % max(it, key=lambda f: Fraction(*f)),
-    "shade_frac": lambda it: f"{it[1]} of {it[0]} parts shaded",
+    "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
     "area_split": lambda it: str(it[0] * (it[1] + it[2])),
@@ -14500,6 +14634,8 @@ PACKETS = [
     ("42-equal-fractions", "equal-fractions", "Equal Fractions", learn_equal_fractions, practice_equal_fractions,
      False),
     ("43-comparing-fractions", "comparing-fractions", "Comparing Fractions", learn_comparing_fractions, practice_comparing_fractions,
+     False),
+    ("44-fractions-of-a-group", "fractions-of-a-group", "Fractions of a Group", learn_fraction_of_group, practice_fraction_of_group,
      False),
     ("45-perimeter", "perimeter", "Perimeter", learn_perimeter, practice_perimeter, False),
     ("46-elapsed-time", "elapsed-time", "Elapsed Time", learn_elapsed, practice_elapsed, False),
