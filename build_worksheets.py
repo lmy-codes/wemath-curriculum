@@ -9768,7 +9768,7 @@ CHECKINS["35-division"] = [
 ]
 
 
-# ====================================================================== 36. Fractions as Numbers
+# ====================================================================== 39. Fractions as Numbers
 
 
 def frac_width(tok, size):
@@ -10010,7 +10010,7 @@ FRAC_EQUIV = [f"{a}/{n} = [{a * m // n}]/{m}" for n in _DENS for m in _DENS if m
               for a in rng(1, n - 1)] + [f"{a}/{m} = [{a * n // m}]/{n}" for n in _DENS for m in _DENS
                                          if m % n == 0 and m > n for a in rng(1, m - 1) if a * n % m == 0]
 
-CHECKINS["36-fractions"] = [
+CHECKINS["39-fractions"] = [
     S("Name the fraction", None, "name_frac", [(k, n, a) for k in ("strip", "circle") for n in (2, 3, 4, 6, 8)
                                                for a in rng(1, n - 1) if k == "strip" or n <= 4], 2),
     S("Shade it", None, "shade_frac", [(n, a) for n in (3, 4, 6, 8) for a in rng(1, n - 1)], 2),
@@ -10040,7 +10040,7 @@ def stories_x(seed, kind, items):
     return out
 
 
-GRADES.append(("grade-3", "Grade 3", "Packets 33–42", [
+GRADES.append(("grade-3", "Grade 3", "Packets 33–52", [
     S("Groups of", None, "times_groups", [(g, n) for g in rng(2, 5) for n in rng(2, 5)], 2, 33),
     S("Times 2, 5 and 10", None, "eq3", FACTS_2_5_10, 6, 33),
     S("Break it apart", None, "break_array", [(a, b) for a in (3, 4, 6, 7, 8, 9) for b in rng(3, 9)], 2, 34),
@@ -10048,15 +10048,15 @@ GRADES.append(("grade-3", "Grade 3", "Packets 33–42", [
     S("Think multiplication", None, "think_times", [(d * q, d) for d in rng(3, 9) for q in rng(3, 9)], 2, 35),
     S("Divide", None, "eq3", DIV_FACTS, 9, 35),
     S("Name the fraction", None, "name_frac", [(k, n, a) for k in ("strip", "circle") for n in (2, 3, 4, 6, 8)
-                                               for a in rng(1, n - 1) if k == "strip" or n <= 4], 2, 36),
-    S("Compare fractions", "Write <, > or =.", "frac3", FRAC_COMPARE, 3, 36, balance=is_less),
-    S("Equal fractions", None, "frac3", FRAC_EQUIV, 3, 36),
+                                               for a in rng(1, n - 1) if k == "strip" or n <= 4], 2, 39),
+    S("Compare fractions", "Write <, > or =.", "frac3", FRAC_COMPARE, 3, 39, balance=is_less),
+    S("Equal fractions", None, "frac3", FRAC_EQUIV, 3, 39),
     S("Word problems", None, "word", stories_x("g3a", "times", [(g, k) for g in rng(3, 9) for k in rng(3, 9)])[:8]
       + stories_x("g3b", "share", [(g, k) for g in rng(3, 9) for k in rng(3, 9)])[:8], 4, "33–35"),
 ]))
 
 
-# ====================================================================== 37. Rounding
+# ====================================================================== 36. Rounding
 
 
 def round_to(n, place):
@@ -10208,7 +10208,7 @@ ROUND_100 = [f"{n} rounds to [{round_to(n, 100)}]" for n in rng(105, 985, 11) if
 ROUND_MIXED = [f"Round {n} to the nearest {p}: [{round_to(n, p)}]" for n in rng(112, 988, 13) for p in (10, 100)
                if n % 10]
 
-CHECKINS["37-rounding"] = [
+CHECKINS["36-rounding"] = [
     S("Which ten is closer?", None, "round_card", [(n, 10, "closer") for n in rng(12, 98) if n % 10 and n not in (23, 47)], 2),
     S("Nearest ten", None, "eq2", ROUND_10, 2),
     S("Nearest hundred", None, "eq2", ROUND_100, 2),
@@ -10216,11 +10216,11 @@ CHECKINS["37-rounding"] = [
 ]
 _g3 = next(g for g in GRADES if g[0] == "grade-3")[3]
 _g3[-1:-1] = [
-    S("Rounding", None, "eq2", ROUND_MIXED, 4, 37),
+    S("Rounding", None, "eq2", ROUND_MIXED, 4, 36),
 ]
 
 
-# ====================================================================== 38. Multiplying by Tens
+# ====================================================================== 37. Multiplying by Tens
 
 
 def tens_groups(bk, x, y, groups, tens, h=60, w=STICK_W, gap=5, ggap=18):
@@ -10361,17 +10361,17 @@ KINDS.update(KINDS_38)
 
 TENS_FACTS = [f"{g} {TIMES} {t * 10} = [{g * t * 10}]" for g in rng(2, 9) for t in rng(2, 9)]
 
-CHECKINS["38-multiplying-by-tens"] = [
+CHECKINS["37-multiplying-by-tens"] = [
     S("Groups of tens", None, "tens_groups", [(g, t) for g in rng(2, 4) for t in rng(2, 6) if g * t <= 12 and (g, t) != (2, 3)], 2),
     S("The fact, then the tens", None, "eq2", [tens_fact(g, t) for g in rng(2, 9) for t in rng(2, 9)], 2),
     S("Multiply", None, "eq3", TENS_FACTS, 6),
 ]
 _g3[-1:-1] = [
-    S("Multiply by tens", None, "eq3", TENS_FACTS, 3, 38),
+    S("Multiply by tens", None, "eq3", TENS_FACTS, 3, 37),
 ]
 
 
-# ====================================================================== 39. Area
+# ====================================================================== 38. Area
 
 
 def side_label(bk, x, y, text, anchor="center", size=10):
@@ -10611,18 +10611,18 @@ KINDS.update(KINDS_39)
 AREA_EQS = [area_eq(a, b, u) for a in rng(3, 9) for b in rng(3, 9) if a != b for u in ("cm", "in", "m", "ft")]
 MISSING_SIDES = [missing_side_eq(a * b, a, u) for a in rng(3, 9) for b in rng(3, 9) for u in ("cm", "in")]
 
-CHECKINS["39-area"] = [
+CHECKINS["38-area"] = [
     S("Rows times columns", None, "area_rows", [(r, k) for r in rng(2, 6) for k in rng(3, 8) if (r, k) != (3, 7)], 2),
     S("Break it apart", None, "area_split", [(r, 5, b) for r in rng(3, 8) for b in rng(1, 4)], 1),
     S("Area", None, "eq2", AREA_EQS, 4),
     S("Find the missing side", None, "eq2", MISSING_SIDES, 2),
 ]
 _g3[-1:-1] = [
-    S("Area", None, "eq2", AREA_EQS, 2, 39),
+    S("Area", None, "eq2", AREA_EQS, 2, 38),
 ]
 
 
-# ====================================================================== 40. Perimeter
+# ====================================================================== 45. Perimeter
 
 
 def edge_numbers(bk, x, y, rows, cols, cell, size=9):
@@ -10860,7 +10860,7 @@ KINDS.update(KINDS_40)
 PERIM_EQS = [perim_eq(a, b, u) for a in rng(3, 15) for b in rng(2, 9) if a > b for u in ("cm", "in", "m", "ft")]
 PERIM_MISSING = [perim_missing_eq(a, b, u) for a in rng(4, 12) for b in rng(2, 8) if a > b for u in ("cm", "m")]
 
-CHECKINS["40-perimeter"] = [
+CHECKINS["45-perimeter"] = [
     S("Add the sides", None, "perim_add", [(a, b, u) for a in rng(5, 12) for b in rng(2, 6) if a > b
                                             for u in ("cm", "in", "m", "ft")], 2),
     S("Area and perimeter", None, "area_perim", [(r, k) for r in rng(2, 5) for k in rng(3, 8) if r < k], 2),
@@ -10868,11 +10868,11 @@ CHECKINS["40-perimeter"] = [
     S("Find the missing side", None, "eq2", PERIM_MISSING, 2),
 ]
 _g3[-1:-1] = [
-    S("Perimeter", None, "eq2", PERIM_EQS, 2, 40),
+    S("Perimeter", None, "eq2", PERIM_EQS, 2, 45),
 ]
 
 
-# ====================================================================== 41. Elapsed Time
+# ====================================================================== 46. Elapsed Time
 
 
 def tadd(t, mins):
@@ -11097,7 +11097,7 @@ KINDS.update(KINDS_41)
 ELAPSED_EQS = [elapsed_eq((h, m), tadd((h, m), d)) for h in rng(1, 12) for m in rng(5, 55, 5) for d in rng(15, 55, 10)]
 LATER_EQS = [later_eq((h, m), d) for h in rng(1, 12) for m in rng(10, 55, 5) for d in rng(20, 50, 5) if m + d > 60]
 
-CHECKINS["41-elapsed-time"] = [
+CHECKINS["46-elapsed-time"] = [
     S("Time to the minute", None, "read_minute", [(h, m, "full") for h in rng(1, 12) for m in rng(1, 59) if m % 5], 2),
     S("Find the stops", None, "jump_time", [((h, m), tadd((h, m), d), "find") for h in rng(1, 11) for m in rng(35, 55, 5)
                                        for d in rng(25, 45, 5) if m + d > 60], 2),
@@ -11105,11 +11105,11 @@ CHECKINS["41-elapsed-time"] = [
     S("What time will it be?", None, "eq2", LATER_EQS, 2),
 ]
 _g3[-1:-1] = [
-    S("Elapsed time", None, "eq2", ELAPSED_EQS, 2, 41),
+    S("Elapsed time", None, "eq2", ELAPSED_EQS, 2, 46),
 ]
 
 
-# ====================================================================== 42. Word Problems with All Four Operations
+# ====================================================================== 47. Word Problems with All Four Operations
 
 
 def equal_bar(bk, x, y, w, n, each, unknown, h=24, size=13, show_all=False):
@@ -11323,18 +11323,18 @@ WORDS_42 = [
 
 EQUAL_BARS = [("eq", n, e, u) for n in rng(3, 8) for e in rng(3, 9) for u in ("whole", "each") if (n, e) != (5, 7)]
 
-CHECKINS["42-four-operations"] = [
+CHECKINS["47-four-operations"] = [
     S("Equal pieces", "Find the number that goes in the box.", "bar", EQUAL_BARS, 4),
     S("Two steps", None, "two_step", two_step_x("c42"), 1),
     S("Two-step word problems", None, "word", stories_two("w42"), 1),
 ]
 _g3[-1:-1] = [
-    S("Equal pieces", None, "bar", EQUAL_BARS, 2, 42),
-    S("Two-step word problems", None, "word", stories_two("g42"), 2, 42),
+    S("Equal pieces", None, "bar", EQUAL_BARS, 2, 47),
+    S("Two-step word problems", None, "word", stories_two("g42"), 2, 47),
 ]
 
 
-# ====================================================================== 43. Patterns in the Times Table
+# ====================================================================== 48. Patterns in the Times Table
 
 
 def times_table(bk, x, top, n=10, cell=20, hl_rows=(), hl_cols=(), hl_cells=(), blanks=(), hide=False, size=None):
@@ -11562,7 +11562,7 @@ EO_PRACTICE = [(3, 8), (5, 7), (6, 9), (9, 3), (4, 7), (7, 7), (2, 9), (5, 5), (
 # The pool leaves out the practice ones, so the check-in's even/odd answers really alternate.
 EO_POOL = [(a, b) for a in rng(2, 9) for b in rng(2, 9) if (a, b) not in EO_PRACTICE]
 
-CHECKINS["43-patterns-in-the-times-table"] = [
+CHECKINS["48-patterns-in-the-times-table"] = [
     S("Fill in the row", None, "table_row", [(n, b) for n in rng(3, 9) for b in ((2, 5, 7, 9), (3, 4, 8, 10))
                                              if (n, b) != (4, (3, 5, 6))], 1),
     S("Pieces of the table", None, "table_piece", [(r, k, 3, 4, ((0, 1), (1, 3), (2, 0))) for r in rng(2, 7)
@@ -11571,11 +11571,11 @@ CHECKINS["43-patterns-in-the-times-table"] = [
     S("Double it", None, "eq2", [double_fact(a, b) for a in rng(2, 5) for b in rng(2, 9)], 2),
 ]
 _g3[-1:-1] = [
-    S("Times table patterns", None, "eo_product", EO_POOL, 2, 43),
+    S("Times table patterns", None, "eo_product", EO_POOL, 2, 48),
 ]
 
 
-# ====================================================================== 44. Mass and Liquid Volume
+# ====================================================================== 49. Mass and Liquid Volume
 
 
 def weight_label(v, unit):
@@ -11806,18 +11806,18 @@ KINDS_44 = {
 }
 KINDS.update(KINDS_44)
 
-CHECKINS["44-mass-and-liquid-volume"] = [
+CHECKINS["49-mass-and-liquid-volume"] = [
     S("Grams or kilograms?", None, "unit_choice", MASS_UNITS, 2),
     S("Read the balance", None, "balance", [(k, ws, "g") for k in ("apple", "egg", "duck", "cupcake", "fish")
                                              for ws in ((100, 50, 10), (200, 20, 5), (50, 20, 20), (500, 100))], 1),
     S("Read the beaker", None, "beaker", [(n, 10) for n in rng(1, 9) if n not in (4, 6)], 3),
 ]
 _g3[-1:-1] = [
-    S("Mass and liquid volume", None, "beaker", [(n, 10) for n in rng(1, 9) if n not in (4, 6)], 2, 44),
+    S("Mass and liquid volume", None, "beaker", [(n, 10) for n in rng(1, 9) if n not in (4, 6)], 2, 49),
 ]
 
 
-# ====================================================================== 45. Scaled Graphs
+# ====================================================================== 50. Scaled Graphs
 
 
 def scaled_picture_graph(bk, x, top, title, cats, counts, kind, per, cell=17, labw=58, show=True):
@@ -12041,7 +12041,7 @@ KINDS.update(KINDS_45)
 
 PICTURE_EQS = [pictures_eq(p, n) for p in (2, 5, 10) for n in rng(3, 9)]
 
-CHECKINS["45-scaled-graphs"] = [
+CHECKINS["50-scaled-graphs"] = [
     S("Read the graph", None, "sgraph", [
         sgraph_item("pic", "Kites flown", ["Mon", "Tue", "Wed", "Thu"], [10, 25, 15, 30], "star", 5, "kites on", "c45a"),
         sgraph_item("bar", "Laps swum (by 2s)", ["Ava", "Ben", "Kim", "Max"], [12, 6, 16, 10], None, 2, "laps by",
@@ -12050,11 +12050,11 @@ CHECKINS["45-scaled-graphs"] = [
     S("How many pictures?", None, "eq2", [count_pictures_eq(p, n) for p in (2, 5, 10) for n in rng(3, 9)], 2),
 ]
 _g3[-1:-1] = [
-    S("Scaled graphs", None, "eq2", PICTURE_EQS, 2, 45),
+    S("Scaled graphs", None, "eq2", PICTURE_EQS, 2, 50),
 ]
 
 
-# ====================================================================== 46. Measuring to the Quarter Inch
+# ====================================================================== 51. Measuring to the Quarter Inch
 
 QUARTER = {0: "", 1: "¼", 2: "½", 3: "¾"}
 
@@ -12262,18 +12262,18 @@ KINDS.update(KINDS_46)
 
 QUARTER_EQS = [f"{qstr(q)} inches = [{q}] quarter inches" for q in rng(5, 23) if q % 4]
 
-CHECKINS["46-measuring-to-the-quarter-inch"] = [
+CHECKINS["51-measuring-to-the-quarter-inch"] = [
     S("Read the ruler", None, "quarter", [(k, q) for k in ("pencil", "crayon", "straw", "ribbon") for q in rng(5, 22)
                                          if q % 2], 3),
     S("Which is longer?", None, "eq2", [longer_eq(a, a + d) for a in rng(5, 20) for d in (1, 2) if a % 4], 2),
     S("Quarter inches", None, "eq2", QUARTER_EQS, 2),
 ]
 _g3[-1:-1] = [
-    S("Quarter inches", None, "eq2", QUARTER_EQS, 2, 46),
+    S("Quarter inches", None, "eq2", QUARTER_EQS, 2, 51),
 ]
 
 
-# ====================================================================== 47. Shapes and Quadrilaterals
+# ====================================================================== 52. Shapes and Quadrilaterals
 
 SHAPES = {
     "square": [(-1, -1), (1, -1), (1, 1), (-1, 1)],
@@ -12538,7 +12538,7 @@ KINDS.update(KINDS_47)
 BALANCE["is_quad"] = lambda it: len(SHAPES[it[0]]) == 4
 BALANCE["quad_fact"] = lambda it: it[1]
 
-CHECKINS["47-shapes-and-quadrilaterals"] = [
+CHECKINS["52-shapes-and-quadrilaterals"] = [
     S("Quadrilateral or not?", None, "is_quad", [(k, r) for k in SHAPES for r in (0, 10, 25)], 3),
     S("Right angles", None, "right_count", [(k, r) for k in ("rectangle", "rtrap", "square", "rtri", "rhombus")
                                             for r in (5, 30)], 3),
@@ -12547,11 +12547,11 @@ CHECKINS["47-shapes-and-quadrilaterals"] = [
     S("True or not?", None, "quad_fact", QUAD_FACTS, 2),
 ]
 _g3[-1:-1] = [
-    S("Quadrilaterals", None, "is_quad", [(k, r) for k in SHAPES for r in (0, 10, 25)], 2, 47),
+    S("Quadrilaterals", None, "is_quad", [(k, r) for k in SHAPES for r in (0, 10, 25)], 2, 52),
 ]
 
 
-# ====================================================================== 48. Thousands (grade 4 starts)
+# ====================================================================== 53. Thousands (grade 4 starts)
 
 
 def nf(n):
@@ -12750,7 +12750,7 @@ def compare_big(pairs):
 
 COMPARE_4 = compare_big([(a, b) for a in rng(2105, 9850, 389) for b in (a + 90, a - 90, a + 900, a - 9) if b > 999])
 
-CHECKINS["48-thousands"] = [
+CHECKINS["53-thousands"] = [
     S("Read the quick drawing", None, "quick_th", [n for n in rng(1124, 5832, 137) if n % 10], 2),
     S("Put the parts together", None, "eq2", EXPANDED, 2),
     S("What is the digit worth?", None, "eq2", [worth_eq(n, p) for n in rng(2134, 9876, 271) for p in (10, 100, 1000)
@@ -12759,7 +12759,7 @@ CHECKINS["48-thousands"] = [
 ]
 
 
-# ====================================================================== 49. Rounding Big Numbers
+# ====================================================================== 54. Rounding Big Numbers
 
 
 def learn_round_big(bk):
@@ -12884,7 +12884,7 @@ WORDS_49 = [
 
 ROUND_K = [round_eq(n, 1000) for n in rng(1102, 9898, 83) if n % 100]
 
-CHECKINS["49-rounding-big-numbers"] = [
+CHECKINS["54-rounding-big-numbers"] = [
     S("Which thousand is closer?", None, "round_card", [(n, 1000, "closer") for n in rng(1150, 9850, 113) if n % 500],
       2),
     S("Nearest thousand", None, "eq2", ROUND_K, 2),
@@ -12894,7 +12894,7 @@ CHECKINS["49-rounding-big-numbers"] = [
 ]
 
 
-# ====================================================================== 50. Adding and Subtracting Big Numbers
+# ====================================================================== 55. Adding and Subtracting Big Numbers
 
 
 def c_big_stack(bk, x, cy, w, item):
@@ -13009,7 +13009,7 @@ KINDS.update(KINDS_50)
 BIG_ADD = [big_eq(a, "+", b) for a in rng(1236, 6890, 479) for b in rng(1158, 3870, 367)]
 BIG_SUB = [big_eq(a, MINUS, b) for a in rng(5213, 9890, 451) for b in rng(1347, 4980, 389)]
 
-CHECKINS["50-adding-and-subtracting-big-numbers"] = [
+CHECKINS["55-adding-and-subtracting-big-numbers"] = [
     S("Add in columns", None, "big_stack", [(a, b, "+", "plain") for a in rng(1347, 6789, 683) for b in rng(1258, 3790, 421)],
       2),
     S("Subtract in columns", None, "big_stack", [(a, b, MINUS, "plain") for a in rng(5124, 9870, 593)
@@ -13019,7 +13019,7 @@ CHECKINS["50-adding-and-subtracting-big-numbers"] = [
 ]
 
 
-# ====================================================================== 51. Multiplying by One Digit
+# ====================================================================== 56. Multiplying by One Digit
 
 
 def place_parts(n):
@@ -13192,7 +13192,7 @@ KINDS.update(KINDS_51)
 MULT_2 = [mult_eq(n, f) for n in rng(12, 98) if n % 10 for f in rng(3, 9) if (n + f) % 5 == 0]
 MULT_3 = [mult_eq(n, f) for n in rng(112, 487, 29) for f in rng(2, 7)]
 
-CHECKINS["51-multiplying-by-one-digit"] = [
+CHECKINS["56-multiplying-by-one-digit"] = [
     S("The area model", None, "area_mult", [(n, f, "given") for n in rng(13, 87, 7) if n % 10 for f in rng(3, 8)], 1),
     S("Write the parts", None, "partial", [(n, f) for n in rng(23, 89, 11) for f in rng(3, 8)], 2),
     S("Multiply", None, "eq3", MULT_2, 3),
@@ -13200,7 +13200,7 @@ CHECKINS["51-multiplying-by-one-digit"] = [
 ]
 
 
-# ====================================================================== 52. Division with Remainders
+# ====================================================================== 57. Division with Remainders
 
 
 def rem_eq(n, d):
@@ -13359,7 +13359,7 @@ KINDS.update(KINDS_52)
 
 REM_EQS = [rem_eq(n, d) for d in rng(3, 9) for n in rng(d * 3 + 1, d * 9 + d - 1) if n % d]
 
-CHECKINS["52-division-with-remainders"] = [
+CHECKINS["57-division-with-remainders"] = [
     S("Make groups", None, "groups_rem", [(n, g) for g in rng(3, 5) for n in rng(g * 3 + 1, 22) if n % g], 1),
     S("Use a times fact", None, "rem_think", [(n, d) for d in rng(3, 9) for n in rng(d * 4 + 1, d * 8) if n % d], 2),
     S("Divide", None, "eq3", REM_EQS, 6),
@@ -13381,17 +13381,17 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 48–52", [
-    S("Read big numbers", None, "eq2", EXPANDED, 3, 48),
-    S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 48, balance=is_less),
-    S("Round", None, "eq2", ROUND_K, 4, 49),
-    S("Add", None, "eq2", BIG_ADD, 3, 50),
-    S("Subtract", None, "eq2", BIG_SUB, 3, 50),
-    S("Multiply", None, "eq3", MULT_2, 6, 51),
-    S("Multiply three digits", None, "eq2", MULT_3, 2, 51),
-    S("Divide", None, "eq3", REM_EQS, 6, 52),
+GRADES.append(("grade-4", "Grade 4", "Packets 53–57", [
+    S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
+    S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
+    S("Round", None, "eq2", ROUND_K, 4, 54),
+    S("Add", None, "eq2", BIG_ADD, 3, 55),
+    S("Subtract", None, "eq2", BIG_SUB, 3, 55),
+    S("Multiply", None, "eq3", MULT_2, 6, 56),
+    S("Multiply three digits", None, "eq2", MULT_3, 2, 56),
+    S("Divide", None, "eq3", REM_EQS, 6, 57),
     S("Word problems", None, "word", stories_x("g4a", "times", [(g, k) for g in rng(3, 8) for k in rng(13, 48, 7)])[:6]
-      + stories_rem("g4b", [(n, d) for d in rng(3, 9) for n in rng(d * 3 + 1, d * 9) if n % d])[:6], 4, "51–52"),
+      + stories_rem("g4b", [(n, d) for d in rng(3, 9) for n in rng(d * 3 + 1, d * 9) if n % d])[:6], 4, "56–57"),
 ]))
 
 
@@ -13405,7 +13405,8 @@ import json
 
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
-                  26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52]
+                  26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+                  51, 52, 53, 54, 55, 56, 57]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -13585,32 +13586,40 @@ PACKETS = [
     ("27-telling-time", "telling-time", "Telling Time", learn_time, practice_time, False),
     ("28-money", "money", "Money", learn_money, practice_money, False),
     ("29-subtracting-across-zeros", "subtracting-across-zeros", "Subtracting Across Zeros", learn_across_zeros,
-     practice_across_zeros, False),    ("30-two-step-word-problems", "two-step-word-problems", "Two-Step Word Problems", learn_bar_models,
-     practice_bar_models, False),    ("31-measuring-length", "measuring-length", "Measuring Length", learn_length, practice_length, False),    ("32-graphs", "graphs", "Graphs", learn_graphs, practice_graphs, False),    ("33-multiplication", "multiplication", "Multiplication", learn_multiplication, practice_multiplication, False),    ("34-multiplication-strategies", "multiplication-strategies", "Multiplication Strategies", learn_strategies,
-     practice_strategies, False),    ("35-division", "division", "Division", learn_division, practice_division, False),    ("36-fractions", "fractions", "Fractions", learn_fractions, practice_fractions, False),    ("37-rounding", "rounding", "Rounding", learn_rounding, practice_rounding, False),
-    ("38-multiplying-by-tens", "multiplying-by-tens", "Multiplying by Tens", learn_times_tens,
+     practice_across_zeros, False),
+    ("30-two-step-word-problems", "two-step-word-problems", "Two-Step Word Problems", learn_bar_models,
+     practice_bar_models, False),
+    ("31-measuring-length", "measuring-length", "Measuring Length", learn_length, practice_length, False),
+    ("32-graphs", "graphs", "Graphs", learn_graphs, practice_graphs, False),
+    ("33-multiplication", "multiplication", "Multiplication", learn_multiplication, practice_multiplication, False),
+    ("34-multiplication-strategies", "multiplication-strategies", "Multiplication Strategies", learn_strategies,
+     practice_strategies, False),
+    ("35-division", "division", "Division", learn_division, practice_division, False),
+    ("36-rounding", "rounding", "Rounding", learn_rounding, practice_rounding, False),
+    ("37-multiplying-by-tens", "multiplying-by-tens", "Multiplying by Tens", learn_times_tens,
      practice_times_tens, False),
-    ("39-area", "area", "Area", learn_area, practice_area, False),
-    ("40-perimeter", "perimeter", "Perimeter", learn_perimeter, practice_perimeter, False),
-    ("41-elapsed-time", "elapsed-time", "Elapsed Time", learn_elapsed, practice_elapsed, False),
-    ("42-four-operations", "four-operations", "All Four Operations", learn_four_ops, practice_four_ops, False),
-    ("43-patterns-in-the-times-table", "times-table-patterns", "Patterns in the Times Table", learn_patterns,
+    ("38-area", "area", "Area", learn_area, practice_area, False),
+    ("39-fractions", "fractions", "Fractions", learn_fractions, practice_fractions, False),
+    ("45-perimeter", "perimeter", "Perimeter", learn_perimeter, practice_perimeter, False),
+    ("46-elapsed-time", "elapsed-time", "Elapsed Time", learn_elapsed, practice_elapsed, False),
+    ("47-four-operations", "four-operations", "All Four Operations", learn_four_ops, practice_four_ops, False),
+    ("48-patterns-in-the-times-table", "times-table-patterns", "Patterns in the Times Table", learn_patterns,
      practice_patterns, False),
-    ("44-mass-and-liquid-volume", "mass-and-liquid-volume", "Mass and Liquid Volume", learn_mass_volume,
+    ("49-mass-and-liquid-volume", "mass-and-liquid-volume", "Mass and Liquid Volume", learn_mass_volume,
      practice_mass_volume, False),
-    ("45-scaled-graphs", "scaled-graphs", "Scaled Graphs", learn_scaled_graphs, practice_scaled_graphs, False),
-    ("46-measuring-to-the-quarter-inch", "quarter-inch", "Measuring to the Quarter Inch", learn_quarter_inch,
+    ("50-scaled-graphs", "scaled-graphs", "Scaled Graphs", learn_scaled_graphs, practice_scaled_graphs, False),
+    ("51-measuring-to-the-quarter-inch", "quarter-inch", "Measuring to the Quarter Inch", learn_quarter_inch,
      practice_quarter_inch, False),
-    ("47-shapes-and-quadrilaterals", "quadrilaterals", "Shapes and Quadrilaterals", learn_quadrilaterals,
+    ("52-shapes-and-quadrilaterals", "quadrilaterals", "Shapes and Quadrilaterals", learn_quadrilaterals,
      practice_quadrilaterals, False),
-    ("48-thousands", "thousands", "Thousands", learn_thousands, practice_thousands, False),
-    ("49-rounding-big-numbers", "rounding-big-numbers", "Rounding Big Numbers", learn_round_big, practice_round_big,
+    ("53-thousands", "thousands", "Thousands", learn_thousands, practice_thousands, False),
+    ("54-rounding-big-numbers", "rounding-big-numbers", "Rounding Big Numbers", learn_round_big, practice_round_big,
      False),
-    ("50-adding-and-subtracting-big-numbers", "big-add-subtract", "Adding and Subtracting Big Numbers",
+    ("55-adding-and-subtracting-big-numbers", "big-add-subtract", "Adding and Subtracting Big Numbers",
      learn_big_add_sub, practice_big_add_sub, False),
-    ("51-multiplying-by-one-digit", "multiplying-by-one-digit", "Multiplying by One Digit", learn_mult_one_digit,
+    ("56-multiplying-by-one-digit", "multiplying-by-one-digit", "Multiplying by One Digit", learn_mult_one_digit,
      practice_mult_one_digit, False),
-    ("52-division-with-remainders", "division-with-remainders", "Division with Remainders", learn_remainders,
+    ("57-division-with-remainders", "division-with-remainders", "Division with Remainders", learn_remainders,
      practice_remainders, False),
 ]
 
