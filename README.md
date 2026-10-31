@@ -41,7 +41,7 @@ Thirty-eight packets, in teaching order (K to grade 3). Each starts with a pictu
 | `34-multiplication-strategies/` | Break-apart arrays: ×3 = ×2 + one group, ×4 = double double, ×6 = ×5 + one group, ×7 = ×5 + ×2, ×8 = double ×4, ×9 = ×10 − one group; all 36 facts of 3, 4, 6, 7, 8, 9 | 8 |
 | `35-division/` | Share it, make groups, think multiplication (missing factor), fact families, all division facts to 10 × 10 | 8 |
 | `36-fractions/` | Fraction strips and the fraction wall: name and shade fractions, compare, equal fractions, fractions equal to wholes (no number lines) | 7 |
-| `37-rounding/` | Round to the nearest 10 and 100: find the ten below and the ten above, see how far each is (a ten-frame shows it), and pick the closer one; exactly in the middle rounds up | 7 |
+| `37-rounding/` | Round to the nearest 10 and 100: find the ten below and the ten above, and circle the closer one; exactly in the middle rounds up | 7 |
 | `38-multiplying-by-tens/` | 4 × 30 as 4 groups of 3 tens = 12 tens = 120: groups of ten-sticks, how many tens, the fact then the tens, careful with 5s (5 × 40 = 20 tens = 200) | 6 |
 | `39-area/` | Cover with unit squares and count, rows × columns, side lengths with no squares, break a rectangle apart (7 × 7 = 7 × 5 + 7 × 2), two rectangles (L shapes), find a missing side | 8 |
 | `40-perimeter/` | Walk around the edge and count, add the sides of rectangles and other shapes, find a missing side, area and perimeter of the same rectangle | 8 |
@@ -53,7 +53,7 @@ Thirty-eight packets, in teaching order (K to grade 3). Each starts with a pictu
 | `46-measuring-to-the-quarter-inch/` | Rulers with half and quarter marks, true-size things to measure, X charts of the lengths | 8 |
 | `47-shapes-and-quadrilaterals/` | Sides, corners and right angles; quadrilateral or not; square, rectangle, rhombus or other; a square is a rectangle and a rhombus; draw one | 8 |
 | `48-thousands/` | Grade 4. Quick drawings with cubes, expanded form, what a digit is worth, ten times as much, compare, 1,000 more and less | 7 |
-| `49-rounding-big-numbers/` | The founder's method to the nearest 1,000 and 100: the one below, the one above, which is closer (the ten-frame counts the next place); estimate sums | 8 |
+| `49-rounding-big-numbers/` | The founder's method to the nearest 1,000 and 100: the one below, the one above, which is closer; estimate sums | 8 |
 | `50-adding-and-subtracting-big-numbers/` | Four-digit columns: carry boxes, break boxes, across zeros, then no help | 7 |
 | `51-multiplying-by-one-digit/` | The area model (23 × 4 = 80 + 12), splitting it yourself, three digits, partial products, then plain problems | 9 |
 | `52-division-with-remainders/` | Share on plates and make groups with leftovers, the biggest times fact that fits, 17 ÷ 5 = 3 R 2, what the remainder means in a story | 8 |

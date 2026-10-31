@@ -10063,13 +10063,11 @@ def round_to(n, place):
     return (n + place // 2) // place * place
 
 
-def between(bk, x, y, w, n, place, given=False, frame=True, cell=10, size=16, bw=44, show_dist=False):
-    """The rounding picture: [ten below] <- n -> [ten above], a bubble on each arrow with how far it is,
-    and a ten-frame under n (filled = past the ten below, empty = still to go). The key rings the closer one.
+def between(bk, x, y, w, n, place, given=False, size=16, bw=44):
+    """The rounding picture: [ten below] <- n -> [ten above]. The key rings the closer one.
     y = baseline of the number row. given=True prints the tens below and above."""
     c = bk.c
     lo, hi = n // place * place, n // place * place + place
-    d_lo, d_hi = n - lo, hi - n
     bh = size * 1.6
     lx, rx = x, x + w - bw
     for bx, v in ((lx, lo), (rx, hi)):
@@ -10086,22 +10084,14 @@ def between(bk, x, y, w, n, place, given=False, frame=True, cell=10, size=16, bw
     ay = y + size * 0.35
     bk.arrow(mx - nw, ay, lx + bw + 4, ay)
     bk.arrow(mx + nw, ay, rx - 4, ay)
-    for cx, d in (((mx - nw + lx + bw) / 2, d_lo), ((mx + nw + rx) / 2, d_hi)):
-        big = len(str(d)) > 2  # hundreds away (rounding to 1,000): a wider bubble
-        r = size * (0.92 if big else 0.72)
-        jump_circle(bk, cx, ay + r + 4, d, r=r, size=size * (0.62 if big else 0.7), reveal=T.text2 if show_dist else None)
-    if frame:
-        k = d_lo // (place // 10)
-        bk.ten_frame(mx - cell * 2.5, y - size - cell * 2 - 6, cell, ["a"] * k + [None] * (10 - k))
     return lo, hi
 
 
 def c_between(bk, x, cy, w, item):
-    """Round one number: tens (or hundreds) below and above, how far to each, the closer one."""
+    """Round one number: the ten (or hundred) below and above, circle the closer one."""
     n, place, level = item
-    frame = level != "boxes"
-    between(bk, x + GUT, cy + 76, w - GUT - 14, n, place, given=level == "closer", frame=frame, cell=9, size=15)
-    bk.fit_eq(x + GUT, cy + 10, w - GUT - 10, f"{nf(n)} rounds to [{nf(round_to(n, place))}]", size=14)
+    between(bk, x + GUT, cy + 52, w - GUT - 14, n, place, given=level == "closer", size=15)
+    bk.fit_eq(x + GUT, cy + 12, w - GUT - 10, f"{nf(n)} rounds to [{nf(round_to(n, place))}]", size=14)
 
 
 def learn_rounding(bk):
@@ -10109,47 +10099,41 @@ def learn_rounding(bk):
                     big=True, footer="WeMath  ·  Rounding")
     c = bk.c
     label(bk, M, y - 6, "Round 47 to the nearest ten")
-    between(bk, M + 14, y - 54, 300, 47, 10, given=True, cell=14, size=22, bw=56, show_dist=True)
+    between(bk, M + 14, y - 54, 300, 47, 10, given=True, size=22, bw=56)
     c.setFillColor(T.text2)
     c.setFont("Rnd", 12)
     c.drawString(M + 340, y - 36, "The ten below is 40.")
     c.drawString(M + 340, y - 54, "The ten above is 50.")
-    c.drawString(M + 340, y - 72, "47 is 7 away from 40")
-    c.drawString(M + 340, y - 90, "and 3 away from 50.")
-    color_eq(bk, M + 340, y - 118, [("47", None), ("rounds to", None), ("50", "b")], 20)
-    y -= 144
+    c.drawString(M + 340, y - 72, "47 is closer to 50.")
+    color_eq(bk, M + 340, y - 104, [("47", None), ("rounds to", None), ("50", "b")], 20)
+    y -= 132
 
-    label(bk, M, y - 6, "The ten-frame shows how far")
-    bk.ten_frame(M + 20, y - 54, 18, ["a"] * 7 + [None] * 3)
+    label(bk, M, y - 6, "Round 362 to the nearest hundred")
+    between(bk, M + 14, y - 54, 300, 362, 100, given=True, size=22, bw=56)
     c.setFillColor(T.text2)
     c.setFont("Rnd", 12)
-    c.drawString(M + 130, y - 30, "Filled: 7 past the ten below.")
-    c.drawString(M + 130, y - 48, "Empty: 3 more to the ten above.")
-    c.drawString(M + 130, y - 66, "More than half full? Round up.")
-    bk.ten_frame(M + 380, y - 54, 18, ["a"] * 5 + [None] * 5)
-    c.setFillColor(T.text2)
-    c.setFont("Rnd", 12)
-    c.drawString(M + 380, y - 74, "Exactly half: 45 rounds up to 50.")
-    y -= 96
+    c.drawString(M + 340, y - 36, "The hundred below is 300.")
+    c.drawString(M + 340, y - 54, "The hundred above is 400.")
+    c.drawString(M + 340, y - 72, "362 is closer to 400.")
+    color_eq(bk, M + 340, y - 104, [("362", None), ("rounds to", None), ("400", "b")], 20)
+    y -= 132
 
-    label(bk, M, y - 6, "Round 362 to the nearest hundred: count the tens")
-    between(bk, M + 14, y - 54, 300, 362, 100, given=True, cell=14, size=22, bw=56, show_dist=True)
+    label(bk, M, y - 6, "Exactly in the middle? Round up.")
+    color_eq(bk, M + 14, y - 40, [("45", None), ("rounds to", None), ("50", "b")], 20)
     c.setFillColor(T.text2)
     c.setFont("Rnd", 12)
-    c.drawString(M + 340, y - 40, "6 tens past 300.")
-    c.drawString(M + 340, y - 58, "Only 38 more to 400.")
-    color_eq(bk, M + 340, y - 92, [("362", None), ("rounds to", None), ("400", "b")], 20)
-    y -= 140
+    c.drawString(M + 280, y - 40, "45 is right in the middle of 40 and 50.")
+    y -= 66
 
     bottom = your_turn(bk, y, h=112)
     bk.ask("round: 23 to 10 your turn")
-    between(bk, M + 130, bottom + 72, 230, 23, 10, cell=11, size=18, bw=48)
-    bk.eq(M + 400, bottom + 50, "23 rounds to [20]", size=16)
+    between(bk, M + 130, bottom + 72, 230, 23, 10, size=18, bw=48)
+    bk.eq(M + 170, bottom + 22, "23 rounds to [20]", size=16)
     if bottom < 112:
         print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
     teacher_note(bk, "Goal: round to the nearest 10 or 100 (3.NBT.1). Say “What is the ten below? The ten "
-                     "above? Which is closer?” The ten-frame shows the ones (the tens for 100). Exactly in the "
-                     "middle rounds up.")
+                     "above? Which is closer?” Most kids can see which is closer, so there is no counting. Exactly in "
+                     "the middle rounds up.")
 
 
 def practice_rounding(bk):
@@ -10167,15 +10151,15 @@ def practice_rounding(bk):
          [f"{n} is between [{n // 10 * 10}] and [{n // 10 * 10 + 10}]" for n in (36, 82, 59, 14, 73, 28, 91, 65)],
          2, 42, 8, plain, lambda t: t)
     key = KINDS_37["round_card"].key
-    part(2, "Which ten is closer?", "Count how far to each ten. Circle the closer one.",
+    part(2, "Which ten is closer?", "Circle the closer ten.",
          [(43, 10, "closer"), (68, 10, "closer"), (27, 10, "closer"), (85, 10, "closer"), (52, 10, "closer"),
-          (39, 10, "closer")], 2, 112, 10, c_between, key)
-    part(3, "Fill in every box", "Find both tens, how far to each, then round.",
+          (39, 10, "closer")], 2, 84, 10, c_between, key)
+    part(3, "Fill in every box", "Write both tens, circle the closer one, then round.",
          [(74, 10, "boxes"), (16, 10, "boxes"), (95, 10, "boxes"), (31, 10, "boxes"), (247, 10, "boxes"),
-          (563, 10, "boxes")], 2, 112, 10, c_between, key)
-    part(4, "Round to the nearest hundred", "The ten-frame counts the tens.",
+          (563, 10, "boxes")], 2, 84, 10, c_between, key)
+    part(4, "Round to the nearest hundred", "Circle the closer hundred.",
          [(418, 100, "closer"), (276, 100, "closer"), (650, 100, "closer"), (134, 100, "closer"),
-          (581, 100, "closer"), (749, 100, "closer")], 2, 112, 10, c_between, key)
+          (581, 100, "closer"), (749, 100, "closer")], 2, 84, 10, c_between, key)
     part(5, "Nearest ten", "No help this time.",
          [f"{n} rounds to [{round_to(n, 10)}]" for n in (22, 48, 63, 87, 55, 11, 79, 34, 96, 41, 17, 66)], 3, 42, 8,
          plain, lambda t: t)
@@ -10215,7 +10199,7 @@ WORDS_37 = [
 ]
 
 KINDS_37 = {
-    "round_card": Kind(112, 2, lambda it: f"round: {it[0]} to {it[1]} {it[2]}", c_between),
+    "round_card": Kind(84, 2, lambda it: f"round: {it[0]} to {it[1]} {it[2]}", c_between),
 }
 KINDS.update(KINDS_37)
 
@@ -12783,43 +12767,41 @@ def learn_round_big(bk):
                     name_line=False, big=True, footer="WeMath  ·  Rounding Big Numbers")
     c = bk.c
     label(bk, M, y - 6, "Round 4,372 to the nearest thousand")
-    between(bk, M + 14, y - 54, 300, 4372, 1000, given=True, cell=14, size=20, bw=64, show_dist=True)
+    between(bk, M + 14, y - 54, 300, 4372, 1000, given=True, size=20, bw=64)
     c.setFillColor(T.text2)
     c.setFont("Rnd", 12)
     c.drawString(M + 340, y - 36, "The thousand below is 4,000.")
     c.drawString(M + 340, y - 54, "The thousand above is 5,000.")
-    c.drawString(M + 340, y - 72, "The ten-frame counts hundreds:")
-    c.drawString(M + 340, y - 90, "3 past 4,000, 7 to go.")
-    color_eq(bk, M + 340, y - 118, [("4,372", None), ("rounds to", None), ("4,000", "b")], 18)
-    y -= 146
+    c.drawString(M + 340, y - 72, "4,372 is closer to 4,000.")
+    color_eq(bk, M + 340, y - 104, [("4,372", None), ("rounds to", None), ("4,000", "b")], 18)
+    y -= 132
 
     label(bk, M, y - 6, "Round 4,372 to the nearest hundred")
-    between(bk, M + 14, y - 54, 300, 4372, 100, given=True, cell=14, size=20, bw=64, show_dist=True)
+    between(bk, M + 14, y - 54, 300, 4372, 100, given=True, size=20, bw=64)
     c.setFillColor(T.text2)
     c.setFont("Rnd", 12)
-    c.drawString(M + 340, y - 36, "Between 4,300 and 4,400.")
-    c.drawString(M + 340, y - 54, "The ten-frame counts tens:")
-    c.drawString(M + 340, y - 72, "7 tens past 4,300.")
+    c.drawString(M + 340, y - 36, "The hundred below is 4,300.")
+    c.drawString(M + 340, y - 54, "The hundred above is 4,400.")
+    c.drawString(M + 340, y - 72, "4,372 is closer to 4,400.")
     color_eq(bk, M + 340, y - 104, [("4,372", None), ("rounds to", None), ("4,400", "b")], 18)
-    y -= 140
+    y -= 132
 
     label(bk, M, y - 6, "Exactly in the middle? Round up.")
     color_eq(bk, M + 14, y - 40, [("2,500", None), ("rounds to", None), ("3,000", "b")], 20)
     c.setFillColor(T.text2)
     c.setFont("Rnd", 12)
-    c.drawString(M + 280, y - 40, "Half-full ten-frame: round up.")
+    c.drawString(M + 280, y - 40, "2,500 is right in the middle.")
     y -= 62
 
     bottom = your_turn(bk, y, h=116)
     bk.ask("round: 6815 to 1000 your turn")
-    between(bk, M + 130, bottom + 80, 260, 6815, 1000, cell=9, size=17, bw=56)
-    bk.eq(M + 410, bottom + 60, "rounds to", size=14)
-    bk.eq(M + 410, bottom + 30, "[7,000]", size=17)
+    between(bk, M + 130, bottom + 76, 260, 6815, 1000, size=17, bw=56)
+    bk.eq(M + 170, bottom + 24, "6,815 rounds to [7,000]", size=16)
     if bottom < 112:
         print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
     teacher_note(bk, "Goal: round numbers to 9,999 to the nearest 10, 100 or 1,000 (4.NBT.3), the founder's way: "
-                     "“What is the thousand below? The thousand above? Which is closer?” The ten-frame counts the "
-                     "next place down.")
+                     "“What is the thousand below? The thousand above? Which is closer?” No counting: kids "
+                     "can see which one is closer.")
 
 
 PLACE_WORD = {10: "ten", 100: "hundred", 1000: "thousand"}
@@ -12844,14 +12826,14 @@ def practice_round_big(bk):
          [f"{nf(n)} is between [{nf(n // 1000 * 1000)}] and [{nf(n // 1000 * 1000 + 1000)}]"
           for n in (3604, 7285, 1930, 5472, 8126, 2759, 6341, 4818)], 2, 42, 8, plain, lambda t: t)
     key = KINDS_37["round_card"].key
-    part(2, "Which thousand is closer?", "The ten-frame counts hundreds. Circle the closer one.",
+    part(2, "Which thousand is closer?", "Circle the closer thousand.",
          [(3604, 1000, "closer"), (7285, 1000, "closer"), (1930, 1000, "closer"), (5472, 1000, "closer"),
-          (8126, 1000, "closer"), (2759, 1000, "closer")], 2, 112, 10, c_between, key)
-    part(3, "Which hundred is closer?", "The ten-frame counts tens.",
+          (8126, 1000, "closer"), (2759, 1000, "closer")], 2, 84, 10, c_between, key)
+    part(3, "Which hundred is closer?", "Circle the closer hundred.",
          [(3648, 100, "closer"), (7215, 100, "closer"), (1983, 100, "closer"), (5427, 100, "closer"),
-          (8162, 100, "closer"), (2794, 100, "closer")], 2, 112, 10, c_between, key)
-    part(4, "Fill in every box", "Find both, how far to each, then round.",
-         [(6341, 1000, "boxes"), (4818, 1000, "boxes"), (9473, 100, "boxes"), (2056, 100, "boxes")], 2, 112, 10,
+          (8162, 100, "closer"), (2794, 100, "closer")], 2, 84, 10, c_between, key)
+    part(4, "Fill in every box", "Write both, circle the closer one, then round.",
+         [(6341, 1000, "boxes"), (4818, 1000, "boxes"), (9473, 100, "boxes"), (2056, 100, "boxes")], 2, 84, 10,
          c_between, key)
     part(5, "Nearest thousand", "No help this time.",
          [round_eq(n, 1000) for n in (2317, 6845, 4502, 8190, 3678, 5049, 7731, 1465, 9206, 2981, 6123, 4567)], 2, 42,
