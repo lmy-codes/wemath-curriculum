@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–65", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–66", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -15736,6 +15736,170 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 66. Tenths and Hundredths
+
+
+def dec(k, places=2):
+    """dec(27) = "0.27", dec(3, 1) = "0.3", dec(140) = "1.40"."""
+    return f"{k // 10 ** places}.{k % 10 ** places:0{places}d}"
+
+
+def grid_100(bk, x, y, s, k, answer=False):
+    """A whole as a 10 × 10 grid; the first k small squares shaded row by row (a full row is a tenth).
+    answer=True shades them only on the key."""
+    c = bk.c
+    cell = s / 10
+    for i in range(k):
+        r, col = divmod(i, 10)
+        pts = [(x + col * cell, y + s - (r + 1) * cell), (x + (col + 1) * cell, y + s - (r + 1) * cell),
+               (x + (col + 1) * cell, y + s - r * cell), (x + col * cell, y + s - r * cell)]
+        if answer:
+            if bk.key:
+                shade(bk, pts, answer=True)
+        else:
+            shade(bk, pts)
+    c.setStrokeColor(T.muted)
+    c.setLineWidth(0.5)
+    for i in range(1, 10):
+        c.line(x, y + i * cell, x + s, y + i * cell)
+        c.line(x + i * cell, y, x + i * cell, y + s)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.3)
+    c.rect(x, y, s, s, stroke=1, fill=0)
+
+
+def c_read_grid(bk, x, cy, w, k):
+    grid_100(bk, x + GUT, cy + 10, 76, k)
+    frac_fit(bk, x + GUT + 96, cy + 42, w - GUT - 104, f"[{k}]/100 = [{dec(k)}]", size=19)
+
+
+def c_read_tenths(bk, x, cy, w, k):
+    strip(bk, x + GUT, cy + 15, 150, 24, 10, shaded=k)
+    frac_fit(bk, x + GUT + 180, cy + 20, w - GUT - 190, f"[{k}]/10 = [{dec(k, 1)}]", size=19)
+
+
+def learn_decimals(bk):
+    y = bk.new_page("Tenths and Hundredths", "Cut one whole into 10 or 100 equal parts. Write it as a decimal.",
+                    name_line=False, big=True, footer="WeMath  ·  Tenths and Hundredths")
+    c = bk.c
+    label(bk, M, y - 6, "Tenths")
+    strip(bk, M + 14, y - 52, 220, 26, 10, shaded=3)
+    frac_expr(bk, M + 260, y - 46, "3/10 = 0.3", size=24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 400, y - 42, "three tenths")
+    y -= 76
+
+    label(bk, M, y - 6, "Hundredths")
+    grid_100(bk, M + 14, y - 108, 96, 45)
+    frac_expr(bk, M + 140, y - 54, "45/100 = 0.45", size=24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 140, y - 82, "45 hundredths: 4 full rows (tenths) and 5 more squares.")
+    c.drawString(M + 140, y - 100, "The first digit after the point is tenths, the second hundredths.")
+    y -= 128
+
+    label(bk, M, y - 6, "A tenth is 10 hundredths")
+    frac_expr(bk, M + 14, y - 42, "3/10 = 30/100", size=20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 180, y - 36, "So you can add them:")
+    frac_expr(bk, M + 320, y - 42, "3/10 + 45/100 = 75/100", size=18)
+    y -= 66
+
+    label(bk, M, y - 6, "Money works the same way")
+    for i, kind in enumerate("DDDPPPP"):
+        coin(bk, M + 30 + i * 30, y - 36, kind, k=1.0)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 250, y - 40, "3 dimes and 4 pennies: $0.34")
+    y -= 70
+
+    bottom = your_turn(bk, y, h=96)
+    bk.ask("read the grid: 27 hundredths your turn")
+    grid_100(bk, M + 140, bottom + 12, 72, 27)
+    frac_expr(bk, M + 240, bottom + 44, "[27]/100 = [0.27]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: tenths and hundredths as fractions and decimals (4.NF.5–6). Say “How many equal parts "
+                     "make the whole? How many are shaded?” A full row of the grid is one tenth. No number lines.")
+
+
+def practice_decimals(bk):
+    title = "Tenths and Hundredths: Practice"
+    y = bk.new_page(title, "One place after the point: tenths. Two places: hundredths.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Tenths", "Write the fraction and the decimal.", "read_tenths", [7, 2, 9, 5, 1, 6])
+    part(2, "Hundredths", "Full rows are tenths. Count the rows, then the squares.", "read_grid",
+         [36, 52, 8, 71, 90, 15, 63, 4])
+    part(3, "Fraction to decimal", "No help this time.", "frac3",
+         [f"{k}/10 = [{dec(k, 1)}]" for k in (4, 8, 1)]
+         + [f"{k}/100 = [{dec(k)}]" for k in (35, 83, 4, 17, 60, 9, 48, 99, 21, 6, 70, 55)])
+    part(4, "Decimal to fraction", "No help this time.", "frac3",
+         [f"{dec(k, 1)} = [{k}]/10" for k in (6, 3, 9)]
+         + [f"{dec(k)} = [{k}]/100" for k in (83, 27, 5, 64, 40, 11, 98, 7, 32)])
+    part(5, "Tenths are hundredths too", "No help this time.", "eq2",
+         [f"{dec(k, 1)} = [{10 * k}] hundredths" for k in (4, 7, 2, 9, 5, 1, 8, 6)])
+    part(6, "Add tenths and hundredths", "No help this time. Make the tenths into hundredths first.", "frac2",
+         [f"{a}/10 + {b}/100 = [{10 * a + b}]/100" for a, b in ((3, 45), (6, 12), (2, 7), (5, 38), (1, 61),
+                                                               (7, 25), (4, 9), (8, 14))])
+    part(7, "Money", "No help this time. A dime is a tenth of a dollar; a penny is a hundredth.", "eq2",
+         [f"{d} dimes and {p} pennies = [${dec(10 * d + p)}]" for d, p in ((3, 4), (6, 2), (8, 3), (5, 7), (7, 5),
+                                                                           (2, 9), (9, 1), (4, 6))])
+    part(8, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_66)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 9, "Word problems", "Draw a grid or a strip.")
+    for i, story in enumerate(WORDS_66):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 9, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_66 = ["3 × 2/5 = [6]/5", "1 3/8 + 2 2/8 = [3] [5]/8", "2/3 [<] 3/4", "84 × 12 = [1,008]",
+             "5,082 ÷ 6 = [847]", "26 × 30 = [780]"]
+
+WORDS_66 = [
+    ("A garden has 100 equal squares. 37 of them have flowers. What decimal part has flowers?", "37/100 = 0.37",
+     "0.37", "of the garden"),
+    ("Mia ran 7/10 of a mile. Write that as a decimal.", "7/10 = 0.7", "0.7", "mile"),
+    ("Ben has 4 dimes and 3 pennies. How much money is that, in dollars?", "4/10 + 3/100 = 0.43", "$0.43", ""),
+    ("A jug is 6/10 full. Kim adds 25/100 of a jug more. How full is it now?", "60/100 + 25/100 = 85/100",
+     "85/100", "full"),
+    ("Challenge: Leo has 0.5 of a dollar. Sam has 45 hundredths of a dollar. Who has more?",
+     "0.5 = 50/100 > 45/100", "Leo", ""),
+]
+
+KINDS_66 = {
+    "read_grid": Kind(96, 2, lambda k: f"read the grid: {k} hundredths", c_read_grid),
+    "read_tenths": Kind(56, 1, lambda k: f"read the strip: {k} tenths", c_read_tenths, 8),
+}
+KINDS.update(KINDS_66)
+
+DEC_TO = ([f"{k}/10 = [{dec(k, 1)}]" for k in rng(1, 9)] + [f"{k}/100 = [{dec(k)}]" for k in rng(1, 99) if k % 10])
+DEC_FROM = ([f"{dec(k, 1)} = [{k}]/10" for k in rng(1, 9)] + [f"{dec(k)} = [{k}]/100" for k in rng(1, 99) if k % 10])
+DEC_ADD = [f"{a}/10 + {b}/100 = [{10 * a + b}]/100" for a in rng(1, 8) for b in rng(3, 89, 7) if 10 * a + b < 100]
+
+CHECKINS["66-tenths-and-hundredths"] = [
+    S("Hundredths", None, "read_grid", [k for k in rng(3, 97, 4) if k % 10], 2),
+    S("Fraction to decimal", None, "frac3", DEC_TO, 3),
+    S("Decimal to fraction", None, "frac3", DEC_FROM, 3),
+    S("Add tenths and hundredths", None, "frac2", DEC_ADD, 2),
+]
+_g4[-1:-1] = [
+    S("Tenths and hundredths", None, "frac3", DEC_TO + DEC_FROM, 3, 66),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -15747,7 +15911,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -15806,6 +15970,8 @@ ANSWER_OF = {
     "mixed2": lambda it: it[1],
     "mixed1": lambda it: it[1],
     "groups_frac": lambda it: f"{it[0] * it[1]}/{it[2]}",
+    "read_grid": lambda k: f"{k}/100 = {dec(k)}",
+    "read_tenths": lambda k: f"{k}/10 = {dec(k, 1)}",
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -16024,6 +16190,8 @@ PACKETS = [
     ("64-mixed-numbers", "mixed-numbers", "Mixed Numbers", learn_mixed_numbers, practice_mixed_numbers,
      False),
     ("65-fractions-times-whole-numbers", "fractions-times-whole-numbers", "Fractions Times Whole Numbers", learn_frac_times, practice_frac_times,
+     False),
+    ("66-tenths-and-hundredths", "tenths-and-hundredths", "Tenths and Hundredths", learn_decimals, practice_decimals,
      False),
 ]
 
