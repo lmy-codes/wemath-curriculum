@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–60", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–61", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -14940,6 +14940,166 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 61. Equivalent Fractions
+
+
+def cut_strip(bk, x, y, w, h, n, a, k, answer_cuts=False):
+    """A strip of n parts with a shaded, every part cut into k smaller pieces with dashed lines
+    (answer_cuts: the dashed lines only on the key, in the answer colour)."""
+    c = bk.c
+    strip(bk, x, y, w, h, n, shaded=a)
+    if answer_cuts and not bk.key:
+        return
+    c.setStrokeColor(T.answer if answer_cuts else T.ink)
+    c.setLineWidth(0.9)
+    c.setDash(2.5, 2)
+    for i in range(n):
+        for j in range(1, k):
+            xx = x + w * (i + j / k) / n
+            c.line(xx, y + 1, xx, y + h - 1)
+    c.setDash()
+
+
+def c_cut_strip(bk, x, cy, w, item):
+    a, b, k = item
+    bk.c.setFillColor(T.text2)
+    bk.c.setFont("Rnd", 11)
+    bk.c.drawString(x + GUT, cy + 52, f"Each piece is cut into {k}.")
+    cut_strip(bk, x + GUT, cy + 14, 220, 26, b, a, k)
+    frac_expr(bk, x + GUT + 250, cy + 22, f"{a}/{b} = [{a * k}]/[{b * k}]", size=22)
+
+
+def c_equal_q(bk, x, cy, w, item):
+    """Are these two fractions equal? The key rings yes or no."""
+    (a, b), (p, q) = item
+    frac_expr(bk, x + GUT, cy + 22, f"{a}/{b} and {p}/{q}", size=19)
+    yes_no_choice(bk, x, cy - 2, w, a * q == b * p)
+
+
+def learn_equivalent(bk):
+    y = bk.new_page("Equivalent Fractions", "Cut every piece the same way: more pieces, same amount.",
+                    name_line=False, big=True, footer="WeMath  ·  Equivalent Fractions")
+    c = bk.c
+    label(bk, M, y - 6, "2/3: cut every piece into 4")
+    cut_strip(bk, M + 14, y - 54, 260, 30, 3, 2, 4)
+    frac_expr(bk, M + 300, y - 46, "2/3 = 8/12", size=24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 72, "4 times as many pieces, and 4 times as many shaded.")
+    y -= 96
+
+    label(bk, M, y - 6, "Multiply the top and the bottom by the same number")
+    color_eq(bk, M + 14, y - 42, [("top:", None), ("2 × 4 = 8", "a")], 18)
+    color_eq(bk, M + 14, y - 68, [("bottom:", None), ("3 × 4 = 12", "b")], 18)
+    frac_expr(bk, M + 300, y - 60, "2/3 = 8/12", size=24)
+    y -= 92
+
+    label(bk, M, y - 6, "Divide to get bigger pieces")
+    strip(bk, M + 14, y - 54, 260, 30, 10, shaded=6)
+    frac_expr(bk, M + 300, y - 46, "6/10 = 3/5", size=24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 72, "Put the pieces in pairs: top ÷ 2 and bottom ÷ 2.")
+    y -= 96
+
+    label(bk, M, y - 6, "Hundredths: tenths cut into 10")
+    frac_expr(bk, M + 14, y - 40, "3/10 = 30/100", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 170, y - 36, "Every tenth is 10 hundredths.")
+    y -= 62
+
+    bottom = your_turn(bk, y, h=96)
+    bk.ask("cut the pieces: 3/4 into 3 your turn")
+    cut_strip(bk, M + 130, bottom + 30, 200, 26, 4, 3, 3)
+    frac_expr(bk, M + 360, bottom + 36, "3/4 = [9]/[12]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: equivalent fractions by multiplying or dividing the top and bottom by the same number "
+                     "(4.NF.1). Say “Cut every piece into 4. How many pieces now? How many are shaded?”")
+
+
+def practice_equivalent(bk):
+    title = "Equivalent Fractions: Practice"
+    y = bk.new_page(title, "Do the same to the top and the bottom.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Cut the pieces", "Count the small pieces, then the shaded ones.", "cut_strip",
+         [(1, 3, 4), (3, 5, 2), (2, 4, 3), (5, 6, 2), (1, 2, 6), (3, 4, 2)])
+    part(2, "Times the top and the bottom", "Multiply both by the number shown.", "frac2",
+         [f"times {k}: {a}/{b} = [{a * k}]/[{b * k}]" for a, b, k in ((2, 5, 2), (1, 4, 3), (5, 6, 2), (2, 3, 4),
+                                                                     (1, 3, 4), (3, 10, 10), (1, 2, 6), (4, 5, 20),
+                                                                     (1, 6, 2), (9, 10, 10))])
+    part(3, "Find the top number", "No help this time.", "frac3",
+         ["3/4 = [9]/12", "1/3 = [4]/12", "5/6 = [10]/12", "1/4 = [3]/12", "7/10 = [70]/100", "1/2 = [50]/100",
+          "2/3 = [8]/12", "3/5 = [60]/100", "1/6 = [2]/12", "1/4 = [25]/100", "1/2 = [6]/12", "2/5 = [40]/100"])
+    part(4, "Find the bottom number", "No help this time.", "frac3",
+         ["3/4 = 75/[100]", "2/3 = 8/[12]", "1/5 = 20/[100]", "5/6 = 10/[12]", "3/10 = 30/[100]", "1/2 = 6/[12]",
+          "3/4 = 9/[12]", "4/5 = 80/[100]", "9/10 = 90/[100]"])
+    part(5, "Fewer, bigger pieces", "No help this time. Divide the top and the bottom by the same number.", "frac3",
+         ["8/12 = [2]/3", "60/100 = [3]/5", "9/12 = [3]/4", "50/100 = [1]/2", "10/12 = [5]/6", "40/100 = [2]/5",
+          "4/12 = [1]/3", "75/100 = [3]/4", "6/12 = [1]/2", "20/100 = [1]/5", "2/12 = [1]/6", "70/100 = [7]/10"])
+    part(6, "Equal or not?", "Circle yes or no.", "equal_q",
+         [((2, 3), (8, 12)), ((3, 4), (6, 12)), ((1, 5), (20, 100)), ((5, 6), (10, 12)), ((2, 5), (25, 100)),
+          ((3, 10), (30, 100)), ((1, 4), (4, 12)), ((7, 10), (70, 100))])
+    part(7, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_61)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 8, "Word problems", "Draw a strip and cut the pieces.")
+    for i, story in enumerate(WORDS_61):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 8, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_61 = ["1,248 ÷ 4 = [312]", "42 × 13 = [546]", "784 ÷ 4 = [196]",
+             "3/8 [<] 5/8", "5,912 to the nearest hundred = [5,900]", "4/5 of 25 = [20]"]
+
+WORDS_61 = [
+    ("Mia ate 3/4 of a pizza cut in 12 slices. How many slices did she eat?", "3/4 = 9/12", "9", "slices"),
+    ("A fence has 100 boards. 3/10 of them are painted. How many boards are painted?", "3/10 = 30/100", "30",
+     "boards"),
+    ("Leo read 8/12 of his book. Kim read 2/3 of the same book. Did they read the same amount?", "8/12 = 2/3",
+     "yes", ""),
+    ("60 of 100 seats are full. What fraction is that, in fifths?", "60/100 = 3/5", "3/5", "full"),
+    ("Challenge: Sam says 2/5 = 4/10 = 40/100. Is he right? What would 2/5 be in twentieths?",
+     "2/5 = 8/20", "8/20", ""),
+]
+
+KINDS_61 = {
+    "cut_strip": Kind(72, 1, lambda it: f"cut the pieces: {it[0]}/{it[1]} into {it[2]}", c_cut_strip, 8),
+    "equal_q": Kind(62, 2, lambda it: f"equal or not: {it[0][0]}/{it[0][1]} and {it[1][0]}/{it[1][1]}", c_equal_q),
+}
+KINDS.update(KINDS_61)
+BALANCE["equal_q"] = lambda it: it[0][0] * it[1][1] == it[0][1] * it[1][0]
+
+_EQ4 = [(2, 4), (2, 6), (2, 8), (2, 10), (2, 12), (2, 100), (3, 6), (3, 12), (4, 8), (4, 12), (4, 100), (5, 10),
+        (5, 100), (6, 12), (10, 100)]
+EQUIV_TOP = [f"{a}/{n} = [{a * m // n}]/{m}" for n, m in _EQ4 for a in rng(1, n - 1)]
+EQUIV_DOWN = [f"{a * m // n}/{m} = [{a}]/{n}" for n, m in _EQ4 for a in rng(1, n - 1)]
+EQUIV_Q = ([((a, n), (a * m // n, m)) for n, m in _EQ4 for a in rng(1, n - 1)]
+           + [((a, n), (a * m // n + 1, m)) for n, m in _EQ4 for a in rng(1, n - 1) if a * m // n + 1 < m])
+
+CHECKINS["61-equivalent-fractions"] = [
+    S("Cut the pieces", None, "cut_strip", [(a, n, k) for n in (2, 3, 4, 5) for a in rng(1, n - 1) for k in (2, 3, 4)],
+      1),
+    S("Find the top number", None, "frac3", EQUIV_TOP, 3),
+    S("Fewer, bigger pieces", None, "frac3", EQUIV_DOWN, 3),
+    S("Equal or not?", "Circle yes or no.", "equal_q", EQUIV_Q, 2),
+]
+_g4[-1:-1] = [
+    S("Equivalent fractions", None, "frac3", EQUIV_TOP + EQUIV_DOWN, 3, 61),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -14951,7 +15111,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -15000,6 +15160,8 @@ ANSWER_OF = {
     "factor_array": lambda it: f"{it[0]} × {it[1]}",
     "yes_text": lambda it: _yes(it[1]),
     "prime": lambda n: "prime" if is_prime(n) else "composite",
+    "cut_strip": lambda it: f"{it[0] * it[2]}/{it[1] * it[2]}",
+    "equal_q": lambda it: _yes(it[0][0] * it[1][1] == it[0][1] * it[1][0]),
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -15208,6 +15370,8 @@ PACKETS = [
     ("59-dividing-bigger-numbers", "dividing-bigger-numbers", "Dividing Bigger Numbers", learn_dividing_big, practice_dividing_big,
      False),
     ("60-factors-and-multiples", "factors-and-multiples", "Factors and Multiples", learn_factors, practice_factors,
+     False),
+    ("61-equivalent-fractions", "equivalent-fractions", "Equivalent Fractions", learn_equivalent, practice_equivalent,
      False),
 ]
 
