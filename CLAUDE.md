@@ -90,6 +90,7 @@ Each folder has `color/` and `black-and-white/` subfolders, each holding `<slug>
 - Needs `reportlab` (plus `pypdfium2` and `pypdf` for checking). If they're missing, create a venv outside the PDF folders: `python3 -m venv .venv && .venv/bin/pip install reportlab pypdfium2 pypdf`.
 - Uses the macOS fonts Avenir Next (`.ttc` subfont indices 7, 5, 2, 0) and Arial Rounded Bold.
 - **Off a Mac (cloud sessions):** set `WEMATH_PREVIEW_FONTS` to a folder with `Inter-Regular/Medium/SemiBold/Bold.ttf` and `LiberationSans-Bold.ttf` (Inter's `.otf` converted with fontTools), and `WEMATH_OUT` to a scratch folder. The stand-ins match Avenir's widths closely enough to check layouts. **Never commit PDFs built this way**; the founder rebuilds on the Mac.
+- **Preview branch (founder's request):** after each round, push the preview build to the separate `pdf-previews` branch (only PDFs and a README; force-push a fresh single commit each time; never merge it) so the founder can look at the new packets on GitHub without pulling. That branch is the one exception to "never commit preview PDFs".
 - The folder moved once (from `Website/curriculum` to `WeMath/curriculum`). Always `ls` before assuming paths.
 
 ---
