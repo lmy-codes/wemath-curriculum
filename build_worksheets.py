@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–69", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–70", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -16386,6 +16386,166 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 70. Line Plots with Fractions
+
+
+def e8(k):
+    """k eighths as a label: 5 -> "5/8", 8 -> "1", 11 -> "1 3/8"."""
+    q, r = divmod(k, 8)
+    if not q:
+        return f"{r}/8"
+    return f"{q} {r}/8" if r else str(q)
+
+
+def c_make_x8(bk, x, cy, w, item):
+    """Lengths in eighths on the left; an empty X chart to fill in on the right."""
+    title, lengths = item
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("AvD", 10.5)
+    c.drawString(x + GUT, cy + 148, title)
+    for i, k in enumerate(lengths):
+        col, row = divmod(i, 4)
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", 12)
+        c.drawString(x + GUT + col * 52, cy + 120 - row * 24, f"{e8(k)} in")
+    span = list(range(min(lengths), max(lengths) + 1))
+    x_chart(bk, x + GUT + 168, cy + 168, "Make the X chart (inches)", [e8(k) for k in span],
+            [lengths.count(k) for k in span], colw=36, show=False)
+
+
+def x8_questions(lengths, seed):
+    span = list(range(min(lengths), max(lengths) + 1))
+    r = random.Random(seed)
+    common = max(span, key=lengths.count)
+    one = r.choice([k for k in span if lengths.count(k)])
+    return [(f"How many are {e8(one)} in?", lengths.count(one)),
+            ("Longest minus shortest?", e8(max(lengths) - min(lengths))),
+            (f"All the {e8(common)} in ones together?", e8(common * lengths.count(common))),
+            ("How many in all?", len(lengths))]
+
+
+def c_read_x8(bk, x, cy, w, item):
+    title, lengths, seed = item
+    span = list(range(min(lengths), max(lengths) + 1))
+    x_chart(bk, x + GUT + 6, cy + 168, title, [e8(k) for k in span], [lengths.count(k) for k in span], colw=36)
+    graph_questions(bk, x + GUT + 250, cy + 140, w - GUT - 262, x8_questions(lengths, seed))
+
+
+def learn_line_plots(bk):
+    y = bk.new_page("Line Plots with Fractions", "Put an X for each one. Then add and take away fractions.",
+                    name_line=False, big=True, footer="WeMath  ·  Line Plots with Fractions")
+    c = bk.c
+    lengths = [6, 7, 7, 8, 9, 9, 9, 11]
+    label(bk, M, y - 6, "8 bugs, measured to the eighth of an inch")
+    for i, k in enumerate(lengths):
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", 13)
+        c.drawString(M + 14 + (i % 4) * 54, y - 36 - (i // 4) * 22, f"{e8(k)} in")
+    span = list(range(6, 12))
+    x_chart(bk, M + 260, y - 22, "Bug lengths (inches)", [e8(k) for k in span], [lengths.count(k) for k in span],
+            colw=40)
+    y -= 128
+
+    label(bk, M, y - 6, "Questions you can answer")
+    lines = (("Longest minus shortest:", "1 3/8 − 6/8 = 5/8 in"),
+             ("All the 1 1/8 in bugs end to end:", "3 × 1 1/8 = 3 3/8 in"),
+             ("How many are shorter than 1 in?", "3 bugs"))
+    for i, (q, a) in enumerate(lines):
+        c.setFillColor(T.text2)
+        c.setFont("Rnd", 12)
+        c.drawString(M + 14, y - 34 - i * 30, q)
+        frac_expr(bk, M + 250, y - 36 - i * 30, a.replace("−", MINUS), size=15)
+    y -= 128
+
+    bottom = your_turn(bk, y, h=92)
+    bk.ask("x chart eighths your turn")
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 13)
+    c.drawString(M + 130, bottom + 56, "Longest 1 2/8 in, shortest 5/8 in.")
+    frac_expr(bk, M + 130, bottom + 22, f"1 2/8 {MINUS} 5/8 = [5]/8", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: X charts (line plots) of measurements in halves, quarters and eighths, then add and "
+                     "subtract the fractions to answer questions (4.MD.4). Say “Find the biggest and smallest X "
+                     "first.”")
+
+
+def practice_line_plots(bk):
+    title = "Line Plots with Fractions: Practice"
+    y = bk.new_page(title, "One X for each measurement.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Make the X chart", "Put an X above the length for each one.", "make_x8",
+         [("Ribbon pieces", [5, 6, 6, 7, 7, 7, 9, 9]), ("Leaves", [9, 10, 10, 12, 12, 12, 13, 14]),
+          ("Snails", [3, 4, 4, 4, 5, 7, 7, 8])])
+    part(2, "Read the X chart", "Answer the questions.", "read_x8",
+         [("Feathers (inches)", [8, 9, 9, 10, 10, 10, 12, 13], 1), ("Shells (inches)", [4, 5, 5, 5, 6, 8, 8, 9], 2),
+          ("Pencils (inches)", [17, 18, 18, 19, 20, 20, 20, 22], 3)])
+    part(3, "Add the X's", "No help this time. Same length, many times.", "frac2",
+         [f"{n} {TIMES} {e8(k)} = [{n * k}]/8" for n, k in ((3, 3), (4, 5), (5, 3), (5, 2), (3, 6), (6, 1), (2, 5),
+                                                             (3, 7))])
+    part(4, "How far apart?", "No help this time. Longest minus shortest.", "mixed2",
+         [mx(f"{e8(a)} {MINUS} {e8(b)} = " + (f"[{a - b}]/8" if a - b < 8 else mixed_box(a - b, 8)), e8(a - b))
+          for a, b in ((13, 6), (15, 4), (11, 4), (14, 9), (20, 7), (10, 5), (17, 2), (12, 10))])
+    part(5, "Put them together", "No help this time. Two pieces end to end.", "mixed2",
+         [mx(f"{e8(a)} + {e8(b)} = " + (f"[{a + b}]/8" if a + b < 8 else mixed_box(a + b, 8)), e8(a + b))
+          for a, b in ((9, 4), (5, 6), (10, 11), (3, 2), (12, 7), (6, 9), (17, 3), (1, 5))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_70)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 7, "Word problems", "Use eighths.")
+    for i, story in enumerate(WORDS_70):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 7, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_70 = ["area: 13 × 6 = [78] sq m", "5 ft = [60] in", "0.8 [>] 0.75", "5 × 3/10 = [15]/10",
+             "3 1/8 − 1 2/8 = [1] [7]/8", "75 × 12 = [900]"]
+
+WORDS_70 = [
+    ("Two worms are 1 4/8 in and 7/8 in long. How much longer is the first one?", f"1 4/8 {MINUS} 7/8 = 5/8",
+     "5/8", "in"),
+    ("Four beads are each 3/8 in long. How long are they in a row?", f"4 {TIMES} 3/8 = 12/8 = 1 4/8", "1 4/8",
+     "in"),
+    ("Ana's X chart shows 3 X's at 5/8 in and 2 X's at 7/8 in. How many things did she measure?", "3 + 2 = 5",
+     "5", "things"),
+    ("A ribbon is 2 1/8 in. Another is 1 4/8 in. How long are they together?", "2 1/8 + 1 4/8 = 3 5/8", "3 5/8",
+     "in"),
+    ("Challenge: The longest leaf is 1 7/8 in and the shortest is 6/8 in. How far apart are they?",
+     f"1 7/8 {MINUS} 6/8 = 1 1/8", "1 1/8", "in"),
+]
+
+KINDS_70 = {
+    "make_x8": Kind(176, 1, lambda it: f"make the x chart: {it[0]}", c_make_x8, 10),
+    "read_x8": Kind(176, 1, lambda it: f"read the x chart: {it[0]}", c_read_x8, 10),
+}
+KINDS.update(KINDS_70)
+
+X8_TIMES = [f"{n} {TIMES} {e8(k)} = [{n * k}]/8" for n in rng(2, 6) for k in rng(1, 7)]
+X8_APART = [mx(f"{e8(a)} {MINUS} {e8(b)} = " + (f"[{a - b}]/8" if a - b < 8 else mixed_box(a - b, 8)), e8(a - b))
+            for a in rng(9, 19, 2) for b in rng(2, 8) if (a - b) % 8]
+
+CHECKINS["70-line-plots-with-fractions"] = [
+    S("Read the X chart", None, "read_x8", [("Crayons (inches)", [10, 11, 11, 12, 12, 12, 14, 15], 7),
+                                            ("Sticks (inches)", [5, 6, 6, 6, 7, 9, 9, 10], 8)], 1),
+    S("Add the X's", None, "frac2", X8_TIMES, 3),
+    S("How far apart?", None, "mixed2", X8_APART, 3),
+]
+_g4[-1:-1] = [
+    S("Line plot questions", None, "mixed2", X8_APART, 2, 70),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -16397,7 +16557,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -16462,6 +16622,8 @@ ANSWER_OF = {
     "biggest_dec": lambda it: dstr(max(it)),
     "conv_table": lambda it: ", ".join(f"{n} {it[0]} = {nf(n * CONV[(it[0], it[1])])} {it[1]}" for n in it[2][1:]),
     "rect_formula": lambda it: f"area {nf(it[0] * it[1])} sq {it[2]}, perimeter {2 * (it[0] + it[1])} {it[2]}",
+    "make_x8": lambda it: "X chart: " + ", ".join(f"{lengths_n} at {e8(k)}" for k in sorted(set(it[1])) for lengths_n in [it[1].count(k)]),
+    "read_x8": lambda it: " · ".join(str(a) for _, a in x8_questions(it[1], it[2])),
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -16688,6 +16850,8 @@ PACKETS = [
     ("68-measurement-conversions", "measurement-conversions", "Measurement Conversions", learn_conversions, practice_conversions,
      False),
     ("69-area-and-perimeter-formulas", "area-and-perimeter-formulas", "Area and Perimeter Formulas", learn_area_formulas, practice_area_formulas,
+     False),
+    ("70-line-plots-with-fractions", "line-plots-with-fractions", "Line Plots with Fractions", learn_line_plots, practice_line_plots,
      False),
 ]
 
