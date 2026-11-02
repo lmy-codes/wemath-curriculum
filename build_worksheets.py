@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–58", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–59", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -14589,6 +14589,182 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 59. Dividing Bigger Numbers
+
+
+def div_area(bk, x, y, w, h, d, chunks, given=True, size=14):
+    """Division as an area model: the side d on the left, the total split into chunks (each a multiple of d) inside,
+    and the other side of each piece (chunk ÷ d) in a box on top. given=False leaves the chunks as boxes too."""
+    c = bk.c
+    total = sum(chunks)
+    wts = [max(0.22, ch / total) for ch in chunks]
+    k = w / sum(wts)
+    px = x
+    for i, (ch, wt) in enumerate(zip(chunks, wts)):
+        pw = wt * k
+        if T.color:
+            c.setFillColor(T.band if i % 2 == 0 else T.strip)
+            c.rect(px, y, pw, h, stroke=0, fill=1)
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(1.3)
+        c.rect(px, y, pw, h, stroke=1, fill=0)
+        if given:
+            c.setFillColor(T.ink)
+            c.setFont("Rnd", size)
+            c.drawCentredString(px + pw / 2, y + h / 2 - size * 0.36, nf(ch))
+        else:
+            bw = max(36, sw(nf(ch), "Rnd", size) + 12)
+            bk.box(px + pw / 2 - bw / 2, y + h / 2 - size * 0.75, bw, size * 1.5, nf(ch), size=size * 0.9)
+        q = nf(ch // d)
+        bw = max(34, sw(q, "Rnd", size) + 12)
+        bk.box(px + pw / 2 - bw / 2, y + h + 4, bw, size * 1.45, q, size=size * 0.9)
+        px += pw
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", size)
+    c.drawRightString(x - 6, y + h / 2 - size * 0.36, str(d))
+
+
+def c_div_area(bk, x, cy, w, item):
+    n, d, chunks, mode = item
+    bk.fit_eq(x + GUT, cy + 140, w - GUT - 10, f"{nf(n)} {DIV} {d} = [{nf(n // d)}]", size=16)
+    div_area(bk, x + GUT + 30, cy + 52, min(340, w - GUT - 60), 40, d, chunks, given=mode == "given")
+    bk.fit_eq(x + GUT + 30, cy + 14, w - GUT - 40,
+              " + ".join(f"[{nf(ch // d)}]" for ch in chunks) + f" = [{nf(n // d)}]", size=15)
+
+
+def c_partial_q(bk, x, cy, w, item):
+    """Partial quotients: n is split into chunks; divide each, then add."""
+    n, d, chunks = item
+    bk.fit_eq(x + GUT, cy + 128, w - GUT - 10, f"{nf(n)} = " + " + ".join(nf(ch) for ch in chunks), size=15)
+    for i, ch in enumerate(chunks):
+        bk.fit_eq(x + GUT + 10, cy + 96 - i * 28, w - GUT - 20, f"{nf(ch)} {DIV} {d} = [{nf(ch // d)}]", size=14)
+    bk.fit_eq(x + GUT + 10, cy + 96 - len(chunks) * 28, w - GUT - 20,
+              " + ".join(f"[{nf(ch // d)}]" for ch in chunks) + f" = [{nf(n // d)}]", size=14)
+
+
+def div_eq(n, d):
+    return f"{nf(n)} {DIV} {d} = [{nf(n // d)}]"
+
+
+def learn_dividing_big(bk):
+    y = bk.new_page("Dividing Bigger Numbers", "Split the big number into parts you can divide. Then add.",
+                    name_line=False, big=True, footer="WeMath  ·  Dividing Bigger Numbers")
+    c = bk.c
+    label(bk, M, y - 6, "84 ÷ 4: split 84 into 80 and 4")
+    div_area(bk, M + 40, y - 90, 260, 46, 4, [80, 4], size=18)
+    for i, (line, kind) in enumerate((("80 ÷ 4 = 20", "a"), ("4 ÷ 4 = 1", "b"), ("20 + 1 = 21", None))):
+        color_eq(bk, M + 340, y - 40 - i * 26, [(line, kind)], 18)
+    y -= 124
+
+    label(bk, M, y - 6, "Pick parts that divide easily: 96 ÷ 4")
+    div_area(bk, M + 40, y - 90, 260, 46, 4, [80, 16], size=18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 36, "80 is 4 × 20, and 16 is 4 × 4.")
+    color_eq(bk, M + 340, y - 66, [("20 + 4 = 24", None)], 18)
+    y -= 124
+
+    label(bk, M, y - 6, "Big numbers: 3,648 ÷ 3")
+    color_eq(bk, M + 14, y - 40, [("3,000 ÷ 3 = 1,000", "a")], 16)
+    color_eq(bk, M + 14, y - 64, [("600 ÷ 3 = 200", "b")], 16)
+    color_eq(bk, M + 14, y - 88, [("48 ÷ 3 = 16", "a")], 16)
+    color_eq(bk, M + 270, y - 64, [("1,000 + 200 + 16 = 1,216", None)], 16)
+    y -= 112
+
+    bottom = your_turn(bk, y, h=118)
+    bk.ask("divide with the area model: 72 / 3 your turn")
+    div_area(bk, M + 160, bottom + 30, 200, 40, 3, [60, 12])
+    bk.eq(M + 390, bottom + 44, "72 ÷ 3 = [24]", size=17)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: divide up to four digits by one digit (4.NBT.6) by splitting the number into parts that "
+                     "divide easily. Say “What part can you share easily? Tens first. Then what's left.”")
+
+
+def practice_dividing_big(bk):
+    title = "Dividing Bigger Numbers: Practice"
+    y = bk.new_page(title, "Split the number into easy parts. Divide each one. Add.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Divide tens and hundreds", "Use a fact you know: 12 ÷ 3 = 4, so 120 ÷ 3 = 40.", "eq3",
+         [div_eq(n, d) for n, d in ((80, 4), (150, 3), (240, 6), (90, 3), (350, 7), (480, 8), (60, 2), (2400, 6),
+                                    (560, 8), (3600, 9), (200, 5), (1800, 2))])
+    part(2, "The area model", "The parts are inside. Find the side of each piece.", "div_area",
+         [(63, 3, (60, 3), "given"), (85, 5, (50, 35), "given"), (78, 6, (60, 18), "given"),
+          (936, 4, (800, 120, 16), "given"), (92, 4, (80, 12), "given")])
+    part(3, "Split it yourself", "Write the parts inside first.", "div_area",
+         [(48, 2, (40, 8), "split"), (75, 3, (60, 15), "split"), (96, 8, (80, 16), "split"),
+          (655, 5, (500, 150, 5), "split")])
+    part(4, "Divide each part", "No picture this time.", "partial_q",
+         [(84, 7, (70, 14)), (138, 6, (120, 18)), (464, 4, (400, 64)), (2856, 4, (2800, 56))])
+    part(5, "Two digits", "No help this time.", "eq3",
+         [div_eq(n, d) for n, d in ((52, 4), (87, 3), (72, 6), (95, 5), (68, 2), (91, 7), (64, 4), (84, 6),
+                                    (98, 7), (76, 2), (57, 3), (96, 6))])
+    part(6, "Three digits", "No help this time.", "eq3",
+         [div_eq(n, d) for n, d in ((636, 6), (248, 2), (455, 5), (372, 3), (816, 8), (595, 7), (432, 4), (738, 9),
+                                    (264, 2))])
+    part(7, "Four digits", "No help this time.", "eq2",
+         [div_eq(n, d) for n, d in ((4826, 2), (3696, 3), (5025, 5), (8448, 4), (7266, 6), (2835, 7))])
+    part(8, "With a remainder", "No help this time. What is left over?", "eq3",
+         [rem_eq(n, d) for n, d in ((97, 4), (85, 6), (79, 3), (127, 5), (98, 8), (157, 7), (203, 4), (89, 2),
+                                    (311, 6))])
+    part(9, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_59)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 10, "Word problems", "Share it, or make groups.")
+    for i, story in enumerate(WORDS_59):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 10, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_59 = ["26 × 14 = [364]", "40 × 70 = [2,800]", "5,729 to the nearest hundred = [5,700]",
+             "2/5 of 30 = [12]", f"6,000 {MINUS} 2,385 = [3,615]", "14/4 = 3 wholes and [2]/4"]
+
+WORDS_59 = [
+    ("96 stickers are shared equally by 4 friends. How many stickers does each friend get?", f"96 {DIV} 4 = 24",
+     "24", "stickers"),
+    ("A farmer packs 252 eggs into cartons of 6. How many cartons does she fill?", f"252 {DIV} 6 = 42", "42",
+     "cartons"),
+    ("A school has 1,575 books to put on 5 shelves equally. How many books go on each shelf?",
+     f"1,575 {DIV} 5 = 315", "315", "books"),
+    ("98 kids ride in vans that hold 8 kids each. How many vans are full? How many kids are left?",
+     f"98 {DIV} 8 = 12 R 2", "12 R 2", ""),
+    ("Challenge: 135 kids go on a trip. Each van holds 8 kids. How many vans do they need for everyone?",
+     f"135 {DIV} 8 = 16 R 7, so 17 vans", "17", "vans"),
+]
+
+KINDS_59 = {
+    "div_area": Kind(162, 1, lambda it: f"divide with the area model: {it[0]} / {it[1]} ({it[3]})", c_div_area, 10),
+    "partial_q": Kind(152, 2, lambda it: f"divide each part: {it[0]} / {it[1]}", c_partial_q, 10),
+}
+KINDS.update(KINDS_59)
+
+DIV_2 = [div_eq(d * q, d) for d in rng(2, 9) for q in rng(11, 49) if d * q < 100 and (d + q) % 3 == 0]
+DIV_3 = [div_eq(d * q, d) for d in rng(2, 9) for q in rng(102, 489, 13) if d * q < 1000]
+DIV_4 = [div_eq(d * q, d) for d in rng(2, 9) for q in rng(1013, 4489, 263) if 1000 <= d * q < 10000]
+REM_BIG = [rem_eq(n, d) for d in rng(3, 9) for n in rng(61, 499, 37) if n % d]
+
+CHECKINS["59-dividing-bigger-numbers"] = [
+    S("The area model", None, "div_area", [(d * (t + o), d, (d * t, d * o), "given") for d in rng(3, 7)
+                                           for t in (10, 20) for o in rng(2, 6)], 1),
+    S("Two and three digits", None, "eq3", DIV_2 + DIV_3, 3),
+    S("Four digits", None, "eq2", DIV_4, 2),
+    S("With a remainder", None, "eq3", REM_BIG, 3),
+]
+_g4[-1:-1] = [
+    S("Divide bigger numbers", None, "eq3", DIV_2 + DIV_3, 3, 59),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -14600,7 +14776,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -14644,6 +14820,8 @@ ANSWER_OF = {
     "biggest": lambda it: "%d/%d" % max(it, key=lambda f: Fraction(*f)),
     "area2": lambda it: nf(it[0] * it[1]),
     "partial2": lambda it: nf(it[0] * it[1]),
+    "div_area": lambda it: nf(it[0] // it[1]),
+    "partial_q": lambda it: nf(it[0] // it[1]),
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -14848,6 +15026,8 @@ PACKETS = [
     ("57-division-with-remainders", "division-with-remainders", "Division with Remainders", learn_remainders,
      practice_remainders, False),
     ("58-multiplying-two-digit-numbers", "multiplying-two-digit", "Multiplying Two-Digit Numbers", learn_mult_two_digit, practice_mult_two_digit,
+     False),
+    ("59-dividing-bigger-numbers", "dividing-bigger-numbers", "Dividing Bigger Numbers", learn_dividing_big, practice_dividing_big,
      False),
 ]
 
