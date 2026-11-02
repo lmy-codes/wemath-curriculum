@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–68", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–69", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -16246,6 +16246,146 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 69. Area and Perimeter Formulas
+
+
+def area_f(l, w, u):
+    return f"area: {l} {TIMES} {w} = [{nf(l * w)}] sq {u}"
+
+
+def perim_f(l, w, u):
+    return f"perimeter: 2 {TIMES} {l} + 2 {TIMES} {w} = [{2 * (l + w)}] {u}"
+
+
+def c_rect_formula(bk, x, cy, w, item):
+    """A labelled rectangle (not to scale beyond its shape) with the area and perimeter formulas beside it."""
+    l, wd, u = item
+    rw = 96 if l >= wd else 60
+    rh = 60 if l >= wd else 90
+    rect_sides(bk, x + GUT + 10, cy + 22, rw, min(rh, 66), f"{l} {u}", "", "", f"{wd} {u}", size=11)
+    tx = x + GUT + 160
+    bk.fit_eq(tx, cy + 62, w - (tx - x) - 10, area_f(l, wd, u), size=16)
+    bk.fit_eq(tx, cy + 24, w - (tx - x) - 10, perim_f(l, wd, u), size=16)
+
+
+def learn_area_formulas(bk):
+    y = bk.new_page("Area and Perimeter Formulas", "Area: length × width. Perimeter: all the way around.",
+                    name_line=False, big=True, footer="WeMath  ·  Area and Perimeter Formulas")
+    c = bk.c
+    label(bk, M, y - 6, "A rectangle 8 m long and 5 m wide")
+    rect_sides(bk, M + 30, y - 110, 160, 80, "8 m", "5 m", "8 m", "5 m", size=12)
+    color_eq(bk, M + 250, y - 46, [("Area:", None), ("8 × 5", "a"), ("=", "op"), ("40 sq m", None)], 18)
+    color_eq(bk, M + 250, y - 80, [("Perimeter:", None), ("8 + 5 + 8 + 5", "b"), ("=", "op"), ("26 m", None)], 18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 250, y - 104, "or 2 × 8 + 2 × 5 = 26: two long sides, two short.")
+    y -= 140
+
+    label(bk, M, y - 6, "Find a missing side from the area")
+    color_eq(bk, M + 14, y - 42, [("8 cm × ? cm", "a"), ("=", "op"), ("48 sq cm", None)], 18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 270, y - 38, "48 ÷ 8 = 6, so the width is 6 cm.")
+    y -= 66
+
+    label(bk, M, y - 6, "Find a missing side from the perimeter")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 32, "Perimeter 30 ft, length 9 ft.")
+    c.drawString(M + 14, y - 50, "The two lengths are 18 ft, so the two widths are 30 minus 18 = 12 ft.")
+    c.drawString(M + 14, y - 68, "One width is half of 12: 6 ft.")
+    y -= 92
+
+    bottom = your_turn(bk, y, h=100)
+    bk.ask("area and perimeter: 7 by 4 your turn")
+    rect_sides(bk, M + 140, bottom + 24, 100, 56, "7 in", "", "", "4 in", size=11)
+    bk.eq(M + 290, bottom + 62, "area: [28] sq in", size=17)
+    bk.eq(M + 290, bottom + 28, "perimeter: [22] in", size=17)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: area = length × width and perimeter = 2 × length + 2 × width, also to find a missing side (4.MD.3). It is "
+                     "packets 38 and 45 without the squares. Say “Area covers it; perimeter walks around it.”")
+
+
+def practice_area_formulas(bk):
+    title = "Area and Perimeter Formulas: Practice"
+    y = bk.new_page(title, "Area in square units, perimeter in units.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Both formulas", "Two sides are labelled. The other two match them.", "rect_formula",
+         [(12, 5, "cm"), (9, 7, "m"), (15, 4, "ft"), (6, 6, "in"), (20, 3, "yd"), (11, 8, "m")])
+    part(2, "Area", "No help this time.", "eq2",
+         [area_f(l, w, u) for l, w, u in ((14, 6, "m"), (23, 4, "cm"), (18, 10, "ft"), (25, 3, "in"), (16, 7, "yd"),
+                                          (32, 5, "m"), (12, 12, "cm"), (40, 6, "ft"), (19, 8, "in"), (45, 2, "m"))])
+    part(3, "Perimeter", "No help this time.", "eq2",
+         [perim_f(l, w, u) for l, w, u in ((14, 6, "m"), (23, 4, "cm"), (18, 10, "ft"), (25, 3, "in"),
+                                           (16, 7, "yd"), (32, 5, "m"), (30, 20, "cm"), (40, 6, "ft"),
+                                           (19, 8, "in"), (45, 2, "m"))])
+    part(4, "Missing side from the area", "No help this time. Divide.", "eq2",
+         [f"{a} {u} {TIMES} [{A // a}] {u} = {A} sq {u}" for A, a, u in ((54, 9, "cm"), (72, 8, "m"), (65, 5, "ft"),
+                                                                       (84, 7, "in"), (96, 12, "yd"),
+                                                                       (120, 10, "m"), (91, 7, "cm"),
+                                                                       (150, 15, "ft"))])
+    part(5, "Missing side from the perimeter", "No help this time. Take away both lengths, then halve it.", "eq1",
+         [f"P = {2 * (l + w)} {u}, length {l} {u}: width = [{w}] {u}" for l, w, u in
+          ((9, 6, "ft"), (12, 4, "m"), (15, 10, "cm"), (20, 5, "in"), (8, 7, "yd"), (25, 15, "m"))])
+    part(6, "Squares", "No help this time. All four sides match.", "eq2",
+         [f"square, side {s} {u}: A = [{s * s}] sq {u}" for s, u in ((9, "in"), (11, "m"), (15, "cm"))]
+         + [f"square, side {s} {u}: P = [{4 * s}] {u}" for s, u in ((9, "in"), (11, "m"), (15, "cm"))])
+    part(7, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_69)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 8, "Word problems", "Draw the rectangle and label the sides.")
+    for i, story in enumerate(WORDS_69):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 8, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_69 = ["8 ft = [96] in", "7 kg = [7,000] g", "0.45 [<] 0.5",
+             "29/100 = [0.29]", "3 × 4/5 = [12]/5", "64 × 32 = [2,048]"]
+
+WORDS_69 = [
+    ("A garden is 15 m long and 8 m wide. How much fence goes all the way around it?",
+     f"2 {TIMES} 15 + 2 {TIMES} 8 = 46", "46", "m"),
+    ("A rug is 11 ft long and 6 ft wide. What is its area?", f"11 {TIMES} 6 = 66", "66", "sq ft"),
+    ("A poster has an area of 72 sq in. It is 9 in wide. How long is it?", f"72 {DIV} 9 = 8", "8", "in"),
+    ("A square room has sides of 12 ft. How much carpet covers the floor?", f"12 {TIMES} 12 = 144", "144", "sq ft"),
+    ("Challenge: A pen has 40 m of fence around it. It is 12 m long. How wide is it?",
+     f"40 {MINUS} 24 = 16, 16 {DIV} 2 = 8", "8", "m"),
+]
+
+KINDS_69 = {
+    "rect_formula": Kind(96, 1, lambda it: f"both formulas: {it[0]} {it[2]} by {it[1]} {it[2]}", c_rect_formula, 8),
+    "eq1": Kind(44, 1, lambda t: t, c_eq, 8),
+}
+KINDS.update(KINDS_69)
+
+AREA_F = [area_f(l, w, u) for l in rng(11, 49, 3) for w in rng(3, 9) for u in ("cm", "m") if (l + w) % 3 == 0]
+PERIM_F = [perim_f(l, w, u) for l in rng(11, 49, 3) for w in rng(3, 9) for u in ("ft", "in") if (l + w) % 3 == 1]
+MISSING_A = [f"{a} m {TIMES} [{b}] m = {a * b} sq m" for a in rng(6, 12) for b in rng(6, 12) if a != b]
+
+CHECKINS["69-area-and-perimeter-formulas"] = [
+    S("Both formulas", None, "rect_formula", [(l, w, "m") for l in rng(10, 16) for w in (3, 4, 6)], 1),
+    S("Area", None, "eq2", AREA_F, 2),
+    S("Perimeter", None, "eq2", PERIM_F, 2),
+    S("Missing side", None, "eq2", MISSING_A, 2),
+    S("Missing side from the perimeter", None, "eq1", [f"P = {2 * (l + w)} m, length {l} m: width = [{w}] m"
+                                                        for l in rng(10, 30, 4) for w in rng(3, 9)], 2),
+]
+_g4[-1:-1] = [
+    S("Area and perimeter", None, "eq2", AREA_F[::2] + PERIM_F[::2], 2, 69),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -16257,7 +16397,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -16321,6 +16461,7 @@ ANSWER_OF = {
     "compare_grids": lambda it: dsign(it[0], it[1]),
     "biggest_dec": lambda it: dstr(max(it)),
     "conv_table": lambda it: ", ".join(f"{n} {it[0]} = {nf(n * CONV[(it[0], it[1])])} {it[1]}" for n in it[2][1:]),
+    "rect_formula": lambda it: f"area {nf(it[0] * it[1])} sq {it[2]}, perimeter {2 * (it[0] + it[1])} {it[2]}",
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -16545,6 +16686,8 @@ PACKETS = [
     ("67-comparing-decimals", "comparing-decimals", "Comparing Decimals", learn_compare_decimals, practice_compare_decimals,
      False),
     ("68-measurement-conversions", "measurement-conversions", "Measurement Conversions", learn_conversions, practice_conversions,
+     False),
+    ("69-area-and-perimeter-formulas", "area-and-perimeter-formulas", "Area and Perimeter Formulas", learn_area_formulas, practice_area_formulas,
      False),
 ]
 
