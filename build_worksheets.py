@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–64", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–65", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -15601,6 +15601,141 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 65. Fractions Times Whole Numbers
+
+
+def c_groups_frac(bk, x, cy, w, item):
+    """k strips, each with a/n shaded: k groups of a/n."""
+    k, a, n = item
+    top = cy + 22 + k * 22
+    for j in range(k):
+        strip(bk, x + GUT, top - 18 - j * 22, 150, 16, n, shaded=a)
+    frac_fit(bk, x + GUT + 176, cy + 22 + k * 11 - 6, w - GUT - 186, f"{k} {TIMES} {a}/{n} = [{k * a}]/{n}", size=20)
+
+
+def ftimes(k, a, n):
+    return f"{k} {TIMES} {a}/{n} = [{k * a}]/{n}"
+
+
+def learn_frac_times(bk):
+    y = bk.new_page("Fractions Times Whole Numbers", "3 × 2/5 means 3 groups of 2/5.", name_line=False,
+                    big=True, footer="WeMath  ·  Fractions Times Whole Numbers")
+    c = bk.c
+    label(bk, M, y - 6, "3 groups of 2/5")
+    for j in range(3):
+        strip(bk, M + 14, y - 40 - j * 26, 200, 20, 5, shaded=2)
+    frac_expr(bk, M + 240, y - 72, f"3 {TIMES} 2/5 = 6/5", size=24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 240, y - 104, "2 fifths, 3 times: 6 fifths.")
+    y -= 128
+
+    label(bk, M, y - 6, "It's the same as adding")
+    frac_expr(bk, M + 14, y - 42, "2/5 + 2/5 + 2/5 = 6/5 = 1 1/5", size=20)
+    y -= 66
+
+    label(bk, M, y - 6, "Every fraction is unit fractions put together")
+    frac_expr(bk, M + 14, y - 42, f"5/4 = 5 {TIMES} 1/4", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 200, y - 38, "5 pieces, each one 1/4.")
+    y -= 66
+
+    label(bk, M, y - 6, "Multiply the top. The bottom stays.")
+    frac_expr(bk, M + 14, y - 42, f"4 {TIMES} 3/8 = 12/8", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 200, y - 38, "4 × 3 = 12 eighths. The pieces are still eighths.")
+    y -= 66
+
+    bottom = your_turn(bk, y, h=96)
+    bk.ask("groups of a fraction: 2 x 3/4 your turn")
+    for j in range(2):
+        strip(bk, M + 130, bottom + 56 - j * 24, 160, 18, 4, shaded=3)
+    frac_expr(bk, M + 320, bottom + 38, f"2 {TIMES} 3/4 = [6]/4", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: a whole number times a fraction (4.NF.4): 3 × 2/5 is 3 groups of 2/5. Say “How many "
+                     "groups? How many pieces in each? What size are the pieces?” Only the top number grows.")
+
+
+def practice_frac_times(bk):
+    title = "Fractions Times Whole Numbers: Practice"
+    y = bk.new_page(title, "Groups of a fraction: multiply the top. The bottom stays.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Groups of a fraction", "Count all the shaded pieces.", "groups_frac",
+         [(2, 2, 5), (3, 1, 4), (4, 2, 6), (2, 3, 8), (3, 2, 3), (4, 3, 10)])
+    part(2, "Unit fractions", "No help this time.", "frac3",
+         [f"{k} {TIMES} 1/{n} = [{k}]/{n}" for k, n in ((5, 4), (3, 8), (7, 10), (2, 3), (6, 5), (4, 12), (9, 6),
+                                                        (3, 2), (11, 8))]
+         + [f"{k}/{n} = [{k}] {TIMES} 1/{n}" for k, n in ((7, 3), (5, 6), (9, 10), (4, 5), (11, 12), (3, 4))])
+    part(3, "Add it up", "Write it as adding, then multiply.", "frac1",
+         [f"{k} {TIMES} {a}/{n} = " + " + ".join([f"{a}/{n}"] * k) + f" = [{k * a}]/{n}"
+          for k, a, n in ((3, 2, 6), (4, 3, 5), (2, 5, 8), (3, 4, 10), (5, 2, 12), (2, 2, 3))])
+    part(4, "Multiply", "No help this time.", "frac3",
+         [ftimes(k, a, n) for k, a, n in ((4, 3, 8), (2, 3, 5), (5, 2, 10), (3, 5, 6), (6, 2, 12), (2, 7, 8),
+                                          (3, 3, 4), (4, 2, 5), (7, 3, 10), (2, 5, 12), (5, 1, 3), (3, 7, 10),
+                                          (4, 5, 6), (6, 3, 8), (8, 1, 5))])
+    part(5, "As a mixed number", "No help this time. Then turn it into a mixed number.", "mixed2",
+         [mx(f"{k} {TIMES} {a}/{n} = [{k * a}]/{n} = " + mixed_box(k * a, n), mixed(k * a, n))
+          for k, a, n in ((3, 3, 4), (2, 4, 5), (5, 2, 3), (3, 5, 8), (4, 4, 6), (3, 7, 10), (2, 5, 6),
+                          (5, 3, 4))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_65)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 7, "Word problems", "Draw the groups.")
+    for i, story in enumerate(WORDS_65):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 7, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_65 = ["2 3/8 + 1 4/8 = [3] [7]/8", "11/4 = [2] [3]/4", "3/12 [<] 1/2",
+             "45 × 13 = [585]", "3,654 ÷ 6 = [609]", "5/8 [<] 3/4"]
+
+WORDS_65 = [
+    ("Each pancake uses 3/4 cup of milk. How much milk do 2 pancakes use?", f"2 {TIMES} 3/4 = 6/4", "6/4",
+     "cups"),
+    ("Mia walks 2/5 of a mile to school each day. How far does she walk in 4 days?", f"4 {TIMES} 2/5 = 8/5",
+     "8/5", "miles"),
+    ("Each of 5 kids eats 1/8 of a pizza. How much of the pizza do they eat?", f"5 {TIMES} 1/8 = 5/8", "5/8",
+     "of the pizza"),
+    ("A plant grows 3/10 of an inch each week. How much does it grow in 3 weeks?", f"3 {TIMES} 3/10 = 9/10",
+     "9/10", "inch"),
+    ("Challenge: A recipe needs 2/3 cup of flour. Leo makes it 4 times. Is that more than 2 cups?",
+     f"4 {TIMES} 2/3 = 8/3 = 2 2/3", "yes", ""),
+]
+
+KINDS_65 = {
+    "groups_frac": Kind(118, 1, lambda it: f"groups of a fraction: {it[0]} x {it[1]}/{it[2]}", c_groups_frac, 8),
+}
+KINDS.update(KINDS_65)
+
+FRAC_TIMES = [ftimes(k, a, n) for n in (3, 4, 5, 6, 8, 10, 12) for a in rng(1, n - 1) for k in rng(2, 6)
+              if a > 1 or k > 3]
+FRAC_TIMES_MIXED = [mx(f"{k} {TIMES} {a}/{n} = [{k * a}]/{n} = " + mixed_box(k * a, n), mixed(k * a, n))
+                    for n in (3, 4, 5, 6, 8) for a in rng(2, n - 1) for k in rng(2, 5) if k * a > n and k * a % n]
+
+CHECKINS["65-fractions-times-whole-numbers"] = [
+    S("Groups of a fraction", None, "groups_frac", [(k, a, n) for k in (2, 3) for n in (4, 5, 6, 8) for a in (1, 2, 3)
+                                                    if a < n], 1),
+    S("Multiply", None, "frac3", FRAC_TIMES, 6),
+    S("As a mixed number", None, "mixed2", FRAC_TIMES_MIXED, 2),
+]
+_g4[-1:-1] = [
+    S("Fraction times a whole number", None, "frac3", FRAC_TIMES, 3, 65),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -15612,7 +15747,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -15670,6 +15805,7 @@ ANSWER_OF = {
     "mixed3": lambda it: it[1],
     "mixed2": lambda it: it[1],
     "mixed1": lambda it: it[1],
+    "groups_frac": lambda it: f"{it[0] * it[1]}/{it[2]}",
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -15886,6 +16022,8 @@ PACKETS = [
     ("63-adding-and-subtracting-fractions", "adding-and-subtracting-fractions", "Adding and Subtracting Fractions", learn_add_fractions, practice_add_fractions,
      False),
     ("64-mixed-numbers", "mixed-numbers", "Mixed Numbers", learn_mixed_numbers, practice_mixed_numbers,
+     False),
+    ("65-fractions-times-whole-numbers", "fractions-times-whole-numbers", "Fractions Times Whole Numbers", learn_frac_times, practice_frac_times,
      False),
 ]
 
