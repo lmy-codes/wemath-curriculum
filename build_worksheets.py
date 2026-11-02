@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–66", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–67", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -15900,6 +15900,174 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 67. Comparing Decimals
+
+
+def dsign(a, b):
+    return "<" if a < b else ">" if a > b else "="
+
+
+def dstr(k):
+    """Hundredths k as the shortest decimal: 40 -> "0.4", 37 -> "0.37"."""
+    return dec(k // 10, 1) if k % 10 == 0 else dec(k)
+
+
+def c_compare_grids(bk, x, cy, w, item):
+    a, b = item
+    grid_100(bk, x + GUT, cy + 26, 62, a)
+    grid_100(bk, x + GUT + 118, cy + 26, 62, b)
+    bk.box(x + GUT + 72, cy + 44, 36, 28, dsign(a, b), size=18)
+    for gx, k in ((x + GUT, a), (x + GUT + 118, b)):
+        bk.c.setFillColor(T.ink)
+        bk.c.setFont("Rnd", 13)
+        bk.c.drawCentredString(gx + 31, cy + 8, dstr(k))
+
+
+def c_biggest_dec(bk, x, cy, w, item):
+    c = bk.c
+    best = max(item)
+    fx = x + GUT + 6
+    for k in item:
+        t = dstr(k)
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", 17)
+        c.drawString(fx, cy + 16, t)
+        tw = sw(t, "Rnd", 17)
+        if bk.key and k == best:
+            c.setStrokeColor(T.answer)
+            c.setLineWidth(1.5)
+            c.ellipse(fx - 7, cy + 6, fx + tw + 7, cy + 36, stroke=1, fill=0)
+        fx += 62
+
+
+def dcmp(a, b, money=False):
+    pa, pb = (f"${dec(a)}", f"${dec(b)}") if money else (dstr(a), dstr(b))
+    return f"{pa} [{dsign(a, b)}] {pb}"
+
+
+def learn_compare_decimals(bk):
+    y = bk.new_page("Comparing Decimals", "Same whole? Make both hundredths, then compare.", name_line=False,
+                    big=True, footer="WeMath  ·  Comparing Decimals")
+    c = bk.c
+    label(bk, M, y - 6, "0.4 or 0.37?")
+    grid_100(bk, M + 14, y - 104, 84, 40)
+    grid_100(bk, M + 150, y - 104, 84, 37)
+    bk.box(M + 105, y - 72, 38, 28, ">", size=18, reveal=T.ink)
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 14)
+    c.drawCentredString(M + 56, y - 122, "0.4")
+    c.drawCentredString(M + 192, y - 122, "0.37")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 270, y - 40, "0.4 is 4 tenths: 4 full rows.")
+    c.drawString(M + 270, y - 58, "That's 40 hundredths.")
+    c.drawString(M + 270, y - 76, "40 hundredths > 37 hundredths.")
+    color_eq(bk, M + 270, y - 108, [("0.4", "a"), ("=", "op"), ("0.40", "a"), (">", "op"), ("0.37", "b")], 20)
+    y -= 146
+
+    label(bk, M, y - 6, "Longer is not always bigger")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 30, "0.37 has more digits than 0.4, but fewer hundredths.")
+    c.drawString(M + 14, y - 48, "Compare the tenths first. If they match, compare the hundredths.")
+    color_eq(bk, M + 14, y - 80, [("0.65", "a"), ("<", "op"), ("0.68", "b")], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 160, y - 76, "Same tenths (6), so look at the hundredths.")
+    y -= 104
+
+    label(bk, M, y - 6, "Money helps")
+    color_eq(bk, M + 14, y - 40, [("$0.50", "a"), (">", "op"), ("$0.45", "b")], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 170, y - 36, "5 dimes is more than 4 dimes and 5 pennies.")
+    y -= 64
+
+    bottom = your_turn(bk, y, h=82)
+    bk.ask("compare decimals: 0.3 and 0.29 your turn")
+    bk.eq(M + 150, bottom + 32, "0.3 [>] 0.29", size=24)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 330, bottom + 36, "Write 0.3 as hundredths first.")
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: compare decimals to hundredths (4.NF.7). Say “How many hundredths is each one?” "
+                     "Watch for the mix-up that 0.37 > 0.4 because it is longer.")
+
+
+def practice_compare_decimals(bk):
+    title = "Comparing Decimals: Practice"
+    y = bk.new_page(title, "Same whole. Write <, > or =.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Compare with grids", "Which grid has more shaded?", "compare_grids",
+         [(50, 46), (28, 30), (73, 70), (60, 66), (9, 20), (85, 58)])
+    part(2, "Make them hundredths", "Write the tenths as hundredths, then compare.", "eq2",
+         [f"{dstr(a)} = [{dec(a)}] so {dstr(a)} [{dsign(a, b)}] {dstr(b)}" for a, b in
+          ((60, 58), (30, 34), (70, 69), (20, 21), (80, 85), (50, 49), (90, 91), (10, 7))])
+    part(3, "Compare", "No help this time.", "eq3",
+         [dcmp(a, b) for a, b in ((64, 59), (33, 38), (40, 4), (72, 27), (15, 50), (90, 89), (61, 16), (25, 30),
+                                    (8, 80), (44, 40), (57, 75), (99, 90), (12, 21), (30, 3), (68, 86))])
+    part(4, "Money", "No help this time.", "eq3",
+         [dcmp(a, b, money=True) for a, b in ((45, 54), (90, 85), (30, 3), (65, 56), (20, 19), (7, 70))])
+    part(5, "Circle the biggest", "No help this time.", "biggest_dec",
+         [(40, 37, 9), (52, 60, 25), (18, 81, 80), (70, 7, 69), (33, 30, 39), (5, 50, 45)])
+    part(6, "Fractions and decimals", "No help this time.", "frac3",
+         ["3/10 [<] 0.35", "0.6 [=] 60/100", "45/100 [>] 0.4", "0.09 [<] 1/10", "7/10 [>] 0.68", "0.5 [=] 1/2",
+          "0.25 [<] 3/10", "8/10 [>] 0.79"])
+    part(7, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_67)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 8, "Word problems", "Draw grids if it helps.")
+    for i, story in enumerate(WORDS_67):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 8, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_67 = ["47/100 = [0.47]", "0.3 = [30] hundredths", "4 × 2/3 = [8]/3", "3 2/5 − 1 1/5 = [2] [1]/5",
+             "53 × 24 = [1,272]", "2,856 ÷ 7 = [408]"]
+
+WORDS_67 = [
+    ("Mia ran 0.6 of a mile. Ben ran 0.58 of a mile. Who ran farther?", "0.6 = 0.60 > 0.58", "Mia", ""),
+    ("A red pencil is 0.15 of a meter long. A blue one is 0.2 of a meter. Which is longer?", "0.15 < 0.20",
+     "blue", "pencil"),
+    ("Kim has $0.75. A toy costs $0.80. Does she have enough money?", "0.75 < 0.80", "no", ""),
+    ("Leo's jug is 0.5 full. Sam's same jug is 0.50 full. Who has more?", "0.5 = 0.50", "same", ""),
+    ("Challenge: Put 0.4, 0.38 and 0.09 in order from smallest to biggest.", "0.09 < 0.38 < 0.40",
+     "0.09, 0.38, 0.4", ""),
+]
+
+KINDS_67 = {
+    "compare_grids": Kind(96, 2, lambda it: f"compare grids: {dstr(it[0])} and {dstr(it[1])}", c_compare_grids),
+    "biggest_dec": Kind(48, 2, lambda it: "biggest decimal: " + " ".join(dstr(k) for k in it), c_biggest_dec, 8),
+}
+KINDS.update(KINDS_67)
+BALANCE["compare_grids"] = lambda it: it[0] < it[1]
+
+DEC_CMP = [dcmp(a, b) for a in rng(3, 97, 7) for b in rng(2, 98, 9) if a != b and abs(a - b) < 40]
+
+CHECKINS["67-comparing-decimals"] = [
+    S("Compare with grids", None, "compare_grids", [(a, b) for a in rng(15, 85, 10) for b in (a - 4, a + 6, a // 10 * 10)
+                                                   if b != a and 0 < b < 100], 2),
+    S("Compare", "Write <, > or =.", "eq3", DEC_CMP, 6, balance=is_less),
+    S("Circle the biggest", None, "biggest_dec", [(a, b, c) for a, b, c in ((38, 40, 9), (60, 55, 7), (8, 27, 30),
+                                                                            (68, 9, 70), (15, 20, 3), (79, 8, 80))],
+      2),
+]
+_g4[-1:-1] = [
+    S("Compare decimals", "Write <, > or =.", "eq3", DEC_CMP, 3, 67, balance=is_less),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -15911,7 +16079,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -15972,6 +16140,8 @@ ANSWER_OF = {
     "groups_frac": lambda it: f"{it[0] * it[1]}/{it[2]}",
     "read_grid": lambda k: f"{k}/100 = {dec(k)}",
     "read_tenths": lambda k: f"{k}/10 = {dec(k, 1)}",
+    "compare_grids": lambda it: dsign(it[0], it[1]),
+    "biggest_dec": lambda it: dstr(max(it)),
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -16192,6 +16362,8 @@ PACKETS = [
     ("65-fractions-times-whole-numbers", "fractions-times-whole-numbers", "Fractions Times Whole Numbers", learn_frac_times, practice_frac_times,
      False),
     ("66-tenths-and-hundredths", "tenths-and-hundredths", "Tenths and Hundredths", learn_decimals, practice_decimals,
+     False),
+    ("67-comparing-decimals", "comparing-decimals", "Comparing Decimals", learn_compare_decimals, practice_compare_decimals,
      False),
 ]
 
