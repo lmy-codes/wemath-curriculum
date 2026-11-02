@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–62", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–63", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -15272,6 +15272,167 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 63. Adding and Subtracting Fractions
+
+
+def add_strip(bk, x, y, w, h, n, a, b, take=False):
+    """A strip of n parts. Adding: a parts shaded, then b parts with a dot (the second number).
+    Taking away (take=True): a parts shaded, the last b of them crossed out."""
+    c = bk.c
+    strip(bk, x, y, w, h, n, shaded=a)
+    pw = w / n
+    for i in range(b):
+        j = (a + i) if not take else (a - b + i)
+        cx = x + pw * (j + 0.5)
+        if take:
+            c.setStrokeColor(T.ink)
+            c.setLineWidth(1.3)
+            c.line(cx - pw * 0.3, y + h * 0.2, cx + pw * 0.3, y + h * 0.8)
+            c.line(cx - pw * 0.3, y + h * 0.8, cx + pw * 0.3, y + h * 0.2)
+        else:
+            bk.dot(cx, y + h / 2, min(5, pw * 0.22), "b")
+
+
+def c_add_strip(bk, x, cy, w, item):
+    a, b, n, op = item
+    take = op == "-"
+    add_strip(bk, x + GUT, cy + 18, 220, 26, n, a, b, take=take)
+    sign = MINUS if take else "+"
+    ans = a - b if take else a + b
+    frac_fit(bk, x + GUT + 246, cy + 24, w - GUT - 256, f"{a}/{n} {sign} {b}/{n} = [{ans}]/{n}", size=20)
+
+
+def fsum(a, b, n):
+    return f"{a}/{n} + {b}/{n} = [{a + b}]/{n}"
+
+
+def fdiff(a, b, n):
+    return f"{a}/{n} {MINUS} {b}/{n} = [{a - b}]/{n}"
+
+
+def learn_add_fractions(bk):
+    y = bk.new_page("Adding and Subtracting Fractions", "Same size pieces: add or take away the tops.",
+                    name_line=False, big=True, footer="WeMath  ·  Adding and Subtracting Fractions")
+    c = bk.c
+    label(bk, M, y - 6, "2/8 + 3/8: count the eighths")
+    add_strip(bk, M + 14, y - 54, 260, 30, 8, 2, 3)
+    frac_expr(bk, M + 300, y - 46, "2/8 + 3/8 = 5/8", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 72, "2 eighths and 3 more eighths make 5 eighths. The bottom number stays.")
+    y -= 96
+
+    label(bk, M, y - 6, "5/6 − 2/6: take away sixths")
+    add_strip(bk, M + 14, y - 54, 260, 30, 6, 5, 2, take=True)
+    frac_expr(bk, M + 300, y - 46, f"5/6 {MINUS} 2/6 = 3/6", size=22)
+    y -= 80
+
+    label(bk, M, y - 6, "Split a fraction into parts")
+    frac_expr(bk, M + 14, y - 42, "3/5 = 1/5 + 1/5 + 1/5", size=20)
+    frac_expr(bk, M + 14, y - 86, "3/5 = 1/5 + 2/5", size=20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 290, y - 40, "Any way you split the pieces,")
+    c.drawString(M + 290, y - 56, "they add up to the same amount.")
+    y -= 112
+
+    label(bk, M, y - 6, "Fraction buddies make one whole")
+    frac_expr(bk, M + 14, y - 42, "3/8 + 5/8 = 8/8 = 1", size=20)
+    y -= 66
+
+    bottom = your_turn(bk, y, h=88)
+    bk.ask("add with strips: 3/10 + 4/10 your turn")
+    add_strip(bk, M + 130, bottom + 30, 200, 24, 10, 3, 4)
+    frac_expr(bk, M + 350, bottom + 36, "3/10 + 4/10 = [7]/10", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: add and subtract fractions with the same bottom number, and split a fraction into "
+                     "parts (4.NF.3a, b, d). Say “What size are the pieces? How many pieces now?” Never add the "
+                     "bottom numbers.")
+
+
+def practice_add_fractions(bk):
+    title = "Adding and Subtracting Fractions: Practice"
+    y = bk.new_page(title, "The bottom number tells the size of the pieces. It stays the same.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Add with strips", "Shaded pieces, then the dotted pieces.", "add_strip",
+         [(3, 2, 6, "+"), (1, 4, 8, "+"), (2, 5, 10, "+"), (1, 1, 3, "+"), (4, 3, 12, "+"), (2, 2, 5, "+")])
+    part(2, "Take away with strips", "Cross out the pieces you take away.", "add_strip",
+         [(5, 3, 8, "-"), (4, 1, 6, "-"), (9, 4, 10, "-"), (3, 2, 4, "-"), (7, 5, 12, "-"), (4, 2, 5, "-")])
+    part(3, "Split it up", "Find the missing part.", "frac2",
+         ["5/8 = 2/8 + [3]/8", "4/6 = 1/6 + [3]/6", "7/10 = 3/10 + [4]/10", "3/4 = 2/4 + [1]/4",
+          "9/12 = 4/12 + [5]/12", "4/5 = 1/5 + [3]/5", "6/8 = 1/8 + [5]/8", "8/10 = 6/10 + [2]/10",
+          "5/6 = 3/6 + [2]/6", "11/12 = 5/12 + [6]/12"])
+    part(4, "Add", "No help this time.", "frac3",
+         [fsum(a, b, n) for a, b, n in ((3, 4, 8), (2, 3, 5), (5, 2, 10), (1, 3, 6), (7, 4, 12), (1, 2, 4),
+                                        (4, 5, 10), (2, 1, 3), (3, 3, 8), (5, 6, 12), (1, 4, 6), (2, 4, 10),
+                                        (1, 1, 5), (6, 1, 8), (3, 8, 12))])
+    part(5, "Take away", "No help this time.", "frac3",
+         [fdiff(a, b, n) for a, b, n in ((7, 3, 8), (4, 2, 5), (9, 5, 10), (5, 1, 6), (11, 6, 12), (3, 1, 4),
+                                         (6, 4, 8), (8, 3, 10), (2, 1, 3), (10, 7, 12), (6, 2, 6), (3, 2, 5))])
+    part(6, "Fraction buddies", "No help this time. Together they make 1 whole.", "frac3",
+         ["5/8 + [3]/8 = 1", "2/5 + [3]/5 = 1", "7/10 + [3]/10 = 1", "1/6 + [5]/6 = 1", "5/12 + [7]/12 = 1",
+          "1/4 + [3]/4 = 1", "4/10 + [6]/10 = 1", "2/3 + [1]/3 = 1", "7/8 + [1]/8 = 1"])
+    part(7, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_63)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 8, "Word problems", "Draw a strip.")
+    for i, story in enumerate(WORDS_63):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 8, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_63 = ["3/4 = [75]/100", "2/3 [<] 7/8", "64 × 15 = [960]", "1,035 ÷ 5 = [207]", "4/5 of 40 = [32]",
+             "2,999 + 1,436 = [4,435]"]
+
+WORDS_63 = [
+    ("Mia ate 2/8 of a pizza. Ben ate 3/8 of it. How much of the pizza did they eat?", "2/8 + 3/8 = 5/8",
+     "5/8", "of the pizza"),
+    ("A jug is 7/10 full. Sam drinks 3/10 of the jug. How full is it now?", f"7/10 {MINUS} 3/10 = 4/10", "4/10",
+     "full"),
+    ("Leo walked 1/4 mile to the park and 2/4 mile to school. How far did he walk?", "1/4 + 2/4 = 3/4", "3/4",
+     "mile"),
+    ("A ribbon is 5/6 of a yard. Kim cuts off 4/6 of a yard. How much is left?", f"5/6 {MINUS} 4/6 = 1/6", "1/6",
+     "of a yard"),
+    ("Ana painted 5/12 of a wall. How much more must she paint to finish the wall?", "5/12 + 7/12 = 1", "7/12",
+     "of the wall"),
+    ("Challenge: Jo read 2/10 of a book on Monday and 5/10 on Tuesday. How much is left to read?",
+     f"2/10 + 5/10 = 7/10, 1 {MINUS} 7/10 = 3/10", "3/10", "of the book"),
+]
+
+KINDS_63 = {
+    "add_strip": Kind(62, 1, lambda it: f"{'add' if it[3] == '+' else 'take away'} with strips: {it[0]}/{it[2]} "
+                                         f"and {it[1]}/{it[2]}", c_add_strip, 8),
+}
+KINDS.update(KINDS_63)
+
+_A_DENS = (3, 4, 5, 6, 8, 10, 12)
+FRAC_ADD = [fsum(a, b, n) for n in _A_DENS for a in rng(1, n - 1) for b in rng(1, n - a)]
+FRAC_SUB = [fdiff(a, b, n) for n in _A_DENS for a in rng(2, n) for b in rng(1, a - 1)]
+FRAC_SPLIT = [f"{a + b}/{n} = {a}/{n} + [{b}]/{n}" for n in _A_DENS for a in rng(1, n - 2) for b in rng(1, n - 1 - a)]
+
+CHECKINS["63-adding-and-subtracting-fractions"] = [
+    S("Add with strips", None, "add_strip", [(a, b, n, "+") for n in (5, 6, 8, 10) for a in rng(1, 3)
+                                             for b in rng(1, 3) if a + b < n], 1),
+    S("Split it up", None, "frac2", FRAC_SPLIT, 2),
+    S("Add", None, "frac3", FRAC_ADD, 3),
+    S("Take away", None, "frac3", FRAC_SUB, 3),
+]
+_g4[-1:-1] = [
+    S("Add and subtract fractions", None, "frac3", FRAC_ADD[::2] + FRAC_SUB[::2], 3, 63),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -15283,7 +15444,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -15336,6 +15497,7 @@ ANSWER_OF = {
     "equal_q": lambda it: _yes(it[0][0] * it[1][1] == it[0][1] * it[1][0]),
     "vs_half": lambda it: half_side(it[0], it[1]),
     "smallest": lambda it: "%d/%d" % min(it, key=lambda f: Fraction(*f)),
+    "add_strip": lambda it: f"{it[0] + it[1] if it[3] == chr(43) else it[0] - it[1]}/{it[2]}",
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -15548,6 +15710,8 @@ PACKETS = [
     ("61-equivalent-fractions", "equivalent-fractions", "Equivalent Fractions", learn_equivalent, practice_equivalent,
      False),
     ("62-comparing-unlike-fractions", "comparing-unlike-fractions", "Comparing Unlike Fractions", learn_comparing_unlike, practice_comparing_unlike,
+     False),
+    ("63-adding-and-subtracting-fractions", "adding-and-subtracting-fractions", "Adding and Subtracting Fractions", learn_add_fractions, practice_add_fractions,
      False),
 ]
 
