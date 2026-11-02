@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–57", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–58", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -14402,6 +14402,193 @@ GRADES.append(("grade-4", "Grade 4", "Packets 53–57", [
 ]))
 
 
+# ====================================================================== 58. Multiplying Two-Digit Numbers
+
+
+def area_model2(bk, x, y, w, h, a, b, labels=True, products=False, size=14):
+    """The area model for a × b (both two-digit): a's tens and ones across the top, b's down the left, one piece
+    for each pair with its product inside. labels=False makes the outside numbers boxes; products=True prints the
+    products (worked example). y = bottom."""
+    c = bk.c
+    cols, rows = place_parts(a), place_parts(b)
+    cw = [max(0.3, p / a) for p in cols]
+    rh = [max(0.38, p / b) for p in rows]
+    kx, ky = w / sum(cw), h / sum(rh)
+    yy = y + h
+    for j, (q, rw) in enumerate(zip(rows, rh)):
+        ph = rw * ky
+        yy -= ph
+        xx = x
+        for i, (p, cwt) in enumerate(zip(cols, cw)):
+            pw = cwt * kx
+            if T.color:
+                c.setFillColor(T.band if (i + j) % 2 == 0 else T.strip)
+                c.rect(xx, yy, pw, ph, stroke=0, fill=1)
+            c.setStrokeColor(T.ink)
+            c.setLineWidth(1.3)
+            c.rect(xx, yy, pw, ph, stroke=1, fill=0)
+            prod = nf(p * q)
+            if products:
+                c.setFillColor(T.ink)
+                c.setFont("Rnd", size)
+                c.drawCentredString(xx + pw / 2, yy + ph / 2 - size * 0.36, prod)
+            else:
+                bw = max(34, sw(prod, "Rnd", size) + 12)
+                bk.box(xx + pw / 2 - bw / 2, yy + ph / 2 - size * 0.75, bw, size * 1.5, prod, size=size * 0.9)
+            if j == 0:
+                if labels:
+                    c.setFillColor(T.ink)
+                    c.setFont("Rnd", size)
+                    c.drawCentredString(xx + pw / 2, y + h + 6, str(p))
+                else:
+                    bk.box(xx + pw / 2 - 18, y + h + 4, 36, size * 1.45, p, size=size * 0.9)
+            xx += pw
+        if labels:
+            c.setFillColor(T.ink)
+            c.setFont("Rnd", size)
+            c.drawRightString(x - 6, yy + ph / 2 - size * 0.36, str(q))
+        else:
+            bk.box(x - 44, yy + ph / 2 - size * 0.72, 36, size * 1.45, q, size=size * 0.9)
+
+
+def parts2(a, b):
+    return [p * q for q in place_parts(b) for p in place_parts(a)]
+
+
+def c_area2(bk, x, cy, w, item):
+    a, b, mode = item
+    bk.fit_eq(x + GUT, cy + 168, w - GUT - 10, f"{a} {TIMES} {b} = [{nf(a * b)}]", size=16)
+    area_model2(bk, x + GUT + 50, cy + 52, min(330, w - GUT - 70), 82, a, b, labels=mode == "given")
+    bk.fit_eq(x + GUT, cy + 14, w - GUT - 10, " + ".join(f"[{nf(p)}]" for p in parts2(a, b)) + f" = [{nf(a * b)}]",
+              size=15)
+
+
+def partial_lines2(a, b):
+    lines = [f"{p} {TIMES} {q} = [{nf(p * q)}]" for q in place_parts(b) for p in place_parts(a)]
+    return lines + [" + ".join(f"[{nf(p)}]" for p in parts2(a, b)) + f" = [{nf(a * b)}]"]
+
+
+def c_partial2(bk, x, cy, w, item):
+    a, b = item
+    bk.fit_eq(x + GUT, cy + 156, w - GUT - 10, f"{a} {TIMES} {b}", size=16)
+    for i, line in enumerate(partial_lines2(a, b)):
+        bk.fit_eq(x + GUT + 10, cy + 124 - i * 27, w - GUT - 20, line, size=14)
+
+
+def learn_mult_two_digit(bk):
+    y = bk.new_page("Multiplying Two-Digit Numbers", "Break both numbers into tens and ones. Four pieces, then add.",
+                    name_line=False, big=True, footer="WeMath  ·  Multiplying Two-Digit Numbers")
+    c = bk.c
+    label(bk, M, y - 6, "Tens times tens")
+    color_eq(bk, M + 14, y - 42, [("20", "a"), (TIMES, "op"), ("30", "b"), ("=", "op"), ("600", None)], 22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 220, y - 30, "2 tens × 3 tens: 2 × 3 = 6,")
+    c.drawString(M + 220, y - 46, "and tens times tens are hundreds.")
+    y -= 66
+
+    label(bk, M, y - 6, "23 × 14: four pieces")
+    area_model2(bk, M + 44, y - 128, 270, 96, 23, 14, products=True, size=17)
+    for i, line in enumerate(("10 × 20 = 200", "10 × 3 = 30", "4 × 20 = 80", "4 × 3 = 12")):
+        color_eq(bk, M + 350, y - 40 - i * 24, [(line, None)], 16)
+    color_eq(bk, M + 350, y - 140, [("200 + 30 + 80 + 12 = 322", None)], 15)
+    y -= 168
+
+    label(bk, M, y - 6, "No picture? List the four parts")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 30, "Tens × tens, tens × ones, ones × tens, ones × ones. Then add.")
+    color_eq(bk, M + 14, y - 60, [("31 × 26 = 600 + 20 + 180 + 6 = 806", None)], 17)
+    y -= 84
+
+    bottom = your_turn(bk, y, h=148)
+    bk.ask("area model two digits: 12 x 13 your turn")
+    area_model2(bk, M + 160, bottom + 22, 190, 84, 12, 13)
+    bk.eq(M + 380, bottom + 60, "12 × 13 = [156]", size=17)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: two-digit × two-digit with the area model, then partial products (4.NBT.5). It is "
+                     "packet 56's model with both numbers split. Say “Tens times tens first: those are hundreds.”")
+
+
+def practice_mult_two_digit(bk):
+    title = "Multiplying Two-Digit Numbers: Practice"
+    y = bk.new_page(title, "Split both numbers. Four pieces. Add them.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Tens times tens", "2 tens × 3 tens = 6 hundreds.", "eq3",
+         [f"{a} {TIMES} {b} = [{nf(a * b)}]" for a, b in ((30, 40), (20, 70), (50, 60), (80, 30), (40, 90), (60, 20),
+                                                          (70, 70), (20, 50), (90, 30), (40, 40), (60, 80), (30, 50))])
+    part(2, "The area model", "The tens and ones are on the outside. Fill in each piece.", "area2",
+         [(24, 13, "given"), (32, 21, "given"), (15, 42, "given"), (43, 26, "given")])
+    part(3, "Split them yourself", "Write the tens and ones on the outside first.", "area2",
+         [(36, 12, "split"), (27, 31, "split"), (52, 18, "split"), (41, 35, "split")])
+    part(4, "Write the four parts", "No picture this time.", "partial2",
+         [(34, 21), (16, 45), (53, 32), (28, 17)])
+    part(5, "Times a tens number", "No help this time.", "eq3",
+         [f"{a} {TIMES} {b} = [{nf(a * b)}]" for a, b in ((34, 20), (17, 30), (46, 40), (23, 60), (58, 20),
+                                                          (19, 50), (62, 30), (35, 40), (71, 20))])
+    part(6, "Two digits times two digits", "No help this time.", "eq3",
+         [f"{a} {TIMES} {b} = [{nf(a * b)}]" for a, b in ((23, 15), (41, 12), (36, 24), (52, 13), (18, 27), (64, 11),
+                                                          (33, 32), (47, 21), (26, 35), (72, 14), (15, 19), (38, 43),
+                                                          (54, 26), (29, 31), (61, 47))])
+    part(7, "Estimate, then multiply", "No help this time. Round each number to the nearest ten first.", "eq2",
+         [f"{a} {TIMES} {b} is about [{nf(round_to(a, 10) * round_to(b, 10))}]" for a, b in
+          ((38, 21), (49, 32), (61, 19), (27, 42), (52, 48), (73, 29))])
+    part(8, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_58)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 9, "Word problems", "Draw the area model if it helps.")
+    for i, story in enumerate(WORDS_58):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 9, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_58 = ["136 × 4 = [544]", f"47 {DIV} 6 = [7] R [5]", "6,284 to the nearest thousand = [6,000]",
+             "3/4 of 24 = [18]", "3,508 + 2,694 = [6,202]", "7/10 [>] 3/10"]
+
+WORDS_58 = [
+    ("A theater has 24 rows with 18 seats in each row. How many seats are there?", f"24 {TIMES} 18 = 432", "432",
+     "seats"),
+    ("A baker makes 36 trays of muffins. Each tray holds 12 muffins. How many muffins is that?",
+     f"36 {TIMES} 12 = 432", "432", "muffins"),
+    ("A book has 15 chapters of 23 pages each. How many pages does it have?", f"15 {TIMES} 23 = 345", "345", "pages"),
+    ("Each of 27 kids reads 30 minutes. How many minutes do they read in all?", f"27 {TIMES} 30 = 810", "810",
+     "minutes"),
+    ("Challenge: 12 boxes of 24 pens and 15 boxes of 20 pencils. How many more pencils than pens?",
+     f"15 {TIMES} 20 = 300, 12 {TIMES} 24 = 288, 300 {MINUS} 288 = 12", "12", "more pencils"),
+]
+
+KINDS_58 = {
+    "area2": Kind(190, 1, lambda it: f"area model two digits: {it[0]} x {it[1]} ({it[2]})", c_area2, 10),
+    "partial2": Kind(176, 2, lambda it: f"four parts: {it[0]} x {it[1]}", c_partial2, 10),
+}
+KINDS.update(KINDS_58)
+
+MULT_22 = [f"{a} {TIMES} {b} = [{nf(a * b)}]" for a in rng(12, 89, 7) for b in rng(11, 49, 5) if a % 10 and b % 10]
+TENS_TENS = [f"{a} {TIMES} {b} = [{nf(a * b)}]" for a in rng(20, 90, 10) for b in rng(20, 90, 10)]
+
+CHECKINS["58-multiplying-two-digit-numbers"] = [
+    S("The area model", None, "area2", [(a, b, "given") for a in rng(13, 47, 6) for b in rng(12, 36, 5)
+                                        if a % 10 and b % 10], 1),
+    S("Tens times tens", None, "eq3", TENS_TENS, 3),
+    S("Multiply", None, "eq3", MULT_22, 6),
+]
+_g4 = next(g for g in GRADES if g[0] == "grade-4")[3]
+_g4[-1:-1] = [
+    S("Two digits times two digits", None, "eq3", MULT_22, 3, 58),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -14413,7 +14600,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57]
+                  51, 52, 53, 54, 55, 56, 57, 58]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -14455,6 +14642,8 @@ ANSWER_OF = {
     "compare_frac": lambda it: frac_sign(*it[0], *it[1]),
     "compare_shapes": lambda it: frac_sign(*it[1], *it[2]),
     "biggest": lambda it: "%d/%d" % max(it, key=lambda f: Fraction(*f)),
+    "area2": lambda it: nf(it[0] * it[1]),
+    "partial2": lambda it: nf(it[0] * it[1]),
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -14658,6 +14847,8 @@ PACKETS = [
      practice_mult_one_digit, False),
     ("57-division-with-remainders", "division-with-remainders", "Division with Remainders", learn_remainders,
      practice_remainders, False),
+    ("58-multiplying-two-digit-numbers", "multiplying-two-digit", "Multiplying Two-Digit Numbers", learn_mult_two_digit, practice_mult_two_digit,
+     False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
