@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–70", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–71", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -16546,6 +16546,220 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 71. Angles
+
+
+def ray(bk, x0, y0, deg, length, lw=1.6, color=None):
+    c = bk.c
+    t = math.radians(deg)
+    x1, y1 = x0 + length * math.cos(t), y0 + length * math.sin(t)
+    c.setStrokeColor(color or T.ink)
+    c.setLineWidth(lw)
+    c.line(x0, y0, x1, y1)
+    h = 6
+    for s in (-1, 1):
+        a = t + math.pi + s * 0.45
+        c.line(x1, y1, x1 + h * math.cos(a), y1 + h * math.sin(a))
+    return x1, y1
+
+
+def angle_mark(bk, vx, vy, a0, a1, r=16, color=None):
+    """The little arc between two rays (a square corner for exactly 90°)."""
+    c = bk.c
+    c.setStrokeColor(color or T.accent)
+    c.setLineWidth(1.2)
+    if abs((a1 - a0) % 360 - 90) < 0.01:
+        s = r * 0.62
+        t0, t1 = math.radians(a0), math.radians(a1)
+        p1 = (vx + s * math.cos(t0), vy + s * math.sin(t0))
+        p2 = (vx + s * math.cos(t1), vy + s * math.sin(t1))
+        p3 = (p1[0] + s * math.cos(t1), p1[1] + s * math.sin(t1))
+        c.line(*p1, *p3)
+        c.line(*p3, *p2)
+        return
+    p = c.beginPath()
+    p.arc(vx - r, vy - r, vx + r, vy + r, startAng=a0, extent=(a1 - a0) % 360)
+    c.drawPath(p, stroke=1, fill=0)
+
+
+def draw_angle(bk, vx, vy, deg, length=60, turn=0):
+    """An angle of `deg` degrees with its vertex at (vx, vy), the first ray pointing at `turn` degrees."""
+    ray(bk, vx, vy, turn, length)
+    ray(bk, vx, vy, turn + deg, length)
+    angle_mark(bk, vx, vy, turn, turn + deg)
+    bk.dot(vx, vy, 2.2, "a")
+
+
+def protractor(bk, cx, cy, R, deg=None):
+    """A half-circle protractor with ticks every 10° (numbers every 30°); with deg, the angle drawn on it."""
+    c = bk.c
+    c.setStrokeColor(T.muted)
+    c.setLineWidth(1)
+    p = c.beginPath()
+    p.arc(cx - R, cy - R, cx + R, cy + R, startAng=0, extent=180)
+    p.close()
+    c.drawPath(p, stroke=1, fill=0)
+    for d in range(0, 181, 5):
+        t = math.radians(d)
+        ln = 9 if d % 10 == 0 else 5
+        c.setLineWidth(0.8 if d % 10 == 0 else 0.5)
+        c.line(cx + R * math.cos(t), cy + R * math.sin(t), cx + (R - ln) * math.cos(t), cy + (R - ln) * math.sin(t))
+        if d % 30 == 0:
+            c.setFillColor(T.text2)
+            c.setFont("AvM", 7.5)
+            c.drawCentredString(cx + (R - 18) * math.cos(t), cy + (R - 18) * math.sin(t) - 2.5, str(d))
+    if deg is not None:
+        ray(bk, cx, cy, 0, R + 14, color=T.ink)
+        ray(bk, cx, cy, deg, R + 14, color=T.ink)
+        angle_mark(bk, cx, cy, 0, deg, r=14)
+    bk.dot(cx, cy, 2.4, "a")
+
+
+def angle_kind(deg):
+    return "acute" if deg < 90 else "right" if deg == 90 else "obtuse" if deg < 180 else "straight"
+
+
+def c_read_protractor(bk, x, cy, w, deg):
+    protractor(bk, x + GUT + 70, cy + 14, 62, deg)
+    bk.eq(x + GUT + 200, cy + 30, f"[{deg}] degrees", size=18)
+
+
+def c_angle_kind(bk, x, cy, w, item):
+    deg, turn = item
+    draw_angle(bk, x + GUT + 18, cy + 14, deg, length=46, turn=turn)
+    circle_choice(bk, x + GUT + 88, cy + 26, ["acute", "right", "obtuse"], angle_kind(deg), size=11, gap=10)
+
+
+def c_angle_add(bk, x, cy, w, item):
+    """Two angles side by side sharing a ray; add them."""
+    a, b = item
+    vx, vy = x + GUT + 20, cy + 16
+    ray(bk, vx, vy, 0, 70)
+    ray(bk, vx, vy, a, 70)
+    ray(bk, vx, vy, a + b, 70)
+    angle_mark(bk, vx, vy, 0, a, r=18)
+    angle_mark(bk, vx, vy, a, a + b, r=26, color=T.text2)
+    bk.c.setFillColor(T.text2)
+    bk.c.setFont("AvM", 9)
+    for mid, val, rr in ((a / 2, a, 30), (a + b / 2, b, 40)):
+        t = math.radians(mid)
+        bk.c.drawCentredString(vx + rr * math.cos(t) + 4, vy + rr * math.sin(t) - 3, f"{val}°")
+    bk.fit_eq(x + GUT + 120, cy + 30, w - GUT - 130, f"{a} + {b} = [{a + b}] degrees", size=16)
+
+
+def learn_angles(bk):
+    y = bk.new_page("Angles", "An angle is a turn between two rays. We measure it in degrees.", name_line=False,
+                    big=True, footer="WeMath  ·  Angles")
+    c = bk.c
+    label(bk, M, y - 6, "A full turn is 360 degrees. A square corner is 90.")
+    draw_angle(bk, M + 30, y - 84, 90, length=56)
+    draw_angle(bk, M + 150, y - 84, 40, length=60)
+    draw_angle(bk, M + 290, y - 84, 130, length=56, turn=0)
+    for xx, t in ((M + 30, "right: 90°"), (M + 150, "acute: under 90°"), (M + 290, "obtuse: over 90°")):
+        c.setFillColor(T.text2)
+        c.setFont("Rnd", 12)
+        c.drawString(xx, y - 104, t)
+    y -= 126
+
+    label(bk, M, y - 6, "Read a protractor")
+    protractor(bk, M + 120, y - 120, 92, 60)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 250, y - 40, "1. Put the dot on the vertex.")
+    c.drawString(M + 250, y - 58, "2. Line up one ray with 0.")
+    c.drawString(M + 250, y - 76, "3. Read where the other ray crosses.")
+    color_eq(bk, M + 250, y - 108, [("60", "b"), ("degrees", None)], 20)
+    y -= 146
+
+    label(bk, M, y - 6, "Angles add up")
+    c_angle_add(bk, M - GUT + 14, y - 90, 300, (30, 45))
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 330, y - 46, "Two angles side by side:")
+    c.drawString(M + 330, y - 64, "add their degrees.")
+    y -= 104
+
+    bottom = your_turn(bk, y, h=84)
+    bk.ask("angle kind: 120 your turn")
+    draw_angle(bk, M + 150, bottom + 18, 120, length=48)
+    circle_choice(bk, M + 250, bottom + 32, ["acute", "right", "obtuse"], "obtuse", size=14, gap=14)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: angles as turns measured in degrees, reading a protractor, and adding angles "
+                     "(4.MD.5–7). Compare with a square corner first: “Is it smaller than a corner, or bigger?”")
+
+
+def practice_angles(bk):
+    title = "Angles: Practice"
+    y = bk.new_page(title, "Square corner = 90 degrees. Straight line = 180 degrees.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Acute, right or obtuse?", "Compare with a square corner.", "angle_kind",
+         [(40, 10), (120, 0), (90, 20), (150, 5), (25, 30), (90, 0), (100, 15), (70, 0), (135, 10), (55, 25)])
+    part(2, "Read the protractor", "How many degrees?", "read_protractor", [50, 120, 30, 160, 90, 75, 140, 20])
+    part(3, "Angles add up", "Add the two angles.", "angle_add", [(20, 50), (40, 40), (35, 25), (60, 30)])
+    part(4, "Find the missing angle", "No help this time. Together they make the angle shown.", "eq2",
+         [f"{a} + [{t - a}] = {t} degrees" for a, t in
+          ((35, 90), (120, 180), (45, 90), (70, 180), (25, 90), (150, 180), (60, 90), (95, 180))])
+    part(5, "Add angles", "No help this time.", "eq2",
+         [f"{a} + {b} = [{a + b}] degrees" for a, b in ((45, 30), (60, 25), (90, 45), (15, 75), (100, 50),
+                                                        (35, 40), (70, 80), (125, 30))])
+    part(6, "Turns", "No help this time. A full turn is 360 degrees.", "eq2",
+         ["1/4 turn = [90] degrees", "1/2 turn = [180] degrees", "3/4 turn = [270] degrees",
+          "1 full turn = [360] degrees", "2 right angles = [180] degrees", "3 right angles = [270] degrees"])
+    part(7, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_71)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 8, "Word problems", "Draw the angles.")
+    for i, story in enumerate(WORDS_71):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 8, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_71 = ["area: 16 × 9 = [144] sq ft", "6 m = [600] cm",
+             "1 3/8 + 6/8 = [2] [1]/8", "0.56 [<] 0.6", "9/10 = [0.9]",
+             "1,206 ÷ 3 = [402]"]
+
+WORDS_71 = [
+    ("A door opens 30 degrees, then 45 degrees more. How far has it opened?", "30 + 45 = 75", "75", "degrees"),
+    ("The hands of a clock make a square corner at 3:00. How many degrees is that?", "a right angle = 90", "90",
+     "degrees"),
+    ("A skater turns half a circle. How many degrees does she turn?", "1/2 of 360 = 180", "180", "degrees"),
+    ("A pizza slice has a 60 degree corner. How many slices fit around the whole pizza?", f"360 {DIV} 60 = 6",
+     "6", "slices"),
+    ("Challenge: Two angles make a straight line. One is 115 degrees. How big is the other?",
+     f"180 {MINUS} 115 = 65", "65", "degrees"),
+]
+
+KINDS_71 = {
+    "angle_kind": Kind(64, 2, lambda it: f"angle kind: {it[0]} turned {it[1]}", c_angle_kind),
+    "read_protractor": Kind(92, 1, lambda d: f"read the protractor: {d}", c_read_protractor),
+    "angle_add": Kind(96, 2, lambda it: f"angles add up: {it[0]} and {it[1]}", c_angle_add),
+}
+KINDS.update(KINDS_71)
+
+ANGLE_MISSING = [f"{a} + [{t - a}] = {t} degrees" for t in (90, 180) for a in rng(15, t - 15, 5) if a % 10 != 0]
+ANGLE_KINDS = [(d, t) for d in (20, 35, 50, 65, 80, 90, 100, 115, 130, 145, 160) for t in (0, 15)]
+
+CHECKINS["71-angles"] = [
+    S("Acute, right or obtuse?", None, "angle_kind", ANGLE_KINDS, 2),
+    S("Read the protractor", None, "read_protractor", [d for d in rng(20, 170, 10) if d != 90], 2),
+    S("Find the missing angle", None, "eq2", ANGLE_MISSING, 4),
+]
+_g4[-1:-1] = [
+    S("Angles", None, "eq2", ANGLE_MISSING, 2, 71),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -16557,7 +16771,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -16624,6 +16838,9 @@ ANSWER_OF = {
     "rect_formula": lambda it: f"area {nf(it[0] * it[1])} sq {it[2]}, perimeter {2 * (it[0] + it[1])} {it[2]}",
     "make_x8": lambda it: "X chart: " + ", ".join(f"{lengths_n} at {e8(k)}" for k in sorted(set(it[1])) for lengths_n in [it[1].count(k)]),
     "read_x8": lambda it: " · ".join(str(a) for _, a in x8_questions(it[1], it[2])),
+    "angle_kind": lambda it: angle_kind(it[0]),
+    "read_protractor": lambda d: f"{d} degrees",
+    "angle_add": lambda it: f"{it[0] + it[1]} degrees",
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -16852,6 +17069,8 @@ PACKETS = [
     ("69-area-and-perimeter-formulas", "area-and-perimeter-formulas", "Area and Perimeter Formulas", learn_area_formulas, practice_area_formulas,
      False),
     ("70-line-plots-with-fractions", "line-plots-with-fractions", "Line Plots with Fractions", learn_line_plots, practice_line_plots,
+     False),
+    ("71-angles", "angles", "Angles", learn_angles, practice_angles,
      False),
 ]
 
