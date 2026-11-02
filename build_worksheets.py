@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–71", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–72", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -16760,6 +16760,240 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 72. Lines and Shapes
+
+
+def figure(bk, x, y, kind, length=74, deg=12):
+    """A line segment (two endpoints), a ray (one endpoint, one arrow) or a line (arrows both ways)."""
+    t = math.radians(deg)
+    x1, y1 = x + length * math.cos(t), y + length * math.sin(t)
+    c = bk.c
+    if kind == "line":
+        ray(bk, (x + x1) / 2, (y + y1) / 2, deg, length / 2)
+        ray(bk, (x + x1) / 2, (y + y1) / 2, deg + 180, length / 2)
+    elif kind == "ray":
+        ray(bk, x, y, deg, length)
+        bk.dot(x, y, 2.8, "a")
+    else:
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(1.6)
+        c.line(x, y, x1, y1)
+        bk.dot(x, y, 2.8, "a")
+        bk.dot(x1, y1, 2.8, "a")
+
+
+def two_lines(bk, cx, cy, kind, r=34, base=15):
+    """Two lines: parallel, perpendicular (crossing at a square corner) or neither."""
+    if kind == "parallel":
+        for off in (-9, 9):
+            t = math.radians(base + 90)
+            ox, oy = off * math.cos(t), off * math.sin(t)
+            ray(bk, cx + ox, cy + oy, base, r)
+            ray(bk, cx + ox, cy + oy, base + 180, r)
+        return
+    other = base + (90 if kind == "perpendicular" else 50)
+    for d in (base, other):
+        ray(bk, cx, cy, d, r)
+        ray(bk, cx, cy, d + 180, r)
+    if kind == "perpendicular":
+        angle_mark(bk, cx, cy, base, base + 90, r=9)
+
+
+def triangle_pts(x, y, L, A, B):
+    """Base from (x, y) to (x + L, y); the corners at the base are A and B degrees."""
+    a, b = math.radians(A), math.radians(B)
+    d = L * math.sin(b) / math.sin(a + b)
+    return [(x, y), (x + L, y), (x + d * math.cos(a), y + d * math.sin(a))]
+
+
+def tri_kind(A, B):
+    C = 180 - A - B
+    m = max(A, B, C)
+    return "right" if m == 90 else "acute" if m < 90 else "obtuse"
+
+
+def c_triangle_kind(bk, x, cy, w, item):
+    A, B = item
+    pts = triangle_pts(0, 0, 70, A, B)
+    h = max(p[1] for p in pts)
+    k = min(1, 52 / h)
+    pts = [(x + GUT + 10 + px * k, cy + 10 + py * k) for px, py in pts]
+    c = bk.c
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.6)
+    c.drawPath(_poly(c, pts), stroke=1, fill=0)
+    angs = [A, B, 180 - A - B]
+    for i, p in enumerate(pts):
+        if angs[i] == 90:
+            q, r_ = pts[(i + 1) % 3], pts[(i - 1) % 3]
+            a0 = math.degrees(math.atan2(q[1] - p[1], q[0] - p[0]))
+            a1 = math.degrees(math.atan2(r_[1] - p[1], r_[0] - p[0]))
+            if (a1 - a0) % 360 > 180:
+                a0, a1 = a1, a0
+            angle_mark(bk, p[0], p[1], a0, a0 + 90, r=10)
+    circle_choice(bk, x + GUT + 104, cy + 26, ["right", "acute", "obtuse"], tri_kind(A, B), size=11, gap=10)
+
+
+def c_line_name(bk, x, cy, w, item):
+    kind, deg = item
+    figure(bk, x + GUT + 6, cy + 18, kind, length=64, deg=deg)
+    circle_choice(bk, x + GUT + 92, cy + 22, ["segment", "ray", "line"], kind, size=11, gap=10)
+
+
+def c_two_lines(bk, x, cy, w, item):
+    kind, base = item
+    two_lines(bk, x + GUT + 40, cy + 30, kind, base=base)
+    circle_choice(bk, x + GUT + 110, cy + 24, ["parallel", "perpendicular", "neither"], kind, size=12, gap=14)
+
+
+SYM = {"square": 4, "rectangle": 2, "rhombus": 2, "parallelogram": 0, "kite": 1, "triangle": 1, "pentagon": 5,
+       "hexagon": 6, "quad": 0, "trapezoid": 1}
+
+
+def c_symmetry(bk, x, cy, w, kind):
+    draw_shape(bk, kind, x + GUT + 40, cy + 40, 24)
+    bk.fit_eq(x + GUT + 96, cy + 30, w - GUT - 106, f"lines of symmetry: [{SYM[kind]}]", size=14)
+
+
+def learn_lines_shapes(bk):
+    y = bk.new_page("Lines and Shapes", "Lines, rays, parallel and perpendicular, and lines of symmetry.",
+                    name_line=False, big=True, footer="WeMath  ·  Lines and Shapes")
+    c = bk.c
+    label(bk, M, y - 6, "Segment, ray, line")
+    for i, (kind, name) in enumerate((("segment", "line segment: 2 endpoints"), ("ray", "ray: 1 endpoint"),
+                                      ("line", "line: no endpoints"))):
+        figure(bk, M + 14 + i * 170, y - 40, kind, length=110, deg=0)
+        c.setFillColor(T.text2)
+        c.setFont("Rnd", 12)
+        c.drawString(M + 14 + i * 170, y - 62, name)
+    y -= 84
+
+    label(bk, M, y - 6, "Parallel and perpendicular")
+    two_lines(bk, M + 60, y - 50, "parallel", r=42, base=0)
+    two_lines(bk, M + 260, y - 50, "perpendicular", r=34, base=0)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 92, "Parallel: never meet.")
+    c.drawString(M + 214, y - 92, "Perpendicular: a square corner.")
+    y -= 112
+
+    label(bk, M, y - 6, "Triangles by their biggest angle")
+    for i, (A, B, name) in enumerate(((90, 45, "right"), (60, 70, "acute"), (30, 25, "obtuse"))):
+        pts = triangle_pts(M + 14 + i * 170, y - 84, 90, A, B)
+        h = max(p[1] for p in pts) - (y - 84)
+        k = min(1, 50 / h)
+        pts = [(M + 14 + i * 170 + (px - M - 14 - i * 170) * k, y - 84 + (py - y + 84) * k) for px, py in pts]
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(1.6)
+        c.drawPath(_poly(c, pts), stroke=1, fill=0)
+        c.setFillColor(T.text2)
+        c.setFont("Rnd", 12)
+        c.drawString(M + 14 + i * 170, y - 102, name)
+    y -= 124
+
+    label(bk, M, y - 6, "Lines of symmetry: fold it and the halves match")
+    draw_shape(bk, "rectangle", M + 60, y - 50, 26)
+    c.setStrokeColor(T.accent)
+    c.setLineWidth(1.2)
+    c.setDash(3, 2.5)
+    c.line(M + 60, y - 78, M + 60, y - 22)
+    c.line(M + 14, y - 50, M + 106, y - 50)
+    c.setDash()
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 140, y - 46, "A rectangle has 2 lines of symmetry.")
+    y -= 96
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("parallel or perpendicular your turn")
+    two_lines(bk, M + 170, bottom + 34, "perpendicular", r=26, base=30)
+    circle_choice(bk, M + 240, bottom + 28, ["parallel", "perpendicular", "neither"], "perpendicular", size=13,
+                  gap=14)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: points, lines, segments, rays, angles, parallel and perpendicular lines, triangles by "
+                     "angle, and lines of symmetry (4.G.1–3). Use a square corner (a sticky note) to test angles.")
+
+
+def practice_lines_shapes(bk):
+    title = "Lines and Shapes: Practice"
+    y = bk.new_page(title, "Look for endpoints, square corners and matching halves.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Segment, ray or line?", "Count the endpoints.", "line_name",
+         [("ray", 15), ("segment", 0), ("line", 25), ("segment", 30), ("line", 5), ("ray", -10), ("line", -15),
+          ("ray", 40), ("segment", -20), ("segment", 50)])
+    part(2, "Parallel, perpendicular or neither?", "Circle one.", "two_lines",
+         [("perpendicular", 20), ("parallel", 10), ("neither", 5), ("parallel", 45), ("perpendicular", 0),
+          ("neither", 35), ("neither", -20), ("perpendicular", 60), ("parallel", -15)])
+    part(3, "Right, acute or obtuse triangle?", "Look at the biggest corner.", "triangle_kind",
+         [(90, 40), (65, 55), (30, 30), (50, 90), (70, 60), (25, 40), (90, 60), (55, 75)])
+    part(4, "Lines of symmetry", "How many ways can you fold it so the halves match?", "symmetry",
+         ["square", "kite", "parallelogram", "hexagon", "rhombus", "triangle", "pentagon", "quad"])
+    part(5, "True or not?", "Circle yes or no.", "yes_text1",
+         [("A square has 4 right angles.", True), ("Parallel lines cross.", False),
+          ("A line has two endpoints.", False), ("A ray has one endpoint.", True),
+          ("A rectangle has 2 pairs of parallel sides.", True), ("A right triangle has 2 right angles.", False),
+          ("Perpendicular lines make square corners.", True), ("A circle has no lines of symmetry.", False)])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_72)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 7, "Word problems", "Draw a picture.")
+    for i, story in enumerate(WORDS_72):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 7, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_72 = ["40 + [50] = 90 degrees", "2 1/8 + 5/8 = [2] [6]/8",
+             "area: 21 × 4 = [84] sq m", "7 ft = [84] in", "0.19 = [19]/100",
+             "63 × 22 = [1,386]"]
+
+WORDS_72 = [
+    ("A window has 4 square corners. How many right angles does it have?", "4 square corners = 4 right angles",
+     "4", "right angles"),
+    ("Two train tracks never meet. Are they parallel or perpendicular?", "never meet = parallel", "parallel", ""),
+    ("A stop sign has 8 equal sides. How many lines of symmetry does it have?", "8 equal sides = 8 lines",
+     "8", "lines"),
+    ("Challenge: A triangle has corners of 35 and 45 degrees. Is it acute, right or obtuse?",
+     f"180 {MINUS} 35 {MINUS} 45 = 100", "obtuse", ""),
+]
+
+KINDS_72 = {
+    "line_name": Kind(56, 2, lambda it: f"segment, ray or line: {it[0]} at {it[1]}", c_line_name, 8),
+    "two_lines": Kind(70, 1, lambda it: f"two lines: {it[0]} at {it[1]}", c_two_lines, 8),
+    "triangle_kind": Kind(76, 2, lambda it: f"triangle kind: {it[0]} and {it[1]}", c_triangle_kind),
+    "symmetry": Kind(80, 2, lambda k: f"lines of symmetry: {k}", c_symmetry),
+}
+KINDS.update(KINDS_72)
+KINDS["yes_text1"] = Kind(58, 1, KINDS["yes_text"].key, c_yes_text, 8)
+BALANCE["yes_text1"] = BALANCE["yes_text"]
+
+GEO_FACTS = [("A rectangle has 4 right angles.", True), ("A rhombus always has a right angle.", False),
+             ("A line segment has two endpoints.", True), ("Perpendicular lines never meet.", False),
+             ("An obtuse angle is more than 90 degrees.", True), ("A ray goes on forever both ways.", False),
+             ("A square has 4 lines of symmetry.", True), ("An acute angle is more than 90 degrees.", False)]
+
+CHECKINS["72-lines-and-shapes"] = [
+    S("Segment, ray or line?", None, "line_name", [(k, d) for k in ("segment", "ray", "line") for d in (-25, 10, 35)], 2),
+    S("Parallel, perpendicular or neither?", None, "two_lines",
+      [(k, d) for k in ("parallel", "perpendicular", "neither") for d in (-30, 25, 50)], 2),
+    S("Right, acute or obtuse triangle?", None, "triangle_kind", [(90, 35), (60, 65), (20, 35), (45, 90), (35, 25)], 2),
+    S("True or not?", "Circle yes or no.", "yes_text1", GEO_FACTS, 2),
+]
+_g4[-1:-1] = [
+    S("Lines and angles", "Circle yes or no.", "yes_text1", GEO_FACTS, 2, 72),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -16771,7 +17005,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -16841,6 +17075,11 @@ ANSWER_OF = {
     "angle_kind": lambda it: angle_kind(it[0]),
     "read_protractor": lambda d: f"{d} degrees",
     "angle_add": lambda it: f"{it[0] + it[1]} degrees",
+    "line_name": lambda it: it[0],
+    "yes_text1": lambda it: _yes(it[1]),
+    "two_lines": lambda it: it[0],
+    "triangle_kind": lambda it: tri_kind(it[0], it[1]),
+    "symmetry": lambda k: str(SYM[k]),
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -17071,6 +17310,8 @@ PACKETS = [
     ("70-line-plots-with-fractions", "line-plots-with-fractions", "Line Plots with Fractions", learn_line_plots, practice_line_plots,
      False),
     ("71-angles", "angles", "Angles", learn_angles, practice_angles,
+     False),
+    ("72-lines-and-shapes", "lines-and-shapes", "Lines and Shapes", learn_lines_shapes, practice_lines_shapes,
      False),
 ]
 
