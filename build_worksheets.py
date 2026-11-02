@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–63", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–64", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -15433,6 +15433,174 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 64. Mixed Numbers
+
+
+def mixed(t, n):
+    """7, 4 -> "1 3/4" (or "2" when there are no pieces left)."""
+    q, r = divmod(t, n)
+    return f"{q} {r}/{n}" if r else str(q)
+
+
+def mixed_box(t, n):
+    """7, 4 -> "[1] [3]/4": the answer as boxes."""
+    q, r = divmod(t, n)
+    return f"[{q}] [{r}]/{n}"
+
+
+def mx(text, answer):
+    """A mixed-number question: (text drawn with frac_expr, the answer for curriculum.json)."""
+    return (text, answer)
+
+
+def c_mixed_q(bk, x, cy, w, item):
+    frac_fit(bk, x + GUT, cy + 16, w - GUT - 10, item[0], size=17)
+
+
+def c_to_mixed(bk, x, cy, w, item):
+    """Full bars, then a part bar: name it as a fraction and as a mixed number."""
+    n, t = item
+    k = -(-t // n)
+    strips(bk, x + GUT, cy + 40 + k * 12, 150, n, k, shaded=t, h=16, gap=6)
+    frac_fit(bk, x + GUT + 172, cy + 34, w - GUT - 182, f"[{t}]/{n} = " + mixed_box(t, n), size=19)
+
+
+def learn_mixed_numbers(bk):
+    y = bk.new_page("Mixed Numbers", "Whole ones and pieces: 1 3/4 means 1 whole and 3/4.", name_line=False,
+                    big=True, footer="WeMath  ·  Mixed Numbers")
+    c = bk.c
+    label(bk, M, y - 6, "7/4 is 1 whole and 3/4 more")
+    strips(bk, M + 14, y - 22, 220, 4, 2, shaded=7, h=24, gap=8)
+    frac_expr(bk, M + 260, y - 52, "7/4 = 1 3/4", size=26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 410, y - 40, "Say: one and")
+    c.drawString(M + 410, y - 56, "three fourths.")
+    y -= 96
+
+    label(bk, M, y - 6, "Back to a fraction: count all the pieces")
+    frac_expr(bk, M + 14, y - 42, "2 1/3 = 3/3 + 3/3 + 1/3 = 7/3", size=20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 70, "Each whole is 3 thirds: 2 wholes are 6 thirds, plus 1 more is 7 thirds.")
+    y -= 94
+
+    label(bk, M, y - 6, "Add: wholes with wholes, pieces with pieces")
+    frac_expr(bk, M + 14, y - 42, "2 1/5 + 1 3/5 = 3 4/5", size=20)
+    frac_expr(bk, M + 14, y - 84, "1 3/4 + 2 2/4 = 3 5/4 = 4 1/4", size=20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 78, "5/4 is another whole and 1/4.")
+    y -= 108
+
+    label(bk, M, y - 6, "Take away the same way")
+    frac_expr(bk, M + 14, y - 42, f"3 4/6 {MINUS} 1 1/6 = 2 3/6", size=20)
+    y -= 64
+
+    bottom = your_turn(bk, y, h=84)
+    bk.ask("write the mixed number: 5/3 in strips your turn")
+    strips(bk, M + 130, bottom + 66, 160, 3, 2, shaded=5, h=18, gap=6)
+    frac_expr(bk, M + 320, bottom + 34, "5/3 = [1] [2]/3", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: mixed numbers with the same bottom number: rename, add and subtract (4.NF.3c). Say "
+                     "“How many whole bars? How many pieces left over?” Add the wholes, then the pieces.")
+
+
+def practice_mixed_numbers(bk):
+    title = "Mixed Numbers: Practice"
+    y = bk.new_page(title, "Whole ones first, then the pieces.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Write the mixed number", "Count the pieces, then the whole bars.", "to_mixed",
+         [(4, 9), (3, 7), (6, 10), (5, 8), (8, 11), (2, 5)])
+    part(2, "Fraction to mixed number", "No help this time.", "mixed3",
+         [mx(f"{t}/{n} = " + mixed_box(t, n), mixed(t, n)) for t, n in
+          ((9, 2), (13, 4), (8, 3), (12, 5), (15, 4), (11, 3), (17, 6), (23, 10), (14, 5), (19, 8), (10, 6),
+           (25, 12))])
+    part(3, "Mixed number to fraction", "No help this time. How many pieces in all?", "mixed3",
+         [mx(f"{mixed(t, n)} = [{t}]/{n}", f"{t}/{n}") for t, n in
+          ((7, 2), (11, 4), (10, 3), (13, 5), (17, 4), (14, 3), (11, 6), (27, 10), (17, 5), (21, 8), (19, 6),
+           (13, 12))])
+    part(4, "Add mixed numbers", "No help this time. Wholes, then pieces.", "mixed2",
+         [mx(f"{mixed(a, n)} + {mixed(b, n)} = " + mixed_box(a + b, n), mixed(a + b, n)) for a, b, n in
+          ((9, 6, 4), (7, 6, 5), (11, 12, 8), (7, 4, 3), (13, 15, 6), (21, 32, 10), (7, 8, 6), (10, 5, 4),
+           (16, 13, 12))])
+    part(5, "Make a new whole", "The pieces make more than 1. Turn them into a whole.", "mixed1",
+         [mx(f"{mixed(a, n)} + {mixed(b, n)} = {(a // n) + (b // n)} [{a % n + b % n}]/{n} = " + mixed_box(a + b, n),
+             mixed(a + b, n)) for a, b, n in ((7, 11, 4), (8, 9, 5), (13, 14, 8), (5, 8, 3), (11, 9, 6),
+                                              (17, 29, 10))])
+    part(6, "Take away mixed numbers", "No help this time.", "mixed2",
+         [mx(f"{mixed(a, n)} {MINUS} {mixed(b, n)} = " + mixed_box(a - b, n), mixed(a - b, n)) for a, b, n in
+          ((19, 6, 5), (15, 5, 4), (31, 12, 8), (11, 4, 3), (23, 8, 6), (37, 12, 10), (27, 13, 6), (19, 6, 4),
+           (41, 15, 12))])
+    part(7, "Break a whole first", "Not enough pieces? Turn one whole into pieces.", "mixed1",
+         [mx(f"{mixed(a, n)} {MINUS} {mixed(b, n)} = {a // n - 1} [{a % n + n}]/{n} {MINUS} {mixed(b, n)} = "
+             + mixed_box(a - b, n), mixed(a - b, n)) for a, b, n in ((14, 7, 4), (16, 9, 5), (25, 15, 8),
+                                                                    (19, 11, 6))])
+    part(8, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_64)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 9, "Word problems", "Draw the bars.")
+    for i, story in enumerate(WORDS_64):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 9, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_64 = ["5/8 + 2/8 = [7]/8", "9/10 − 4/10 = [5]/10".replace("−", MINUS), "7/12 [>] 1/2", "72 × 21 = [1,512]",
+             "2,448 ÷ 4 = [612]", "Round 6,550 to the nearest hundred: [6,600]"]
+
+WORDS_64 = [
+    ("Mia ran 1 2/4 miles on Monday and 2 1/4 miles on Tuesday. How far did she run?", "1 2/4 + 2 1/4 = 3 3/4",
+     "3 3/4", "miles"),
+    ("A pizza has 8 slices. Ben's family ate 11 slices from two pizzas. How many pizzas is that?",
+     "11/8 = 1 3/8", "1 3/8", "pizzas"),
+    ("A ribbon is 4 5/6 feet long. Leo cuts off 2 1/6 feet. How long is the rest?", f"4 5/6 {MINUS} 2 1/6 = 2 4/6",
+     "2 4/6", "feet"),
+    ("Kim baked 2 3/4 pans of bread and then 1 3/4 pans more. How many pans in all?",
+     "2 3/4 + 1 3/4 = 3 6/4 = 4 2/4", "4 2/4", "pans"),
+    ("Challenge: A jug holds 3 1/4 liters. Sam pours out 1 3/4 liters. How much is left in the jug?",
+     f"3 1/4 {MINUS} 1 3/4 = 1 2/4", "1 2/4", "liters"),
+]
+
+KINDS_64 = {
+    "to_mixed": Kind(84, 1, lambda it: f"write the mixed number: {it[1]}/{it[0]} in strips", c_to_mixed, 8),
+    "mixed3": Kind(48, 3, lambda it: it[0], c_mixed_q, 8),
+    "mixed2": Kind(48, 2, lambda it: it[0], c_mixed_q, 8),
+    "mixed1": Kind(48, 1, lambda it: it[0], c_mixed_q, 8),
+}
+KINDS.update(KINDS_64)
+
+_M_DENS = (2, 3, 4, 5, 6, 8, 10, 12)
+TO_MIXED = [mx(f"{t}/{n} = " + mixed_box(t, n), mixed(t, n)) for n in _M_DENS for t in rng(n + 1, 4 * n) if t % n]
+TO_FRAC = [mx(f"{mixed(t, n)} = [{t}]/{n}", f"{t}/{n}") for n in _M_DENS for t in rng(n + 1, 4 * n) if t % n]
+MIXED_ADD = [mx(f"{mixed(a, n)} + {mixed(b, n)} = " + mixed_box(a + b, n), mixed(a + b, n))
+             for n in (3, 4, 5, 6, 8) for a in rng(n + 1, 3 * n - 1, 2) for b in rng(n + 1, 2 * n - 1)
+             if a % n and b % n and (a + b) % n and a % n + b % n < n]
+MIXED_SUB = [mx(f"{mixed(a, n)} {MINUS} {mixed(b, n)} = " + mixed_box(a - b, n), mixed(a - b, n))
+             for n in (3, 4, 5, 6, 8) for a in rng(2 * n + 1, 4 * n - 1, 2) for b in rng(n + 1, 2 * n - 1)
+             if a % n > b % n > 0]
+
+CHECKINS["64-mixed-numbers"] = [
+    S("Write the mixed number", None, "to_mixed", [(n, t) for n in (3, 4, 5, 6) for t in rng(n + 1, 2 * n - 1)], 1),
+    S("Fraction to mixed number", None, "mixed3", TO_MIXED, 3),
+    S("Mixed number to fraction", None, "mixed3", TO_FRAC, 3),
+    S("Add and take away", None, "mixed2", MIXED_ADD[::3] + MIXED_SUB[::3], 2),
+]
+_g4[-1:-1] = [
+    S("Mixed numbers", None, "mixed3", TO_MIXED + TO_FRAC, 3, 64),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -15444,7 +15612,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -15498,6 +15666,10 @@ ANSWER_OF = {
     "vs_half": lambda it: half_side(it[0], it[1]),
     "smallest": lambda it: "%d/%d" % min(it, key=lambda f: Fraction(*f)),
     "add_strip": lambda it: f"{it[0] + it[1] if it[3] == chr(43) else it[0] - it[1]}/{it[2]}",
+    "to_mixed": lambda it: f"{it[1]}/{it[0]} = " + mixed(it[1], it[0]),
+    "mixed3": lambda it: it[1],
+    "mixed2": lambda it: it[1],
+    "mixed1": lambda it: it[1],
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -15712,6 +15884,8 @@ PACKETS = [
     ("62-comparing-unlike-fractions", "comparing-unlike-fractions", "Comparing Unlike Fractions", learn_comparing_unlike, practice_comparing_unlike,
      False),
     ("63-adding-and-subtracting-fractions", "adding-and-subtracting-fractions", "Adding and Subtracting Fractions", learn_add_fractions, practice_add_fractions,
+     False),
+    ("64-mixed-numbers", "mixed-numbers", "Mixed Numbers", learn_mixed_numbers, practice_mixed_numbers,
      False),
 ]
 
