@@ -1,6 +1,6 @@
 # WeMath worksheets
 
-Fifty-eight packets, in teaching order (K to grade 4). Each starts with a picture-first learning page, followed by practice.
+Seventy-three packets, in teaching order (K to grade 4). Each starts with a picture-first learning page, followed by practice.
 
 | Folder | Topic | Pages |
 |---|---|---|
@@ -62,6 +62,21 @@ Fifty-eight packets, in teaching order (K to grade 4). Each starts with a pictur
 | `55-adding-and-subtracting-big-numbers/` | Four-digit columns: carry boxes, break boxes, across zeros, then no help | 7 |
 | `56-multiplying-by-one-digit/` | The area model (23 × 4 = 80 + 12), splitting it yourself, three digits, partial products, then plain problems | 9 |
 | `57-division-with-remainders/` | Share on plates and make groups with leftovers, the biggest times fact that fits, 17 ÷ 5 = 3 R 2, what the remainder means in a story | 8 |
+| `58-multiplying-two-digit-numbers/` | Tens times tens, the four-piece area model, split it yourself, the four parts as a list, two digits × two digits, estimate first | 9 |
+| `59-dividing-bigger-numbers/` | Divide tens and hundreds, the division area model, split it yourself, divide each part, two, three and four digits, remainders | 9 |
+| `60-factors-and-multiples/` | Rectangles of dots, factor pairs, is it a factor, all the factors, multiples, is it a multiple, prime or composite | 8 |
+| `61-equivalent-fractions/` | Cut the pieces, times the top and the bottom, find the top or bottom number, fewer bigger pieces, twelfths and hundredths | 7 |
+| `62-comparing-unlike-fractions/` | More or less than half, strips, use 1/2, make the bottoms the same, close to 1, circle the smallest | 8 |
+| `63-adding-and-subtracting-fractions/` | Add and take away with strips, split a fraction into parts, fraction buddies that make 1 | 7 |
+| `64-mixed-numbers/` | Fraction to mixed number and back, add, make a new whole, take away, break a whole first | 8 |
+| `65-fractions-times-whole-numbers/` | Groups of a fraction, unit fractions, write it as adding, multiply, as a mixed number | 7 |
+| `66-tenths-and-hundredths/` | Tenths strips, hundred grids, fraction to decimal and back, tenths as hundredths, adding tenths and hundredths, dimes and pennies | 7 |
+| `67-comparing-decimals/` | Grids side by side, make them hundredths, compare, money, circle the biggest, fractions and decimals | 6 |
+| `68-measurement-conversions/` | Conversion tables, metric, feet, pounds and time, mixed units, which is more, add and take away | 6 |
+| `69-area-and-perimeter-formulas/` | Both formulas, area, perimeter, missing side from the area or the perimeter, squares | 7 |
+| `70-line-plots-with-fractions/` | Make and read X charts in eighths, add the X's, how far apart, put them together | 7 |
+| `71-angles/` | Acute, right or obtuse, read a protractor, angles that add up, missing angles, turns | 7 |
+| `72-lines-and-shapes/` | Segment, ray or line, parallel or perpendicular, triangles by their biggest angle, lines of symmetry, true or not | 8 |
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 
@@ -82,7 +97,7 @@ Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hol
 | Grade 1 | 3–9: over ten, back through ten, doubles, tens and ones, ten more/less, two-digit adding | 60 problems | 60 problems |
 | Grade 2 | 10–32: two-digit subtracting, borrowing, columns, three-digit numbers, skip counting, comparing, arrays, even/odd, hundred buddies, counting, halves, equal shares, time, money, across zeros, bar models, length, graphs | 98 problems | 98 problems |
 | Grade 3 | 33–52: multiplication, strategies, division, rounding, multiplying by tens, area, six fraction packets (unit fractions, counting fractions, fractions and wholes, equal fractions, comparing, fractions of a group), perimeter, elapsed time, two-step problems, times-table patterns, mass and volume, scaled graphs, quarter inches, quadrilaterals | 86 problems | 86 problems |
-| Grade 4 | 53–57: thousands, rounding big numbers, adding and subtracting big numbers, multiplying by one digit, division with remainders | 34 problems | 34 problems |
+| Grade 4 | 53–72: thousands, rounding big numbers, adding and subtracting big numbers, multiplying by one and two digits, dividing (remainders, bigger numbers), factors and multiples, equivalent and unlike fractions, adding fractions, mixed numbers, fraction × whole number, tenths and hundredths, decimals, conversions, area and perimeter formulas, line plots, angles, lines and shapes | 77 problems | 77 problems |
 
 Each answer key ends with a **scoring sheet**: every part, the packet it checks, and a score line. Use the **pre-assessment** for placement: start a student at the first packet where they miss more than 1 problem in its parts. Use the **post-assessment** to see growth: a part with more than 1 miss means that packet needs review.
 

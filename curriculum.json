@@ -1,5 +1,5 @@
 {
- "version": "cb5993d9295d",
+ "version": "dfa10669c0e3",
  "packets": [
   {
    "number": 0,
@@ -463,6 +463,126 @@
    "folder": "57-division-with-remainders",
    "file": "division-with-remainders",
    "title": "Division with Remainders",
+   "grade": "4"
+  },
+  {
+   "number": 58,
+   "slug": "multiplying-two-digit-numbers",
+   "folder": "58-multiplying-two-digit-numbers",
+   "file": "multiplying-two-digit",
+   "title": "Multiplying Two-Digit Numbers",
+   "grade": "4"
+  },
+  {
+   "number": 59,
+   "slug": "dividing-bigger-numbers",
+   "folder": "59-dividing-bigger-numbers",
+   "file": "dividing-bigger-numbers",
+   "title": "Dividing Bigger Numbers",
+   "grade": "4"
+  },
+  {
+   "number": 60,
+   "slug": "factors-and-multiples",
+   "folder": "60-factors-and-multiples",
+   "file": "factors-and-multiples",
+   "title": "Factors and Multiples",
+   "grade": "4"
+  },
+  {
+   "number": 61,
+   "slug": "equivalent-fractions",
+   "folder": "61-equivalent-fractions",
+   "file": "equivalent-fractions",
+   "title": "Equivalent Fractions",
+   "grade": "4"
+  },
+  {
+   "number": 62,
+   "slug": "comparing-unlike-fractions",
+   "folder": "62-comparing-unlike-fractions",
+   "file": "comparing-unlike-fractions",
+   "title": "Comparing Unlike Fractions",
+   "grade": "4"
+  },
+  {
+   "number": 63,
+   "slug": "adding-and-subtracting-fractions",
+   "folder": "63-adding-and-subtracting-fractions",
+   "file": "adding-and-subtracting-fractions",
+   "title": "Adding and Subtracting Fractions",
+   "grade": "4"
+  },
+  {
+   "number": 64,
+   "slug": "mixed-numbers",
+   "folder": "64-mixed-numbers",
+   "file": "mixed-numbers",
+   "title": "Mixed Numbers",
+   "grade": "4"
+  },
+  {
+   "number": 65,
+   "slug": "fractions-times-whole-numbers",
+   "folder": "65-fractions-times-whole-numbers",
+   "file": "fractions-times-whole-numbers",
+   "title": "Fractions Times Whole Numbers",
+   "grade": "4"
+  },
+  {
+   "number": 66,
+   "slug": "tenths-and-hundredths",
+   "folder": "66-tenths-and-hundredths",
+   "file": "tenths-and-hundredths",
+   "title": "Tenths and Hundredths",
+   "grade": "4"
+  },
+  {
+   "number": 67,
+   "slug": "comparing-decimals",
+   "folder": "67-comparing-decimals",
+   "file": "comparing-decimals",
+   "title": "Comparing Decimals",
+   "grade": "4"
+  },
+  {
+   "number": 68,
+   "slug": "measurement-conversions",
+   "folder": "68-measurement-conversions",
+   "file": "measurement-conversions",
+   "title": "Measurement Conversions",
+   "grade": "4"
+  },
+  {
+   "number": 69,
+   "slug": "area-and-perimeter-formulas",
+   "folder": "69-area-and-perimeter-formulas",
+   "file": "area-and-perimeter-formulas",
+   "title": "Area and Perimeter Formulas",
+   "grade": "4"
+  },
+  {
+   "number": 70,
+   "slug": "line-plots-with-fractions",
+   "folder": "70-line-plots-with-fractions",
+   "file": "line-plots-with-fractions",
+   "title": "Line Plots with Fractions",
+   "grade": "4"
+  },
+  {
+   "number": 71,
+   "slug": "angles",
+   "folder": "71-angles",
+   "file": "angles",
+   "title": "Angles",
+   "grade": "4"
+  },
+  {
+   "number": 72,
+   "slug": "lines-and-shapes",
+   "folder": "72-lines-and-shapes",
+   "file": "lines-and-shapes",
+   "title": "Lines and Shapes",
    "grade": "4"
   }
  ],
@@ -2432,7 +2552,7 @@
    "id": "grade-4-pre",
    "type": "pre",
    "title": "Grade 4 Pre-Assessment",
-   "total": 34,
+   "total": 77,
    "file": "assessments/color/grade-4-pre-assessment-key.pdf",
    "parts": [
     {
@@ -2659,28 +2779,387 @@
     },
     {
      "part": 9,
+     "name": "Two digits times two digits",
+     "kind": "eq3",
+     "packet": 58,
+     "packets": "58",
+     "questions": [
+      {
+       "n": 31,
+       "prompt": "19 × 21 = ?",
+       "answer": "399"
+      },
+      {
+       "n": 32,
+       "prompt": "33 × 31 = ?",
+       "answer": "1,023"
+      },
+      {
+       "n": 33,
+       "prompt": "26 × 36 = ?",
+       "answer": "936"
+      }
+     ]
+    },
+    {
+     "part": 10,
+     "name": "Divide bigger numbers",
+     "kind": "eq3",
+     "packet": 59,
+     "packets": "59",
+     "questions": [
+      {
+       "n": 34,
+       "prompt": "906 ÷ 2 = ?",
+       "answer": "453"
+      },
+      {
+       "n": 35,
+       "prompt": "805 ÷ 7 = ?",
+       "answer": "115"
+      },
+      {
+       "n": 36,
+       "prompt": "958 ÷ 2 = ?",
+       "answer": "479"
+      }
+     ]
+    },
+    {
+     "part": 11,
+     "name": "Prime or composite?",
+     "kind": "prime",
+     "packet": 60,
+     "packets": "60",
+     "questions": [
+      {
+       "n": 37,
+       "prompt": "prime or composite: 41",
+       "answer": "prime"
+      },
+      {
+       "n": 38,
+       "prompt": "prime or composite: 20",
+       "answer": "composite"
+      },
+      {
+       "n": 39,
+       "prompt": "prime or composite: 71",
+       "answer": "prime"
+      }
+     ]
+    },
+    {
+     "part": 12,
+     "name": "Is it a factor?",
+     "kind": "yes_text",
+     "packet": 60,
+     "packets": "60",
+     "questions": [
+      {
+       "n": 40,
+       "prompt": "Is 4 a factor of 72?",
+       "answer": "yes"
+      },
+      {
+       "n": 41,
+       "prompt": "Is 8 a factor of 54?",
+       "answer": "no"
+      }
+     ]
+    },
+    {
+     "part": 13,
+     "name": "Equivalent fractions",
+     "kind": "frac3",
+     "packet": 61,
+     "packets": "61",
+     "questions": [
+      {
+       "n": 42,
+       "prompt": "1/5 = ?/100",
+       "answer": "20"
+      },
+      {
+       "n": 43,
+       "prompt": "2/10 = ?/100",
+       "answer": "20"
+      },
+      {
+       "n": 44,
+       "prompt": "1/10 = ?/100",
+       "answer": "10"
+      }
+     ]
+    },
+    {
+     "part": 14,
+     "name": "Compare fractions",
+     "kind": "frac3",
+     "packet": 62,
+     "packets": "62",
+     "questions": [
+      {
+       "n": 45,
+       "prompt": "1/8 ? 10/12",
+       "answer": "<"
+      },
+      {
+       "n": 46,
+       "prompt": "4/6 ? 3/10",
+       "answer": ">"
+      },
+      {
+       "n": 47,
+       "prompt": "1/4 ? 7/12",
+       "answer": "<"
+      }
+     ]
+    },
+    {
+     "part": 15,
+     "name": "Add and subtract fractions",
+     "kind": "frac3",
+     "packet": 63,
+     "packets": "63",
+     "questions": [
+      {
+       "n": 48,
+       "prompt": "7/12 + 5/12 = ?/12",
+       "answer": "12"
+      },
+      {
+       "n": 49,
+       "prompt": "10/10 − 7/10 = ?/10",
+       "answer": "3"
+      },
+      {
+       "n": 50,
+       "prompt": "7/8 − 6/8 = ?/8",
+       "answer": "1"
+      }
+     ]
+    },
+    {
+     "part": 16,
+     "name": "Mixed numbers",
+     "kind": "mixed3",
+     "packet": 64,
+     "packets": "64",
+     "questions": [
+      {
+       "n": 51,
+       "prompt": "41/12 = ? ?/12",
+       "answer": "3 5/12"
+      },
+      {
+       "n": 52,
+       "prompt": "1 1/8 = ?/8",
+       "answer": "9/8"
+      },
+      {
+       "n": 53,
+       "prompt": "2 5/10 = ?/10",
+       "answer": "25/10"
+      }
+     ]
+    },
+    {
+     "part": 17,
+     "name": "Fraction times a whole number",
+     "kind": "frac3",
+     "packet": 65,
+     "packets": "65",
+     "questions": [
+      {
+       "n": 54,
+       "prompt": "5 × 2/3 = ?/3",
+       "answer": "10"
+      },
+      {
+       "n": 55,
+       "prompt": "3 × 6/12 = ?/12",
+       "answer": "18"
+      },
+      {
+       "n": 56,
+       "prompt": "2 × 5/6 = ?/6",
+       "answer": "10"
+      }
+     ]
+    },
+    {
+     "part": 18,
+     "name": "Tenths and hundredths",
+     "kind": "frac3",
+     "packet": 66,
+     "packets": "66",
+     "questions": [
+      {
+       "n": 57,
+       "prompt": "0.08 = ?/100",
+       "answer": "8"
+      },
+      {
+       "n": 58,
+       "prompt": "82/100 = ?",
+       "answer": "0.82"
+      },
+      {
+       "n": 59,
+       "prompt": "0.56 = ?/100",
+       "answer": "56"
+      }
+     ]
+    },
+    {
+     "part": 19,
+     "name": "Compare decimals",
+     "kind": "eq3",
+     "packet": 67,
+     "packets": "67",
+     "questions": [
+      {
+       "n": 60,
+       "prompt": "0.59 ? 0.83",
+       "answer": "<"
+      },
+      {
+       "n": 61,
+       "prompt": "0.8 ? 0.74",
+       "answer": ">"
+      },
+      {
+       "n": 62,
+       "prompt": "0.59 ? 0.92",
+       "answer": "<"
+      }
+     ]
+    },
+    {
+     "part": 20,
+     "name": "Measurement conversions",
+     "kind": "eq3",
+     "packet": 68,
+     "packets": "68",
+     "questions": [
+      {
+       "n": 63,
+       "prompt": "11 lb = ? oz",
+       "answer": "176"
+      },
+      {
+       "n": 64,
+       "prompt": "7 km = ? m",
+       "answer": "7,000"
+      },
+      {
+       "n": 65,
+       "prompt": "7 weeks = ? days",
+       "answer": "49"
+      }
+     ]
+    },
+    {
+     "part": 21,
+     "name": "Area and perimeter",
+     "kind": "eq2",
+     "packet": 69,
+     "packets": "69",
+     "questions": [
+      {
+       "n": 66,
+       "prompt": "area: 14 × 7 = ? sq cm",
+       "answer": "98"
+      },
+      {
+       "n": 67,
+       "prompt": "perimeter: 2 × 23 + 2 × 8 = ? ft",
+       "answer": "62"
+      }
+     ]
+    },
+    {
+     "part": 22,
+     "name": "Line plot questions",
+     "kind": "mixed2",
+     "packet": 70,
+     "packets": "70",
+     "questions": [
+      {
+       "n": 68,
+       "prompt": "1 7/8 − 1 = ?/8",
+       "answer": "7/8"
+      },
+      {
+       "n": 69,
+       "prompt": "1 7/8 − 2/8 = ? ?/8",
+       "answer": "1 5/8"
+      }
+     ]
+    },
+    {
+     "part": 23,
+     "name": "Angles",
+     "kind": "eq2",
+     "packet": 71,
+     "packets": "71",
+     "questions": [
+      {
+       "n": 70,
+       "prompt": "75 + ? = 90 degrees",
+       "answer": "15"
+      },
+      {
+       "n": 71,
+       "prompt": "35 + ? = 180 degrees",
+       "answer": "145"
+      }
+     ]
+    },
+    {
+     "part": 24,
+     "name": "Lines and angles",
+     "kind": "yes_text1",
+     "packet": 72,
+     "packets": "72",
+     "questions": [
+      {
+       "n": 72,
+       "prompt": "A ray goes on forever both ways.",
+       "answer": "no"
+      },
+      {
+       "n": 73,
+       "prompt": "A square has 4 lines of symmetry.",
+       "answer": "yes"
+      }
+     ]
+    },
+    {
+     "part": 25,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "56–57",
      "questions": [
       {
-       "n": 31,
+       "n": 74,
        "prompt": "Kai puts 33 beads into bags of 9. How many beads are left over?",
        "answer": "6 beads"
       },
       {
-       "n": 32,
+       "n": 75,
        "prompt": "Ella puts 25 stickers into bags of 8. How many stickers are left over?",
        "answer": "1 stickers"
       },
       {
-       "n": 33,
+       "n": 76,
        "prompt": "Rosa has 4 bags with 41 leaves in each bag. How many leaves are there in all?",
        "answer": "164 leaves"
       },
       {
-       "n": 34,
+       "n": 77,
        "prompt": "Ravi has 3 bags with 48 rocks in each bag. How many rocks are there in all?",
        "answer": "144 rocks"
       }
@@ -5002,7 +5481,7 @@
    "id": "grade-4-post",
    "type": "post",
    "title": "Grade 4 Post-Assessment",
-   "total": 34,
+   "total": 77,
    "file": "assessments/color/grade-4-post-assessment-key.pdf",
    "parts": [
     {
@@ -5229,28 +5708,387 @@
     },
     {
      "part": 9,
+     "name": "Two digits times two digits",
+     "kind": "eq3",
+     "packet": 58,
+     "packets": "58",
+     "questions": [
+      {
+       "n": 31,
+       "prompt": "12 × 11 = ?",
+       "answer": "132"
+      },
+      {
+       "n": 32,
+       "prompt": "75 × 16 = ?",
+       "answer": "1,200"
+      },
+      {
+       "n": 33,
+       "prompt": "68 × 16 = ?",
+       "answer": "1,088"
+      }
+     ]
+    },
+    {
+     "part": 10,
+     "name": "Divide bigger numbers",
+     "kind": "eq3",
+     "packet": 59,
+     "packets": "59",
+     "questions": [
+      {
+       "n": 34,
+       "prompt": "618 ÷ 3 = ?",
+       "answer": "206"
+      },
+      {
+       "n": 35,
+       "prompt": "928 ÷ 4 = ?",
+       "answer": "232"
+      },
+      {
+       "n": 36,
+       "prompt": "204 ÷ 2 = ?",
+       "answer": "102"
+      }
+     ]
+    },
+    {
+     "part": 11,
+     "name": "Prime or composite?",
+     "kind": "prime",
+     "packet": 60,
+     "packets": "60",
+     "questions": [
+      {
+       "n": 37,
+       "prompt": "prime or composite: 72",
+       "answer": "composite"
+      },
+      {
+       "n": 38,
+       "prompt": "prime or composite: 73",
+       "answer": "prime"
+      },
+      {
+       "n": 39,
+       "prompt": "prime or composite: 99",
+       "answer": "composite"
+      }
+     ]
+    },
+    {
+     "part": 12,
+     "name": "Is it a factor?",
+     "kind": "yes_text",
+     "packet": 60,
+     "packets": "60",
+     "questions": [
+      {
+       "n": 40,
+       "prompt": "Is 3 a factor of 24?",
+       "answer": "yes"
+      },
+      {
+       "n": 41,
+       "prompt": "Is 6 a factor of 90?",
+       "answer": "yes"
+      }
+     ]
+    },
+    {
+     "part": 13,
+     "name": "Equivalent fractions",
+     "kind": "frac3",
+     "packet": 61,
+     "packets": "61",
+     "questions": [
+      {
+       "n": 42,
+       "prompt": "4/12 = ?/6",
+       "answer": "2"
+      },
+      {
+       "n": 43,
+       "prompt": "2/4 = ?/100",
+       "answer": "50"
+      },
+      {
+       "n": 44,
+       "prompt": "2/4 = ?/12",
+       "answer": "6"
+      }
+     ]
+    },
+    {
+     "part": 14,
+     "name": "Compare fractions",
+     "kind": "frac3",
+     "packet": 62,
+     "packets": "62",
+     "questions": [
+      {
+       "n": 45,
+       "prompt": "3/5 ? 4/10",
+       "answer": ">"
+      },
+      {
+       "n": 46,
+       "prompt": "1/5 ? 7/12",
+       "answer": "<"
+      },
+      {
+       "n": 47,
+       "prompt": "5/8 ? 2/10",
+       "answer": ">"
+      }
+     ]
+    },
+    {
+     "part": 15,
+     "name": "Add and subtract fractions",
+     "kind": "frac3",
+     "packet": 63,
+     "packets": "63",
+     "questions": [
+      {
+       "n": 48,
+       "prompt": "5/8 − 3/8 = ?/8",
+       "answer": "2"
+      },
+      {
+       "n": 49,
+       "prompt": "12/12 − 9/12 = ?/12",
+       "answer": "3"
+      },
+      {
+       "n": 50,
+       "prompt": "10/12 − 2/12 = ?/12",
+       "answer": "8"
+      }
+     ]
+    },
+    {
+     "part": 16,
+     "name": "Mixed numbers",
+     "kind": "mixed3",
+     "packet": 64,
+     "packets": "64",
+     "questions": [
+      {
+       "n": 51,
+       "prompt": "3 3/5 = ?/5",
+       "answer": "18/5"
+      },
+      {
+       "n": 52,
+       "prompt": "23/6 = ? ?/6",
+       "answer": "3 5/6"
+      },
+      {
+       "n": 53,
+       "prompt": "21/12 = ? ?/12",
+       "answer": "1 9/12"
+      }
+     ]
+    },
+    {
+     "part": 17,
+     "name": "Fraction times a whole number",
+     "kind": "frac3",
+     "packet": 65,
+     "packets": "65",
+     "questions": [
+      {
+       "n": 54,
+       "prompt": "3 × 4/12 = ?/12",
+       "answer": "12"
+      },
+      {
+       "n": 55,
+       "prompt": "6 × 4/10 = ?/10",
+       "answer": "24"
+      },
+      {
+       "n": 56,
+       "prompt": "6 × 3/4 = ?/4",
+       "answer": "18"
+      }
+     ]
+    },
+    {
+     "part": 18,
+     "name": "Tenths and hundredths",
+     "kind": "frac3",
+     "packet": 66,
+     "packets": "66",
+     "questions": [
+      {
+       "n": 57,
+       "prompt": "0.31 = ?/100",
+       "answer": "31"
+      },
+      {
+       "n": 58,
+       "prompt": "5/100 = ?",
+       "answer": "0.05"
+      },
+      {
+       "n": 59,
+       "prompt": "0.13 = ?/100",
+       "answer": "13"
+      }
+     ]
+    },
+    {
+     "part": 19,
+     "name": "Compare decimals",
+     "kind": "eq3",
+     "packet": 67,
+     "packets": "67",
+     "questions": [
+      {
+       "n": 60,
+       "prompt": "0.45 ? 0.38",
+       "answer": ">"
+      },
+      {
+       "n": 61,
+       "prompt": "0.1 ? 0.11",
+       "answer": "<"
+      },
+      {
+       "n": 62,
+       "prompt": "0.8 ? 0.56",
+       "answer": ">"
+      }
+     ]
+    },
+    {
+     "part": 20,
+     "name": "Measurement conversions",
+     "kind": "eq3",
+     "packet": 68,
+     "packets": "68",
+     "questions": [
+      {
+       "n": 63,
+       "prompt": "6 yd = ? in",
+       "answer": "216"
+      },
+      {
+       "n": 64,
+       "prompt": "4 km = ? m",
+       "answer": "4,000"
+      },
+      {
+       "n": 65,
+       "prompt": "6 kg = ? g",
+       "answer": "6,000"
+      }
+     ]
+    },
+    {
+     "part": 21,
+     "name": "Area and perimeter",
+     "kind": "eq2",
+     "packet": 69,
+     "packets": "69",
+     "questions": [
+      {
+       "n": 66,
+       "prompt": "area: 47 × 4 = ? sq cm",
+       "answer": "188"
+      },
+      {
+       "n": 67,
+       "prompt": "perimeter: 2 × 47 + 2 × 5 = ? ft",
+       "answer": "104"
+      }
+     ]
+    },
+    {
+     "part": 22,
+     "name": "Line plot questions",
+     "kind": "mixed2",
+     "packet": 70,
+     "packets": "70",
+     "questions": [
+      {
+       "n": 68,
+       "prompt": "2 1/8 − 1 = ? ?/8",
+       "answer": "1 1/8"
+      },
+      {
+       "n": 69,
+       "prompt": "1 3/8 − 2/8 = ? ?/8",
+       "answer": "1 1/8"
+      }
+     ]
+    },
+    {
+     "part": 23,
+     "name": "Angles",
+     "kind": "eq2",
+     "packet": 71,
+     "packets": "71",
+     "questions": [
+      {
+       "n": 70,
+       "prompt": "145 + ? = 180 degrees",
+       "answer": "35"
+      },
+      {
+       "n": 71,
+       "prompt": "115 + ? = 180 degrees",
+       "answer": "65"
+      }
+     ]
+    },
+    {
+     "part": 24,
+     "name": "Lines and angles",
+     "kind": "yes_text1",
+     "packet": 72,
+     "packets": "72",
+     "questions": [
+      {
+       "n": 72,
+       "prompt": "A rectangle has 4 right angles.",
+       "answer": "yes"
+      },
+      {
+       "n": 73,
+       "prompt": "An acute angle is more than 90 degrees.",
+       "answer": "no"
+      }
+     ]
+    },
+    {
+     "part": 25,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "56–57",
      "questions": [
       {
-       "n": 31,
+       "n": 74,
        "prompt": "Omar has 8 bags with 27 buttons in each bag. How many buttons are there in all?",
        "answer": "216 buttons"
       },
       {
-       "n": 32,
+       "n": 75,
        "prompt": "Ben puts 37 cards into bags of 7. How many cards are left over?",
        "answer": "2 cards"
       },
       {
-       "n": 33,
+       "n": 76,
        "prompt": "Tess puts 30 stickers into bags of 8. How many stickers are left over?",
        "answer": "6 stickers"
       },
       {
-       "n": 34,
+       "n": 77,
        "prompt": "Finn has 3 bags with 13 buttons in each bag. How many buttons are there in all?",
        "answer": "39 buttons"
       }
@@ -5795,6 +6633,97 @@
    "packet": 55
   },
   {
+   "id": "check-in:adding-and-subtracting-fractions",
+   "type": "check-in",
+   "title": "Adding and Subtracting Fractions Check-In",
+   "total": 9,
+   "file": "63-adding-and-subtracting-fractions/color/adding-and-subtracting-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Add with strips",
+     "kind": "add_strip",
+     "packet": 63,
+     "packets": "63",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "add with strips: 2/10 and 2/10",
+       "answer": "4/10"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Split it up",
+     "kind": "frac2",
+     "packet": 63,
+     "packets": "63",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "6/8 = 3/8 + ?/8",
+       "answer": "3"
+      },
+      {
+       "n": 3,
+       "prompt": "4/6 = 2/6 + ?/6",
+       "answer": "2"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Add",
+     "kind": "frac3",
+     "packet": 63,
+     "packets": "63",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "2/10 + 5/10 = ?/10",
+       "answer": "7"
+      },
+      {
+       "n": 5,
+       "prompt": "9/12 + 2/12 = ?/12",
+       "answer": "11"
+      },
+      {
+       "n": 6,
+       "prompt": "4/8 + 1/8 = ?/8",
+       "answer": "5"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Take away",
+     "kind": "frac3",
+     "packet": 63,
+     "packets": "63",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "3/4 − 2/4 = ?/4",
+       "answer": "1"
+      },
+      {
+       "n": 8,
+       "prompt": "8/12 − 3/12 = ?/12",
+       "answer": "5"
+      },
+      {
+       "n": 9,
+       "prompt": "2/4 − 1/4 = ?/4",
+       "answer": "1"
+      }
+     ]
+    }
+   ],
+   "packet": 63
+  },
+  {
    "id": "check-in:adding-and-taking-away",
    "type": "check-in",
    "title": "Adding and Taking Away Check-In",
@@ -6210,6 +7139,83 @@
    "packet": 9
   },
   {
+   "id": "check-in:angles",
+   "type": "check-in",
+   "title": "Angles Check-In",
+   "total": 8,
+   "file": "71-angles/color/angles-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Acute, right or obtuse?",
+     "kind": "angle_kind",
+     "packet": 71,
+     "packets": "71",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "angle kind: 65 turned 0",
+       "answer": "acute"
+      },
+      {
+       "n": 2,
+       "prompt": "angle kind: 130 turned 0",
+       "answer": "obtuse"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Read the protractor",
+     "kind": "read_protractor",
+     "packet": 71,
+     "packets": "71",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "read the protractor: 170",
+       "answer": "170 degrees"
+      },
+      {
+       "n": 4,
+       "prompt": "read the protractor: 110",
+       "answer": "110 degrees"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Find the missing angle",
+     "kind": "eq2",
+     "packet": 71,
+     "packets": "71",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "65 + ? = 90 degrees",
+       "answer": "25"
+      },
+      {
+       "n": 6,
+       "prompt": "75 + ? = 180 degrees",
+       "answer": "105"
+      },
+      {
+       "n": 7,
+       "prompt": "55 + ? = 90 degrees",
+       "answer": "35"
+      },
+      {
+       "n": 8,
+       "prompt": "55 + ? = 180 degrees",
+       "answer": "125"
+      }
+     ]
+    }
+   ],
+   "packet": 71
+  },
+  {
    "id": "check-in:area",
    "type": "check-in",
    "title": "Area Check-In",
@@ -6299,6 +7305,106 @@
     }
    ],
    "packet": 38
+  },
+  {
+   "id": "check-in:area-and-perimeter-formulas",
+   "type": "check-in",
+   "title": "Area and Perimeter Formulas Check-In",
+   "total": 9,
+   "file": "69-area-and-perimeter-formulas/color/area-and-perimeter-formulas-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Both formulas",
+     "kind": "rect_formula",
+     "packet": 69,
+     "packets": "69",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "both formulas: 13 m by 3 m",
+       "answer": "area 39 sq m, perimeter 32 m"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Area",
+     "kind": "eq2",
+     "packet": 69,
+     "packets": "69",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "area: 35 × 4 = ? sq cm",
+       "answer": "140"
+      },
+      {
+       "n": 3,
+       "prompt": "area: 47 × 4 = ? sq m",
+       "answer": "188"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Perimeter",
+     "kind": "eq2",
+     "packet": 69,
+     "packets": "69",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "perimeter: 2 × 17 + 2 × 5 = ? in",
+       "answer": "44"
+      },
+      {
+       "n": 5,
+       "prompt": "perimeter: 2 × 20 + 2 × 8 = ? ft",
+       "answer": "56"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Missing side",
+     "kind": "eq2",
+     "packet": 69,
+     "packets": "69",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "7 m × ? m = 70 sq m",
+       "answer": "10"
+      },
+      {
+       "n": 7,
+       "prompt": "12 m × ? m = 84 sq m",
+       "answer": "7"
+      }
+     ]
+    },
+    {
+     "part": 5,
+     "name": "Missing side from the perimeter",
+     "kind": "eq1",
+     "packet": 69,
+     "packets": "69",
+     "questions": [
+      {
+       "n": 8,
+       "prompt": "P = 68 m, length 26 m: width = ? m",
+       "answer": "8"
+      },
+      {
+       "n": 9,
+       "prompt": "P = 46 m, length 14 m: width = ? m",
+       "answer": "9"
+      }
+     ]
+    }
+   ],
+   "packet": 69
   },
   {
    "id": "check-in:back-through-ten",
@@ -6405,6 +7511,93 @@
     }
    ],
    "packet": 5
+  },
+  {
+   "id": "check-in:comparing-decimals",
+   "type": "check-in",
+   "title": "Comparing Decimals Check-In",
+   "total": 10,
+   "file": "67-comparing-decimals/color/comparing-decimals-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Compare with grids",
+     "kind": "compare_grids",
+     "packet": 67,
+     "packets": "67",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "compare grids: 0.15 and 0.21",
+       "answer": "<"
+      },
+      {
+       "n": 2,
+       "prompt": "compare grids: 0.65 and 0.6",
+       "answer": ">"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Compare",
+     "kind": "eq3",
+     "packet": 67,
+     "packets": "67",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "0.24 ? 0.56",
+       "answer": "<"
+      },
+      {
+       "n": 4,
+       "prompt": "0.45 ? 0.29",
+       "answer": ">"
+      },
+      {
+       "n": 5,
+       "prompt": "0.17 ? 0.47",
+       "answer": "<"
+      },
+      {
+       "n": 6,
+       "prompt": "0.73 ? 0.65",
+       "answer": ">"
+      },
+      {
+       "n": 7,
+       "prompt": "0.45 ? 0.83",
+       "answer": "<"
+      },
+      {
+       "n": 8,
+       "prompt": "0.52 ? 0.29",
+       "answer": ">"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Circle the biggest",
+     "kind": "biggest_dec",
+     "packet": 67,
+     "packets": "67",
+     "questions": [
+      {
+       "n": 9,
+       "prompt": "biggest decimal: 0.6 0.55 0.07",
+       "answer": "0.6"
+      },
+      {
+       "n": 10,
+       "prompt": "biggest decimal: 0.15 0.2 0.03",
+       "answer": "0.2"
+      }
+     ]
+    }
+   ],
+   "packet": 67
   },
   {
    "id": "check-in:comparing-fractions",
@@ -6604,6 +7797,93 @@
    "packet": 17
   },
   {
+   "id": "check-in:comparing-unlike-fractions",
+   "type": "check-in",
+   "title": "Comparing Unlike Fractions Check-In",
+   "total": 10,
+   "file": "62-comparing-unlike-fractions/color/comparing-unlike-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "More or less than half?",
+     "kind": "vs_half",
+     "packet": 62,
+     "packets": "62",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "more or less than half: 11/12",
+       "answer": "more than 1/2"
+      },
+      {
+       "n": 2,
+       "prompt": "more or less than half: 3/6",
+       "answer": "= 1/2"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Make the bottoms the same",
+     "kind": "frac1",
+     "packet": 62,
+     "packets": "62",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "3/4 = ?/12 and 4/6 = ?/12 so 3/4 ? 4/6",
+       "answer": "9 · 8 · >"
+      },
+      {
+       "n": 4,
+       "prompt": "3/4 = ?/12 and 5/6 = ?/12 so 3/4 ? 5/6",
+       "answer": "9 · 10 · <"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Compare",
+     "kind": "frac3",
+     "packet": 62,
+     "packets": "62",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "1/4 ? 7/10",
+       "answer": "<"
+      },
+      {
+       "n": 6,
+       "prompt": "5/6 ? 4/12",
+       "answer": ">"
+      },
+      {
+       "n": 7,
+       "prompt": "1/8 ? 6/10",
+       "answer": "<"
+      },
+      {
+       "n": 8,
+       "prompt": "8/10 ? 3/12",
+       "answer": ">"
+      },
+      {
+       "n": 9,
+       "prompt": "1/8 ? 8/10",
+       "answer": "<"
+      },
+      {
+       "n": 10,
+       "prompt": "2/3 ? 3/12",
+       "answer": ">"
+      }
+     ]
+    }
+   ],
+   "packet": 62
+  },
+  {
    "id": "check-in:counting-forward-and-backward",
    "type": "check-in",
    "title": "Counting Forward and Backward Check-In",
@@ -6794,6 +8074,97 @@
     }
    ],
    "packet": 40
+  },
+  {
+   "id": "check-in:dividing-bigger-numbers",
+   "type": "check-in",
+   "title": "Dividing Bigger Numbers Check-In",
+   "total": 9,
+   "file": "59-dividing-bigger-numbers/color/dividing-bigger-numbers-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "The area model",
+     "kind": "div_area",
+     "packet": 59,
+     "packets": "59",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "divide with the area model: 65 / 5 (given)",
+       "answer": "13"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Two and three digits",
+     "kind": "eq3",
+     "packet": 59,
+     "packets": "59",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "542 ÷ 2 = ?",
+       "answer": "271"
+      },
+      {
+       "n": 3,
+       "prompt": "835 ÷ 5 = ?",
+       "answer": "167"
+      },
+      {
+       "n": 4,
+       "prompt": "412 ÷ 2 = ?",
+       "answer": "206"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Four digits",
+     "kind": "eq2",
+     "packet": 59,
+     "packets": "59",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "4,052 ÷ 4 = ?",
+       "answer": "1,013"
+      },
+      {
+       "n": 6,
+       "prompt": "2,026 ÷ 2 = ?",
+       "answer": "1,013"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "With a remainder",
+     "kind": "eq3",
+     "packet": 59,
+     "packets": "59",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "394 ÷ 8 = ? R ?",
+       "answer": "49 R 2"
+      },
+      {
+       "n": 8,
+       "prompt": "357 ÷ 9 = ? R ?",
+       "answer": "39 R 6"
+      },
+      {
+       "n": 9,
+       "prompt": "172 ÷ 5 = ? R ?",
+       "answer": "34 R 2"
+      }
+     ]
+    }
+   ],
+   "packet": 59
   },
   {
    "id": "check-in:division",
@@ -7369,6 +8740,97 @@
    "packet": 21
   },
   {
+   "id": "check-in:equivalent-fractions",
+   "type": "check-in",
+   "title": "Equivalent Fractions Check-In",
+   "total": 9,
+   "file": "61-equivalent-fractions/color/equivalent-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Cut the pieces",
+     "kind": "cut_strip",
+     "packet": 61,
+     "packets": "61",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "cut the pieces: 4/5 into 2",
+       "answer": "8/10"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Find the top number",
+     "kind": "frac3",
+     "packet": 61,
+     "packets": "61",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "4/6 = ?/12",
+       "answer": "8"
+      },
+      {
+       "n": 3,
+       "prompt": "3/6 = ?/12",
+       "answer": "6"
+      },
+      {
+       "n": 4,
+       "prompt": "4/5 = ?/100",
+       "answer": "80"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Fewer, bigger pieces",
+     "kind": "frac3",
+     "packet": 61,
+     "packets": "61",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "50/100 = ?/4",
+       "answer": "2"
+      },
+      {
+       "n": 6,
+       "prompt": "60/100 = ?/10",
+       "answer": "6"
+      },
+      {
+       "n": 7,
+       "prompt": "6/12 = ?/4",
+       "answer": "2"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Equal or not?",
+     "kind": "equal_q",
+     "packet": 61,
+     "packets": "61",
+     "questions": [
+      {
+       "n": 8,
+       "prompt": "equal or not: 4/6 and 8/12",
+       "answer": "yes"
+      },
+      {
+       "n": 9,
+       "prompt": "equal or not: 2/4 and 5/8",
+       "answer": "no"
+      }
+     ]
+    }
+   ],
+   "packet": 61
+  },
+  {
    "id": "check-in:even-and-odd",
    "type": "check-in",
    "title": "Even and Odd Check-In",
@@ -7502,6 +8964,97 @@
     }
    ],
    "packet": 22
+  },
+  {
+   "id": "check-in:factors-and-multiples",
+   "type": "check-in",
+   "title": "Factors and Multiples Check-In",
+   "total": 9,
+   "file": "60-factors-and-multiples/color/factors-and-multiples-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Factor pairs",
+     "kind": "pairs",
+     "packet": 60,
+     "packets": "60",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "48 = 1 × ? and 2 × ? and 3 × ? and 4 × ? and 6 × ?",
+       "answer": "48 · 24 · 16 · 12 · 8"
+      },
+      {
+       "n": 2,
+       "prompt": "40 = 1 × ? and 2 × ? and 4 × ? and 5 × ?",
+       "answer": "40 · 20 · 10 · 8"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Is it a factor?",
+     "kind": "yes_text",
+     "packet": 60,
+     "packets": "60",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "Is 3 a factor of 60?",
+       "answer": "yes"
+      },
+      {
+       "n": 4,
+       "prompt": "Is 4 a factor of 90?",
+       "answer": "no"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Is it a multiple?",
+     "kind": "yes_text",
+     "packet": 60,
+     "packets": "60",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "Is 48 a multiple of 6?",
+       "answer": "yes"
+      },
+      {
+       "n": 6,
+       "prompt": "Is 62 a multiple of 6?",
+       "answer": "no"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Prime or composite?",
+     "kind": "prime",
+     "packet": 60,
+     "packets": "60",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "prime or composite: 53",
+       "answer": "prime"
+      },
+      {
+       "n": 8,
+       "prompt": "prime or composite: 46",
+       "answer": "composite"
+      },
+      {
+       "n": 9,
+       "prompt": "prime or composite: 58",
+       "answer": "composite"
+      }
+     ]
+    }
+   ],
+   "packet": 60
   },
   {
    "id": "check-in:four-operations",
@@ -7765,6 +9318,88 @@
     }
    ],
    "packet": 44
+  },
+  {
+   "id": "check-in:fractions-times-whole-numbers",
+   "type": "check-in",
+   "title": "Fractions Times Whole Numbers Check-In",
+   "total": 9,
+   "file": "65-fractions-times-whole-numbers/color/fractions-times-whole-numbers-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Groups of a fraction",
+     "kind": "groups_frac",
+     "packet": 65,
+     "packets": "65",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "groups of a fraction: 3 x 3/4",
+       "answer": "9/4"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Multiply",
+     "kind": "frac3",
+     "packet": 65,
+     "packets": "65",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "5 × 1/12 = ?/12",
+       "answer": "5"
+      },
+      {
+       "n": 3,
+       "prompt": "3 × 7/12 = ?/12",
+       "answer": "21"
+      },
+      {
+       "n": 4,
+       "prompt": "5 × 3/12 = ?/12",
+       "answer": "15"
+      },
+      {
+       "n": 5,
+       "prompt": "2 × 2/8 = ?/8",
+       "answer": "4"
+      },
+      {
+       "n": 6,
+       "prompt": "5 × 2/12 = ?/12",
+       "answer": "10"
+      },
+      {
+       "n": 7,
+       "prompt": "5 × 7/10 = ?/10",
+       "answer": "35"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "As a mixed number",
+     "kind": "mixed2",
+     "packet": 65,
+     "packets": "65",
+     "questions": [
+      {
+       "n": 8,
+       "prompt": "2 × 7/8 = ?/8 = ? ?/8",
+       "answer": "1 6/8"
+      },
+      {
+       "n": 9,
+       "prompt": "4 × 2/6 = ?/6 = ? ?/6",
+       "answer": "1 2/6"
+      }
+     ]
+    }
+   ],
+   "packet": 65
   },
   {
    "id": "check-in:graphs",
@@ -8286,6 +9921,164 @@
    "packet": 15
   },
   {
+   "id": "check-in:line-plots-with-fractions",
+   "type": "check-in",
+   "title": "Line Plots with Fractions Check-In",
+   "total": 7,
+   "file": "70-line-plots-with-fractions/color/line-plots-with-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Read the X chart",
+     "kind": "read_x8",
+     "packet": 70,
+     "packets": "70",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "read the x chart: Sticks (inches)",
+       "answer": "3 · 5/8 · 2 2/8 · 8"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Add the X's",
+     "kind": "frac2",
+     "packet": 70,
+     "packets": "70",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "6 × 2/8 = ?/8",
+       "answer": "12"
+      },
+      {
+       "n": 3,
+       "prompt": "2 × 1/8 = ?/8",
+       "answer": "2"
+      },
+      {
+       "n": 4,
+       "prompt": "3 × 5/8 = ?/8",
+       "answer": "15"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "How far apart?",
+     "kind": "mixed2",
+     "packet": 70,
+     "packets": "70",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "1 1/8 − 4/8 = ?/8",
+       "answer": "5/8"
+      },
+      {
+       "n": 6,
+       "prompt": "1 7/8 − 3/8 = ? ?/8",
+       "answer": "1 4/8"
+      },
+      {
+       "n": 7,
+       "prompt": "1 1/8 − 2/8 = ?/8",
+       "answer": "7/8"
+      }
+     ]
+    }
+   ],
+   "packet": 70
+  },
+  {
+   "id": "check-in:lines-and-shapes",
+   "type": "check-in",
+   "title": "Lines and Shapes Check-In",
+   "total": 8,
+   "file": "72-lines-and-shapes/color/lines-and-shapes-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Segment, ray or line?",
+     "kind": "line_name",
+     "packet": 72,
+     "packets": "72",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "segment, ray or line: ray at -25",
+       "answer": "ray"
+      },
+      {
+       "n": 2,
+       "prompt": "segment, ray or line: line at 35",
+       "answer": "line"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Parallel, perpendicular or neither?",
+     "kind": "two_lines",
+     "packet": 72,
+     "packets": "72",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "two lines: neither at 50",
+       "answer": "neither"
+      },
+      {
+       "n": 4,
+       "prompt": "two lines: perpendicular at 25",
+       "answer": "perpendicular"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Right, acute or obtuse triangle?",
+     "kind": "triangle_kind",
+     "packet": 72,
+     "packets": "72",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "triangle kind: 60 and 65",
+       "answer": "acute"
+      },
+      {
+       "n": 6,
+       "prompt": "triangle kind: 20 and 35",
+       "answer": "obtuse"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "True or not?",
+     "kind": "yes_text1",
+     "packet": 72,
+     "packets": "72",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "An obtuse angle is more than 90 degrees.",
+       "answer": "yes"
+      },
+      {
+       "n": 8,
+       "prompt": "A rhombus always has a right angle.",
+       "answer": "no"
+      }
+     ]
+    }
+   ],
+   "packet": 72
+  },
+  {
    "id": "check-in:mass-and-liquid-volume",
    "type": "check-in",
    "title": "Mass and Liquid Volume Check-In",
@@ -8351,6 +10144,88 @@
     }
    ],
    "packet": 49
+  },
+  {
+   "id": "check-in:measurement-conversions",
+   "type": "check-in",
+   "title": "Measurement Conversions Check-In",
+   "total": 9,
+   "file": "68-measurement-conversions/color/measurement-conversions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Fill in the table",
+     "kind": "conv_table",
+     "packet": 68,
+     "packets": "68",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "conversion table: min to sec: 1-2-3-6-8",
+       "answer": "2 min = 120 sec, 3 min = 180 sec, 6 min = 360 sec, 8 min = 480 sec"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Change the unit",
+     "kind": "eq3",
+     "packet": 68,
+     "packets": "68",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "7 yd = ? in",
+       "answer": "252"
+      },
+      {
+       "n": 3,
+       "prompt": "5 lb = ? oz",
+       "answer": "80"
+      },
+      {
+       "n": 4,
+       "prompt": "2 kg = ? g",
+       "answer": "2,000"
+      },
+      {
+       "n": 5,
+       "prompt": "5 hr = ? min",
+       "answer": "300"
+      },
+      {
+       "n": 6,
+       "prompt": "2 m = ? cm",
+       "answer": "200"
+      },
+      {
+       "n": 7,
+       "prompt": "12 days = ? hr",
+       "answer": "288"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Mixed units",
+     "kind": "eq2",
+     "packet": 68,
+     "packets": "68",
+     "questions": [
+      {
+       "n": 8,
+       "prompt": "4 m 5 cm = ? cm",
+       "answer": "405"
+      },
+      {
+       "n": 9,
+       "prompt": "6 ft 1 in = ? in",
+       "answer": "73"
+      }
+     ]
+    }
+   ],
+   "packet": 68
   },
   {
    "id": "check-in:measuring-length",
@@ -8586,6 +10461,97 @@
     }
    ],
    "packet": 11
+  },
+  {
+   "id": "check-in:mixed-numbers",
+   "type": "check-in",
+   "title": "Mixed Numbers Check-In",
+   "total": 9,
+   "file": "64-mixed-numbers/color/mixed-numbers-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Write the mixed number",
+     "kind": "to_mixed",
+     "packet": 64,
+     "packets": "64",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "write the mixed number: 4/3 in strips",
+       "answer": "4/3 = 1 1/3"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Fraction to mixed number",
+     "kind": "mixed3",
+     "packet": 64,
+     "packets": "64",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "9/4 = ? ?/4",
+       "answer": "2 1/4"
+      },
+      {
+       "n": 3,
+       "prompt": "11/6 = ? ?/6",
+       "answer": "1 5/6"
+      },
+      {
+       "n": 4,
+       "prompt": "28/10 = ? ?/10",
+       "answer": "2 8/10"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Mixed number to fraction",
+     "kind": "mixed3",
+     "packet": 64,
+     "packets": "64",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "3 4/10 = ?/10",
+       "answer": "34/10"
+      },
+      {
+       "n": 6,
+       "prompt": "1 5/10 = ?/10",
+       "answer": "15/10"
+      },
+      {
+       "n": 7,
+       "prompt": "3 11/12 = ?/12",
+       "answer": "47/12"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Add and take away",
+     "kind": "mixed2",
+     "packet": 64,
+     "packets": "64",
+     "questions": [
+      {
+       "n": 8,
+       "prompt": "2 1/6 + 1 2/6 = ? ?/6",
+       "answer": "3 3/6"
+      },
+      {
+       "n": 9,
+       "prompt": "3 4/5 − 1 2/5 = ? ?/5",
+       "answer": "2 2/5"
+      }
+     ]
+    }
+   ],
+   "packet": 64
   },
   {
    "id": "check-in:money",
@@ -9035,6 +11001,93 @@
     }
    ],
    "packet": 37
+  },
+  {
+   "id": "check-in:multiplying-two-digit-numbers",
+   "type": "check-in",
+   "title": "Multiplying Two-Digit Numbers Check-In",
+   "total": 10,
+   "file": "58-multiplying-two-digit-numbers/color/multiplying-two-digit-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "The area model",
+     "kind": "area2",
+     "packet": 58,
+     "packets": "58",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "area model two digits: 19 x 22 (given)",
+       "answer": "418"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Tens times tens",
+     "kind": "eq3",
+     "packet": 58,
+     "packets": "58",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "80 × 60 = ?",
+       "answer": "4,800"
+      },
+      {
+       "n": 3,
+       "prompt": "50 × 20 = ?",
+       "answer": "1,000"
+      },
+      {
+       "n": 4,
+       "prompt": "30 × 70 = ?",
+       "answer": "2,100"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Multiply",
+     "kind": "eq3",
+     "packet": 58,
+     "packets": "58",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "47 × 26 = ?",
+       "answer": "1,222"
+      },
+      {
+       "n": 6,
+       "prompt": "54 × 36 = ?",
+       "answer": "1,944"
+      },
+      {
+       "n": 7,
+       "prompt": "19 × 31 = ?",
+       "answer": "589"
+      },
+      {
+       "n": 8,
+       "prompt": "61 × 16 = ?",
+       "answer": "976"
+      },
+      {
+       "n": 9,
+       "prompt": "68 × 46 = ?",
+       "answer": "3,128"
+      },
+      {
+       "n": 10,
+       "prompt": "33 × 36 = ?",
+       "answer": "1,188"
+      }
+     ]
+    }
+   ],
+   "packet": 58
   },
   {
    "id": "check-in:over-the-next-ten",
@@ -10768,6 +12821,102 @@
     }
    ],
    "packet": 7
+  },
+  {
+   "id": "check-in:tenths-and-hundredths",
+   "type": "check-in",
+   "title": "Tenths and Hundredths Check-In",
+   "total": 10,
+   "file": "66-tenths-and-hundredths/color/tenths-and-hundredths-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Hundredths",
+     "kind": "read_grid",
+     "packet": 66,
+     "packets": "66",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "read the grid: 67 hundredths",
+       "answer": "67/100 = 0.67"
+      },
+      {
+       "n": 2,
+       "prompt": "read the grid: 7 hundredths",
+       "answer": "7/100 = 0.07"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Fraction to decimal",
+     "kind": "frac3",
+     "packet": 66,
+     "packets": "66",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "7/10 = ?",
+       "answer": "0.7"
+      },
+      {
+       "n": 4,
+       "prompt": "69/100 = ?",
+       "answer": "0.69"
+      },
+      {
+       "n": 5,
+       "prompt": "12/100 = ?",
+       "answer": "0.12"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Decimal to fraction",
+     "kind": "frac3",
+     "packet": 66,
+     "packets": "66",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "0.96 = ?/100",
+       "answer": "96"
+      },
+      {
+       "n": 7,
+       "prompt": "0.21 = ?/100",
+       "answer": "21"
+      },
+      {
+       "n": 8,
+       "prompt": "0.15 = ?/100",
+       "answer": "15"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Add tenths and hundredths",
+     "kind": "frac2",
+     "packet": 66,
+     "packets": "66",
+     "questions": [
+      {
+       "n": 9,
+       "prompt": "1/10 + 80/100 = ?/100",
+       "answer": "90"
+      },
+      {
+       "n": 10,
+       "prompt": "2/10 + 24/100 = ?/100",
+       "answer": "44"
+      }
+     ]
+    }
+   ],
+   "packet": 66
   },
   {
    "id": "check-in:thousands",

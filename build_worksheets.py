@@ -11525,8 +11525,8 @@ def learn_area(bk):
     if bottom < 112:
         print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
     teacher_note(bk, "Goal: area as unit squares that cover a shape, then rows × columns (3.MD.5–7). Say "
-                     "“How many rows? How many in each row?” Area is inside; the edge is perimeter (next "
-                     "packet). Link breaking apart to packet 34.")
+                     "“How many rows? How many in each row?” Area is inside; the edge is perimeter (packet "
+                     "45). Link breaking apart to packet 34.")
 
 
 def practice_area(bk):
@@ -14136,7 +14136,7 @@ def learn_mult_one_digit(bk):
     if bottom < 112:
         print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
     teacher_note(bk, "Goal: multiply a two- or three-digit number by one digit with the area model, then partial "
-                     "products (4.NBT.5). It is packet 39's break-it-apart area with packet 38's tens. Say “Tens "
+                     "products (4.NBT.5). It is packet 38's break-it-apart area with packet 37's tens. Say “Tens "
                      "times 4, ones times 4, then add.”")
 
 
@@ -14373,7 +14373,7 @@ CHECKINS["57-division-with-remainders"] = [
 ]
 
 
-# ---------------------------------------------------------------------- grade 4 assessments (packets 48-52)
+# ---------------------------------------------------------------------- grade 4 assessments (packets 53-72)
 
 
 def stories_rem(seed, pairs):
@@ -15061,7 +15061,7 @@ def practice_equivalent(bk):
 
 
 REVIEW_61 = ["1,248 ÷ 4 = [312]", "42 × 13 = [546]", "784 ÷ 4 = [196]",
-             "3/8 [<] 5/8", "5,912 to the nearest hundred = [5,900]", "4/5 of 25 = [20]"]
+             "26 × 3 = [78]", "5,912 to the nearest hundred = [5,900]", "4/5 of 25 = [20]"]
 
 WORDS_61 = [
     ("Mia ate 3/4 of a pizza cut in 12 slices. How many slices did she eat?", "3/4 = 9/12", "9", "slices"),
