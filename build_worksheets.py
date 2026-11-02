@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–67", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–68", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -16068,6 +16068,184 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 68. Measurement Conversions
+
+
+CONV = {("m", "cm"): 100, ("km", "m"): 1000, ("kg", "g"): 1000, ("L", "mL"): 1000, ("ft", "in"): 12,
+        ("yd", "ft"): 3, ("yd", "in"): 36, ("lb", "oz"): 16, ("hr", "min"): 60, ("min", "sec"): 60,
+        ("week", "day"): 7, ("day", "hr"): 24}
+
+
+def unit_plural(u, n):
+    """Plural for the units that are words (3 weeks, 2 days); abbreviations stay the same."""
+    return {"week": "weeks", "day": "days"}.get(u, u) if n != 1 else u
+
+
+def conv_eq(n, big, small):
+    m = n * CONV[(big, small)]
+    return f"{n} {unit_plural(big, n)} = [{nf(m)}] {unit_plural(small, m)}"
+
+
+def c_conv_table(bk, x, cy, w, item):
+    """A conversion table: the big unit on the left, the small unit on the right; the first row is given."""
+    big, small, ns = item[:3]
+    given = len(item) > 3 and item[3]
+    c = bk.c
+    f = CONV[(big, small)]
+    cw, rh = 80, 22
+    tx, top = x + GUT + 10, cy + 20 + rh * (len(ns) + 1)
+    c.setStrokeColor(T.line)
+    c.setLineWidth(0.8)
+    for i in range(len(ns) + 2):
+        c.line(tx, top - i * rh, tx + 2 * cw, top - i * rh)
+    for j in range(3):
+        c.line(tx + j * cw, top, tx + j * cw, top - (len(ns) + 1) * rh)
+    c.setFillColor(T.ink)
+    c.setFont("AvB", 12)
+    c.drawCentredString(tx + cw / 2, top - rh + 7, big)
+    c.drawCentredString(tx + 1.5 * cw, top - rh + 7, small)
+    for i, n in enumerate(ns):
+        yy = top - (i + 2) * rh
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", 13)
+        c.drawCentredString(tx + cw / 2, yy + 6, str(n))
+        v = nf(n * f)
+        if i == 0 or given:
+            c.setFillColor(T.ink)
+            c.setFont("Rnd", 13)
+            c.drawCentredString(tx + 1.5 * cw, yy + 6, v)
+        else:
+            bw = max(40, sw(v, "Rnd", 13) + 12)
+            bk.box(tx + 1.5 * cw - bw / 2, yy + 2, bw, rh - 4, v, size=12)
+
+
+def learn_conversions(bk):
+    y = bk.new_page("Measurement Conversions", "A big unit holds many small units. Multiply to change units.",
+                    name_line=False, big=True, footer="WeMath  ·  Measurement Conversions")
+    c = bk.c
+    label(bk, M, y - 6, "1 meter is 100 centimeters")
+    color_eq(bk, M + 14, y - 42, [("3 m", "a"), ("=", "op"), ("3 × 100", None), ("=", "op"), ("300 cm", "b")], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 330, y - 38, "Big unit to small unit: multiply.")
+    y -= 64
+
+    label(bk, M, y - 6, "Make a table")
+    c_conv_table(bk, M - GUT - 10 + 14, y - 176, 300, ("ft", "in", (1, 2, 3, 4, 5), True))
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 220, y - 40, "1 foot = 12 inches.")
+    c.drawString(M + 220, y - 58, "Each row adds 12 more.")
+    c.drawString(M + 220, y - 76, "5 ft = 5 × 12 = 60 in.")
+    y -= 172
+
+    label(bk, M, y - 6, "Units to know")
+    rows = ("1 km = 1,000 m      1 m = 100 cm      1 kg = 1,000 g      1 L = 1,000 mL",
+            "1 yd = 3 ft      1 ft = 12 in      1 lb = 16 oz",
+            "1 hr = 60 min      1 min = 60 sec      1 day = 24 hr      1 week = 7 days")
+    for i, r in enumerate(rows):
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", 12)
+        c.drawString(M + 14, y - 32 - i * 20, r)
+    y -= 100
+
+    label(bk, M, y - 6, "Mixed units")
+    color_eq(bk, M + 14, y - 40, [("2 m 35 cm", "a"), ("=", "op"), ("200 cm + 35 cm", None), ("=", "op"),
+                                  ("235 cm", "b")], 18)
+    y -= 62
+
+    bottom = your_turn(bk, y, h=70)
+    bk.ask("conversion: 4 ft your turn")
+    bk.eq(M + 150, bottom + 26, "4 ft = [48] in", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: change a bigger unit into a smaller one and solve measurement word problems "
+                     "(4.MD.1–2). Say “How many small units in one big unit? Then how many in 3?” Make a table.")
+
+
+def practice_conversions(bk):
+    title = "Measurement Conversions: Practice"
+    y = bk.new_page(title, "Big unit to small unit: multiply by how many fit in one.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Fill in the table", "The first row is done.", "conv_table",
+         [("m", "cm", (1, 2, 4, 6, 9)), ("yd", "ft", (1, 3, 5, 7, 10)), ("lb", "oz", (1, 2, 3, 5, 8)),
+          ("hr", "min", (1, 2, 4, 5, 10))])
+    part(2, "Metric units", "No help this time.", "eq3",
+         [conv_eq(n, b, s) for n, b, s in ((4, "m", "cm"), (3, "kg", "g"), (5, "L", "mL"), (2, "km", "m"),
+                                           (7, "m", "cm"), (9, "kg", "g"), (6, "km", "m"), (8, "L", "mL"),
+                                           (12, "m", "cm"), (4, "kg", "g"), (3, "L", "mL"), (10, "km", "m"))])
+    part(3, "Feet, pounds and time", "No help this time.", "eq3",
+         [conv_eq(n, b, s) for n, b, s in ((3, "ft", "in"), (4, "yd", "ft"), (2, "lb", "oz"), (5, "min", "sec"),
+                                           (3, "hr", "min"), (2, "yd", "in"), (6, "ft", "in"), (3, "week", "day"),
+                                           (4, "lb", "oz"), (2, "day", "hr"), (8, "yd", "ft"), (7, "min", "sec"))])
+    part(4, "Mixed units", "No help this time. Change the big unit, then add.", "eq2",
+         ["3 m 42 cm = [342] cm", "1 kg 250 g = [1,250] g",
+          "3 ft 4 in = [40] in", "2 hr 15 min = [135] min", "4 m 8 cm = [408] cm", "2 L 600 mL = [2,600] mL",
+          "5 ft 6 in = [66] in", "1 hr 45 min = [105] min", "2 yd 1 ft = [7] ft", "3 lb 5 oz = [53] oz"])
+    part(5, "Which is more?", "No help this time. Change to the same unit first.", "eq3",
+         ["3 ft [<] 40 in", "2 m [>] 150 cm", "1 kg [<] 1,200 g", "5 yd [>] 14 ft", "2 hr [>] 100 min",
+          "3 L [=] 3,000 mL", "2 lb [<] 40 oz", "4 min [>] 200 sec"])
+    part(6, "Add and take away", "No help this time. Use the small unit.", "eq2",
+         [f"1 L {MINUS} 350 mL = [650] mL", "2 m + 45 cm = [245] cm", f"3 ft {MINUS} 8 in = [28] in",
+          "1 hr + 25 min = [85] min", f"1 kg {MINUS} 375 g = [625] g", "2 yd + 2 ft = [8] ft",
+          f"1 km {MINUS} 400 m = [600] m", "1 lb + 9 oz = [25] oz"])
+    part(7, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_68)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 8, "Word problems", "Change to the same unit first.")
+    for i, story in enumerate(WORDS_68):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 8, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_68 = ["0.7 [>] 0.65", "38/100 = [0.38]", "5 × 3/4 = [15]/4", "2 5/6 + 1 3/6 = [4] [2]/6",
+             "36 × 25 = [900]", "4,568 ÷ 8 = [571]"]
+
+WORDS_68 = [
+    ("A rope is 3 m long. Leo cuts off 75 cm. How long is the rope now, in centimeters?",
+     f"300 cm {MINUS} 75 cm = 225 cm", "225", "cm"),
+    ("A movie is 2 hours long. Ana has watched 85 minutes. How many minutes are left?",
+     f"120 {MINUS} 85 = 35", "35", "minutes"),
+    ("A bag of apples weighs 2 kg. Each apple is about 200 g. About how many apples are in the bag?",
+     f"2,000 {DIV} 200 = 10", "10", "apples"),
+    ("Mia drinks 250 mL of milk each day. How much does she drink in a week?", f"7 {TIMES} 250 = 1,750",
+     "1,750", "mL"),
+    ("A desk is 4 ft long. A shelf is 50 in long. Which is longer?", "4 ft = 48 in < 50 in", "shelf", ""),
+    ("Challenge: Ben runs 400 m around the track 6 times. Is that more than 2 km?",
+     f"6 {TIMES} 400 = 2,400 m > 2,000 m", "yes", ""),
+]
+
+KINDS_68 = {
+    "conv_table": Kind(156, 2, lambda it: f"conversion table: {it[0]} to {it[1]}: " + "-".join(map(str, it[2])),
+                       c_conv_table),
+}
+KINDS.update(KINDS_68)
+
+CONV_POOL = [conv_eq(n, b, s) for (b, s) in CONV for n in rng(2, 12)]
+MIXED_UNITS = ([f"{a} m {b} cm = [{100 * a + b}] cm" for a in rng(1, 6) for b in (5, 12, 27, 48, 60, 83)]
+               + [f"{a} ft {b} in = [{12 * a + b}] in" for a in rng(1, 6) for b in (1, 3, 5, 7, 9, 11)]
+               + [f"{a} hr {b} min = [{60 * a + b}] min" for a in rng(1, 4) for b in (10, 20, 35, 40, 50)])
+
+CHECKINS["68-measurement-conversions"] = [
+    S("Fill in the table", None, "conv_table", [(b, s, (1, 2, 3, 6, 8)) for (b, s) in CONV], 1),
+    S("Change the unit", None, "eq3", CONV_POOL, 6),
+    S("Mixed units", None, "eq2", MIXED_UNITS, 2),
+]
+_g4[-1:-1] = [
+    S("Measurement conversions", None, "eq3", CONV_POOL, 3, 68),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -16079,7 +16257,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -16142,6 +16320,7 @@ ANSWER_OF = {
     "read_tenths": lambda k: f"{k}/10 = {dec(k, 1)}",
     "compare_grids": lambda it: dsign(it[0], it[1]),
     "biggest_dec": lambda it: dstr(max(it)),
+    "conv_table": lambda it: ", ".join(f"{n} {it[0]} = {nf(n * CONV[(it[0], it[1])])} {it[1]}" for n in it[2][1:]),
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -16364,6 +16543,8 @@ PACKETS = [
     ("66-tenths-and-hundredths", "tenths-and-hundredths", "Tenths and Hundredths", learn_decimals, practice_decimals,
      False),
     ("67-comparing-decimals", "comparing-decimals", "Comparing Decimals", learn_compare_decimals, practice_compare_decimals,
+     False),
+    ("68-measurement-conversions", "measurement-conversions", "Measurement Conversions", learn_conversions, practice_conversions,
      False),
 ]
 
