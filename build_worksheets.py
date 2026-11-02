@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–61", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–62", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -15100,6 +15100,178 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 62. Comparing Unlike Fractions
+
+
+HALF_WORDS = ("less than 1/2", "= 1/2", "more than 1/2")
+
+
+def half_side(a, b):
+    return HALF_WORDS[0] if 2 * a < b else HALF_WORDS[1] if 2 * a == b else HALF_WORDS[2]
+
+
+def c_vs_half(bk, x, cy, w, item):
+    a, b = item
+    frac_expr(bk, x + GUT, cy + 16, f"{a}/{b}", size=18)
+    circle_choice(bk, x + GUT + 40, cy + 17, HALF_WORDS, half_side(a, b), size=11, gap=11)
+
+
+def same_bottom_line(a, b, p, q):
+    from math import lcm
+    m = lcm(b, q)
+    return (f"{a}/{b} = [{a * m // b}]/{m} and {p}/{q} = [{p * m // q}]/{m} "
+            f"so {a}/{b} [{frac_sign(a, b, p, q)}] {p}/{q}")
+
+
+def c_smallest(bk, x, cy, w, item):
+    """Three fractions; the key rings the smallest."""
+    c = bk.c
+    low = min(item, key=lambda f: Fraction(*f))
+    fx = x + GUT + 6
+    for a, b in item:
+        frac_expr(bk, fx, cy + 16, f"{a}/{b}", size=18)
+        if bk.key and (a, b) == low:
+            c.setStrokeColor(T.answer)
+            c.setLineWidth(1.5)
+            c.ellipse(fx - 9, cy + 2, fx + 27, cy + 42, stroke=1, fill=0)
+        fx += 56
+
+
+def learn_comparing_unlike(bk):
+    y = bk.new_page("Comparing Unlike Fractions", "Use 1/2, or make the pieces the same size.",
+                    name_line=False, big=True, footer="WeMath  ·  Comparing Unlike Fractions")
+    c = bk.c
+    label(bk, M, y - 6, "Compare with 1/2")
+    strip(bk, M + 14, y - 46, 220, 22, 8, shaded=3)
+    strip(bk, M + 14, y - 76, 220, 22, 6, shaded=4)
+    c.setStrokeColor(T.accent)
+    c.setLineWidth(1.4)
+    c.setDash(3, 2.5)
+    c.line(M + 124, y - 18, M + 124, y - 80)
+    c.setDash()
+    frac_expr(bk, M + 260, y - 62, "3/8 < 4/6", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 380, y - 46, "3/8 is less than half.")
+    c.drawString(M + 380, y - 64, "4/6 is more than half.")
+    y -= 104
+
+    label(bk, M, y - 6, "Make the bottom numbers the same")
+    cut_strip(bk, M + 14, y - 46, 220, 22, 3, 2, 4)
+    cut_strip(bk, M + 14, y - 76, 220, 22, 4, 3, 3)
+    frac_expr(bk, M + 260, y - 46, "2/3 = 8/12", size=18)
+    frac_expr(bk, M + 260, y - 80, "3/4 = 9/12", size=18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 380, y - 46, "Now the pieces match:")
+    frac_expr(bk, M + 380, y - 80, "2/3 < 3/4", size=18)
+    y -= 110
+
+    label(bk, M, y - 6, "Close to 1? Look at the missing piece")
+    strip(bk, M + 14, y - 46, 220, 22, 8, shaded=7)
+    strip(bk, M + 14, y - 76, 220, 22, 10, shaded=9)
+    frac_expr(bk, M + 260, y - 62, "7/8 < 9/10", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 380, y - 46, "7/8 misses 1/8.")
+    c.drawString(M + 380, y - 64, "9/10 misses only 1/10.")
+    y -= 102
+
+    bottom = your_turn(bk, y, h=80)
+    bk.ask("compare to one half: 2/5 and 5/8 your turn")
+    frac_expr(bk, M + 150, bottom + 28, "2/5 [<] 5/8", size=26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 320, bottom + 34, "Which one is more than half?")
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: compare fractions with different tops and bottoms (4.NF.2). Ask “Is each one more or "
+                     "less than half?” If that doesn't settle it, cut the pieces so the bottoms match.")
+
+
+def practice_comparing_unlike(bk):
+    title = "Comparing Unlike Fractions: Practice"
+    y = bk.new_page(title, "Same whole. Write <, > or =.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "More or less than half?", "Half of the bottom number is the middle.", "vs_half",
+         [(3, 8), (4, 6), (5, 10), (2, 5), (7, 12), (3, 4), (6, 12), (1, 3), (4, 5), (5, 12)])
+    part(2, "Compare with strips", "Look at how much is shaded.", "compare_frac",
+         [((2, 3), (3, 5)), ((3, 8), (2, 3)), ((5, 6), (7, 8)), ((2, 4), (5, 10)), ((3, 5), (1, 4)),
+          ((7, 12), (3, 4))])
+    part(3, "Use 1/2", "No help this time. One is less than half, one is more.", "frac3",
+         ["3/8 [<] 4/6", "5/6 [>] 2/5", "5/8 [>] 2/6", "1/3 [<] 7/10", "4/10 [<] 2/3", "7/12 [>] 3/8",
+          "4/6 [>] 1/4", "2/5 [<] 3/4", "3/10 [<] 5/8"])
+    part(4, "Make the bottoms the same", "Then compare the tops.", "frac1",
+         [same_bottom_line(a, b, p, q) for a, b, p, q in ((2, 3, 3, 4), (3, 5, 7, 10), (5, 6, 3, 4), (3, 8, 1, 4),
+                                                          (5, 12, 1, 3), (2, 5, 3, 10), (1, 2, 5, 12),
+                                                          (4, 6, 7, 12))])
+    part(5, "Close to 1", "No help this time. Which one misses less?", "frac3",
+         ["7/8 [<] 9/10", "5/6 [>] 3/4", "11/12 [>] 4/5", "2/3 [<] 5/6", "9/10 [>] 3/4", "4/5 [<] 7/8"])
+    part(6, "Compare", "No help this time.", "frac3",
+         ["3/4 [>] 5/8", "7/12 [<] 5/6", "4/5 [>] 7/10", "5/12 [<] 1/2", "3/10 [<] 2/5", "1/4 [<] 3/8",
+          "5/6 [>] 7/12", "6/10 [=] 3/5", "7/10 [>] 1/2", "1/3 [<] 5/12", "2/4 [<] 7/12", "3/8 [<] 2/4"])
+    part(7, "Circle the smallest", "No help this time.", "smallest",
+         [((3, 4), (1, 3), (5, 8)), ((7, 10), (4, 5), (1, 2)), ((5, 6), (2, 3), (7, 12)), ((3, 5), (1, 2), (9, 10)),
+          ((2, 6), (5, 8), (1, 4)), ((3, 8), (1, 2), (2, 3))])
+    part(8, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_62)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 9, "Word problems", "Draw strips to compare.")
+    for i, story in enumerate(WORDS_62):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 9, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_62 = ["9/10 = [90]/100", "56 × 12 = [672]", "1,515 ÷ 5 = [303]", "4,816 to the nearest ten = [4,820]",
+             "2/3 of 27 = [18]", "8,003 − 2,457 = [5,546]".replace("−", MINUS)]
+
+WORDS_62 = [
+    ("Mia ran 3/4 of a mile. Ben ran 2/3 of a mile. Who ran farther?", "3/4 = 9/12, 2/3 = 8/12", "Mia", ""),
+    ("A red jug is 3/8 full. A blue jug is 5/6 full. Which jug has more?", "3/8 < 1/2 < 5/6", "blue", "jug"),
+    ("Kim ate 4/10 of a pizza. Leo ate 2/5 of the same pizza. Who ate more?", "4/10 = 2/5", "same", ""),
+    ("Sam's ribbon is 7/12 of a yard. Jo's ribbon is 1/2 of a yard. Whose ribbon is longer?", "7/12 > 6/12",
+     "Sam's", "ribbon"),
+    ("Challenge: Ana did 5/6 of her homework. Max did 7/8 of his. Who has less left to do?",
+     "1/8 left < 1/6 left", "Max", ""),
+]
+
+KINDS_62 = {
+    "vs_half": Kind(44, 1, lambda it: f"more or less than half: {it[0]}/{it[1]}", c_vs_half, 8),
+    "smallest": Kind(48, 2, lambda it: "smallest: " + " ".join(f"{a}/{b}" for a, b in it), c_smallest, 8),
+}
+KINDS.update(KINDS_62)
+KINDS["frac1"] = Kind(48, 1, lambda t: t, c_frac, 8)
+BALANCE["vs_half"] = lambda it: 2 * it[0] > it[1]
+
+_UNLIKE = [(a, b, p, q) for b in (3, 4, 5, 6, 8, 10, 12) for q in (3, 4, 5, 6, 8, 10, 12) if b < q
+           for a in rng(1, b - 1) for p in rng(1, q - 1) if a != p and a * q != b * p]
+UNLIKE_HALF = [f"{a}/{b} [{frac_sign(a, b, p, q)}] {p}/{q}" for a, b, p, q in _UNLIKE
+               if (2 * a - b) * (2 * p - q) < 0]
+# Both fractions change: the shared bottom is 6, 10 or 12 and neither bottom is already it (2/3 and 3/4 -> 12).
+UNLIKE_SAME = [same_bottom_line(a, b, p, q) for a, b, p, q in _UNLIKE
+               if math.lcm(b, q) in (6, 10, 12) and math.lcm(b, q) not in (b, q)]
+VS_HALF = [(a, b) for b in (4, 5, 6, 8, 10, 12) for a in rng(1, b - 1)]
+
+CHECKINS["62-comparing-unlike-fractions"] = [
+    S("More or less than half?", None, "vs_half", VS_HALF, 2),
+    S("Make the bottoms the same", None, "frac1", UNLIKE_SAME, 2),
+    S("Compare", "Write <, > or =.", "frac3", UNLIKE_HALF, 6, balance=is_less),
+]
+_g4[-1:-1] = [
+    S("Compare fractions", "Write <, > or =.", "frac3", UNLIKE_HALF, 3, 62, balance=is_less),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -15111,7 +15283,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -15162,6 +15334,8 @@ ANSWER_OF = {
     "prime": lambda n: "prime" if is_prime(n) else "composite",
     "cut_strip": lambda it: f"{it[0] * it[2]}/{it[1] * it[2]}",
     "equal_q": lambda it: _yes(it[0][0] * it[1][1] == it[0][1] * it[1][0]),
+    "vs_half": lambda it: half_side(it[0], it[1]),
+    "smallest": lambda it: "%d/%d" % min(it, key=lambda f: Fraction(*f)),
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -15372,6 +15546,8 @@ PACKETS = [
     ("60-factors-and-multiples", "factors-and-multiples", "Factors and Multiples", learn_factors, practice_factors,
      False),
     ("61-equivalent-fractions", "equivalent-fractions", "Equivalent Fractions", learn_equivalent, practice_equivalent,
+     False),
+    ("62-comparing-unlike-fractions", "comparing-unlike-fractions", "Comparing Unlike Fractions", learn_comparing_unlike, practice_comparing_unlike,
      False),
 ]
 
