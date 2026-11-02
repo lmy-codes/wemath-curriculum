@@ -14388,7 +14388,7 @@ def stories_rem(seed, pairs):
     return out
 
 
-GRADES.append(("grade-4", "Grade 4", "Packets 53–59", [
+GRADES.append(("grade-4", "Grade 4", "Packets 53–60", [
     S("Read big numbers", None, "eq2", EXPANDED, 3, 53),
     S("Compare", "Write <, > or =.", "eq2", COMPARE_4, 3, 53, balance=is_less),
     S("Round", None, "eq2", ROUND_K, 4, 54),
@@ -14765,6 +14765,181 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 60. Factors and Multiples
+
+
+def factors(n):
+    return [d for d in range(1, n + 1) if n % d == 0]
+
+
+def is_prime(n):
+    return n > 1 and len(factors(n)) == 2
+
+
+def c_factor_array(bk, x, cy, w, item):
+    """An array of dots: rows × columns is one factor pair."""
+    r, k = item
+    step = min(13, 120 / max(k, 1))
+    rad = min(4.2, step * 0.34)
+    for i in range(r):
+        for j in range(k):
+            bk.dot(x + GUT + rad + j * step, cy + 64 - rad - i * step * 0.95, rad, "a" if i % 2 == 0 else "b")
+    bk.fit_eq(x + GUT + 190, cy + 28, w - GUT - 200, f"{r} {TIMES} [{k}] = {r * k}", size=18)
+
+
+def c_yes_text(bk, x, cy, w, item):
+    """A yes/no question in words. The key rings the answer."""
+    text, yes = item
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 14)
+    bk.c.drawString(x + GUT, cy + 26, text)
+    yes_no_choice(bk, x, cy - 2, w, yes)
+
+
+def c_prime(bk, x, cy, w, n):
+    bk.c.setFillColor(T.ink)
+    bk.c.setFont("Rnd", 20)
+    bk.c.drawString(x + GUT, cy + 15, str(n))
+    circle_choice(bk, x + GUT + 44, cy + 17, ["prime", "composite"], "prime" if is_prime(n) else "composite",
+                  size=12, gap=14)
+
+
+def factor_pairs_eq(n):
+    pairs = [(d, n // d) for d in factors(n) if d * d <= n]
+    return f"{n} = " + " and ".join(f"{a} {TIMES} [{b}]" for a, b in pairs)
+
+
+def learn_factors(bk):
+    y = bk.new_page("Factors and Multiples", "Factors make the number. Multiples come from counting by it.",
+                    name_line=False, big=True, footer="WeMath  ·  Factors and Multiples")
+    c = bk.c
+    label(bk, M, y - 6, "Every rectangle for 12")
+    xx = M + 14
+    for r, k in ((1, 12), (2, 6), (3, 4)):
+        array_picture(bk, xx, y - 22, r, k, step=11, r=3.6)
+        c.setFillColor(T.text2)
+        c.setFont("Rnd", 12)
+        c.drawString(xx, y - 74, f"{r} × {k}")
+        xx += k * 11 + 26
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 96, "Factor pairs of 12: 1 and 12, 2 and 6, 3 and 4.")
+    color_eq(bk, M + 14, y - 124, [("Factors of 12:", None), ("1, 2, 3, 4, 6, 12", "a")], 17)
+    y -= 150
+
+    label(bk, M, y - 6, "Multiples: count by the number")
+    color_eq(bk, M + 14, y - 40, [("Multiples of 4:", None), ("4, 8, 12, 16, 20, …", "b")], 17)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 64, "12 is a multiple of 4, and 4 is a factor of 12.")
+    y -= 88
+
+    label(bk, M, y - 6, "Prime or composite?")
+    array_picture(bk, M + 14, y - 22, 1, 7, step=13, r=4)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 120, y - 30, "7 has only one rectangle: 1 × 7. It is prime.")
+    array_picture(bk, M + 14, y - 50, 2, 4, step=13, r=4)
+    c.setFillColor(T.text2)
+    c.drawString(M + 120, y - 62, "8 has more: 2 × 4 and 1 × 8. It is composite.")
+    y -= 96
+
+    bottom = your_turn(bk, y, h=84)
+    bk.ask("factor pairs of 15 your turn")
+    bk.eq(M + 130, bottom + 34, "15 = 1 × [15] and 3 × [5]", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: factor pairs, multiples, prime and composite for numbers to 100 (4.OA.4). Say “Can you "
+                     "make a rectangle with this many dots? How many rows?” Start at 1 and stop when the pairs turn "
+                     "around.")
+
+
+def practice_factors(bk):
+    title = "Factors and Multiples: Practice"
+    y = bk.new_page(title, "A factor divides the number with nothing left over.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Rectangles", "How many in each row?", "factor_array",
+         [(2, 9), (3, 6), (4, 5), (2, 8), (3, 7), (4, 4)])
+    part(2, "Factor pairs", "Start with 1. Stop when the pairs turn around.", "pairs",
+         [factor_pairs_eq(n) for n in (18, 20, 28, 16, 30, 21, 36, 27)])
+    part(3, "Is it a factor?", "Circle yes or no.", "yes_text",
+         [(f"Is {a} a factor of {n}?", n % a == 0) for a, n in ((6, 42), (4, 30), (9, 48), (7, 56), (8, 72),
+                                                              (3, 51), (5, 32), (6, 50), (4, 26), (7, 84))])
+    part(4, "All the factors", "No help this time. List them from smallest to biggest.", "factor_list",
+         [24, 40, 32, 45, 50, 60])
+    part(5, "Multiples", "No help this time. Count by the number.", "eq2",
+         [f"Multiples of {n}: {n} {2 * n} [{3 * n}] [{4 * n}] [{5 * n}]" for n in (6, 9, 7, 12, 8, 11, 15, 25)])
+    part(6, "Is it a multiple?", "Circle yes or no.", "yes_text",
+         [(f"Is {m} a multiple of {n}?", m % n == 0) for m, n in ((63, 9), (44, 6), (35, 5), (81, 3), (52, 8),
+                                                                (70, 4), (96, 8), (58, 7), (74, 9), (90, 6))])
+    part(7, "Prime or composite?", "Circle one.", "prime",
+         [17, 21, 9, 13, 2, 27, 39, 11, 31, 29, 51, 49])
+    part(8, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_60)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 9, "Word problems", "Draw the rectangles.")
+    for i, story in enumerate(WORDS_60):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 9, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+def c_factor_list(bk, x, cy, w, n):
+    bk.fit_eq(x + GUT, cy + 14, w - GUT - 10, f"Factors of {n}: " + " ".join(f"[{d}]" for d in factors(n)), size=17)
+
+
+REVIEW_60 = ["846 ÷ 3 = [282]", "31 × 22 = [682]", "4,568 to the nearest ten = [4,570]", "2/3 of 15 = [10]",
+             "2,705 + 4,198 = [6,903]", "5/6 of 30 = [25]"]
+
+WORDS_60 = [
+    ("A teacher wants 24 desks in equal rows. Will rows of 5 work, or rows of 6?",
+     "24 = 4 × 6, 24 ÷ 5 = 4 R 4", "rows of 6", ""),
+    ("Ana packs 36 cookies into bags with the same number in each. Should she put 7 or 9 in a bag?",
+     "36 = 4 × 9", "9", "in a bag"),
+    ("Buses come every 6 minutes. Does a bus come at 42 minutes after the hour?", "42 = 7 × 6, a multiple of 6",
+     "yes", ""),
+    ("Leo has 29 tiles. Can he make a rectangle with more than one row?", "29 is prime: only 1 × 29", "no", ""),
+    ("Challenge: What is the smallest number that is a multiple of both 4 and 6?",
+     "4, 8, 12 and 6, 12: both have 12", "12", ""),
+]
+
+KINDS_60 = {
+    "factor_array": Kind(72, 1, lambda it: f"rectangle of dots: {it[0]} rows, {it[0] * it[1]} dots", c_factor_array),
+    "yes_text": Kind(62, 2, lambda it: it[0], c_yes_text),
+    "prime": Kind(48, 2, lambda n: f"prime or composite: {n}", c_prime, 8),
+    "factor_list": Kind(48, 1, lambda n: f"all the factors of {n}", c_factor_list, 8),
+    "pairs": Kind(44, 1, lambda t: t, lambda bk_, x, cy, w, t: bk_.fit_eq(x + GUT, cy + 14, w - GUT - 10, t, size=17), 8),
+}
+KINDS.update(KINDS_60)
+BALANCE["yes_text"] = lambda it: it[1]
+BALANCE["prime"] = is_prime
+
+FACTOR_Q = [(f"Is {a} a factor of {n}?", n % a == 0) for n in rng(24, 96, 6) for a in (3, 4, 6, 7, 8, 9)]
+MULTIPLE_Q = [(f"Is {m} a multiple of {n}?", m % n == 0) for n in (3, 4, 6, 7, 8, 9) for m in rng(41, 99, 7)]
+PRIME_POOL = [n for n in rng(2, 99) if n > 3]
+
+CHECKINS["60-factors-and-multiples"] = [
+    S("Factor pairs", None, "pairs", [factor_pairs_eq(n) for n in (12, 14, 22, 24, 26, 32, 33, 35, 40, 42, 44, 45, 48)],
+      2),
+    S("Is it a factor?", "Circle yes or no.", "yes_text", FACTOR_Q, 2),
+    S("Is it a multiple?", "Circle yes or no.", "yes_text", MULTIPLE_Q, 2),
+    S("Prime or composite?", "Circle one.", "prime", PRIME_POOL, 3),
+]
+_g4[-1:-1] = [
+    S("Prime or composite?", "Circle one.", "prime", PRIME_POOL, 3, 60),
+    S("Is it a factor?", "Circle yes or no.", "yes_text", FACTOR_Q, 2, 60),
+]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -14776,7 +14951,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -14822,6 +14997,9 @@ ANSWER_OF = {
     "partial2": lambda it: nf(it[0] * it[1]),
     "div_area": lambda it: nf(it[0] // it[1]),
     "partial_q": lambda it: nf(it[0] // it[1]),
+    "factor_array": lambda it: f"{it[0]} × {it[1]}",
+    "yes_text": lambda it: _yes(it[1]),
+    "prime": lambda n: "prime" if is_prime(n) else "composite",
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -15028,6 +15206,8 @@ PACKETS = [
     ("58-multiplying-two-digit-numbers", "multiplying-two-digit", "Multiplying Two-Digit Numbers", learn_mult_two_digit, practice_mult_two_digit,
      False),
     ("59-dividing-bigger-numbers", "dividing-bigger-numbers", "Dividing Bigger Numbers", learn_dividing_big, practice_dividing_big,
+     False),
+    ("60-factors-and-multiples", "factors-and-multiples", "Factors and Multiples", learn_factors, practice_factors,
      False),
 ]
 
