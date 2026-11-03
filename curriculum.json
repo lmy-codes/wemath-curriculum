@@ -1,5 +1,5 @@
 {
- "version": "dfa10669c0e3",
+ "version": "7b2b4bfa50f0",
  "packets": [
   {
    "number": 0,
@@ -584,6 +584,86 @@
    "file": "lines-and-shapes",
    "title": "Lines and Shapes",
    "grade": "4"
+  },
+  {
+   "number": 73,
+   "slug": "powers-of-ten",
+   "folder": "73-powers-of-ten",
+   "file": "powers-of-ten",
+   "title": "Powers of Ten",
+   "grade": "5"
+  },
+  {
+   "number": 74,
+   "slug": "thousandths",
+   "folder": "74-thousandths",
+   "file": "thousandths",
+   "title": "Thousandths",
+   "grade": "5"
+  },
+  {
+   "number": 75,
+   "slug": "comparing-and-rounding-decimals",
+   "folder": "75-comparing-and-rounding-decimals",
+   "file": "comparing-and-rounding-decimals",
+   "title": "Comparing and Rounding Decimals",
+   "grade": "5"
+  },
+  {
+   "number": 76,
+   "slug": "adding-and-subtracting-decimals",
+   "folder": "76-adding-and-subtracting-decimals",
+   "file": "adding-and-subtracting-decimals",
+   "title": "Adding and Subtracting Decimals",
+   "grade": "5"
+  },
+  {
+   "number": 77,
+   "slug": "multiplying-bigger-numbers",
+   "folder": "77-multiplying-bigger-numbers",
+   "file": "multiplying-bigger-numbers",
+   "title": "Multiplying Bigger Numbers",
+   "grade": "5"
+  },
+  {
+   "number": 78,
+   "slug": "dividing-by-two-digit-numbers",
+   "folder": "78-dividing-by-two-digit-numbers",
+   "file": "dividing-by-two-digit-numbers",
+   "title": "Dividing by Two-Digit Numbers",
+   "grade": "5"
+  },
+  {
+   "number": 79,
+   "slug": "multiplying-and-dividing-decimals",
+   "folder": "79-multiplying-and-dividing-decimals",
+   "file": "multiplying-and-dividing-decimals",
+   "title": "Multiplying and Dividing Decimals",
+   "grade": "5"
+  },
+  {
+   "number": 80,
+   "slug": "unlike-fractions",
+   "folder": "80-unlike-fractions",
+   "file": "unlike-fractions",
+   "title": "Unlike Fractions",
+   "grade": "5"
+  },
+  {
+   "number": 81,
+   "slug": "multiplying-fractions",
+   "folder": "81-multiplying-fractions",
+   "file": "multiplying-fractions",
+   "title": "Multiplying Fractions",
+   "grade": "5"
+  },
+  {
+   "number": 82,
+   "slug": "volume",
+   "folder": "82-volume",
+   "file": "volume",
+   "title": "Volume",
+   "grade": "5"
   }
  ],
  "tests": [
@@ -3167,6 +3247,303 @@
     }
    ],
    "grade": "4"
+  },
+  {
+   "id": "grade-5-pre",
+   "type": "pre",
+   "title": "Grade 5 Pre-Assessment",
+   "total": 34,
+   "file": "assessments/color/grade-5-pre-assessment-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Powers of ten",
+     "kind": "eq3",
+     "packet": 73,
+     "packets": "73",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "6.25 × 100 = ?",
+       "answer": "625"
+      },
+      {
+       "n": 2,
+       "prompt": "56 × 100 = ?",
+       "answer": "5,600"
+      },
+      {
+       "n": 3,
+       "prompt": "6.25 × 1,000 = ?",
+       "answer": "6,250"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Thousandths",
+     "kind": "eq2",
+     "packet": 74,
+     "packets": "74",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "in 0.395 the 9 is worth ?",
+       "answer": "0.09"
+      },
+      {
+       "n": 5,
+       "prompt": "in 2.846 the 6 is worth ?",
+       "answer": "0.006"
+      },
+      {
+       "n": 6,
+       "prompt": "0.3 + 0.08 + 0.002 = ?",
+       "answer": "0.382"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Compare decimals",
+     "kind": "eq3",
+     "packet": 75,
+     "packets": "75",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "6.52 ? 6.502",
+       "answer": ">"
+      },
+      {
+       "n": 8,
+       "prompt": "1.09 ? 1.9",
+       "answer": "<"
+      },
+      {
+       "n": 9,
+       "prompt": "3.471 ? 3.47",
+       "answer": ">"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Round to the nearest tenth",
+     "kind": "eq2",
+     "packet": 75,
+     "packets": "75",
+     "questions": [
+      {
+       "n": 10,
+       "prompt": "8.36 rounds to ?",
+       "answer": "8.4"
+      },
+      {
+       "n": 11,
+       "prompt": "4.67 rounds to ?",
+       "answer": "4.7"
+      }
+     ]
+    },
+    {
+     "part": 5,
+     "name": "Add and subtract decimals",
+     "kind": "eq3",
+     "packet": 76,
+     "packets": "76",
+     "questions": [
+      {
+       "n": 12,
+       "prompt": "5.26 + 2.58 = ?",
+       "answer": "7.84"
+      },
+      {
+       "n": 13,
+       "prompt": "6.3 − 1.45 = ?",
+       "answer": "4.85"
+      },
+      {
+       "n": 14,
+       "prompt": "5.4 − 0.86 = ?",
+       "answer": "4.54"
+      }
+     ]
+    },
+    {
+     "part": 6,
+     "name": "Multiply bigger numbers",
+     "kind": "eq2",
+     "packet": 77,
+     "packets": "77",
+     "questions": [
+      {
+       "n": 15,
+       "prompt": "461 × 28 = ?",
+       "answer": "12,908"
+      },
+      {
+       "n": 16,
+       "prompt": "614 × 23 = ?",
+       "answer": "14,122"
+      }
+     ]
+    },
+    {
+     "part": 7,
+     "name": "Divide by two-digit numbers",
+     "kind": "eq3",
+     "packet": 78,
+     "packets": "78",
+     "questions": [
+      {
+       "n": 17,
+       "prompt": "648 ÷ 18 = ?",
+       "answer": "36"
+      },
+      {
+       "n": 18,
+       "prompt": "672 ÷ 16 = ?",
+       "answer": "42"
+      },
+      {
+       "n": 19,
+       "prompt": "840 ÷ 35 = ?",
+       "answer": "24"
+      }
+     ]
+    },
+    {
+     "part": 8,
+     "name": "Multiply and divide decimals",
+     "kind": "eq3",
+     "packet": 79,
+     "packets": "79",
+     "questions": [
+      {
+       "n": 20,
+       "prompt": "6 × 0.25 = ?",
+       "answer": "1.5"
+      },
+      {
+       "n": 21,
+       "prompt": "2.8 ÷ 4 = ?",
+       "answer": "0.7"
+      },
+      {
+       "n": 22,
+       "prompt": "7 × 0.5 = ?",
+       "answer": "3.5"
+      }
+     ]
+    },
+    {
+     "part": 9,
+     "name": "Add and subtract unlike fractions",
+     "kind": "frac2",
+     "packet": 80,
+     "packets": "80",
+     "questions": [
+      {
+       "n": 23,
+       "prompt": "7/9 − 1/3 = ?/?",
+       "answer": "4/9"
+      },
+      {
+       "n": 24,
+       "prompt": "1/2 − 1/5 = ?/?",
+       "answer": "3/10"
+      },
+      {
+       "n": 25,
+       "prompt": "2/9 + 1/2 = ?/?",
+       "answer": "13/18"
+      }
+     ]
+    },
+    {
+     "part": 10,
+     "name": "Multiply fractions",
+     "kind": "frac2",
+     "packet": 81,
+     "packets": "81",
+     "questions": [
+      {
+       "n": 26,
+       "prompt": "1/3 × 5/6 = ?/?",
+       "answer": "5/18"
+      },
+      {
+       "n": 27,
+       "prompt": "5/8 × 1/4 = ?/?",
+       "answer": "5/32"
+      }
+     ]
+    },
+    {
+     "part": 11,
+     "name": "A fraction of a number",
+     "kind": "frac3",
+     "packet": 81,
+     "packets": "81",
+     "questions": [
+      {
+       "n": 28,
+       "prompt": "5/9 × 18 = ?",
+       "answer": "10"
+      }
+     ]
+    },
+    {
+     "part": 12,
+     "name": "Volume",
+     "kind": "eq1",
+     "packet": 82,
+     "packets": "82",
+     "questions": [
+      {
+       "n": 29,
+       "prompt": "6 ft × 5 ft × 3 ft = ? cubic ft",
+       "answer": "90"
+      },
+      {
+       "n": 30,
+       "prompt": "9 cm × 3 cm × 3 cm = ? cubic cm",
+       "answer": "81"
+      }
+     ]
+    },
+    {
+     "part": 13,
+     "name": "Word problems",
+     "kind": "word",
+     "packet": null,
+     "packets": "73–82",
+     "questions": [
+      {
+       "n": 31,
+       "prompt": "A bag of rice weighs 1.25 kg. How much do 8 bags weigh?",
+       "answer": "10 kg"
+      },
+      {
+       "n": 32,
+       "prompt": "Ava buys a book for $6.75 and a pen for $1.40. How much does she spend?",
+       "answer": "$8.15"
+      },
+      {
+       "n": 33,
+       "prompt": "Leo ran 3/4 km, then walked 1/3 km. How far did he go?",
+       "answer": "13/12 km"
+      },
+      {
+       "n": 34,
+       "prompt": "A tank is 5 ft long, 3 ft wide and 4 ft tall. What is its volume?",
+       "answer": "60 cubic ft"
+      }
+     ]
+    }
+   ],
+   "grade": "5"
   },
   {
    "id": "kindergarten-pre",
@@ -6098,6 +6475,303 @@
    "grade": "4"
   },
   {
+   "id": "grade-5-post",
+   "type": "post",
+   "title": "Grade 5 Post-Assessment",
+   "total": 34,
+   "file": "assessments/color/grade-5-post-assessment-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Powers of ten",
+     "kind": "eq3",
+     "packet": 73,
+     "packets": "73",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "9.1 × 10 = ?",
+       "answer": "91"
+      },
+      {
+       "n": 2,
+       "prompt": "740 × 1,000 = ?",
+       "answer": "740,000"
+      },
+      {
+       "n": 3,
+       "prompt": "64.5 ÷ 100 = ?",
+       "answer": "0.645"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Thousandths",
+     "kind": "eq2",
+     "packet": 74,
+     "packets": "74",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "7 + 0.06 = ?",
+       "answer": "7.06"
+      },
+      {
+       "n": 5,
+       "prompt": "in 6.917 the 9 is worth ?",
+       "answer": "0.9"
+      },
+      {
+       "n": 6,
+       "prompt": "in 1.672 the 7 is worth ?",
+       "answer": "0.07"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Compare decimals",
+     "kind": "eq3",
+     "packet": 75,
+     "packets": "75",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "4.9 ? 4.89",
+       "answer": ">"
+      },
+      {
+       "n": 8,
+       "prompt": "2.405 ? 2.45",
+       "answer": "<"
+      },
+      {
+       "n": 9,
+       "prompt": "8.06 ? 8.060",
+       "answer": "="
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Round to the nearest tenth",
+     "kind": "eq2",
+     "packet": 75,
+     "packets": "75",
+     "questions": [
+      {
+       "n": 10,
+       "prompt": "0.94 rounds to ?",
+       "answer": "0.9"
+      },
+      {
+       "n": 11,
+       "prompt": "5.13 rounds to ?",
+       "answer": "5.1"
+      }
+     ]
+    },
+    {
+     "part": 5,
+     "name": "Add and subtract decimals",
+     "kind": "eq3",
+     "packet": 76,
+     "packets": "76",
+     "questions": [
+      {
+       "n": 12,
+       "prompt": "7 − 4.38 = ?",
+       "answer": "2.62"
+      },
+      {
+       "n": 13,
+       "prompt": "1.7 + 0.46 = ?",
+       "answer": "2.16"
+      },
+      {
+       "n": 14,
+       "prompt": "0.58 + 1.6 = ?",
+       "answer": "2.18"
+      }
+     ]
+    },
+    {
+     "part": 6,
+     "name": "Multiply bigger numbers",
+     "kind": "eq2",
+     "packet": 77,
+     "packets": "77",
+     "questions": [
+      {
+       "n": 15,
+       "prompt": "318 × 26 = ?",
+       "answer": "8,268"
+      },
+      {
+       "n": 16,
+       "prompt": "156 × 43 = ?",
+       "answer": "6,708"
+      }
+     ]
+    },
+    {
+     "part": 7,
+     "name": "Divide by two-digit numbers",
+     "kind": "eq3",
+     "packet": 78,
+     "packets": "78",
+     "questions": [
+      {
+       "n": 17,
+       "prompt": "840 ÷ 35 = ?",
+       "answer": "24"
+      },
+      {
+       "n": 18,
+       "prompt": "782 ÷ 23 = ?",
+       "answer": "34"
+      },
+      {
+       "n": 19,
+       "prompt": "648 ÷ 18 = ?",
+       "answer": "36"
+      }
+     ]
+    },
+    {
+     "part": 8,
+     "name": "Multiply and divide decimals",
+     "kind": "eq3",
+     "packet": 79,
+     "packets": "79",
+     "questions": [
+      {
+       "n": 20,
+       "prompt": "7.2 ÷ 9 = ?",
+       "answer": "0.8"
+      },
+      {
+       "n": 21,
+       "prompt": "3.5 ÷ 7 = ?",
+       "answer": "0.5"
+      },
+      {
+       "n": 22,
+       "prompt": "4 × 0.8 = ?",
+       "answer": "3.2"
+      }
+     ]
+    },
+    {
+     "part": 9,
+     "name": "Add and subtract unlike fractions",
+     "kind": "frac2",
+     "packet": 80,
+     "packets": "80",
+     "questions": [
+      {
+       "n": 23,
+       "prompt": "2/5 + 1/3 = ?/?",
+       "answer": "11/15"
+      },
+      {
+       "n": 24,
+       "prompt": "5/8 − 1/6 = ?/?",
+       "answer": "11/24"
+      },
+      {
+       "n": 25,
+       "prompt": "3/4 − 1/5 = ?/?",
+       "answer": "11/20"
+      }
+     ]
+    },
+    {
+     "part": 10,
+     "name": "Multiply fractions",
+     "kind": "frac2",
+     "packet": 81,
+     "packets": "81",
+     "questions": [
+      {
+       "n": 26,
+       "prompt": "1/3 × 5/6 = ?/?",
+       "answer": "5/18"
+      },
+      {
+       "n": 27,
+       "prompt": "1/2 × 7/9 = ?/?",
+       "answer": "7/18"
+      }
+     ]
+    },
+    {
+     "part": 11,
+     "name": "A fraction of a number",
+     "kind": "frac3",
+     "packet": 81,
+     "packets": "81",
+     "questions": [
+      {
+       "n": 28,
+       "prompt": "2/7 × 21 = ?",
+       "answer": "6"
+      }
+     ]
+    },
+    {
+     "part": 12,
+     "name": "Volume",
+     "kind": "eq1",
+     "packet": 82,
+     "packets": "82",
+     "questions": [
+      {
+       "n": 29,
+       "prompt": "5 in × 4 in × 4 in = ? cubic in",
+       "answer": "80"
+      },
+      {
+       "n": 30,
+       "prompt": "6 ft × 5 ft × 3 ft = ? cubic ft",
+       "answer": "90"
+      }
+     ]
+    },
+    {
+     "part": 13,
+     "name": "Word problems",
+     "kind": "word",
+     "packet": null,
+     "packets": "73–82",
+     "questions": [
+      {
+       "n": 31,
+       "prompt": "A school orders 36 boxes of 125 pencils. How many pencils is that?",
+       "answer": "4,500 pencils"
+      },
+      {
+       "n": 32,
+       "prompt": "2/3 of a garden is flowers. 1/4 of the flowers are red. What part of the garden is red?",
+       "answer": "2/12 of the garden"
+      },
+      {
+       "n": 33,
+       "prompt": "864 kids sit in rows of 24. How many rows are there?",
+       "answer": "36 rows"
+      },
+      {
+       "n": 34,
+       "prompt": "A rope is 2.4 m long. It is cut into 6 equal pieces. How long is each piece?",
+       "answer": "0.4 m"
+      }
+     ]
+    }
+   ],
+   "grade": "5"
+  },
+  {
    "id": "kindergarten-post",
    "type": "post",
    "title": "Kindergarten Post-Assessment",
@@ -6631,6 +7305,88 @@
     }
    ],
    "packet": 55
+  },
+  {
+   "id": "check-in:adding-and-subtracting-decimals",
+   "type": "check-in",
+   "title": "Adding and Subtracting Decimals Check-In",
+   "total": 9,
+   "file": "76-adding-and-subtracting-decimals/color/adding-and-subtracting-decimals-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Add and subtract in columns",
+     "kind": "dstack",
+     "packet": 76,
+     "packets": "76",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "decimal columns: 5 - 1.72",
+       "answer": "3.28"
+      },
+      {
+       "n": 2,
+       "prompt": "decimal columns: 3.58 + 0.9",
+       "answer": "4.48"
+      },
+      {
+       "n": 3,
+       "prompt": "decimal columns: 2.85 + 4.6",
+       "answer": "7.45"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Add",
+     "kind": "eq3",
+     "packet": 76,
+     "packets": "76",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "6.07 + 2.9 = ?",
+       "answer": "8.97"
+      },
+      {
+       "n": 5,
+       "prompt": "4.85 + 3.3 = ?",
+       "answer": "8.15"
+      },
+      {
+       "n": 6,
+       "prompt": "3.4 + 2.75 = ?",
+       "answer": "6.15"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Subtract",
+     "kind": "eq3",
+     "packet": 76,
+     "packets": "76",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "8.52 − 2.7 = ?",
+       "answer": "5.82"
+      },
+      {
+       "n": 8,
+       "prompt": "9.61 − 3.25 = ?",
+       "answer": "6.36"
+      },
+      {
+       "n": 9,
+       "prompt": "4.1 − 2.37 = ?",
+       "answer": "1.73"
+      }
+     ]
+    }
+   ],
+   "packet": 76
   },
   {
    "id": "check-in:adding-and-subtracting-fractions",
@@ -7513,6 +8269,130 @@
    "packet": 5
   },
   {
+   "id": "check-in:comparing-and-rounding-decimals",
+   "type": "check-in",
+   "title": "Comparing and Rounding Decimals Check-In",
+   "total": 12,
+   "file": "75-comparing-and-rounding-decimals/color/comparing-and-rounding-decimals-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Compare",
+     "kind": "eq3",
+     "packet": 75,
+     "packets": "75",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "0.264 ? 0.3",
+       "answer": "<"
+      },
+      {
+       "n": 2,
+       "prompt": "0.7 ? 0.69",
+       "answer": ">"
+      },
+      {
+       "n": 3,
+       "prompt": "0.18 ? 0.8",
+       "answer": "<"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Put them in order",
+     "kind": "order_dec",
+     "packet": 75,
+     "packets": "75",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "order decimals: 0.42 - 0.402 - 0.24",
+       "answer": "0.24 < 0.402 < 0.42"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Round with the picture",
+     "kind": "round_dec",
+     "packet": 75,
+     "packets": "75",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "round decimal: 3.74 to 1 boxes",
+       "answer": "3.7"
+      },
+      {
+       "n": 6,
+       "prompt": "round decimal: 0.363 to 2 boxes",
+       "answer": "0.36"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Round to the nearest tenth",
+     "kind": "eq2",
+     "packet": 75,
+     "packets": "75",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "5.13 rounds to ?",
+       "answer": "5.1"
+      },
+      {
+       "n": 8,
+       "prompt": "2.45 rounds to ?",
+       "answer": "2.5"
+      }
+     ]
+    },
+    {
+     "part": 5,
+     "name": "Round to the nearest whole number",
+     "kind": "eq2",
+     "packet": 75,
+     "packets": "75",
+     "questions": [
+      {
+       "n": 9,
+       "prompt": "6.5 rounds to ?",
+       "answer": "7"
+      },
+      {
+       "n": 10,
+       "prompt": "9.8 rounds to ?",
+       "answer": "10"
+      }
+     ]
+    },
+    {
+     "part": 6,
+     "name": "Round to the nearest hundredth",
+     "kind": "eq2",
+     "packet": 75,
+     "packets": "75",
+     "questions": [
+      {
+       "n": 11,
+       "prompt": "1.624 rounds to ?",
+       "answer": "1.62"
+      },
+      {
+       "n": 12,
+       "prompt": "3.075 rounds to ?",
+       "answer": "3.08"
+      }
+     ]
+    }
+   ],
+   "packet": 75
+  },
+  {
    "id": "check-in:comparing-decimals",
    "type": "check-in",
    "title": "Comparing Decimals Check-In",
@@ -8165,6 +9045,93 @@
     }
    ],
    "packet": 59
+  },
+  {
+   "id": "check-in:dividing-by-two-digit-numbers",
+   "type": "check-in",
+   "title": "Dividing by Two-Digit Numbers Check-In",
+   "total": 10,
+   "file": "78-dividing-by-two-digit-numbers/color/dividing-by-two-digit-numbers-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Divide each part",
+     "kind": "partial_q",
+     "packet": 78,
+     "packets": "78",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "divide each part: 792 / 22",
+       "answer": "36"
+      },
+      {
+       "n": 2,
+       "prompt": "divide each part: 731 / 17",
+       "answer": "43"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Divide",
+     "kind": "eq3",
+     "packet": 78,
+     "packets": "78",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "782 ÷ 23 = ?",
+       "answer": "34"
+      },
+      {
+       "n": 4,
+       "prompt": "630 ÷ 42 = ?",
+       "answer": "15"
+      },
+      {
+       "n": 5,
+       "prompt": "742 ÷ 14 = ?",
+       "answer": "53"
+      },
+      {
+       "n": 6,
+       "prompt": "840 ÷ 35 = ?",
+       "answer": "24"
+      },
+      {
+       "n": 7,
+       "prompt": "837 ÷ 31 = ?",
+       "answer": "27"
+      },
+      {
+       "n": 8,
+       "prompt": "702 ÷ 27 = ?",
+       "answer": "26"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "What is left?",
+     "kind": "eq2",
+     "packet": 78,
+     "packets": "78",
+     "questions": [
+      {
+       "n": 9,
+       "prompt": "915 ÷ 42 = ? R ?",
+       "answer": "21 R 33"
+      },
+      {
+       "n": 10,
+       "prompt": "621 ÷ 17 = ? R ?",
+       "answer": "36 R 9"
+      }
+     ]
+    }
+   ],
+   "packet": 78
   },
   {
    "id": "check-in:division",
@@ -10830,6 +11797,194 @@
    "packet": 34
   },
   {
+   "id": "check-in:multiplying-and-dividing-decimals",
+   "type": "check-in",
+   "title": "Multiplying and Dividing Decimals Check-In",
+   "total": 11,
+   "file": "79-multiplying-and-dividing-decimals/color/multiplying-and-dividing-decimals-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Count the tenths",
+     "kind": "eq2",
+     "packet": 79,
+     "packets": "79",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "3 × 0.9 = ? tenths = ?",
+       "answer": "27 · 2.7"
+      },
+      {
+       "n": 2,
+       "prompt": "6 × 0.6 = ? tenths = ?",
+       "answer": "36 · 3.6"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Multiply",
+     "kind": "eq3",
+     "packet": 79,
+     "packets": "79",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "2 × 4.15 = ?",
+       "answer": "8.3"
+      },
+      {
+       "n": 4,
+       "prompt": "5 × 2.8 = ?",
+       "answer": "14"
+      },
+      {
+       "n": 5,
+       "prompt": "3 × 1.6 = ?",
+       "answer": "4.8"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Divide",
+     "kind": "eq3",
+     "packet": 79,
+     "packets": "79",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "1.2 ÷ 4 = ?",
+       "answer": "0.3"
+      },
+      {
+       "n": 7,
+       "prompt": "5.4 ÷ 6 = ?",
+       "answer": "0.9"
+      },
+      {
+       "n": 8,
+       "prompt": "0.63 ÷ 3 = ?",
+       "answer": "0.21"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Tenths times tenths",
+     "kind": "eq3",
+     "packet": 79,
+     "packets": "79",
+     "questions": [
+      {
+       "n": 9,
+       "prompt": "0.3 × 0.8 = ?",
+       "answer": "0.24"
+      },
+      {
+       "n": 10,
+       "prompt": "0.6 × 0.5 = ?",
+       "answer": "0.3"
+      },
+      {
+       "n": 11,
+       "prompt": "0.2 × 0.6 = ?",
+       "answer": "0.12"
+      }
+     ]
+    }
+   ],
+   "packet": 79
+  },
+  {
+   "id": "check-in:multiplying-bigger-numbers",
+   "type": "check-in",
+   "title": "Multiplying Bigger Numbers Check-In",
+   "total": 10,
+   "file": "77-multiplying-bigger-numbers/color/multiplying-bigger-numbers-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Hundreds times tens",
+     "kind": "eq3",
+     "packet": 77,
+     "packets": "77",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "300 × 90 = ?",
+       "answer": "27,000"
+      },
+      {
+       "n": 2,
+       "prompt": "800 × 90 = ?",
+       "answer": "72,000"
+      },
+      {
+       "n": 3,
+       "prompt": "700 × 70 = ?",
+       "answer": "49,000"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Two rows",
+     "kind": "mrows",
+     "packet": 77,
+     "packets": "77",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "two rows: 418 x 23",
+       "answer": "9,614"
+      },
+      {
+       "n": 5,
+       "prompt": "two rows: 152 x 47",
+       "answer": "7,144"
+      },
+      {
+       "n": 6,
+       "prompt": "two rows: 324 x 26",
+       "answer": "8,424"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Multiply",
+     "kind": "eq2",
+     "packet": 77,
+     "packets": "77",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "382 × 19 = ?",
+       "answer": "7,258"
+      },
+      {
+       "n": 8,
+       "prompt": "527 × 34 = ?",
+       "answer": "17,918"
+      },
+      {
+       "n": 9,
+       "prompt": "243 × 17 = ?",
+       "answer": "4,131"
+      },
+      {
+       "n": 10,
+       "prompt": "275 × 36 = ?",
+       "answer": "9,900"
+      }
+     ]
+    }
+   ],
+   "packet": 77
+  },
+  {
    "id": "check-in:multiplying-by-one-digit",
    "type": "check-in",
    "title": "Multiplying by One Digit Check-In",
@@ -11001,6 +12156,107 @@
     }
    ],
    "packet": 37
+  },
+  {
+   "id": "check-in:multiplying-fractions",
+   "type": "check-in",
+   "title": "Multiplying Fractions Check-In",
+   "total": 11,
+   "file": "81-multiplying-fractions/color/multiplying-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Shade and multiply",
+     "kind": "frac_grid",
+     "packet": 81,
+     "packets": "81",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "fraction grid: 1/2 x 2/5 (shade)",
+       "answer": "2/10"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Multiply",
+     "kind": "frac2",
+     "packet": 81,
+     "packets": "81",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "2/5 × 3/7 = ?/?",
+       "answer": "6/35"
+      },
+      {
+       "n": 3,
+       "prompt": "3/4 × 2/5 = ?/?",
+       "answer": "6/20"
+      },
+      {
+       "n": 4,
+       "prompt": "1/2 × 7/9 = ?/?",
+       "answer": "7/18"
+      },
+      {
+       "n": 5,
+       "prompt": "4/7 × 2/3 = ?/?",
+       "answer": "8/21"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "A fraction of a number",
+     "kind": "frac3",
+     "packet": 81,
+     "packets": "81",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "3/4 × 20 = ?",
+       "answer": "15"
+      },
+      {
+       "n": 7,
+       "prompt": "5/6 × 24 = ?",
+       "answer": "20"
+      },
+      {
+       "n": 8,
+       "prompt": "3/5 × 10 = ?",
+       "answer": "6"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Smaller or bigger?",
+     "kind": "frac3",
+     "packet": 81,
+     "packets": "81",
+     "questions": [
+      {
+       "n": 9,
+       "prompt": "2/5 × 10 ? 10",
+       "answer": "<"
+      },
+      {
+       "n": 10,
+       "prompt": "1 1/4 × 8 ? 8",
+       "answer": ">"
+      },
+      {
+       "n": 11,
+       "prompt": "5/7 × 14 ? 14",
+       "answer": "<"
+      }
+     ]
+    }
+   ],
+   "packet": 81
   },
   {
    "id": "check-in:multiplying-two-digit-numbers",
@@ -11371,6 +12627,97 @@
     }
    ],
    "packet": 45
+  },
+  {
+   "id": "check-in:powers-of-ten",
+   "type": "check-in",
+   "title": "Powers of Ten Check-In",
+   "total": 9,
+   "file": "73-powers-of-ten/color/powers-of-ten-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Move the digits",
+     "kind": "shift",
+     "packet": 73,
+     "packets": "73",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "move the digits: 5.2 divided by 100",
+       "answer": "0.052"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Times 10, 100 and 1,000",
+     "kind": "eq3",
+     "packet": 73,
+     "packets": "73",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "13 × 10 = ?",
+       "answer": "130"
+      },
+      {
+       "n": 3,
+       "prompt": "9.1 × 1,000 = ?",
+       "answer": "9,100"
+      },
+      {
+       "n": 4,
+       "prompt": "740 × 10 = ?",
+       "answer": "7,400"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Divide by 10, 100 and 1,000",
+     "kind": "eq3",
+     "packet": 73,
+     "packets": "73",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "56 ÷ 10 = ?",
+       "answer": "5.6"
+      },
+      {
+       "n": 6,
+       "prompt": "4,100 ÷ 100 = ?",
+       "answer": "41"
+      },
+      {
+       "n": 7,
+       "prompt": "4,100 ÷ 10 = ?",
+       "answer": "410"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Powers of ten",
+     "kind": "pow",
+     "packet": 73,
+     "packets": "73",
+     "questions": [
+      {
+       "n": 8,
+       "prompt": "power of ten: 9 × 10^3",
+       "answer": "9,000"
+      },
+      {
+       "n": 9,
+       "prompt": "power of ten: 1.5 × 10^3",
+       "answer": "1,500"
+      }
+     ]
+    }
+   ],
+   "packet": 73
   },
   {
    "id": "check-in:rounding",
@@ -13005,6 +14352,106 @@
    "packet": 53
   },
   {
+   "id": "check-in:thousandths",
+   "type": "check-in",
+   "title": "Thousandths Check-In",
+   "total": 9,
+   "file": "74-thousandths/color/thousandths-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Fill the chart",
+     "kind": "pv_fill",
+     "packet": 74,
+     "packets": "74",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "fill the chart: 3.519",
+       "answer": "3.519"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "What is the digit worth?",
+     "kind": "eq2",
+     "packet": 74,
+     "packets": "74",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "in 7.263 the 2 is worth ?",
+       "answer": "0.2"
+      },
+      {
+       "n": 3,
+       "prompt": "in 0.724 the 4 is worth ?",
+       "answer": "0.004"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Put it together",
+     "kind": "eq2",
+     "packet": 74,
+     "packets": "74",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "4 + 0.5 + 0.01 + 0.007 = ?",
+       "answer": "4.517"
+      },
+      {
+       "n": 5,
+       "prompt": "3 + 0.2 + 0.04 + 0.009 = ?",
+       "answer": "3.249"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Words to numbers",
+     "kind": "eq1",
+     "packet": 74,
+     "packets": "74",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "six thousandths = ?",
+       "answer": "0.006"
+      },
+      {
+       "n": 7,
+       "prompt": "five and three hundred two thousandths = ?",
+       "answer": "5.302"
+      }
+     ]
+    },
+    {
+     "part": 5,
+     "name": "How many thousandths?",
+     "kind": "eq2",
+     "packet": 74,
+     "packets": "74",
+     "questions": [
+      {
+       "n": 8,
+       "prompt": "0.605 = ? thousandths",
+       "answer": "605"
+      },
+      {
+       "n": 9,
+       "prompt": "0.5 = ? thousandths",
+       "answer": "500"
+      }
+     ]
+    }
+   ],
+   "packet": 74
+  },
+  {
    "id": "check-in:two-step-word-problems",
    "type": "check-in",
    "title": "Two-Step Word Problems Check-In",
@@ -13168,6 +14615,107 @@
    "packet": 39
   },
   {
+   "id": "check-in:unlike-fractions",
+   "type": "check-in",
+   "title": "Unlike Fractions Check-In",
+   "total": 11,
+   "file": "80-unlike-fractions/color/unlike-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Same bottoms",
+     "kind": "mixed1",
+     "packet": 80,
+     "packets": "80",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "3/8 + 1/6 = ?/24 + ?/24 = ?/24",
+       "answer": "13/24"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Add",
+     "kind": "frac2",
+     "packet": 80,
+     "packets": "80",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "1/2 + 1/7 = ?/?",
+       "answer": "9/14"
+      },
+      {
+       "n": 3,
+       "prompt": "3/4 + 1/5 = ?/?",
+       "answer": "19/20"
+      },
+      {
+       "n": 4,
+       "prompt": "1/6 + 2/5 = ?/?",
+       "answer": "17/30"
+      },
+      {
+       "n": 5,
+       "prompt": "1/3 + 1/4 = ?/?",
+       "answer": "7/12"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Subtract",
+     "kind": "frac2",
+     "packet": 80,
+     "packets": "80",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "5/8 − 1/6 = ?/?",
+       "answer": "11/24"
+      },
+      {
+       "n": 7,
+       "prompt": "4/5 − 1/3 = ?/?",
+       "answer": "7/15"
+      },
+      {
+       "n": 8,
+       "prompt": "3/4 − 1/5 = ?/?",
+       "answer": "11/20"
+      },
+      {
+       "n": 9,
+       "prompt": "2/3 − 1/2 = ?/?",
+       "answer": "1/6"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Mixed numbers",
+     "kind": "frac2",
+     "packet": 80,
+     "packets": "80",
+     "questions": [
+      {
+       "n": 10,
+       "prompt": "4 2/3 − 2 1/4 = ? ?/?",
+       "answer": "2 5/12"
+      },
+      {
+       "n": 11,
+       "prompt": "1 1/6 + 3 1/4 = ? ?/?",
+       "answer": "4 5/12"
+      }
+     ]
+    }
+   ],
+   "packet": 80
+  },
+  {
    "id": "check-in:up-to-and-over-ten",
    "type": "check-in",
    "title": "Up to and Over Ten Check-In",
@@ -13272,6 +14820,83 @@
     }
    ],
    "packet": 3
+  },
+  {
+   "id": "check-in:volume",
+   "type": "check-in",
+   "title": "Volume Check-In",
+   "total": 8,
+   "file": "82-volume/color/volume-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Count the cubes",
+     "kind": "cube_count",
+     "packet": 82,
+     "packets": "82",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "count the cubes: 2 3 4",
+       "answer": "24"
+      },
+      {
+       "n": 2,
+       "prompt": "count the cubes: 4 2 2",
+       "answer": "16"
+      },
+      {
+       "n": 3,
+       "prompt": "count the cubes: 3 3 2",
+       "answer": "18"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Find the volume",
+     "kind": "eq1",
+     "packet": 82,
+     "packets": "82",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "8 m × 2 m × 5 m = ? cubic m",
+       "answer": "80"
+      },
+      {
+       "n": 5,
+       "prompt": "5 in × 4 in × 4 in = ? cubic in",
+       "answer": "80"
+      },
+      {
+       "n": 6,
+       "prompt": "7 cm × 3 cm × 2 cm = ? cubic cm",
+       "answer": "42"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Find the missing edge",
+     "kind": "eq2",
+     "packet": 82,
+     "packets": "82",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "6 × 4 × ? = 72",
+       "answer": "3"
+      },
+      {
+       "n": 8,
+       "prompt": "2 × 7 × ? = 70",
+       "answer": "5"
+      }
+     ]
+    }
+   ],
+   "packet": 82
   }
  ]
 }

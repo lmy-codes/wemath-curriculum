@@ -1,6 +1,6 @@
 # WeMath worksheets
 
-Seventy-three packets, in teaching order (K to grade 4). Each starts with a picture-first learning page, followed by practice.
+Eighty-three packets, in teaching order (K to grade 5). Each starts with a picture-first learning page, followed by practice.
 
 | Folder | Topic | Pages |
 |---|---|---|
@@ -77,6 +77,16 @@ Seventy-three packets, in teaching order (K to grade 4). Each starts with a pict
 | `70-line-plots-with-fractions/` | Make and read X charts in eighths, add the X's, how far apart, put them together | 7 |
 | `71-angles/` | Acute, right or obtuse, read a protractor, angles that add up, missing angles, turns | 7 |
 | `72-lines-and-shapes/` | Segment, ray or line, parallel or perpendicular, triangles by their biggest angle, lines of symmetry, true or not | 8 |
+| `73-powers-of-ten/` | Grade 5. Digits move in the place-value chart: × and ÷ 10, 100, 1,000, powers of ten, times what? | 7 |
+| `74-thousandths/` | Read and fill the chart to thousandths, what a digit is worth, expanded form, fractions to decimals, words to numbers | 8 |
+| `75-comparing-and-rounding-decimals/` | Compare in the chart, <, > or =, order, round with the founder's method (below, above, which is closer) | 8 |
+| `76-adding-and-subtracting-decimals/` | Points under points (gray zeros), columns, add, subtract, money | 6 |
+| `77-multiplying-bigger-numbers/` | Hundreds × tens, six-piece area model, two rows, three-digit × two-digit, four-digit × one-digit | 9 |
+| `78-dividing-by-two-digit-numbers/` | Easy parts of the divisor, area model, partial quotients, bigger numbers, remainders | 8 |
+| `79-multiplying-and-dividing-decimals/` | Count tenths and hundredths, split the decimal, share tenths, tenths × tenths on a hundred grid | 7 |
+| `80-unlike-fractions/` | Cut strips into the same size pieces, given bottoms, add, subtract, mixed numbers | 7 |
+| `81-multiplying-fractions/` | A square cut both ways, tops × tops, fraction of a number, mixed numbers × a number, smaller or bigger? | 7 |
+| `82-volume/` | Count cubes, layers, length × width × height, base × height, missing edge, two boxes | 7 |
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 
@@ -98,6 +108,7 @@ Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hol
 | Grade 2 | 10–32: two-digit subtracting, borrowing, columns, three-digit numbers, skip counting, comparing, arrays, even/odd, hundred buddies, counting, halves, equal shares, time, money, across zeros, bar models, length, graphs | 98 problems | 98 problems |
 | Grade 3 | 33–52: multiplication, strategies, division, rounding, multiplying by tens, area, six fraction packets (unit fractions, counting fractions, fractions and wholes, equal fractions, comparing, fractions of a group), perimeter, elapsed time, two-step problems, times-table patterns, mass and volume, scaled graphs, quarter inches, quadrilaterals | 86 problems | 86 problems |
 | Grade 4 | 53–72: thousands, rounding big numbers, adding and subtracting big numbers, multiplying by one and two digits, dividing (remainders, bigger numbers), factors and multiples, equivalent and unlike fractions, adding fractions, mixed numbers, fraction × whole number, tenths and hundredths, decimals, conversions, area and perimeter formulas, line plots, angles, lines and shapes | 77 problems | 77 problems |
+| Grade 5 | 73–82: powers of ten, thousandths, comparing and rounding decimals, adding and subtracting decimals, multiplying bigger numbers, dividing by two-digit numbers, multiplying and dividing decimals, unlike fractions, multiplying fractions, volume | 34 problems | 34 problems |
 
 Each answer key ends with a **scoring sheet**: every part, the packet it checks, and a score line. Use the **pre-assessment** for placement: start a student at the first packet where they miss more than 1 problem in its parts. Use the **post-assessment** to see growth: a part with more than 1 miss means that packet needs review.
 

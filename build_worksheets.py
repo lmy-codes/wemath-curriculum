@@ -16994,6 +16994,1857 @@ _g4[-1:-1] = [
 ]
 
 
+# ====================================================================== 73. Powers of Ten
+
+
+from decimal import Decimal as D
+
+
+def dn(x):
+    """A decimal or whole number written plainly, with commas: D("4700") -> "4,700", D("0.250") -> "0.25"."""
+    x = D(x).normalize()
+    s = format(x, ",f")
+    return s
+
+
+def p10(n):
+    return D(10) ** n
+
+
+PV_COLS = ("thousands", "hundreds", "tens", "ones", "tenths", "hundredths", "thousandths")
+
+
+def pv_digits(x):
+    """Digits of x by place: {"tens": "4", ...} for places thousands … thousandths."""
+    s = format(D(x).normalize(), "f")
+    whole, _, frac = s.partition(".")
+    out = {}
+    for i, ch in enumerate(reversed(whole)):
+        if i < 4:
+            out[PV_COLS[3 - i]] = ch
+    for i, ch in enumerate(frac[:3]):
+        out[PV_COLS[4 + i]] = ch
+    return out
+
+
+def pv_row(bk, x, y, cw, h, digits, answer=False, size=15):
+    """One row of the place-value chart; a dot between ones and tenths. answer=True: boxes on the key only."""
+    c = bk.c
+    for i, col in enumerate(PV_COLS):
+        cx = x + i * cw + (8 if i >= 4 else 0)
+        c.setStrokeColor(T.line)
+        c.setLineWidth(0.8)
+        c.rect(cx, y, cw, h, stroke=1, fill=0)
+        d = digits.get(col)
+        if d is None:
+            continue
+        if answer:
+            if bk.key:
+                c.setFillColor(T.answer)
+                c.setFont("Rnd", size)
+                c.drawCentredString(cx + cw / 2, y + h / 2 - size * 0.35, d)
+        else:
+            c.setFillColor(T.ink)
+            c.setFont("Rnd", size)
+            c.drawCentredString(cx + cw / 2, y + h / 2 - size * 0.35, d)
+    c.setFillColor(T.ink)
+    c.circle(x + 4 * cw + 4, y + 4, 2.2, stroke=0, fill=1)
+
+
+def pv_header(bk, x, y, cw, short=True):
+    c = bk.c
+    names = ("th", "h", "t", "o", "tth", "hth", "thth") if short else PV_COLS
+    c.setFillColor(T.text2)
+    c.setFont("AvM", 8)
+    for i, n in enumerate(names):
+        fs = 8
+        while fs > 5 and c.stringWidth(n, "AvM", fs) > cw - 3:
+            fs -= 0.5
+        c.setFont("AvM", fs)
+        c.drawCentredString(x + i * cw + (8 if i >= 4 else 0) + cw / 2, y + 4, n)
+
+
+def c_shift(bk, x, cy, w, item):
+    """A number in the chart, then the row for it × or ÷ 10 / 100 (the key fills the moved digits)."""
+    n, op, k = item
+    res = D(n) * p10(k) if op == "x" else D(n) / p10(k)
+    cw, h = 30, 22
+    x0 = x + GUT + 4
+    pv_header(bk, x0, cy + 72, cw)
+    pv_row(bk, x0, cy + 46, cw, h, pv_digits(n))
+    pv_row(bk, x0, cy + 14, cw, h, pv_digits(res), answer=True)
+    sym = TIMES if op == "x" else DIV
+    bk.fit_eq(x0 + 7 * cw + 30, cy + 42, w - (7 * cw + 30) - GUT - 14,
+              f"{dn(n)} {sym} {dn(p10(k))} = [{dn(res)}]", size=16)
+
+
+def pow_text(bk, x, base, text, size=17, measure=False):
+    """Draw "10^3" style tokens with a raised exponent; other tokens plainly. Returns the end x."""
+    c = bk.c
+    for tok in text.split():
+        if "^" in tok:
+            b, e = tok.split("^")
+            if not measure:
+                c.setFillColor(T.ink)
+                c.setFont("Rnd", size)
+                c.drawString(x, base, b)
+            x += sw(b, "Rnd", size)
+            if not measure:
+                c.setFont("Rnd", size * 0.62)
+                c.drawString(x + 1, base + size * 0.48, e)
+            x += sw(e, "Rnd", size * 0.62) + 2
+        else:
+            font = "AvD" if tok in OPS else "Rnd"
+            if not measure:
+                c.setFillColor(T.text2 if tok in OPS else T.ink)
+                c.setFont(font, size)
+                c.drawString(x, base, tok)
+            x += sw(tok, font, size)
+        x += size * 0.3
+    return x
+
+
+def c_pow(bk, x, cy, w, item):
+    lhs, ans = item
+    end = pow_text(bk, x + GUT, cy + 14, lhs, size=17)
+    bk.fit_eq(end, cy + 14, w - (end - x) - 10, f"= [{ans}]", size=17)
+
+
+def times_p10(n, k):
+    return f"{dn(n)} {TIMES} {dn(p10(k))} = [{dn(D(n) * p10(k))}]"
+
+
+def div_p10(n, k):
+    return f"{dn(n)} {DIV} {dn(p10(k))} = [{dn(D(n) / p10(k))}]"
+
+
+def learn_powers_of_ten(bk):
+    y = bk.new_page("Powers of Ten", "Times 10: every digit moves one place to the left.", name_line=False,
+                    big=True, footer="WeMath  ·  Powers of Ten")
+    c = bk.c
+    cw, h = 40, 28
+    label(bk, M, y - 6, "34 × 10 = 340")
+    pv_header(bk, M + 14, y - 30, cw, short=False)
+    pv_row(bk, M + 14, y - 62, cw, h, pv_digits(34), size=18)
+    pv_row(bk, M + 14, y - 96, cw, h, pv_digits(340), size=18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 310, y - 52, "Each digit is worth 10 times as much,")
+    c.drawString(M + 310, y - 68, "so it moves one place left.")
+    c.drawString(M + 310, y - 86, "The empty ones place gets a 0.")
+    y -= 118
+
+    label(bk, M, y - 6, "4.6 ÷ 10 = 0.46")
+    pv_row(bk, M + 14, y - 40, cw, h, pv_digits("4.6"), size=18)
+    pv_row(bk, M + 14, y - 74, cw, h, pv_digits("0.46"), size=18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 310, y - 32, "Divide by 10: one place right.")
+    c.drawString(M + 310, y - 50, "Divide by 100: two places right.")
+    y -= 96
+
+    label(bk, M, y - 6, "Powers of ten: how many 10s you multiply")
+    for i, (lhs, rhs) in enumerate((("10^2", "10 × 10 = 100"), ("10^3", "10 × 10 × 10 = 1,000"), ("10^4", "10,000"))):
+        e = pow_text(bk, M + 14, y - 38 - i * 26, lhs, size=17)
+        color_eq(bk, e, y - 38 - i * 26, [("=", "op"), (rhs, None)], 17)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 310, y - 40, "The small number says how many")
+    c.drawString(M + 310, y - 56, "10s, and how many zeros.")
+    y -= 104
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("powers of ten your turn: 5.2 x 100")
+    bk.eq(M + 150, bottom + 26, "5.2 × 100 = [520]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: multiply and divide by 10, 100 and 1,000 by moving digits in the place-value chart, and "
+                     "powers of ten (5.NBT.1–2). Say “The digits move; the point stays.” Never “add a zero”.")
+
+
+def practice_powers_of_ten(bk):
+    title = "Powers of Ten: Practice"
+    y = bk.new_page(title, "Times: digits move left. Divide: digits move right.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Move the digits", "Write the new number in the second row.", "shift",
+         [("27", "x", 1), ("6.4", "d", 1), ("3.15", "x", 2), ("820", "d", 2), ("0.9", "x", 1), ("405", "d", 1)])
+    part(2, "Times 10, 100 and 1,000", "No help this time.", "eq3",
+         [times_p10(n, k) for n, k in (("47", 2), ("3.6", 1), ("0.25", 2), ("8", 3), ("5.04", 2), ("62", 1),
+                                       ("0.7", 3), ("19", 3), ("2.38", 1), ("0.06", 2), ("715", 1), ("4.5", 3),
+                                       ("0.81", 1), ("33", 2), ("1.9", 2))])
+    part(3, "Divide by 10, 100 and 1,000", "No help this time.", "eq3",
+         [div_p10(n, k) for n, k in (("4500", 2), ("36", 1), ("7", 2), ("8000", 3), ("52", 2), ("9.4", 1),
+                                     ("630", 1), ("1250", 3), ("3", 1), ("74", 2), ("580", 2), ("2.6", 1),
+                                     ("9000", 2), ("45", 3), ("0.8", 1))])
+    part(4, "Powers of ten", "No help this time.", "pow",
+         [("10^2", "100"), ("10^4", "10,000"), ("10^1", "10"), ("10^5", "100,000"), ("3 × 10^2", "300"),
+          ("7 × 10^3", "7,000"), ("2.5 × 10^2", "250"), ("10^3", "1,000"), ("6 × 10^4", "60,000"),
+          ("4.2 × 10^1", "42")])
+    part(5, "Times what?", "No help this time. Count how many places the digits moved.", "eq3",
+         [f"{dn(n)} {TIMES} [{dn(p10(k))}] = {dn(D(n) * p10(k))}" for n, k in (("52", 2), ("3.7", 1), ("0.4", 3),
+                                                                             ("16", 3), ("2.09", 2), ("81", 1),
+                                                                             ("0.35", 2), ("7", 2))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_73)
+
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 7, "Word problems", "Think about how the digits move.")
+    for i, story in enumerate(WORDS_73):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 7, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_73 = ["0.62 [>] 0.6", "4 × 7/10 = [28]/10", "area: 18 × 7 = [126] sq ft", "48 × 25 = [1,200]",
+             "6 L = [6,000] mL", "40 + [140] = 180 degrees"]
+
+WORDS_73 = [
+    ("A box holds 24 pencils. How many pencils are in 100 boxes?", f"24 {TIMES} 100 = 2,400", "2,400", "pencils"),
+    ("A stack of 10 coins is 1.8 cm tall. How tall is one coin?", f"1.8 {DIV} 10 = 0.18", "0.18", "cm"),
+    ("A sticker costs $0.35. How much do 10 stickers cost?", f"0.35 {TIMES} 10 = 3.5", "$3.50", ""),
+    ("A farm has 4,500 apples to pack in 100 equal bags. How many apples go in each bag?", f"4,500 {DIV} 100 = 45",
+     "45", "apples"),
+    ("Challenge: A paper is 0.1 mm thick. How thick is a stack of 1,000 papers, in cm? (10 mm = 1 cm)",
+     f"0.1 {TIMES} 1,000 = 100 mm = 10 cm", "10", "cm"),
+]
+
+KINDS_73 = {
+    "shift": Kind(96, 1, lambda it: f"move the digits: {it[0]} {'times' if it[1] == 'x' else 'divided by'} "
+                                    f"{dn(p10(it[2]))}", c_shift, 8),
+    "pow": Kind(44, 2, lambda it: f"power of ten: {it[0]}", c_pow, 8),
+}
+KINDS.update(KINDS_73)
+
+TIMES_P10 = [times_p10(n, k) for n in ("13", "2.7", "0.48", "56", "9.1", "0.03", "740", "6.25") for k in (1, 2, 3)]
+DIV_P10 = [div_p10(n, k) for n in ("2700", "56", "380", "9", "64.5", "4100", "83") for k in (1, 2, 3)]
+POW_POOL = [(f"10^{e}", dn(p10(e))) for e in rng(2, 6)] + [(f"{a} × 10^{e}", dn(D(a) * p10(e)))
+                                                         for a in ("2", "4", "9", "1.5", "3.8") for e in rng(1, 4)]
+
+CHECKINS["73-powers-of-ten"] = [
+    S("Move the digits", None, "shift", [(n, op, k) for n in ("38", "5.2", "0.47", "610") for op in ("x", "d")
+                                         for k in (1, 2)], 1),
+    S("Times 10, 100 and 1,000", None, "eq3", TIMES_P10, 3),
+    S("Divide by 10, 100 and 1,000", None, "eq3", DIV_P10, 3),
+    S("Powers of ten", None, "pow", POW_POOL, 2),
+]
+WORDS_G5 = [
+    ("A tank is 5 ft long, 3 ft wide and 4 ft tall. What is its volume?", f"5 {TIMES} 3 {TIMES} 4 = 60", "60",
+     "cubic ft"),
+    ("Ava buys a book for $6.75 and a pen for $1.40. How much does she spend?", "6.75 + 1.40 = 8.15", "$8.15", ""),
+    ("A school orders 36 boxes of 125 pencils. How many pencils is that?", f"36 {TIMES} 125 = 4,500", "4,500",
+     "pencils"),
+    ("Leo ran 3/4 km, then walked 1/3 km. How far did he go?", "3/4 + 1/3 = 13/12", "13/12", "km"),
+    ("864 kids sit in rows of 24. How many rows are there?", f"864 {DIV} 24 = 36", "36", "rows"),
+    ("A rope is 2.4 m long. It is cut into 6 equal pieces. How long is each piece?", f"2.4 {DIV} 6 = 0.4", "0.4",
+     "m"),
+    ("2/3 of a garden is flowers. 1/4 of the flowers are red. What part of the garden is red?",
+     f"1/4 {TIMES} 2/3 = 2/12", "2/12", "of the garden"),
+    ("A bag of rice weighs 1.25 kg. How much do 8 bags weigh?", f"8 {TIMES} 1.25 = 10", "10", "kg"),
+]
+GRADES.append(("grade-5", "Grade 5", "Packets 73–82", [
+    S("Powers of ten", None, "eq3", TIMES_P10 + DIV_P10, 3, 73),
+    S("Word problems", None, "word", WORDS_G5, 4, "73–82"),
+]))
+_g5 = GRADES[-1][3]
+
+
+# ====================================================================== 74. Thousandths
+
+
+ONES_W = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve",
+          "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"]
+TENS_W = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
+
+
+def num_words(n):
+    """0–999 in words: 457 -> "four hundred fifty-seven"."""
+    if n < 20:
+        return ONES_W[n]
+    if n < 100:
+        return TENS_W[n // 10] + ("-" + ONES_W[n % 10] if n % 10 else "")
+    return ONES_W[n // 100] + " hundred" + (" " + num_words(n % 100) if n % 100 else "")
+
+
+def dec_words(x):
+    """"2.045" -> "two and forty-five thousandths"; "0.3" -> "three tenths"."""
+    whole, _, frac = str(x).partition(".")
+    place = {1: "tenth", 2: "hundredth", 3: "thousandth"}[len(frac)]
+    k = int(frac)
+    tail = f"{num_words(k)} {place}{'s' if k != 1 else ''}"
+    return tail if int(whole) == 0 else f"{num_words(int(whole))} and {tail}"
+
+
+def dec_parts(x):
+    """"3.462" -> ["3", "0.4", "0.06", "0.002"] (zero digits left out)."""
+    whole, _, frac = str(x).partition(".")
+    out = [whole] if int(whole) else []
+    for i, ch in enumerate(frac):
+        if ch != "0":
+            out.append("0." + "0" * i + ch)
+    return out
+
+
+def dec_frac_parts(x):
+    """"3.462" -> ["3", "4/10", "6/100", "2/1000"]."""
+    whole, _, frac = str(x).partition(".")
+    out = [whole] if int(whole) else []
+    for i, ch in enumerate(frac):
+        if ch != "0":
+            out.append(f"{ch}/{nf(10 ** (i + 1))}")
+    return out
+
+
+def worth_dec(x, i):
+    """The digit at decimal place i (1 = tenths) and its worth: in 3.462 the 6 is worth 0.06."""
+    frac = str(x).partition(".")[2]
+    d = frac[i - 1]
+    return f"in {x} the {d} is worth [{'0.' + '0' * (i - 1) + d}]"
+
+
+def c_pv_read(bk, x, cy, w, x_):
+    """The chart is filled; write the number."""
+    cw = 30
+    x0 = x + GUT + 4
+    pv_header(bk, x0, cy + 36, cw)
+    pv_row(bk, x0, cy + 10, cw, 24, pv_digits(x_))
+    bk.fit_eq(x0 + 7 * cw + 34, cy + 16, w - (7 * cw + 34) - GUT - 14, f"the number is [{x_}]", size=16)
+
+
+def c_pv_fill(bk, x, cy, w, x_):
+    """Write the number in the chart (the key fills it)."""
+    cw = 30
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 19)
+    c.drawString(x + GUT + 4, cy + 16, x_)
+    x0 = x + GUT + 104
+    pv_header(bk, x0, cy + 36, cw)
+    pv_row(bk, x0, cy + 10, cw, 24, pv_digits(x_), answer=True)
+
+
+def zoom_thousandth(bk, x, y, s=96):
+    """A hundred grid with one hundredth shaded, then that hundredth blown up and cut into 10 thin strips."""
+    c = bk.c
+    grid_100(bk, x, y, s, 1)
+    cell = s / 10
+    big = s
+    bx = x + s + 70
+    for i in range(10):
+        if i == 0:
+            shade(bk, [(bx, y), (bx + big / 10, y), (bx + big / 10, y + big), (bx, y + big)])
+    c.setStrokeColor(T.muted)
+    c.setLineWidth(0.5)
+    for i in range(1, 10):
+        c.line(bx + i * big / 10, y, bx + i * big / 10, y + big)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.3)
+    c.rect(bx, y, big, big, stroke=1, fill=0)
+    c.setStrokeColor(T.muted)
+    c.setLineWidth(0.6)
+    c.setDash(3, 3)
+    c.line(x + cell, y + s, bx, y + big)
+    c.line(x + cell, y + s - cell, bx, y)
+    c.setDash()
+
+
+def learn_thousandths(bk):
+    y = bk.new_page("Thousandths", "Cut a hundredth into 10 equal parts. Each part is a thousandth.", name_line=False,
+                    big=True, footer="WeMath  ·  Thousandths")
+    c = bk.c
+    zoom_thousandth(bk, M + 14, y - 112, 92)
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 13)
+    c.drawCentredString(M + 60, y - 130, "1 hundredth = 0.01")
+    c.drawCentredString(M + 268, y - 130, "1 thousandth = 0.001")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 350, y - 40, "10 thousandths = 1 hundredth")
+    c.drawString(M + 350, y - 58, "100 thousandths = 1 tenth")
+    c.drawString(M + 350, y - 76, "1,000 thousandths = 1 whole")
+    y -= 150
+
+    label(bk, M, y - 6, "2.457 in the place-value chart")
+    cw, h = 40, 28
+    pv_header(bk, M + 14, y - 30, cw, short=False)
+    pv_row(bk, M + 14, y - 62, cw, h, pv_digits("2.457"), size=18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 310, y - 44, "The 7 is in the thousandths place,")
+    c.drawString(M + 310, y - 60, "so it is worth 0.007.")
+    color_eq(bk, M + 14, y - 94, [("2", "a"), ("+", "op"), ("0.4", "a"), ("+", "op"), ("0.05", "a"), ("+", "op"),
+                                  ("0.007", "b"), ("=", "op"), ("2.457", None)], 18)
+    y -= 122
+
+    label(bk, M, y - 6, "Say it")
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 15)
+    c.drawString(M + 14, y - 34, "2.457 = two and four hundred fifty-seven thousandths")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 56, "Say the whole number, then “and” for the point, then the digits after it and the")
+    c.drawString(M + 14, y - 72, "last place: 0.06 = six hundredths, 0.045 = forty-five thousandths.")
+    y -= 94
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("thousandths your turn: 5.382 the 8")
+    bk.eq(M + 120, bottom + 26, "in 5.382 the 8 is worth [0.08]", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: read and write decimals to thousandths in the chart, in expanded form and in words "
+                     "(5.NBT.3a). Say “A thousandth is one hundredth cut into 10.” Read the point as “and”, "
+                     "never “point”.")
+
+
+def practice_thousandths(bk):
+    title = "Thousandths: Practice"
+    y = bk.new_page(title, "Each place is worth 10 of the place to its right.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Read the chart", "Write the number.", "pv_read",
+         ["3.462", "0.508", "14.07", "6.039", "0.715"])
+    part(2, "Fill the chart", "Write each digit in its place.", "pv_fill",
+         ["2.184", "0.096", "31.5", "7.603", "0.042"])
+    part(3, "What is the digit worth?", "Some help: look at the place after the point.", "eq2",
+         [worth_dec(x, i) for x, i in (("4.276", 3), ("0.835", 1), ("9.162", 2), ("1.409", 3), ("6.358", 2),
+                                       ("0.274", 1), ("2.917", 3), ("5.643", 2), ("8.521", 1), ("3.084", 2),
+                                       ("7.395", 3), ("0.769", 1))])
+    part(4, "Put it together", "No help this time.", "eq2",
+         [" + ".join(dec_parts(x)) + f" = [{x}]" for x in ("5.326", "0.471", "2.08", "8.904", "13.257", "0.063",
+                                                          "4.61", "9.035", "6.702", "1.598")])
+    part(5, "Take it apart", "No help this time. Write each part.", "eq1",
+         [" + ".join(f"[{p}]" for p in dec_parts(x)) + f" = {x}" for x in ("3.517", "0.928", "6.403", "7.06",
+                                                                         "2.391", "0.805")])
+    part(6, "Fractions to decimals", "No help this time.", "frac2",
+         [" + ".join(dec_frac_parts(x)) + f" = [{x}]" for x in ("0.483", "2.716", "0.059", "5.302", "0.64",
+                                                               "1.907", "0.025", "4.138")])
+    part(7, "Words to numbers", "No help this time.", "eq1",
+         [f"{dec_words(x)} = [{x}]" for x in ("2.045", "0.318", "7.6", "0.009", "12.53", "4.207", "0.86",
+                                              "3.012")])
+    part(8, "How many thousandths?", "No help this time.", "eq2",
+         [f"{x} = [{int(D(x) * 1000)}] thousandths" for x in ("0.4", "0.27", "0.6", "0.051", "0.93", "0.2",
+                                                             "0.307", "0.08", "0.75")])
+    part(9, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_74)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 10, "Word problems", "Think about the places.")
+    for i, story in enumerate(WORDS_74):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 10, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_74 = ["6.3 × 100 = [630]", "740 ÷ 100 = [7.4]", "10 × 10 × 10 = [1,000]",
+             "0.48 [<] 0.5", "7 × 2/9 = [14]/9", "47 × 23 = [1,081]"]
+WORDS_74 = [
+    ("A runner's time is 12.345 seconds. What is the 4 worth?", "the 4 is in the hundredths place", "0.04",
+     "seconds"),
+    ("A bag of rice weighs 2 kg and 75 thousandths of a kg. Write it as a decimal.", "2 + 0.075 = 2.075", "2.075",
+     "kg"),
+    ("A nail is 0.045 m long. How many thousandths of a meter is that?", "0.045 = 45 thousandths", "45",
+     "thousandths"),
+    ("A seed weighs 0.008 g. How much do 10 of these seeds weigh?", f"0.008 {TIMES} 10 = 0.08", "0.08", "g"),
+    ("Challenge: A number has 4 ones, 7 thousandths, 2 hundredths and no tenths. What is the number?",
+     "4 + 0.02 + 0.007 = 4.027", "4.027", ""),
+]
+KINDS_74 = {
+    "pv_read": Kind(58, 1, lambda x: f"read the chart: {x}", c_pv_read, 8),
+    "pv_fill": Kind(58, 1, lambda x: f"fill the chart: {x}", c_pv_fill, 8),
+}
+KINDS.update(KINDS_74)
+WORTH_POOL = [worth_dec(x, i) for x, i in (("3.581", 2), ("0.724", 3), ("6.917", 1), ("2.846", 3), ("0.395", 2),
+                                           ("7.263", 1), ("4.538", 3), ("1.672", 2))]
+BUILD_POOL = [" + ".join(dec_parts(x)) + f" = [{x}]" for x in ("4.517", "0.382", "7.06", "3.249", "0.705",
+                                                              "6.834")]
+WORDS_POOL = [f"{dec_words(x)} = [{x}]" for x in ("3.064", "0.427", "8.15", "0.006", "5.302", "0.091")]
+THOU_POOL = [f"{x} = [{int(D(x) * 1000)}] thousandths" for x in ("0.5", "0.36", "0.9", "0.072", "0.14", "0.3",
+                                                                "0.605")]
+CHECKINS["74-thousandths"] = [
+    S("Fill the chart", None, "pv_fill", ["5.204", "0.367", "12.08", "3.519"], 1),
+    S("What is the digit worth?", None, "eq2", WORTH_POOL, 2),
+    S("Put it together", None, "eq2", BUILD_POOL, 2),
+    S("Words to numbers", None, "eq1", WORDS_POOL, 2),
+    S("How many thousandths?", None, "eq2", THOU_POOL, 2),
+]
+_g5[-1:-1] = [S("Thousandths", None, "eq2", WORTH_POOL + BUILD_POOL, 3, 74)]
+
+
+# ====================================================================== 75. Comparing and Rounding Decimals
+
+
+PLACE_DEC = {0: "whole number", 1: "tenth", 2: "hundredth"}
+
+
+def dfix(x, places):
+    """Decimal x with exactly `places` digits after the point ("4", "3.5", "0.47")."""
+    return format(D(x).quantize(D(1).scaleb(-places)), "f")
+
+
+def dround(x, places):
+    from decimal import ROUND_HALF_UP
+    return dfix(D(x).quantize(D(1).scaleb(-places), rounding=ROUND_HALF_UP), places)
+
+
+def dbelow_above(x, places):
+    q = D(1).scaleb(-places)
+    lo = (D(x) / q).to_integral_value(rounding="ROUND_FLOOR") * q
+    return dfix(lo, places), dfix(lo + q, places)
+
+
+def dcompare(a, b):
+    return f"{a} [{dsign(D(a), D(b))}] {b}"
+
+
+def drt(x, places):
+    return f"{x} rounds to [{dround(x, places)}]"
+
+
+def dround_eq(x, places):
+    return f"{x} to the nearest {PLACE_DEC[places]} = [{dround(x, places)}]"
+
+
+def between_dec(bk, x, y, w, n, places, given=False, size=16, bw=48):
+    """The rounding picture with decimals: [below] <- n -> [above]; the key rings the closer one."""
+    c = bk.c
+    lo, hi = dbelow_above(n, places)
+    bh = size * 1.6
+    lx, rx = x, x + w - bw
+    for bx, v in ((lx, lo), (rx, hi)):
+        bk.box(bx, y - size * 0.42, bw, bh, v, size=size * 0.85, reveal=T.ink if given else None)
+        if bk.key and v == dround(n, places):
+            c.setStrokeColor(T.answer)
+            c.setLineWidth(1.6)
+            c.ellipse(bx - 6, y - size * 0.42 - 6, bx + bw + 6, y - size * 0.42 + bh + 6, stroke=1, fill=0)
+    mx = x + w / 2
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", size * 1.15)
+    c.drawCentredString(mx, y, n)
+    nw = sw(n, "Rnd", size * 1.15) / 2 + 6
+    ay = y + size * 0.35
+    bk.arrow(mx - nw, ay, lx + bw + 4, ay)
+    bk.arrow(mx + nw, ay, rx - 4, ay)
+
+
+def c_round_dec(bk, x, cy, w, item):
+    n, places, level = item
+    between_dec(bk, x + GUT, cy + 52, w - GUT - 14, n, places, given=level == "closer", size=15)
+    bk.fit_eq(x + GUT, cy + 12, w - GUT - 10, dround_eq(n, places), size=14)
+
+
+def c_cmp_chart(bk, x, cy, w, item):
+    """Two numbers lined up in the chart, then the sign."""
+    a, b = item
+    cw, h = 30, 22
+    x0 = x + GUT + 4
+    pv_header(bk, x0, cy + 54, cw)
+    pv_row(bk, x0, cy + 30, cw, h, pv_digits(a))
+    pv_row(bk, x0, cy + 6, cw, h, pv_digits(b))
+    bk.fit_eq(x0 + 7 * cw + 34, cy + 26, w - (7 * cw + 34) - GUT - 14, dcompare(a, b), size=18)
+
+
+def c_order_dec(bk, x, cy, w, item):
+    nums = list(item)
+    srt = sorted(nums, key=D)
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 16)
+    c.drawString(x + GUT, cy + 15, ",   ".join(nums))
+    bk.fit_eq(x + GUT + 210, cy + 14, w - GUT - 220, " < ".join(f"[{v}]" for v in srt), size=16)
+
+
+def learn_compare_round_dec(bk):
+    y = bk.new_page("Comparing and Rounding Decimals", "Line up the points. Compare from the left.",
+                    name_line=False, big=True, footer="WeMath  ·  Comparing and Rounding Decimals")
+    c = bk.c
+    label(bk, M, y - 6, "0.45 or 0.405?")
+    cw, h = 40, 26
+    pv_header(bk, M + 14, y - 30, cw, short=False)
+    pv_row(bk, M + 14, y - 60, cw, h, pv_digits("0.45"), size=17)
+    pv_row(bk, M + 14, y - 90, cw, h, pv_digits("0.405"), size=17)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 310, y - 40, "Ones: 0 and 0. Same.")
+    c.drawString(M + 310, y - 56, "Tenths: 4 and 4. Same.")
+    c.drawString(M + 310, y - 72, "Hundredths: 5 and 0. 5 is more.")
+    color_eq(bk, M + 310, y - 102, [("0.45", "a"), (">", "op"), ("0.405", "b")], 20)
+    y -= 128
+
+    label(bk, M, y - 6, "Round 3.47 to the nearest tenth")
+    between_dec(bk, M + 14, y - 54, 300, "3.47", 1, given=True, size=22, bw=60)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 36, "The tenth below is 3.4.")
+    c.drawString(M + 340, y - 54, "The tenth above is 3.5.")
+    c.drawString(M + 340, y - 72, "3.47 is closer to 3.5.")
+    color_eq(bk, M + 340, y - 102, [("3.47", None), ("rounds to", None), ("3.5", "b")], 18)
+    y -= 128
+
+    label(bk, M, y - 6, "Round 6.8 to the nearest whole number")
+    between_dec(bk, M + 14, y - 54, 300, "6.8", 0, given=True, size=22, bw=60)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 36, "Below: 6. Above: 7.")
+    c.drawString(M + 340, y - 54, "6.8 is closer to 7.")
+    c.drawString(M + 340, y - 72, "Right in the middle? Round up.")
+    y -= 98
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("compare round decimals your turn: 0.6 0.58")
+    bk.eq(M + 150, bottom + 26, "0.6 [>] 0.58", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: compare decimals to thousandths and round them (5.NBT.3b, 5.NBT.4). Say “Line up the "
+                     "points; the first place that is different decides.” For rounding: “What is below? What is "
+                     "above? Which one is closer?”")
+
+
+def practice_compare_round_dec(bk):
+    title = "Comparing and Rounding Decimals: Practice"
+    y = bk.new_page(title, "Line up the points. Below, above: which one is closer?")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Compare in the chart", "Look for the first place that is different.", "cmp_chart",
+         [("2.35", "2.4"), ("0.718", "0.72"), ("5.06", "5.059"), ("0.9", "0.900"), ("14.2", "1.42")])
+    part(2, "Compare", "No help this time. Write <, > or =.", "eq3",
+         [dcompare(a, b) for a, b in (("0.8", "0.79"), ("3.125", "3.15"), ("0.6", "0.60"), ("4.08", "4.8"),
+                                      ("0.237", "0.24"), ("7.5", "7.499"), ("1.03", "1.003"), ("0.55", "0.505"),
+                                      ("9.1", "9.10"), ("2.46", "2.064"), ("0.312", "0.32"), ("6.07", "6.7"),
+                                      ("0.9", "0.899"), ("5.204", "5.24"), ("8.3", "8.300"), ("0.71", "0.17"),
+                                      ("3.06", "3.059"), ("0.402", "0.42"), ("12.5", "12.49"), ("0.09", "0.9"),
+                                      ("4.53", "4.530"), ("7.019", "7.09"), ("0.635", "0.6"), ("2.7", "2.71"))])
+    part(3, "Put them in order", "No help this time. Smallest first.", "order_dec",
+         [("0.35", "0.305", "0.53"), ("2.1", "2.09", "2.15"), ("4.07", "4.7", "4.017"), ("0.6", "0.66", "0.606"),
+          ("1.5", "1.45", "1.405"), ("3.28", "3.208", "3.3")])
+    part(4, "Round with the picture", "Circle the closer one, then write it.", "round_dec",
+         [("2.63", 1, "closer"), ("7.4", 0, "closer"), ("0.586", 2, "closer"), ("5.71", 1, "closer"),
+          ("3.6", 0, "closer"), ("1.243", 2, "closer")])
+    part(5, "Fill in below and above", "Write the one below and the one above. Circle the closer one.", "round_dec",
+         [("4.82", 1, "boxes"), ("9.3", 0, "boxes"), ("0.457", 2, "boxes"), ("6.15", 1, "boxes"),
+          ("12.7", 0, "boxes"), ("2.318", 2, "boxes")])
+    part(6, "Round to the nearest tenth", "No help this time.", "eq2",
+         [drt(x, 1) for x in ("5.38", "2.91", "7.04", "6.66", "0.85", "3.12", "8.25", "1.77")])
+    part(7, "Round to the nearest whole number", "No help this time.", "eq2",
+         [drt(x, 0) for x in ("8.6", "4.2", "3.5", "11.8", "9.49", "15.3", "6.71", "7.5")])
+    part(8, "Round to the nearest hundredth", "No help this time.", "eq2",
+         [drt(x, 2) for x in ("0.742", "1.365", "0.218", "4.507", "2.873", "0.691", "5.034", "0.326")])
+    part(9, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_75)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 10, "Word problems", "Line up the points.")
+    for i, story in enumerate(WORDS_75):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 10, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_75 = ["in 6.274 the 7 is worth [0.07]", "0.9 = [900] thousandths", "3.8 × 1,000 = [3,800]",
+             "560 ÷ 100 = [5.6]", "2/5 + 1/5 = [3]/5", "4,672 to the nearest hundred = [4,700]"]
+WORDS_75 = [
+    ("Mia ran 100 m in 15.42 seconds. Leo ran it in 15.4 seconds. Who was faster?",
+     "15.4 < 15.42, so Leo took less time", "Leo", ""),
+    ("A melon weighs 2.68 kg. Round it to the nearest tenth of a kilogram.", "2.68 is closer to 2.7", "2.7",
+     "kg"),
+    ("A ribbon is 1.375 m long. Another is 1.38 m long. Which one is longer?", "1.38 > 1.375", "1.38", "m"),
+    ("A book costs $8.49. About how many dollars is that, to the nearest dollar?", "8.49 is closer to 8", "8",
+     "dollars"),
+    ("Challenge: Three jumps were 3.4 m, 3.09 m and 3.35 m. Write them from shortest to longest.",
+     "3.09 < 3.35 < 3.4", "3.09, 3.35, 3.4", "m"),
+]
+KINDS_75 = {
+    "cmp_chart": Kind(76, 1, lambda it: f"compare decimals: {it[0]} and {it[1]}", c_cmp_chart, 8),
+    "order_dec": Kind(42, 1, lambda it: "order decimals: " + " - ".join(it), c_order_dec, 8),
+    "round_dec": Kind(84, 2, lambda it: f"round decimal: {it[0]} to {it[1]} {it[2]}", c_round_dec, 10),
+}
+KINDS.update(KINDS_75)
+DCMP_POOL = [dcompare(a, b) for a, b in (("0.7", "0.69"), ("2.405", "2.45"), ("5.3", "5.30"), ("0.18", "0.8"),
+                                         ("6.52", "6.502"), ("1.09", "1.9"), ("3.471", "3.47"), ("0.264", "0.3"),
+                                         ("8.06", "8.060"), ("4.9", "4.89"))]
+DR_TENTH = [drt(x, 1) for x in ("4.67", "2.45", "5.13", "8.36", "0.94")]
+DR_WHOLE = [drt(x, 0) for x in ("7.3", "9.8", "6.5", "13.4")]
+DR_HUNDREDTH = [drt(x, 2) for x in ("0.538", "1.624", "3.075", "0.419")]
+CHECKINS["75-comparing-and-rounding-decimals"] = [
+    S("Compare", "Write <, > or =.", "eq3", DCMP_POOL, 3, balance=lambda t: "[<]" in t),
+    S("Put them in order", "Smallest first.", "order_dec", [("0.42", "0.402", "0.24"), ("5.6", "5.06", "5.66")], 1),
+    S("Round with the picture", None, "round_dec", [("3.74", 1, "boxes"), ("8.2", 0, "boxes"),
+                                                    ("0.363", 2, "boxes")], 2),
+    S("Round to the nearest tenth", None, "eq2", DR_TENTH, 2),
+    S("Round to the nearest whole number", None, "eq2", DR_WHOLE, 2),
+    S("Round to the nearest hundredth", None, "eq2", DR_HUNDREDTH, 2),
+]
+_g5[-1:-1] = [S("Compare decimals", "Write <, > or =.", "eq3", DCMP_POOL, 3, 75, balance=lambda t: "[<]" in t),
+              S("Round to the nearest tenth", None, "eq2", DR_TENTH, 2, 75)]
+
+
+# ====================================================================== 76. Adding and Subtracting Decimals
+
+
+def dplaces(x):
+    return len(str(x).partition(".")[2])
+
+
+def dres(a, b, op):
+    r = D(a) + D(b) if op == "+" else D(a) - D(b)
+    return dfix(r, max(dplaces(a), dplaces(b)))
+
+
+def dec_stack(bk, x, top, a, b, op, hint=False, size=20, shown=None):
+    """Column addition or subtraction with the points lined up. hint=True writes the filler zeros in gray.
+    top = baseline of the first number. The answer row shows on the key only."""
+    c = bk.c
+    pl = max(dplaces(a), dplaces(b))
+    res = dres(a, b, op)
+    whole = max(len(str(v).partition(".")[0]) for v in (a, b, res))
+    cw, pw = size * 0.72, size * 0.42
+
+    def col_x(i):  # i < 0: whole digits (−1 = ones), i >= 1: decimal places
+        return x + (whole + i) * cw if i < 0 else x + whole * cw + pw + (i - 1) * cw
+
+    def row(v, base, color, filler):
+        w_, _, f_ = str(v).partition(".")
+        for j, ch in enumerate(reversed(w_)):
+            c.setFillColor(color)
+            c.setFont("Rnd", size)
+            c.drawCentredString(col_x(-1 - j) + cw / 2, base, ch)
+        for j in range(pl):
+            ch = f_[j] if j < len(f_) else "0"
+            if j < len(f_) or filler is not None:
+                c.setFillColor(color if j < len(f_) else filler)
+                c.setFont("Rnd", size)
+                c.drawCentredString(col_x(j + 1) + cw / 2, base, ch)
+        if pl and (f_ or filler is not None):
+            c.setFillColor(color)
+            c.circle(x + whole * cw + pw / 2, base + 1, size * 0.09, stroke=0, fill=1)
+
+    row(a, top, T.ink, T.muted if hint else None)
+    row(b, top - size * 1.35, T.ink, T.muted if hint else None)
+    c.setFillColor(T.text2)
+    c.setFont("AvD", size)
+    c.drawRightString(x - 4, top - size * 1.35, MINUS if op == "-" else "+")
+    ly = top - size * 1.35 - size * 0.45
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.4)
+    c.line(x - size * 0.8, ly, col_x(pl if pl else -1) + cw + 2, ly)
+    if shown is not None:
+        row(res, ly - size * 1.25, shown, None)
+    elif bk.key:
+        row(res, ly - size * 1.25, T.answer, None)
+    return ly - size * 1.25
+
+
+def c_dstack(bk, x, cy, w, item):
+    a, b, op, hint = item
+    dec_stack(bk, x + GUT + 26, cy + 70, a, b, op, hint=hint, size=19)
+
+
+def dec_add(a, b):
+    return f"{a} + {b} = [{format(D(dres(a, b, '+')).normalize(), 'f')}]"
+
+
+def dec_sub(a, b):
+    return f"{a} {MINUS} {b} = [{format(D(dres(a, b, '-')).normalize(), 'f')}]"
+
+
+def learn_add_sub_dec(bk):
+    y = bk.new_page("Adding and Subtracting Decimals", "Line up the points. Add tenths to tenths, hundredths to "
+                    "hundredths.", name_line=False, big=True, footer="WeMath  ·  Adding and Subtracting Decimals")
+    c = bk.c
+    label(bk, M, y - 6, "3.45 + 2.7")
+    dec_stack(bk, M + 50, y - 40, "3.45", "2.7", "+", hint=True, size=24, shown=T.ink)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 200, y - 36, "Points under points.")
+    c.drawString(M + 200, y - 54, "2.7 is 2.70: the gray 0 fills the empty place.")
+    c.drawString(M + 200, y - 72, "4 tenths + 7 tenths = 11 tenths:")
+    c.drawString(M + 200, y - 88, "write 1, carry 1 to the ones.")
+    color_eq(bk, M + 200, y - 120, [("3.45", "a"), ("+", "op"), ("2.7", "b"), ("=", "op"), ("6.15", None)], 20)
+    y -= 150
+
+    label(bk, M, y - 6, "5 − 1.38")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 200, y - 36, "5 is 5.00. Write the zeros first.")
+    c.drawString(M + 200, y - 54, "Then subtract like whole numbers:")
+    c.drawString(M + 200, y - 70, "500 hundredths − 138 hundredths.")
+    dec_stack(bk, M + 50, y - 40, "5", "1.38", "-", hint=True, size=24, shown=T.ink)
+    color_eq(bk, M + 200, y - 120, [("5", "a"), ("−", "op"), ("1.38", "b"), ("=", "op"), ("3.62", None)], 20)
+    y -= 150
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("add decimals your turn: 4.6 + 2.85")
+    bk.eq(M + 150, bottom + 26, "4.6 + 2.85 = [7.45]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: add and subtract decimals to hundredths (5.NBT.7). Say “Points under points. Fill "
+                     "empty places with 0.” Then it works like whole numbers: add or take away each place, and "
+                     "regroup 10 of a place.")
+
+
+def practice_add_sub_dec(bk):
+    title = "Adding and Subtracting Decimals: Practice"
+    y = bk.new_page(title, "Points under points. Empty places get a 0.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Line up the points", "The gray zeros fill the empty places.", "dstack",
+         [("2.4", "1.35", "+", True), ("6.8", "2.53", "-", True), ("0.75", "3.6", "+", True),
+          ("9", "4.27", "-", True), ("5.06", "1.9", "+", True), ("7.3", "0.48", "-", True)])
+    part(2, "Add in columns", "Write any zeros you need.", "dstack",
+         [("3.72", "4.5", "+", False), ("0.86", "2.47", "+", False), ("12.6", "5.38", "+", False),
+          ("4.09", "0.95", "+", False), ("7.5", "6.75", "+", False), ("1.64", "8.7", "+", False)])
+    part(3, "Subtract in columns", "Write any zeros you need.", "dstack",
+         [("8.45", "3.2", "-", False), ("6.1", "2.74", "-", False), ("10.5", "4.36", "-", False),
+          ("7", "2.65", "-", False), ("5.32", "1.87", "-", False), ("9.4", "0.58", "-", False)])
+    part(4, "Add", "No help this time.", "eq3",
+         [dec_add(a, b) for a, b in (("2.6", "0.47"), ("5.38", "1.4"), ("0.9", "0.25"), ("7.15", "2.85"),
+                                     ("3.7", "4.6"), ("1.08", "6.5"), ("8.24", "0.39"), ("4.5", "3.75"),
+                                     ("0.66", "2.8"), ("6.3", "1.94"), ("9.05", "0.7"), ("2.47", "3.36"),
+                                     ("5.9", "2.18"), ("0.34", "0.57"), ("3.25", "5.5"))])
+    part(5, "Subtract", "No help this time.", "eq3",
+         [dec_sub(a, b) for a, b in (("7.4", "2.15"), ("5.63", "1.8"), ("9", "3.45"), ("4.2", "0.65"),
+                                     ("8.71", "2.36"), ("6.5", "4.75"), ("3.06", "1.4"), ("10", "6.2"),
+                                     ("5.8", "0.93"), ("7.25", "3.6"), ("2.4", "1.17"), ("8", "0.35"),
+                                     ("6.92", "4.5"), ("3.3", "2.84"), ("9.15", "5.07"))])
+    part(6, "Money", "No help this time.", "eq2",
+         [f"${a} {op} ${b} = [${dres(a, b, '+' if op == '+' else '-')}]"
+          for a, b, op in (("3.45", "2.80", "+"), ("10.00", "6.35", MINUS), ("4.99", "1.25", "+"),
+                           ("5.00", "2.48", MINUS), ("7.60", "1.95", "+"), ("20.00", "13.75", MINUS),
+                           ("8.25", "3.40", MINUS), ("6.15", "2.90", "+"))])
+    part(7, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_76)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 8, "Word problems", "Points under points.")
+    for i, story in enumerate(WORDS_76):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 8, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_76 = ["2.36 to the nearest tenth = [2.4]", "0.57 [>] 0.507", "in 8.193 the 3 is worth [0.003]",
+             "6.4 × 100 = [640]", "4/9 + 3/9 = [7]/9", "3,000 g = [3] kg"]
+WORDS_76 = [
+    ("Ava has $5.00. She buys a book for $3.65. How much money is left?", f"5.00 {MINUS} 3.65 = 1.35", "$1.35", ""),
+    ("A plant was 4.5 cm tall. It grew 1.8 cm. How tall is it now?", "4.5 + 1.8 = 6.3", "6.3", "cm"),
+    ("Ben ran 2.4 km on Monday and 3.85 km on Tuesday. How far did he run in all?", "2.4 + 3.85 = 6.25", "6.25",
+     "km"),
+    ("A jug holds 2 L of juice. Mia pours out 0.75 L. How much juice is left?", f"2 {MINUS} 0.75 = 1.25", "1.25",
+     "L"),
+    ("Challenge: Leo buys a $1.25 pen and a $2.60 pad. He pays $5. How much change does he get?",
+     f"1.25 + 2.60 = 3.85, 5 {MINUS} 3.85 = 1.15", "$1.15", ""),
+]
+KINDS_76 = {
+    "dstack": Kind(104, 3, lambda it: f"decimal columns: {it[0]} {it[2]} {it[1]}", c_dstack, 8),
+}
+KINDS.update(KINDS_76)
+DADD_POOL = [dec_add(a, b) for a, b in (("3.4", "2.75"), ("0.58", "1.6"), ("6.07", "2.9"), ("4.85", "3.3"),
+                                        ("1.7", "0.46"), ("5.26", "2.58"))]
+DSUB_POOL = [dec_sub(a, b) for a, b in (("6.3", "1.45"), ("8.52", "2.7"), ("7", "4.38"), ("5.4", "0.86"),
+                                        ("9.61", "3.25"), ("4.1", "2.37"))]
+CHECKINS["76-adding-and-subtracting-decimals"] = [
+    S("Add and subtract in columns", None, "dstack", [("2.85", "4.6", "+", False), ("7.3", "2.46", "-", False),
+                                                      ("5", "1.72", "-", False), ("3.58", "0.9", "+", False)], 3),
+    S("Add", None, "eq3", DADD_POOL, 3),
+    S("Subtract", None, "eq3", DSUB_POOL, 3),
+]
+_g5[-1:-1] = [S("Add and subtract decimals", None, "eq3", DADD_POOL + DSUB_POOL, 3, 76)]
+
+
+# ====================================================================== 77. Multiplying Bigger Numbers
+
+
+def mult_rows(bk, x, cy, w, a, b, size=15, shown=None):
+    """Column form with two rows: a × (b's ones), a × (b's tens), then the total. Boxes on practice cards;
+    shown=color prints the numbers (worked example). cy = bottom of the area it may use (144 tall)."""
+    c = bk.c
+    t, o = b // 10 * 10, b % 10
+    rx = x + w - 54
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", size + 2)
+    c.drawRightString(rx, cy + 126, nf(a))
+    c.drawRightString(rx, cy + 102, str(b))
+    c.setFillColor(T.text2)
+    c.setFont("AvD", size + 2)
+    c.drawString(rx - 64, cy + 102, TIMES)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.3)
+    c.line(rx - 66, cy + 96, rx + 2, cy + 96)
+    bw, bh = 64, size * 1.6
+    for i, (v, tag) in enumerate(((a * o, f"{TIMES} {o}"), (a * t, f"{TIMES} {t}"))):
+        by = cy + 68 - i * 30
+        bk.box(rx - bw, by - 4, bw, bh, nf(v), size=size, reveal=shown)
+        c.setFillColor(T.muted)
+        c.setFont("AvM", 10)
+        c.drawString(rx + 8, by + 3, tag)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.3)
+    c.line(rx - 66, cy + 27, rx + 2, cy + 34)
+    bk.box(rx - bw, cy + 6, bw, bh, nf(a * b), size=size, reveal=shown)
+
+
+def c_mrows(bk, x, cy, w, item):
+    a, b = item
+    mult_rows(bk, x + GUT, cy, w - GUT, a, b)
+
+
+def mult32(a, b):
+    return f"{nf(a)} {TIMES} {b} = [{nf(a * b)}]"
+
+
+def learn_mult_bigger(bk):
+    y = bk.new_page("Multiplying Bigger Numbers", "Three-digit times two-digit: six pieces, or two rows.",
+                    name_line=False, big=True, footer="WeMath  ·  Multiplying Bigger Numbers")
+    c = bk.c
+    label(bk, M, y - 6, "243 × 36: six pieces")
+    area_model2(bk, M + 44, y - 124, 300, 92, 243, 36, products=True, size=15)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 370, y - 40, "Hundreds, tens and ones")
+    c.drawString(M + 370, y - 56, "across the top; tens and")
+    c.drawString(M + 370, y - 72, "ones down the side.")
+    color_eq(bk, M + 14, y - 152, [("6,000 + 1,200 + 90 + 1,200 + 240 + 18 = 8,748", None)], 16)
+    y -= 178
+
+    label(bk, M, y - 6, "The same in two rows")
+    mult_rows(bk, M + 14, y - 178, 170, 243, 36, size=15, shown=T.ink)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 230, y - 44, "Row 1: 243 × 6 = 1,458 (the bottom pieces).")
+    c.drawString(M + 230, y - 62, "Row 2: 243 × 30 = 7,290 (the top pieces).")
+    c.drawString(M + 230, y - 80, "243 × 30 is 243 × 3 tens = 729 tens.")
+    c.drawString(M + 230, y - 98, "Add the two rows: 8,748.")
+    y -= 186
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("multiply bigger your turn: 312 x 23")
+    bk.eq(M + 150, bottom + 26, "312 × 23 = [7,176]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: multiply three- and four-digit numbers by two-digit numbers (5.NBT.5). The two rows are "
+                     "the area model's pieces added in groups. Say “243 times 3 tens is 729 tens”, never "
+                     "“put down a zero”.")
+
+
+def practice_mult_bigger(bk):
+    title = "Multiplying Bigger Numbers: Practice"
+    y = bk.new_page(title, "Split, multiply each piece, add.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Hundreds times tens", "3 hundreds × 4 tens = 12 thousands.", "eq3",
+         [mult32(a, b) for a, b in ((300, 40), (200, 60), (500, 70), (400, 30), (700, 20), (600, 90),
+                                    (800, 50), (900, 40), (200, 80), (300, 70), (500, 50), (400, 60))])
+    part(2, "Six pieces", "The parts are on the outside. Fill in each piece.", "area2",
+         [(234, 15, "given"), (162, 37, "given"), (425, 23, "given")])
+    part(3, "Split it yourself", "Write the parts on the outside, then fill in each piece.", "area2",
+         [(318, 24, "split"), (256, 43, "split"), (173, 52, "split")])
+    part(4, "Two rows", "Row 1: times the ones. Row 2: times the tens. Then add.", "mrows",
+         [(214, 32), (365, 24), (128, 57), (432, 18), (251, 46), (617, 35), (183, 29), (526, 14), (342, 67)])
+    part(5, "Multiply", "No help this time.", "eq2",
+         [mult32(a, b) for a, b in ((326, 21), (147, 38), (512, 46), (238, 17), (403, 25), (671, 34),
+                                    (295, 42), (184, 63), (736, 15), (459, 27), (128, 74), (387, 56),
+                                    (604, 39), (215, 88), (548, 23), (963, 12), (372, 45), (819, 26),
+                                    (256, 91), (437, 68))])
+    part(6, "Four digits times one digit", "No help this time.", "eq2",
+         [mult32(a, b) for a, b in ((2134, 3), (4206, 7), (1573, 4), (3058, 6), (6125, 8), (2947, 5),
+                                    (5312, 9), (1806, 4), (7243, 3), (3615, 6))])
+    part(7, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_77)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 8, "Word problems", "Split, multiply, add.")
+    for i, story in enumerate(WORDS_77):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 8, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_77 = ["3.6 + 2.75 = [6.35]", f"8.2 {MINUS} 4.67 = [3.53]", "4.28 to the nearest tenth = [4.3]", "0.45 [>] 0.405",
+             "in 3.142 the 4 is worth [0.04]", "2.7 × 1,000 = [2,700]"]
+WORDS_77 = [
+    ("A school bus holds 48 kids. How many kids can 125 buses hold?", f"125 {TIMES} 48 = 6,000", "6,000", "kids"),
+    ("A farm packs 236 boxes of eggs. Each box has 12 eggs. How many eggs is that?", f"236 {TIMES} 12 = 2,832",
+     "2,832", "eggs"),
+    ("A plane flies 465 miles each day for 21 days. How far does it fly?", f"465 {TIMES} 21 = 9,765", "9,765",
+     "miles"),
+    ("A box of paper has 1,250 sheets. How many sheets are in 8 boxes?", f"1,250 {TIMES} 8 = 10,000", "10,000",
+     "sheets"),
+    ("Challenge: A theater has 34 rows of 28 seats. 875 seats are full. How many are empty?",
+     f"34 {TIMES} 28 = 952, 952 {MINUS} 875 = 77", "77", "seats"),
+]
+KINDS_77 = {
+    "mrows": Kind(154, 3, lambda it: f"two rows: {it[0]} x {it[1]}", c_mrows, 10),
+}
+KINDS.update(KINDS_77)
+MULT_32 = [mult32(a, b) for a, b in ((243, 17), (318, 26), (156, 43), (527, 34), (461, 28), (382, 19),
+                                     (614, 23), (275, 36))]
+HUND_TENS = [mult32(a, b) for a in (200, 300, 400, 600, 700, 800) for b in (30, 50, 70, 90)]
+CHECKINS["77-multiplying-bigger-numbers"] = [
+    S("Hundreds times tens", None, "eq3", HUND_TENS, 3),
+    S("Two rows", None, "mrows", [(213, 34), (152, 47), (324, 26), (418, 23)], 3),
+    S("Multiply", None, "eq2", MULT_32, 4),
+]
+_g5[-1:-1] = [S("Multiply bigger numbers", None, "eq2", MULT_32, 2, 77)]
+
+
+# ====================================================================== 78. Dividing by Two-Digit Numbers
+
+
+def q_chunks(d, q):
+    """The pieces of d × q by q's places: (24, 28) -> [480, 192]."""
+    return [d * p for p in place_parts(q)]
+
+
+def div_item(d, q, mode=None):
+    n = d * q
+    return (n, d, q_chunks(d, q), mode) if mode else (n, d, q_chunks(d, q))
+
+
+def rem_eq2(n, d):
+    return f"{nf(n)} {DIV} {d} = [{n // d}] R [{n % d}]"
+
+
+def learn_div_two_digit(bk):
+    y = bk.new_page("Dividing by Two-Digit Numbers", "Find easy parts of the divisor. Take them out. Add.",
+                    name_line=False, big=True, footer="WeMath  ·  Dividing by Two-Digit Numbers")
+    c = bk.c
+    label(bk, M, y - 6, "Easy parts of 24")
+    for i, line in enumerate(("24 × 10 = 240", "24 × 20 = 480", "24 × 5 = 120", "24 × 2 = 48")):
+        color_eq(bk, M + 14 + (i % 2) * 190, y - 36 - (i // 2) * 26, [(line, None)], 17)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 400, y - 32, "Times 10 is easy.")
+    c.drawString(M + 400, y - 48, "Double it for 20.")
+    c.drawString(M + 400, y - 64, "Half of 10 is 5.")
+    y -= 92
+
+    label(bk, M, y - 6, "672 ÷ 24")
+    div_area(bk, M + 40, y - 92, 270, 46, 24, [480, 192], size=18)
+    for i, (line, kind) in enumerate((("480 ÷ 24 = 20", "a"), ("192 ÷ 24 = 8", "b"), ("20 + 8 = 28", None))):
+        color_eq(bk, M + 340, y - 40 - i * 26, [(line, kind)], 17)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 116, "Take out 20 groups of 24 (480). 192 is left. 192 is 8 groups of 24.")
+    y -= 140
+
+    label(bk, M, y - 6, "Not even? Write what is left")
+    color_eq(bk, M + 14, y - 40, [("500 ÷ 24 = 20 R 20", None)], 18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 240, y - 36, "20 groups of 24 is 480. 20 are left,")
+    c.drawString(M + 240, y - 52, "and 20 is less than 24.")
+    y -= 76
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("divide two digits your turn: 384 / 16")
+    bk.eq(M + 150, bottom + 26, "384 ÷ 16 = [24]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: divide by two-digit numbers with the area model and partial quotients (5.NBT.6), like "
+                     "packet 59 with a bigger side. Say “What easy part of 24 fits? 10 groups? 20 groups?” "
+                     "Any easy parts work; fewer parts is faster.")
+
+
+def practice_div_two_digit(bk):
+    title = "Dividing by Two-Digit Numbers: Practice"
+    y = bk.new_page(title, "Easy parts first: 10 groups, 20 groups, 5 groups.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Easy parts", "Times 10, times 20, times 5.", "eq3",
+         [f"{d} {TIMES} {k} = [{nf(d * k)}]" for d, k in ((32, 10), (17, 20), (47, 5), (23, 30), (41, 10),
+                                                          (28, 5), (19, 20), (36, 10), (14, 30), (52, 5),
+                                                          (27, 20), (38, 10))])
+    part(2, "The area model", "The parts are inside. Find each side on top.", "div_area",
+         [div_item(21, 34, "given"), div_item(32, 26, "given"), div_item(15, 47, "given")])
+    part(3, "Pick your own parts", "Write the parts inside, then each side on top.", "div_area",
+         [div_item(26, 35, "split"), div_item(43, 21, "split"), div_item(18, 54, "split")])
+    part(4, "Divide each part", "Then add.", "partial_q",
+         [div_item(25, 37), div_item(31, 24), div_item(16, 58), div_item(42, 23), div_item(13, 76),
+          div_item(34, 29)])
+    part(5, "Divide", "No help this time.", "eq3",
+         [div_eq(d * q, d) for d, q in ((21, 32), (14, 46), (33, 18), (26, 24), (17, 39), (45, 16), (12, 73),
+                                        (38, 21), (23, 27), (51, 14), (19, 44), (36, 22), (28, 31), (15, 58),
+                                        (44, 19))])
+    part(6, "Bigger numbers", "No help this time.", "eq2",
+         [div_eq(d * q, d) for d, q in ((24, 231), (13, 412), (32, 156), (21, 345), (47, 128), (16, 375),
+                                        (35, 207), (18, 264), (27, 193), (52, 143))])
+    part(7, "What is left?", "No help this time.", "eq2",
+         [rem_eq2(n, d) for n, d in ((500, 23), (743, 32), (618, 25), (1000, 37), (859, 41), (432, 19),
+                                     (2015, 46), (967, 28))])
+    part(8, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_78)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 9, "Word problems", "How many groups? How many in each?")
+    for i, story in enumerate(WORDS_78):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 9, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_78 = ["324 × 27 = [8,748]", "5.6 + 3.85 = [9.45]", f"7 {MINUS} 2.36 = [4.64]", "1.807 [>] 1.78",
+             "0.006 = [6] thousandths", "4.5 × 100 = [450]"]
+WORDS_78 = [
+    ("A school has 648 kids in 24 equal classes. How many kids are in each class?", f"648 {DIV} 24 = 27", "27",
+     "kids"),
+    ("A farmer packs 936 eggs in cartons of 12. How many cartons does he fill?", f"936 {DIV} 12 = 78", "78",
+     "cartons"),
+    ("A bus trip is 1,350 miles. The bus drives 45 miles each hour. How many hours is the trip?",
+     f"1,350 {DIV} 45 = 30", "30", "hours"),
+    ("A teacher has 500 stickers to share among 32 kids. How many does each kid get?",
+     f"500 {DIV} 32 = 15 R 20", "15", "stickers"),
+    ("Challenge: 400 kids go on a trip. A bus holds 36 kids. How many buses do they need?",
+     f"400 {DIV} 36 = 11 R 4, so one more bus", "12", "buses"),
+]
+KINDS_78 = {}
+DIV_22 = [div_eq(d * q, d) for d, q in ((23, 34), (16, 42), (31, 27), (18, 36), (42, 15), (27, 26), (14, 53),
+                                        (35, 24))]
+CHECKINS["78-dividing-by-two-digit-numbers"] = [
+    S("Divide each part", None, "partial_q", [div_item(22, 36), div_item(17, 43), div_item(34, 25)], 2),
+    S("Divide", None, "eq3", DIV_22, 6),
+    S("What is left?", None, "eq2", [rem_eq2(n, d) for n, d in ((700, 26), (550, 34), (915, 42), (621, 17))], 2),
+]
+_g5[-1:-1] = [S("Divide by two-digit numbers", None, "eq3", DIV_22, 3, 78)]
+
+
+# ====================================================================== 79. Multiplying and Dividing Decimals
+
+
+def dn2(x):
+    return format(D(x).normalize(), "f")
+
+
+def tenth_bar(bk, x, y, cell, k):
+    """A whole as a bar of 10 tenths; the first k shaded."""
+    c = bk.c
+    for i in range(k):
+        shade(bk, [(x + i * cell, y), (x + (i + 1) * cell, y), (x + (i + 1) * cell, y + cell),
+                   (x + i * cell, y + cell)])
+    c.setStrokeColor(T.muted)
+    c.setLineWidth(0.5)
+    for i in range(1, 10):
+        c.line(x + i * cell, y, x + i * cell, y + cell)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.2)
+    c.rect(x, y, 10 * cell, cell, stroke=1, fill=0)
+
+
+def dec_grid(bk, x, y, s, a, b, answer=False):
+    """Tenths × tenths on a hundred grid: a tenths across, b tenths down; the a-by-b rectangle is shaded
+    (answer=True: on the key only) and outlined. y = bottom."""
+    c = bk.c
+    cell = s / 10
+    pts = [(x, y + s - b * cell), (x + a * cell, y + s - b * cell), (x + a * cell, y + s), (x, y + s)]
+    if not answer or bk.key:
+        shade(bk, pts, answer=answer)
+    c.setStrokeColor(T.muted)
+    c.setLineWidth(0.5)
+    for i in range(1, 10):
+        c.line(x, y + i * cell, x + s, y + i * cell)
+        c.line(x + i * cell, y, x + i * cell, y + s)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.3)
+    c.rect(x, y, s, s, stroke=1, fill=0)
+    if not answer or bk.key:
+        c.setStrokeColor(T.answer if answer else T.ink)
+        c.setLineWidth(2)
+        c.rect(x, y + s - b * cell, a * cell, b * cell, stroke=1, fill=0)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 10)
+    c.drawCentredString(x + a * cell / 2, y + s + 4, f"0.{a}")
+    c.drawRightString(x - 4, y + s - b * cell / 2 - 3, f"0.{b}")
+
+
+def c_dec_grid(bk, x, cy, w, item):
+    a, b = item
+    dec_grid(bk, x + GUT + 14, cy + 10, 74, a, b, answer=True)
+    bk.fit_eq(x + GUT + 100, cy + 44, w - GUT - 106, f"0.{a} × 0.{b} = [{dn2(D(a * b) / 100)}]", size=17)
+
+
+def times_tenths(n, k):
+    """4 × 0.3 = [12] tenths = [1.2]."""
+    return f"{n} × 0.{k} = [{n * k}] tenths = [{dn2(D(n * k) / 10)}]"
+
+
+def times_hundredths(n, k):
+    return f"{n} × {dec(k)} = [{n * k}] hundredths = [{dn2(D(n * k) / 100)}]"
+
+
+def split_times(n, x):
+    """6 × 1.4 = 6 × 1 + 6 × 0.4 → [6] + [2.4] = [8.4]."""
+    w, f = str(x).split(".")
+    return f"{n} × {w} + {n} × 0.{f} = [{n * int(w)}] + [{dn2(n * D('0.' + f))}] = [{dn2(n * D(x))}]"
+
+
+def share_tenths(x, n):
+    """2.4 ÷ 3: [24] tenths ÷ 3 = [8] tenths = [0.8]."""
+    t = int(D(x) * 10)
+    return f"{x} ÷ {n}: [{t}] tenths ÷ {n} = [{t // n}] tenths = [{dn2(D(t // n) / 10)}]"
+
+
+def dtimes(n, x):
+    return f"{n} × {x} = [{dn2(n * D(x))}]"
+
+
+def ddiv(x, n):
+    return f"{x} ÷ {n} = [{dn2(D(x) / n)}]"
+
+
+def learn_mult_div_dec(bk):
+    y = bk.new_page("Multiplying and Dividing Decimals", "Count tenths and hundredths like any other things.",
+                    name_line=False, big=True, footer="WeMath  ·  Multiplying and Dividing Decimals")
+    c = bk.c
+    label(bk, M, y - 6, "3 × 0.4: three groups of 4 tenths")
+    for i in range(3):
+        tenth_bar(bk, M + 14, y - 34 - i * 22, 16, 4)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 200, y - 30, "4 tenths + 4 tenths + 4 tenths = 12 tenths.")
+    c.drawString(M + 200, y - 48, "10 tenths make 1 whole, so 12 tenths = 1.2.")
+    color_eq(bk, M + 200, y - 80, [("3", "a"), ("×", "op"), ("0.4", "b"), ("=", "op"), ("12 tenths", None),
+                                   ("=", "op"), ("1.2", None)], 18)
+    y -= 108
+
+    label(bk, M, y - 6, "2.4 ÷ 3: share 24 tenths")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 30, "2.4 is 24 tenths. Share them among 3: each gets 8 tenths.")
+    color_eq(bk, M + 14, y - 60, [("2.4", "a"), ("÷", "op"), ("3", "b"), ("=", "op"), ("8 tenths", None),
+                                  ("=", "op"), ("0.8", None)], 18)
+    y -= 84
+
+    label(bk, M, y - 6, "0.3 × 0.4: a tenth of a tenth is a hundredth")
+    dec_grid(bk, M + 40, y - 122, 96, 3, 4)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 170, y - 40, "Go 3 tenths across and 4 tenths down.")
+    c.drawString(M + 170, y - 58, "The rectangle has 3 × 4 = 12 small squares.")
+    c.drawString(M + 170, y - 76, "Each small square is a hundredth.")
+    color_eq(bk, M + 170, y - 108, [("0.3", "a"), ("×", "op"), ("0.4", "b"), ("=", "op"), ("0.12", None)], 18)
+    y -= 146
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("decimals your turn: 5 x 0.6")
+    bk.eq(M + 150, bottom + 26, "5 × 0.6 = [3]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: multiply and divide decimals to hundredths with models and place value (5.NBT.7). Say "
+                     "“How many tenths? Count them, then make wholes.” No “count the decimal places” "
+                     "rule yet: kids should see why.")
+
+
+def practice_mult_div_dec(bk):
+    title = "Multiplying and Dividing Decimals: Practice"
+    y = bk.new_page(title, "Count the tenths or hundredths. 10 tenths make 1.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Count the tenths", "How many tenths in all? Then write the decimal.", "eq2",
+         [times_tenths(n, k) for n, k in ((4, 3), (6, 7), (2, 9), (5, 8), (7, 4), (3, 6), (8, 5), (9, 2),
+                                          (6, 4), (7, 9))])
+    part(2, "Count the hundredths", "How many hundredths in all? Then write the decimal.", "eq2",
+         [times_hundredths(n, k) for n, k in ((3, 25), (4, 18), (2, 46), (5, 13), (6, 15), (3, 32), (7, 12),
+                                              (4, 35))])
+    part(3, "Split the decimal", "Ones first, then tenths.", "eq1",
+         [split_times(n, x) for n, x in ((6, "1.4"), (3, "2.7"), (4, "3.6"), (7, "1.8"), (5, "4.3"), (8, "2.5"))])
+    part(4, "Multiply", "No help this time.", "eq3",
+         [dtimes(n, x) for n, x in ((3, "0.7"), (4, "2.3"), (6, "0.15"), (5, "1.9"), (2, "3.45"), (8, "0.6"),
+                                    (7, "2.4"), (9, "0.08"), (3, "4.25"), (6, "1.7"), (4, "0.35"), (5, "6.2"),
+                                    (8, "1.25"), (2, "7.8"), (9, "0.4"))])
+    part(5, "Share the tenths", "How many tenths? Share them.", "eq1",
+         [share_tenths(x, n) for x, n in (("2.4", 3), ("3.5", 5), ("4.8", 6), ("1.6", 4), ("6.3", 7),
+                                          ("5.6", 8))])
+    part(6, "Divide", "No help this time.", "eq3",
+         [ddiv(x, n) for x, n in (("1.8", 3), ("4.5", 5), ("0.84", 4), ("7.2", 8), ("3.6", 6), ("0.96", 3),
+                                  ("8.1", 9), ("2.5", 5), ("1.48", 2), ("6.4", 4), ("0.75", 3), ("9.6", 8))])
+    part(7, "Tenths times tenths", "Shade the rectangle, then count the small squares.", "dec_grid",
+         [(2, 4), (5, 3), (6, 2), (4, 7)])
+    part(8, "Tenths times tenths", "No help this time.", "eq3",
+         [f"0.{a} × 0.{b} = [{dn2(D(a * b) / 100)}]" for a, b in ((6, 7), (8, 3), (9, 5), (3, 3), (7, 2), (4, 9),
+                                                         (5, 6), (8, 8), (2, 9))])
+    part(9, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_79)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 10, "Word problems", "Count the tenths and hundredths.")
+    for i, story in enumerate(WORDS_79):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 10, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_79 = ["858 ÷ 26 = [33]", "215 × 34 = [7,310]", "4.6 + 0.85 = [5.45]", "3.74 to the nearest tenth = [3.7]",
+             "0.32 [<] 0.4", "2 + 0.4 + 0.005 = [2.405]"]
+WORDS_79 = [
+    ("A pencil costs $0.35. How much do 6 pencils cost?", f"6 {TIMES} 0.35 = 2.10", "$2.10", ""),
+    ("A ribbon is 4.8 m long. Ava cuts it into 4 equal pieces. How long is each piece?", f"4.8 {DIV} 4 = 1.2",
+     "1.2", "m"),
+    ("A plant grows 1.5 cm each week. How much does it grow in 7 weeks?", f"7 {TIMES} 1.5 = 10.5", "10.5", "cm"),
+    ("Three friends share $7.50 equally. How much does each friend get?", f"7.50 {DIV} 3 = 2.50", "$2.50", ""),
+    ("Challenge: A garden is 0.6 km long and 0.8 km wide. What is its area?", f"0.6 {TIMES} 0.8 = 0.48", "0.48",
+     "sq km"),
+]
+KINDS_79 = {
+    "dec_grid": Kind(96, 2, lambda it: f"tenths times tenths grid: {it[0]} {it[1]}", c_dec_grid, 8),
+}
+KINDS.update(KINDS_79)
+DTIMES_POOL = [dtimes(n, x) for n, x in ((4, "0.8"), (3, "1.6"), (6, "0.25"), (7, "0.5"), (5, "2.8"), (2, "4.15"))]
+DDIV_POOL = [ddiv(x, n) for x, n in (("2.8", 4), ("5.4", 6), ("0.63", 3), ("3.5", 7), ("1.2", 4), ("7.2", 9))]
+TT_POOL = [f"0.{a} × 0.{b} = [{dn2(D(a * b) / 100)}]" for a, b in ((7, 4), (6, 5), (3, 8), (9, 9), (2, 6))]
+CHECKINS["79-multiplying-and-dividing-decimals"] = [
+    S("Count the tenths", None, "eq2", [times_tenths(n, k) for n, k in ((5, 7), (8, 4), (3, 9), (6, 6))], 2),
+    S("Multiply", None, "eq3", DTIMES_POOL, 3),
+    S("Divide", None, "eq3", DDIV_POOL, 3),
+    S("Tenths times tenths", None, "eq3", TT_POOL, 3),
+]
+_g5[-1:-1] = [S("Multiply and divide decimals", None, "eq3", DTIMES_POOL + DDIV_POOL, 3, 79)]
+
+
+# ====================================================================== 80. Unlike Fractions
+
+
+def unlike(a, b, p, q, op="+", given=True):
+    """1/3 + 3/4 = [4]/12 + [9]/12 = [13]/12 (given=True: the new bottoms are printed);
+    given=False: 1/2 + 1/5 = [7]/[10]."""
+    n = math.lcm(b, q)
+    s1, s2 = a * n // b, p * n // q
+    t = s1 + s2 if op == "+" else s1 - s2
+    sign = "+" if op == "+" else MINUS
+    if given:
+        return f"{a}/{b} {sign} {p}/{q} = [{s1}]/{n} {sign} [{s2}]/{n} = [{t}]/{n}"
+    return f"{a}/{b} {sign} {p}/{q} = [{t}]/[{n}]"
+
+
+def unlike_mx(a, b, p, q, op="+"):
+    """A mixed1 item with the answer for curriculum.json."""
+    n = math.lcm(b, q)
+    t = a * n // b + (1 if op == "+" else -1) * p * n // q
+    return mx(unlike(a, b, p, q, op), f"{t}/{n}")
+
+
+def unlike_mixed(w1, a, b, w2, p, q, op="+"):
+    n = math.lcm(b, q)
+    x = Fraction(w1 * b + a, b) + (1 if op == "+" else -1) * Fraction(w2 * q + p, q)
+    whole, rest = divmod(x * n, n)
+    sign = "+" if op == "+" else MINUS
+    return f"{w1} {a}/{b} {sign} {w2} {p}/{q} = [{whole}] [{rest}]/[{n}]"
+
+
+def c_unlike_strip(bk, x, cy, w, item):
+    """Both fractions as strips, every piece cut so the two strips have the same size pieces."""
+    a, b, p, q = item
+    n = math.lcm(b, q)
+    cut_strip(bk, x + GUT, cy + 50, 200, 22, b, a, n // b)
+    cut_strip(bk, x + GUT, cy + 16, 200, 22, q, p, n // q)
+    frac_fit(bk, x + GUT + 222, cy + 34, w - GUT - 232, unlike(a, b, p, q), size=19)
+
+
+def learn_unlike_fractions(bk):
+    y = bk.new_page("Unlike Fractions", "Different bottoms? Cut the pieces until they match, then add or "
+                    "take away.", name_line=False, big=True,
+                    footer="WeMath  ·  Unlike Fractions")
+    c = bk.c
+    label(bk, M, y - 6, "1/2 + 1/3: halves and thirds don't match")
+    cut_strip(bk, M + 14, y - 46, 240, 26, 2, 1, 3)
+    cut_strip(bk, M + 14, y - 84, 240, 26, 3, 1, 2)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 280, y - 30, "Cut each half into 3: sixths.")
+    c.drawString(M + 280, y - 46, "Cut each third into 2: sixths.")
+    c.drawString(M + 280, y - 62, "Now the pieces match.")
+    frac_expr(bk, M + 280, y - 98, "1/2 + 1/3 = 3/6 + 2/6 = 5/6", size=20)
+    y -= 126
+
+    label(bk, M, y - 6, "Find the same size pieces")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 30, "Count by the bigger bottom until the other bottom fits: 4, 8, 12. 3 fits in 12.")
+    frac_expr(bk, M + 14, y - 66, "2/3 − 1/4 = 8/12 − 3/12 = 5/12", size=20)
+    y -= 92
+
+    label(bk, M, y - 6, "Mixed numbers: wholes, then pieces")
+    frac_expr(bk, M + 14, y - 44, "1 1/2 + 2 1/3 = 3 5/6", size=20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 240, y - 32, "1 + 2 = 3 wholes.")
+    c.drawString(M + 240, y - 48, "1/2 + 1/3 = 5/6.")
+    y -= 72
+
+    bottom = your_turn(bk, y, h=80)
+    bk.ask("unlike fractions your turn: 1/4 + 1/6")
+    frac_expr(bk, M + 140, bottom + 30, "1/4 + 1/6 = [3]/12 + [2]/12 = [5]/12", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: add and subtract fractions with different bottoms by making the same size pieces "
+                     "(5.NF.1–2). It uses packet 61's equal fractions. Say “We can only add pieces of the "
+                     "same size.” Any common bottom is fine.")
+
+
+def practice_unlike_fractions(bk):
+    title = "Unlike Fractions: Practice"
+    y = bk.new_page(title, "Same size pieces first. Then add or take away the tops.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Cut the pieces", "The dashed lines make the same size pieces.", "unlike_strip",
+         [(1, 4, 1, 3), (1, 2, 2, 5), (1, 3, 1, 5), (1, 2, 1, 6)])
+    part(2, "Same bottoms", "The new bottom is given.", "mixed1",
+         [unlike_mx(a, b, p, q, op) for a, b, p, q, op in
+          ((1, 3, 3, 4, "+"), (1, 2, 3, 8, "+"), (5, 6, 1, 3, "-"), (2, 5, 1, 4, "+"), (7, 10, 1, 2, "-"),
+           (1, 6, 4, 9, "+"), (3, 4, 1, 10, "+"), (5, 8, 1, 4, "-"))])
+    part(3, "Add", "No help this time. Find the same size pieces.", "frac2",
+         [unlike(a, b, p, q, "+", False) for a, b, p, q in
+          ((1, 2, 1, 5), (2, 3, 1, 4), (1, 4, 3, 5), (3, 8, 1, 3), (1, 6, 2, 3), (2, 5, 1, 2), (1, 2, 3, 7),
+           (3, 4, 2, 3), (1, 3, 2, 9), (5, 6, 1, 8), (3, 10, 1, 4), (2, 7, 1, 3), (1, 5, 3, 8), (4, 9, 1, 6),
+           (1, 8, 5, 12), (3, 5, 1, 6))])
+    part(4, "Subtract", "No help this time. Find the same size pieces.", "frac2",
+         [unlike(a, b, p, q, "-", False) for a, b, p, q in
+          ((3, 4, 1, 3), (5, 6, 1, 4), (2, 3, 1, 5), (7, 8, 1, 6), (4, 5, 1, 2), (5, 8, 1, 3), (9, 10, 1, 4),
+           (3, 4, 2, 7), (5, 6, 2, 9), (2, 3, 1, 8), (7, 10, 1, 3), (4, 9, 1, 6), (7, 12, 1, 8), (3, 5, 1, 4),
+           (6, 7, 1, 2), (5, 9, 1, 6))])
+    part(5, "Mixed numbers", "No help this time. Wholes, then pieces.", "frac2",
+         [unlike_mixed(*t) for t in ((1, 1, 2, 2, 1, 4, "+"), (2, 1, 3, 1, 1, 2, "+"), (3, 1, 4, 1, 2, 3, "+"),
+                                     (1, 2, 5, 2, 1, 2, "+"), (4, 1, 6, 1, 1, 4, "+"), (3, 2, 3, 1, 1, 2, "-"),
+                                     (5, 3, 4, 2, 1, 3, "-"), (4, 5, 6, 1, 1, 4, "-"), (6, 1, 2, 3, 1, 5, "-"))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_80)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 7, "Word problems", "Same size pieces first.")
+    for i, story in enumerate(WORDS_80):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 7, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_80 = ["7 × 0.6 = [4.2]", "3.6 ÷ 4 = [0.9]", "0.7 × 0.3 = [0.21]", "945 ÷ 35 = [27]", "5/6 = [15]/18",
+             "3/8 [<] 1/2"]
+WORDS_80 = [
+    ("Mia walked 1/2 mile to school and 1/3 mile to the park. How far did she walk?", "1/2 + 1/3 = 5/6", "5/6",
+     "mile"),
+    ("A jug had 3/4 L of milk. Ben drank 1/3 L. How much milk is left?", f"3/4 {MINUS} 1/3 = 5/12", "5/12", "L"),
+    ("Leo read 2/5 of a book on Monday and 1/4 of it on Tuesday. How much did he read?", "2/5 + 1/4 = 13/20",
+     "13/20", "of the book"),
+    ("A board is 2 1/2 m long. Zoe cuts off 1 1/3 m. How long is the rest?", f"2 1/2 {MINUS} 1 1/3 = 1 1/6",
+     "1 1/6", "m"),
+    ("Challenge: Ava had 1 whole pizza. She ate 1/4 and Sam ate 1/3. How much is left?",
+     f"1/4 + 1/3 = 7/12, 1 {MINUS} 7/12 = 5/12", "5/12", "of the pizza"),
+]
+KINDS_80 = {
+    "unlike_strip": Kind(80, 1, lambda it: f"unlike strips: {it[0]}/{it[1]} + {it[2]}/{it[3]}", c_unlike_strip, 8),
+}
+KINDS.update(KINDS_80)
+UNLIKE_ADD = [unlike(a, b, p, q, "+", False) for a, b, p, q in ((1, 3, 1, 4), (2, 5, 1, 3), (1, 2, 1, 7),
+                                                               (3, 4, 1, 5), (1, 6, 2, 5), (2, 9, 1, 2))]
+UNLIKE_SUB = [unlike(a, b, p, q, "-", False) for a, b, p, q in ((2, 3, 1, 2), (4, 5, 1, 3), (5, 8, 1, 6),
+                                                               (3, 4, 1, 5), (7, 9, 1, 3), (1, 2, 1, 5))]
+CHECKINS["80-unlike-fractions"] = [
+    S("Same bottoms", "The new bottom is given.", "mixed1",
+      [unlike_mx(a, b, p, q) for a, b, p, q in ((1, 4, 2, 3), (1, 5, 1, 2), (3, 8, 1, 6))], 1),
+    S("Add", None, "frac2", UNLIKE_ADD, 4),
+    S("Subtract", None, "frac2", UNLIKE_SUB, 4),
+    S("Mixed numbers", None, "frac2", [unlike_mixed(*t) for t in ((2, 1, 4, 1, 1, 3, "+"), (4, 2, 3, 2, 1, 4, "-"),
+                                                                  (1, 1, 6, 3, 1, 4, "+"))], 2),
+]
+_g5[-1:-1] = [S("Add and subtract unlike fractions", None, "frac2", UNLIKE_ADD + UNLIKE_SUB, 3, 80)]
+
+
+# ====================================================================== 81. Multiplying Fractions
+
+
+def frac_grid(bk, x, y, s, a, b, p, q, answer=False):
+    """a/b × p/q: a square cut into b columns and q rows. The first a columns and the first p rows are
+    marked on the edges; the overlap (a × p small pieces) is shaded (answer=True: on the key only). y = bottom."""
+    c = bk.c
+    cw, rh = s / b, s / q
+    pts = [(x, y + s - p * rh), (x + a * cw, y + s - p * rh), (x + a * cw, y + s), (x, y + s)]
+    if not answer or bk.key:
+        shade(bk, pts, answer=answer)
+    c.setStrokeColor(T.muted)
+    c.setLineWidth(0.6)
+    for i in range(1, b):
+        c.line(x + i * cw, y, x + i * cw, y + s)
+    for j in range(1, q):
+        c.line(x, y + j * rh, x + s, y + j * rh)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.3)
+    c.rect(x, y, s, s, stroke=1, fill=0)
+    if not answer or bk.key:
+        c.setStrokeColor(T.answer if answer else T.ink)
+        c.setLineWidth(2)
+        c.rect(x, y + s - p * rh, a * cw, p * rh, stroke=1, fill=0)
+    # brackets: a/b across the top, p/q down the left
+    c.setStrokeColor(T.text2)
+    c.setLineWidth(1)
+    c.line(x, y + s + 4, x + a * cw, y + s + 4)
+    c.line(x - 4, y + s, x - 4, y + s - p * rh)
+    frac_expr(bk, x + a * cw / 2 - 6, y + s + 15, f"{a}/{b}", size=10)
+    frac_expr(bk, x - 22, y + s - p * rh / 2 - 3, f"{p}/{q}", size=10)
+
+
+def ftimes2(a, b, p, q):
+    return f"{a}/{b} × {p}/{q} = [{a * p}]/[{b * q}]"
+
+
+def c_frac_grid(bk, x, cy, w, item):
+    a, b, p, q, mode = item
+    frac_grid(bk, x + GUT + 16, cy + 10, 72, a, b, p, q, answer=mode == "shade")
+    frac_fit(bk, x + GUT + 104, cy + 40, w - GUT - 112, ftimes2(a, b, p, q), size=18)
+
+
+def fwhole(a, b, n):
+    """2/3 × 9 = [6] (n a multiple of b)."""
+    return f"{a}/{b} × {n} = [{a * n // b}]"
+
+
+def scale_q(a, b, n, whole=0):
+    """Bigger or smaller: 3/4 × 8 [<] 8; 1 1/2 × 6 [>] 6."""
+    f = Fraction(whole * b + a, b)
+    text = f"{whole} {a}/{b}" if whole else f"{a}/{b}"
+    return f"{text} × {n} [{sign_of(f * n, Fraction(n))}] {n}"
+
+
+def mixed_whole(w, a, b, n):
+    """1 1/2 × 4 = [6] (whole answers)."""
+    return f"{w} {a}/{b} × {n} = [{(w * b + a) * n // b}]"
+
+
+def learn_mult_fractions(bk):
+    y = bk.new_page("Multiplying Fractions", "A fraction of a fraction: cut one way, then the other way.",
+                    name_line=False, big=True, footer="WeMath  ·  Multiplying Fractions")
+    c = bk.c
+    label(bk, M, y - 6, "1/2 × 2/3: half of two thirds")
+    frac_grid(bk, M + 50, y - 132, 100, 1, 2, 2, 3)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 190, y - 40, "Cut the square into 3 rows: shade 2 of them (2/3).")
+    c.drawString(M + 190, y - 58, "Cut it into 2 columns: take half of the shaded part.")
+    c.drawString(M + 190, y - 76, "The square now has 6 pieces. 2 are in both.")
+    frac_expr(bk, M + 190, y - 112, "1/2 × 2/3 = 2/6", size=22)
+    y -= 158
+
+    label(bk, M, y - 6, "Without a picture: tops times tops, bottoms times bottoms")
+    frac_expr(bk, M + 14, y - 48, "2/3 × 4/5 = 8/15", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 200, y - 36, "2 × 4 = 8 pieces are in both.")
+    c.drawString(M + 200, y - 52, "3 × 5 = 15 pieces in the whole square.")
+    y -= 76
+
+    label(bk, M, y - 6, "Smaller or bigger?")
+    frac_expr(bk, M + 14, y - 44, "3/4 × 8 = 6", size=20)
+    frac_expr(bk, M + 14, y - 80, "1 1/2 × 8 = 12", size=20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 200, y - 38, "Times a fraction less than 1: the answer is smaller than 8.")
+    c.drawString(M + 200, y - 74, "Times more than 1: the answer is bigger than 8.")
+    y -= 104
+
+    bottom = your_turn(bk, y, h=80)
+    bk.ask("multiply fractions your turn: 1/3 x 3/4")
+    frac_expr(bk, M + 170, bottom + 30, "1/3 × 3/4 = [3]/[12]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: multiply fractions and see why it works (5.NF.4, 5.NF.5, 5.NF.6). Read × as “of”: "
+                     "1/2 × 2/3 is half of two thirds. Any equal fraction is right (2/6 or 1/3).")
+
+
+def practice_mult_fractions(bk):
+    title = "Multiplying Fractions: Practice"
+    y = bk.new_page(title, "Read × as “of”. Tops times tops, bottoms times bottoms.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Read the picture", "How many pieces are in both? How many pieces in all?", "frac_grid",
+         [(1, 3, 1, 2, "given"), (2, 3, 1, 4, "given"), (3, 4, 1, 3, "given"), (1, 2, 3, 5, "given"),
+          (2, 5, 2, 3, "given"), (3, 4, 3, 4, "given")])
+    part(2, "Shade and multiply", "Shade the part that is in both, then write it.", "frac_grid",
+         [(1, 4, 2, 3, "shade"), (2, 3, 3, 5, "shade"), (1, 2, 3, 4, "shade"), (4, 5, 1, 3, "shade")])
+    part(3, "Multiply", "No help this time.", "frac2",
+         [ftimes2(a, b, p, q) for a, b, p, q in ((2, 3, 4, 5), (1, 4, 3, 7), (3, 5, 2, 9), (5, 6, 1, 3),
+                                                 (3, 8, 1, 2), (2, 7, 3, 4), (4, 9, 1, 5), (1, 6, 5, 8),
+                                                 (3, 10, 1, 4), (5, 7, 2, 3), (1, 5, 4, 5), (7, 8, 1, 6),
+                                                 (2, 9, 2, 5), (3, 4, 5, 6), (1, 8, 3, 10), (6, 7, 1, 2))])
+    part(4, "A fraction of a number", "No help this time.", "frac3",
+         [fwhole(a, b, n) for a, b, n in ((2, 3, 9), (3, 4, 12), (4, 5, 15), (5, 6, 18), (3, 8, 56),
+                                          (4, 7, 14), (1, 6, 30), (7, 10, 20), (3, 5, 30), (5, 8, 24))])
+    part(5, "Mixed numbers times a number", "No help this time. Wholes first, then the piece.", "frac2",
+         [mixed_whole(w, a, b, n) for w, a, b, n in ((1, 1, 2, 4), (2, 1, 3, 6), (1, 3, 4, 4), (3, 1, 2, 6),
+                                                     (2, 2, 5, 5), (2, 3, 4, 4), (1, 1, 6, 6), (4, 1, 3, 9))])
+    part(6, "Smaller or bigger?", "No help this time. Write < or >. Don't work it out: think.", "frac3",
+         [scale_q(a, b, n, w) for a, b, n, w in ((3, 4, 8, 0), (1, 2, 10, 1), (2, 3, 9, 0), (1, 4, 20, 2),
+                                                 (5, 6, 12, 0), (3, 5, 7, 1), (7, 8, 16, 0), (1, 3, 15, 1),
+                                                 (4, 9, 18, 0), (2, 7, 6, 3))])
+    part(7, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_81)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 8, "Word problems", "× means “of”.")
+    for i, story in enumerate(WORDS_81):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 8, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_81 = ["1/3 + 1/2 = [5]/[6]", "4/5 − 1/4 = [11]/[20]", "6 × 0.7 = [4.2]", "0.4 × 0.6 = [0.24]",
+             "3 × 2/7 = [6]/7", "752 ÷ 16 = [47]"]
+WORDS_81 = [
+    ("A recipe needs 3/4 cup of milk. Mia makes half of the recipe. How much milk does she need?",
+     "1/2 × 3/4 = 3/8", "3/8", "cup"),
+    ("A garden is 2/3 of the yard. Tomatoes grow on 1/2 of the garden. What part of the yard is that?",
+     "1/2 × 2/3 = 2/6", "2/6", "of the yard"),
+    ("A class has 24 kids. 3/8 of them walk to school. How many kids walk?", "3/8 × 24 = 9", "9", "kids"),
+    ("A ribbon is 1 1/2 m long. Leo needs 6 ribbons. How much ribbon is that?", "1 1/2 × 6 = 9", "9", "m"),
+    ("Challenge: Ava had 4/5 of a pizza. She ate 1/4 of that. How much of the whole pizza did she eat?",
+     "1/4 × 4/5 = 4/20", "4/20", "of the pizza"),
+]
+KINDS_81 = {
+    "frac_grid": Kind(100, 2, lambda it: f"fraction grid: {it[0]}/{it[1]} x {it[2]}/{it[3]} ({it[4]})",
+                      c_frac_grid, 8),
+}
+KINDS.update(KINDS_81)
+FTIMES_POOL = [ftimes2(a, b, p, q) for a, b, p, q in ((3, 4, 2, 5), (1, 3, 5, 6), (2, 5, 3, 7), (5, 8, 1, 4),
+                                                      (4, 7, 2, 3), (1, 2, 7, 9))]
+FWHOLE_POOL = [fwhole(a, b, n) for a, b, n in ((3, 5, 10), (2, 7, 21), (5, 9, 18), (3, 4, 20), (5, 6, 24))]
+SCALE_POOL = [scale_q(a, b, n, w) for a, b, n, w in ((2, 5, 10, 0), (1, 4, 8, 1), (5, 7, 14, 0), (1, 2, 6, 2),
+                                                     (3, 10, 20, 0), (2, 3, 12, 1))]
+CHECKINS["81-multiplying-fractions"] = [
+    S("Shade and multiply", None, "frac_grid", [(2, 3, 1, 4, "shade"), (1, 2, 2, 5, "shade"), (3, 4, 2, 3, "shade")],
+      1),
+    S("Multiply", None, "frac2", FTIMES_POOL, 4),
+    S("A fraction of a number", None, "frac3", FWHOLE_POOL, 3),
+    S("Smaller or bigger?", "Write < or >.", "frac3", SCALE_POOL, 3, balance=lambda t: "[<]" in t),
+]
+_g5[-1:-1] = [S("Multiply fractions", None, "frac2", FTIMES_POOL, 2, 81),
+              S("A fraction of a number", None, "frac3", FWHOLE_POOL, 1, 81)]
+
+
+# ====================================================================== 82. Volume
+
+
+def cube_box(bk, x, y, L, W, H, s, labels=None, grid=True):
+    """A box built from unit cubes, drawn at an angle: L across, W back, H up. y = bottom of the front face.
+    labels = (length, width, height) texts for the edges. Returns (width, height) of the drawing."""
+    c = bk.c
+    dx, dy = s * 0.5, s * 0.36
+    front = [(x, y), (x + L * s, y), (x + L * s, y + H * s), (x, y + H * s)]
+    top = [(x, y + H * s), (x + L * s, y + H * s), (x + L * s + W * dx, y + H * s + W * dy),
+           (x + W * dx, y + H * s + W * dy)]
+    side = [(x + L * s, y), (x + L * s + W * dx, y + W * dy), (x + L * s + W * dx, y + H * s + W * dy),
+            (x + L * s, y + H * s)]
+    for pts, col in ((front, T.band), (top, T.strip), (side, T.strip)):
+        if T.color:
+            c.setFillColor(col)
+            c.drawPath(_poly(c, pts), stroke=0, fill=1)
+    if grid:
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(0.6)
+        for i in range(1, L):
+            c.line(x + i * s, y, x + i * s, y + H * s)
+            c.line(x + i * s, y + H * s, x + i * s + W * dx, y + H * s + W * dy)
+        for j in range(1, H):
+            c.line(x, y + j * s, x + L * s, y + j * s)
+            c.line(x + L * s, y + j * s, x + L * s + W * dx, y + j * s + W * dy)
+        for k in range(1, W):
+            c.line(x + k * dx, y + H * s + k * dy, x + L * s + k * dx, y + H * s + k * dy)
+            c.line(x + L * s + k * dx, y + k * dy, x + L * s + k * dx, y + H * s + k * dy)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.3)
+    for pts in (front, top, side):
+        c.drawPath(_poly(c, pts), stroke=1, fill=0)
+    if labels:
+        lt, wt, ht = labels
+        c.setFillColor(T.text2)
+        c.setFont("Rnd", 11)
+        c.drawCentredString(x + L * s / 2, y - 13, lt)
+        c.drawString(x + L * s + W * dx / 2 + 6, y + W * dy / 2 - 6, wt)
+        c.drawRightString(x - 5, y + H * s / 2 - 4, ht)
+    return L * s + W * dx, H * s + W * dy
+
+
+def c_cube_count(bk, x, cy, w, item):
+    L, W, H = item
+    cube_box(bk, x + GUT, cy + 40, L, W, H, 14)
+    bk.fit_eq(x + GUT, cy + 12, w - GUT - 10, f"[{L * W * H}] cubes", size=16)
+
+
+def c_cube_layers(bk, x, cy, w, item):
+    L, W, H = item
+    cube_box(bk, x + GUT, cy + 18, L, W, H, 15)
+    tx = x + GUT + L * 15 + W * 7.5 + 22
+    for i, line in enumerate((f"one layer: {L} × {W} = [{L * W}]", f"layers: [{H}]",
+                              f"{L * W} × {H} = [{L * W * H}] cubes")):
+        bk.fit_eq(tx, cy + 92 - i * 34, w - (tx - x) - 10, line, size=14)
+
+
+def c_cube_edges(bk, x, cy, w, item):
+    L, W, H, u = item
+    cube_box(bk, x + GUT + 30, cy + 48, L, W, H, 11, labels=(f"{L} {u}", f"{W} {u}", f"{H} {u}"))
+    bk.fit_eq(x + GUT, cy + 10, w - GUT - 10, f"{L} × {W} × {H} = [{L * W * H}] cubic {u}", size=15)
+
+
+def vol_eq(L, W, H, u):
+    return f"{L} {u} × {W} {u} × {H} {u} = [{L * W * H}] cubic {u}"
+
+
+def learn_volume(bk):
+    y = bk.new_page("Volume", "How many unit cubes fill the box? Count one layer, then the layers.",
+                    name_line=False, big=True, footer="WeMath  ·  Volume")
+    c = bk.c
+    label(bk, M, y - 6, "A box 4 cubes long, 3 cubes wide, 2 cubes tall")
+    cube_box(bk, M + 40, y - 112, 4, 3, 2, 30)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 250, y - 40, "One layer: 4 rows of 3 = 12 cubes.")
+    c.drawString(M + 250, y - 58, "2 layers: 12 + 12 = 24 cubes.")
+    c.drawString(M + 250, y - 76, "Volume is how many cubes fill it.")
+    color_eq(bk, M + 250, y - 108, [("4", "a"), ("×", "op"), ("3", "a"), ("×", "op"), ("2", "b"), ("=", "op"),
+                                    ("24", None), ("cubes", None)], 20)
+    y -= 140
+
+    label(bk, M, y - 6, "Length × width × height")
+    cube_box(bk, M + 50, y - 112, 5, 2, 3, 22, labels=("5 cm", "2 cm", "3 cm"))
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 250, y - 40, "Each cube is 1 cm on every edge: a cubic cm.")
+    c.drawString(M + 250, y - 58, "Base: 5 × 2 = 10 squares. Height: 3 layers.")
+    color_eq(bk, M + 250, y - 92, [("5 × 2 × 3 = 30 cubic cm", None)], 18)
+    y -= 140
+
+    bottom = your_turn(bk, y, h=110)
+    bk.ask("volume your turn: 3 x 2 x 2 box")
+    cube_box(bk, M + 150, bottom + 22, 3, 2, 2, 22)
+    bk.eq(M + 300, bottom + 46, "volume = [12] cubes", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: volume as counting unit cubes, then length × width × height (5.MD.3–5). Say "
+                     "“How many cubes in one layer? How many layers?” Units are cubic: cubic cm, cubic m.")
+
+
+def practice_volume(bk):
+    title = "Volume: Practice"
+    y = bk.new_page(title, "One layer, then the layers. Length × width × height.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Count the cubes", "Some cubes are hidden. Count one layer, then the layers.", "cube_count",
+         [(3, 2, 2), (4, 2, 3), (2, 2, 4), (5, 3, 1), (3, 3, 3), (2, 3, 3)])
+    part(2, "Layers", "Cubes in one layer, then how many layers.", "cube_layers",
+         [(5, 2, 2), (3, 4, 3), (6, 2, 3), (4, 4, 2)])
+    part(3, "Length × width × height", "Use the numbers on the edges.", "cube_edges",
+         [(6, 3, 2, "cm"), (4, 2, 5, "in"), (5, 4, 3, "m"), (7, 2, 2, "ft")])
+    part(4, "Find the volume", "No help this time.", "eq1",
+         [vol_eq(L, W, H, u) for L, W, H, u in ((8, 3, 2, "cm"), (5, 5, 4, "in"), (9, 2, 3, "m"), (6, 4, 5, "cm"),
+                                               (10, 3, 2, "ft"), (7, 5, 2, "cm"), (4, 4, 4, "in"), (12, 2, 3, "m"),
+                                               (7, 6, 2, "ft"), (9, 4, 3, "cm"))])
+    part(5, "Base times height", "The base is already worked out.", "eq2",
+         [f"{b} sq {u} × {h} {u} = [{b * h}] cubic {u}" for b, h, u in ((20, 3, "cm"), (15, 5, "in"), (36, 2, "m"),
+                                                                       (24, 5, "cm"), (18, 6, "ft"), (40, 2, "in"),
+                                                                       (12, 7, "m"), (50, 4, "cm"))])
+    part(6, "Find the missing edge", "Volume ÷ the other two edges.", "eq2",
+         [f"{L} × {W} × [{H}] = {L * W * H}" for L, W, H in ((4, 5, 3), (6, 2, 7), (3, 3, 5), (8, 4, 2), (5, 6, 4),
+                                                             (7, 3, 6))])
+    part(7, "Two boxes", "No help this time. Find each volume, then add.", "eq1",
+         [f"{a} × {b} × {c_} + {d} × {e} × {f} = [{a * b * c_}] + [{d * e * f}] = [{a * b * c_ + d * e * f}]"
+          for a, b, c_, d, e, f in ((3, 2, 2, 4, 2, 1), (5, 3, 2, 2, 2, 3), (4, 4, 3, 6, 2, 1), (6, 3, 2, 3, 3, 3))])
+    part(8, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_82)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 9, "Word problems", "Length × width × height.")
+    for i, story in enumerate(WORDS_82):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 9, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_82 = ["2/3 × 3/5 = [6]/[15]", "3/4 × 16 = [12]", "1/2 + 2/5 = [9]/[10]", "8 × 0.45 = [3.6]",
+             "6.5 − 2.75 = [3.75]", "38 × 25 = [950]"]
+WORDS_82 = [
+    ("A fish tank is 6 ft long, 2 ft wide and 3 ft tall. What is its volume?", f"6 {TIMES} 2 {TIMES} 3 = 36", "36",
+     "cubic ft"),
+    ("A box holds 5 layers of cubes. Each layer has 12 cubes. How many cubes fill the box?", f"12 {TIMES} 5 = 60",
+     "60", "cubes"),
+    ("A sandbox is 4 m long and 3 m wide. Sand fills it 1 m deep. How much sand is that?", f"4 {TIMES} 3 {TIMES} 1 = 12",
+     "12", "cubic m"),
+    ("A box has a volume of 80 cubic cm. Its base is 4 cm by 5 cm. How tall is it?", f"4 {TIMES} 5 {TIMES} 4 = 80",
+     "4", "cm"),
+    ("Challenge: Two boxes are stacked. One is 5 × 4 × 2 cm, the other 3 × 3 × 3 cm. What is the volume in all?",
+     "40 + 27 = 67", "67", "cubic cm"),
+]
+KINDS_82 = {
+    "cube_count": Kind(110, 3, lambda it: f"count the cubes: {it[0]} {it[1]} {it[2]}", c_cube_count, 8),
+    "cube_layers": Kind(128, 2, lambda it: f"cube layers: {it[0]} {it[1]} {it[2]}", c_cube_layers, 8),
+    "cube_edges": Kind(132, 2, lambda it: f"cube edges: {it[0]} {it[1]} {it[2]} {it[3]}", c_cube_edges, 8),
+}
+KINDS.update(KINDS_82)
+VOL_POOL = [vol_eq(L, W, H, u) for L, W, H, u in ((7, 3, 2, "cm"), (5, 4, 4, "in"), (8, 2, 5, "m"), (6, 5, 3, "ft"),
+                                                  (9, 3, 3, "cm"))]
+CHECKINS["82-volume"] = [
+    S("Count the cubes", None, "cube_count", [(4, 2, 2), (3, 3, 2), (5, 2, 3), (2, 3, 4)], 3),
+    S("Find the volume", None, "eq1", VOL_POOL, 3),
+    S("Find the missing edge", None, "eq2", [f"{L} × {W} × [{H}] = {L * W * H}" for L, W, H in
+                                            ((5, 3, 4), (6, 4, 3), (2, 7, 5), (9, 2, 4))], 2),
+]
+_g5[-1:-1] = [S("Volume", None, "eq1", VOL_POOL, 2, 82)]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -17005,8 +18856,8 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72]
-GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4"}
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82]
+GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4", "grade-5": "5"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
 _yes = lambda b: "yes" if b else "no"
@@ -17080,6 +18931,16 @@ ANSWER_OF = {
     "two_lines": lambda it: it[0],
     "triangle_kind": lambda it: tri_kind(it[0], it[1]),
     "symmetry": lambda k: str(SYM[k]),
+    "shift": lambda it: dn(D(it[0]) * p10(it[2]) if it[1] == "x" else D(it[0]) / p10(it[2])),
+    "pow": lambda it: it[1],
+    "pv_fill": lambda it: it,
+    "round_dec": lambda it: dround(it[0], it[1]),
+    "order_dec": lambda it: " < ".join(sorted(it, key=D)),
+    "dstack": lambda it: format(D(dres(it[0], it[1], it[2])).normalize(), "f"),
+    "mrows": lambda it: nf(it[0] * it[1]),
+    "dec_grid": lambda it: dn2(D(it[0] * it[1]) / 100),
+    "frac_grid": lambda it: f"{it[0] * it[2]}/{it[1] * it[3]}",
+    "cube_count": lambda it: str(it[0] * it[1] * it[2]),
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -17118,20 +18979,24 @@ def packet_grades():
 
 
 def solve(prompt):
-    """The answer to a plain arithmetic prompt like "25 + 29 = ?", "28 + ? = 47" or "6 × ? = 48"."""
-    m = re.fullmatch(r"(\d+|\?) ([+\u2212\u00d7\u00f7]) (\d+|\?) = (\d+|\?)", prompt.strip())
+    """The answer to a plain arithmetic prompt like "25 + 29 = ?", "28 + ? = 47", "6 × ? = 48" or "5.6 ÷ 10 = ?"."""
+    from decimal import Decimal
+    num = r"(\d+(?:\.\d+)?|\?)"
+    m = re.fullmatch(num + r" ([+\u2212\u00d7\u00f7]) " + num + " = " + num, prompt.strip())
     if not m or [m.group(1), m.group(3), m.group(4)].count("?") != 1:
         return None
     a, op, b, c = m.group(1), m.group(2), m.group(3), m.group(4)
-    f = {"+": lambda x, y: x + y, "\u2212": lambda x, y: x - y, "\u00d7": lambda x, y: x * y,
-         "\u00f7": lambda x, y: x // y}[op]
+    n = lambda t: Decimal(t)
     if c == "?":
-        return str(f(int(a), int(b)))
-    if b == "?":  # a op ? = c
-        return str(int(a) - int(c) if op == "\u2212" else int(a) // int(c) if op == "\u00f7"
-                   else {"+": lambda: int(c) - int(a), "\u00d7": lambda: int(c) // int(a)}[op]())
-    return str({"+": lambda: int(c) - int(b), "\u2212": lambda: int(c) + int(b), "\u00d7": lambda: int(c) // int(b),
-                "\u00f7": lambda: int(c) * int(b)}[op]())
+        r = {"+": lambda: n(a) + n(b), "\u2212": lambda: n(a) - n(b), "\u00d7": lambda: n(a) * n(b),
+             "\u00f7": lambda: n(a) / n(b)}[op]()
+    elif b == "?":  # a op ? = c
+        r = {"+": lambda: n(c) - n(a), "\u2212": lambda: n(a) - n(c), "\u00d7": lambda: n(c) / n(a),
+             "\u00f7": lambda: n(a) / n(c)}[op]()
+    else:  # ? op b = c
+        r = {"+": lambda: n(c) - n(b), "\u2212": lambda: n(c) + n(b), "\u00d7": lambda: n(c) / n(b),
+             "\u00f7": lambda: n(c) * n(b)}[op]()
+    return format(r.normalize(), "f")
 
 
 def manifest_entry(id_, type_, title, record, packet=None, grade=None, file=None):
@@ -17155,6 +19020,10 @@ def manifest_entry(id_, type_, title, record, packet=None, grade=None, file=None
         answer = ANSWER_OF[s.kind](item) if s.kind in ANSWER_OF else solved or " · ".join(answers)
         if " R ?" in prompt and len(answers) == 2:
             answer = f"{answers[0]} R {answers[1]}"  # 17 ÷ 5 = 3 R 2
+        elif s.kind not in ANSWER_OF and re.search(r"= \? \?/\?$", prompt) and len(answers) == 3:
+            answer = f"{answers[0]} {answers[1]}/{answers[2]}"  # 1 1/2 + 2 1/3 = 3 5/6
+        elif s.kind not in ANSWER_OF and re.search(r"= \?/\?$", prompt) and len(answers) == 2:
+            answer = f"{answers[0]}/{answers[1]}"  # 1/2 + 1/5 = 7/10
         if s.kind == "word":
             answer = f"{item[2]} {item[3]}".strip()
         parts[-1]["questions"].append({"n": num, "prompt": prompt, "answer": answer})
@@ -17312,6 +19181,26 @@ PACKETS = [
     ("71-angles", "angles", "Angles", learn_angles, practice_angles,
      False),
     ("72-lines-and-shapes", "lines-and-shapes", "Lines and Shapes", learn_lines_shapes, practice_lines_shapes,
+     False),
+    ("73-powers-of-ten", "powers-of-ten", "Powers of Ten", learn_powers_of_ten, practice_powers_of_ten,
+     False),
+    ("74-thousandths", "thousandths", "Thousandths", learn_thousandths, practice_thousandths,
+     False),
+    ("75-comparing-and-rounding-decimals", "comparing-and-rounding-decimals", "Comparing and Rounding Decimals", learn_compare_round_dec, practice_compare_round_dec,
+     False),
+    ("76-adding-and-subtracting-decimals", "adding-and-subtracting-decimals", "Adding and Subtracting Decimals", learn_add_sub_dec, practice_add_sub_dec,
+     False),
+    ("77-multiplying-bigger-numbers", "multiplying-bigger-numbers", "Multiplying Bigger Numbers", learn_mult_bigger, practice_mult_bigger,
+     False),
+    ("78-dividing-by-two-digit-numbers", "dividing-by-two-digit-numbers", "Dividing by Two-Digit Numbers", learn_div_two_digit, practice_div_two_digit,
+     False),
+    ("79-multiplying-and-dividing-decimals", "multiplying-and-dividing-decimals", "Multiplying and Dividing Decimals", learn_mult_div_dec, practice_mult_div_dec,
+     False),
+    ("80-unlike-fractions", "unlike-fractions", "Unlike Fractions", learn_unlike_fractions, practice_unlike_fractions,
+     False),
+    ("81-multiplying-fractions", "multiplying-fractions", "Multiplying Fractions", learn_mult_fractions, practice_mult_fractions,
+     False),
+    ("82-volume", "volume", "Volume", learn_volume, practice_volume,
      False),
 ]
 
