@@ -1044,8 +1044,8 @@ def practice_over_ten(bk):
     y = words(bk, y, [
         ("Leo read 7 pages on Monday and 6 pages on Tuesday. How many pages did he read in all?",
          "7 + 6 = 13", "13", "pages"),
-        ("Ava had some marbles. She got 4 more and now has 12. How many marbles did she start with?",
-         "8 + 4 = 12", "8", "marbles"),
+        ("Ava had 8 marbles. She got 4 more from her brother. How many marbles does she have now?",
+         "8 + 4 = 12", "12", "marbles"),
         ("The class planted 9 flowers in the morning and 8 in the afternoon. How many flowers did they plant?",
          "9 + 8 = 17", "17", "flowers"),
     ], 41) - 22
