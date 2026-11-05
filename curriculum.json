@@ -1,5 +1,5 @@
 {
- "version": "7b2b4bfa50f0",
+ "version": "df0e32199a74",
  "packets": [
   {
    "number": 0,
@@ -664,6 +664,70 @@
    "file": "volume",
    "title": "Volume",
    "grade": "5"
+  },
+  {
+   "number": 83,
+   "slug": "fractions-as-division",
+   "folder": "83-fractions-as-division",
+   "file": "fractions-as-division",
+   "title": "Fractions as Division",
+   "grade": "5"
+  },
+  {
+   "number": 84,
+   "slug": "dividing-with-unit-fractions",
+   "folder": "84-dividing-with-unit-fractions",
+   "file": "dividing-with-unit-fractions",
+   "title": "Dividing with Unit Fractions",
+   "grade": "5"
+  },
+  {
+   "number": 85,
+   "slug": "order-of-operations",
+   "folder": "85-order-of-operations",
+   "file": "order-of-operations",
+   "title": "Order of Operations",
+   "grade": "5"
+  },
+  {
+   "number": 86,
+   "slug": "number-patterns",
+   "folder": "86-number-patterns",
+   "file": "number-patterns",
+   "title": "Number Patterns",
+   "grade": "5"
+  },
+  {
+   "number": 87,
+   "slug": "converting-units",
+   "folder": "87-converting-units",
+   "file": "converting-units",
+   "title": "Converting Units",
+   "grade": "5"
+  },
+  {
+   "number": 88,
+   "slug": "line-plots-with-data",
+   "folder": "88-line-plots-with-data",
+   "file": "line-plots-with-data",
+   "title": "Line Plots with Data",
+   "grade": "5"
+  },
+  {
+   "number": 89,
+   "slug": "the-coordinate-grid",
+   "folder": "89-the-coordinate-grid",
+   "file": "the-coordinate-grid",
+   "title": "The Coordinate Grid",
+   "grade": "5"
+  },
+  {
+   "number": 90,
+   "slug": "classifying-shapes",
+   "folder": "90-classifying-shapes",
+   "file": "classifying-shapes",
+   "title": "Classifying Shapes",
+   "grade": "5"
   }
  ],
  "tests": [
@@ -858,12 +922,12 @@
       {
        "n": 25,
        "prompt": "double 4 = ?, so 4 + 5 = ?",
-       "answer": "8 · 9"
+       "answer": "8, so 4 + 5 = 9"
       },
       {
        "n": 26,
        "prompt": "double 2 = ?, so 2 + 3 = ?",
-       "answer": "4 · 5"
+       "answer": "4, so 2 + 3 = 5"
       }
      ]
     },
@@ -935,17 +999,17 @@
       {
        "n": 35,
        "prompt": "? tens ? ones = 66",
-       "answer": "6 · 6"
+       "answer": "6 tens 6 ones = 66"
       },
       {
        "n": 36,
        "prompt": "? tens ? ones = 84",
-       "answer": "8 · 4"
+       "answer": "8 tens 4 ones = 84"
       },
       {
        "n": 37,
        "prompt": "? tens ? ones = 64",
-       "answer": "6 · 4"
+       "answer": "6 tens 4 ones = 64"
       },
       {
        "n": 38,
@@ -3252,7 +3316,7 @@
    "id": "grade-5-pre",
    "type": "pre",
    "title": "Grade 5 Pre-Assessment",
-   "total": 34,
+   "total": 52,
    "file": "assessments/color/grade-5-pre-assessment-key.pdf",
    "parts": [
     {
@@ -3515,28 +3579,190 @@
     },
     {
      "part": 13,
-     "name": "Word problems",
-     "kind": "word",
-     "packet": null,
-     "packets": "73–82",
+     "name": "Fractions as division",
+     "kind": "frac3",
+     "packet": 83,
+     "packets": "83",
      "questions": [
       {
        "n": 31,
-       "prompt": "A bag of rice weighs 1.25 kg. How much do 8 bags weigh?",
-       "answer": "10 kg"
+       "prompt": "2 ÷ 7 = ?/?",
+       "answer": "2/7"
       },
       {
        "n": 32,
-       "prompt": "Ava buys a book for $6.75 and a pen for $1.40. How much does she spend?",
-       "answer": "$8.15"
-      },
+       "prompt": "1 ÷ 8 = ?/?",
+       "answer": "1/8"
+      }
+     ]
+    },
+    {
+     "part": 14,
+     "name": "Divide with unit fractions",
+     "kind": "frac3",
+     "packet": 84,
+     "packets": "84",
+     "questions": [
       {
        "n": 33,
-       "prompt": "Leo ran 3/4 km, then walked 1/3 km. How far did he go?",
-       "answer": "13/12 km"
+       "prompt": "2 ÷ 1/7 = ?",
+       "answer": "14"
       },
       {
        "n": 34,
+       "prompt": "1/2 ÷ 8 = ?/?",
+       "answer": "1/16"
+      }
+     ]
+    },
+    {
+     "part": 15,
+     "name": "Order of operations",
+     "kind": "eq3",
+     "packet": 85,
+     "packets": "85",
+     "questions": [
+      {
+       "n": 35,
+       "prompt": "56 ÷ (3 + 4) = ?",
+       "answer": "8"
+      },
+      {
+       "n": 36,
+       "prompt": "(8 + 7) × 4 = ?",
+       "answer": "60"
+      },
+      {
+       "n": 37,
+       "prompt": "8 × (12 − 9) = ?",
+       "answer": "24"
+      }
+     ]
+    },
+    {
+     "part": 16,
+     "name": "Number patterns",
+     "kind": "eq1",
+     "packet": 86,
+     "packets": "86",
+     "questions": [
+      {
+       "n": 38,
+       "prompt": "Start at 6, add 7:  6  13  20  ?  ?  ?",
+       "answer": "Start at 6, add 7:  6  13  20  27  34  41"
+      },
+      {
+       "n": 39,
+       "prompt": "Start at 15, add 4:  15  19  23  ?  ?  ?",
+       "answer": "Start at 15, add 4:  15  19  23  27  31  35"
+      }
+     ]
+    },
+    {
+     "part": 17,
+     "name": "Converting units",
+     "kind": "eq3",
+     "packet": 87,
+     "packets": "87",
+     "questions": [
+      {
+       "n": 40,
+       "prompt": "3.6 m = ? cm",
+       "answer": "360"
+      },
+      {
+       "n": 41,
+       "prompt": "62 mm = ? cm",
+       "answer": "6.2"
+      },
+      {
+       "n": 42,
+       "prompt": "1,600 mL = ? L",
+       "answer": "1.6"
+      }
+     ]
+    },
+    {
+     "part": 18,
+     "name": "Line plot data",
+     "kind": "frac2",
+     "packet": 88,
+     "packets": "88",
+     "questions": [
+      {
+       "n": 43,
+       "prompt": "2 4/8 L shared by 4 = ?/8 L each",
+       "answer": "5"
+      },
+      {
+       "n": 44,
+       "prompt": "5/8 + 2/8 + 4/8 + 6/8 = ?/8",
+       "answer": "17"
+      }
+     ]
+    },
+    {
+     "part": 19,
+     "name": "The coordinate grid",
+     "kind": "eq2",
+     "packet": 89,
+     "packets": "89",
+     "questions": [
+      {
+       "n": 45,
+       "prompt": "(7, 1) to (7, 6): ? apart",
+       "answer": "5"
+      },
+      {
+       "n": 46,
+       "prompt": "(1, 2) to (8, 2): ? apart",
+       "answer": "7"
+      }
+     ]
+    },
+    {
+     "part": 20,
+     "name": "Classifying shapes",
+     "kind": "yes_text1",
+     "packet": 90,
+     "packets": "90",
+     "questions": [
+      {
+       "n": 47,
+       "prompt": "A square is a parallelogram.",
+       "answer": "yes"
+      },
+      {
+       "n": 48,
+       "prompt": "Every rhombus is a square.",
+       "answer": "no"
+      }
+     ]
+    },
+    {
+     "part": 21,
+     "name": "Word problems",
+     "kind": "word",
+     "packet": null,
+     "packets": "73–90",
+     "questions": [
+      {
+       "n": 49,
+       "prompt": "5 friends share 4 pizzas equally. How much pizza does each friend get?",
+       "answer": "4/5 of a pizza"
+      },
+      {
+       "n": 50,
+       "prompt": "2/3 of a garden is flowers. 1/4 of the flowers are red. What part of the garden is red?",
+       "answer": "2/12 of the garden"
+      },
+      {
+       "n": 51,
+       "prompt": "A school orders 36 boxes of 125 pencils. How many pencils is that?",
+       "answer": "4,500 pencils"
+      },
+      {
+       "n": 52,
        "prompt": "A tank is 5 ft long, 3 ft wide and 4 ft tall. What is its volume?",
        "answer": "60 cubic ft"
       }
@@ -4084,12 +4310,12 @@
       {
        "n": 25,
        "prompt": "double 8 = ?, so 8 + 9 = ?",
-       "answer": "16 · 17"
+       "answer": "16, so 8 + 9 = 17"
       },
       {
        "n": 26,
        "prompt": "double 5 = ?, so 5 + 6 = ?",
-       "answer": "10 · 11"
+       "answer": "10, so 5 + 6 = 11"
       }
      ]
     },
@@ -4171,7 +4397,7 @@
       {
        "n": 37,
        "prompt": "? tens ? ones = 89",
-       "answer": "8 · 9"
+       "answer": "8 tens 9 ones = 89"
       },
       {
        "n": 38,
@@ -6478,7 +6704,7 @@
    "id": "grade-5-post",
    "type": "post",
    "title": "Grade 5 Post-Assessment",
-   "total": 34,
+   "total": 52,
    "file": "assessments/color/grade-5-post-assessment-key.pdf",
    "parts": [
     {
@@ -6741,30 +6967,192 @@
     },
     {
      "part": 13,
-     "name": "Word problems",
-     "kind": "word",
-     "packet": null,
-     "packets": "73–82",
+     "name": "Fractions as division",
+     "kind": "frac3",
+     "packet": 83,
+     "packets": "83",
      "questions": [
       {
        "n": 31,
-       "prompt": "A school orders 36 boxes of 125 pencils. How many pencils is that?",
-       "answer": "4,500 pencils"
+       "prompt": "4 ÷ 7 = ?/?",
+       "answer": "4/7"
       },
       {
        "n": 32,
-       "prompt": "2/3 of a garden is flowers. 1/4 of the flowers are red. What part of the garden is red?",
-       "answer": "2/12 of the garden"
-      },
+       "prompt": "5 ÷ 9 = ?/?",
+       "answer": "5/9"
+      }
+     ]
+    },
+    {
+     "part": 14,
+     "name": "Divide with unit fractions",
+     "kind": "frac3",
+     "packet": 84,
+     "packets": "84",
+     "questions": [
       {
        "n": 33,
-       "prompt": "864 kids sit in rows of 24. How many rows are there?",
-       "answer": "36 rows"
+       "prompt": "1/6 ÷ 5 = ?/?",
+       "answer": "1/30"
       },
       {
        "n": 34,
-       "prompt": "A rope is 2.4 m long. It is cut into 6 equal pieces. How long is each piece?",
-       "answer": "0.4 m"
+       "prompt": "5 ÷ 1/3 = ?",
+       "answer": "15"
+      }
+     ]
+    },
+    {
+     "part": 15,
+     "name": "Order of operations",
+     "kind": "eq3",
+     "packet": 85,
+     "packets": "85",
+     "questions": [
+      {
+       "n": 35,
+       "prompt": "40 − 27 ÷ 3 = ?",
+       "answer": "31"
+      },
+      {
+       "n": 36,
+       "prompt": "35 ÷ 5 + 18 = ?",
+       "answer": "25"
+      },
+      {
+       "n": 37,
+       "prompt": "6 + 5 × 7 = ?",
+       "answer": "41"
+      }
+     ]
+    },
+    {
+     "part": 16,
+     "name": "Number patterns",
+     "kind": "eq1",
+     "packet": 86,
+     "packets": "86",
+     "questions": [
+      {
+       "n": 38,
+       "prompt": "Start at 3, add 12:  3  15  27  ?  ?  ?",
+       "answer": "Start at 3, add 12:  3  15  27  39  51  63"
+      },
+      {
+       "n": 39,
+       "prompt": "Start at 6, add 7:  6  13  20  ?  ?  ?",
+       "answer": "Start at 6, add 7:  6  13  20  27  34  41"
+      }
+     ]
+    },
+    {
+     "part": 17,
+     "name": "Converting units",
+     "kind": "eq3",
+     "packet": 87,
+     "packets": "87",
+     "questions": [
+      {
+       "n": 40,
+       "prompt": "1.8 kg = ? g",
+       "answer": "1,800"
+      },
+      {
+       "n": 41,
+       "prompt": "2.25 L = ? mL",
+       "answer": "2,250"
+      },
+      {
+       "n": 42,
+       "prompt": "450 cm = ? m",
+       "answer": "4.5"
+      }
+     ]
+    },
+    {
+     "part": 18,
+     "name": "Line plot data",
+     "kind": "frac2",
+     "packet": 88,
+     "packets": "88",
+     "questions": [
+      {
+       "n": 43,
+       "prompt": "1 4/8 cups shared by 6 = ?/8 cups each",
+       "answer": "2"
+      },
+      {
+       "n": 44,
+       "prompt": "3/8 + 3/8 + 7/8 + 2/8 = ?/8",
+       "answer": "15"
+      }
+     ]
+    },
+    {
+     "part": 19,
+     "name": "The coordinate grid",
+     "kind": "eq2",
+     "packet": 89,
+     "packets": "89",
+     "questions": [
+      {
+       "n": 45,
+       "prompt": "(7, 1) to (7, 6): ? apart",
+       "answer": "5"
+      },
+      {
+       "n": 46,
+       "prompt": "(2, 7) to (9, 7): ? apart",
+       "answer": "7"
+      }
+     ]
+    },
+    {
+     "part": 20,
+     "name": "Classifying shapes",
+     "kind": "yes_text1",
+     "packet": 90,
+     "packets": "90",
+     "questions": [
+      {
+       "n": 47,
+       "prompt": "A rectangle can have 4 equal sides.",
+       "answer": "yes"
+      },
+      {
+       "n": 48,
+       "prompt": "An isosceles triangle has 3 different sides.",
+       "answer": "no"
+      }
+     ]
+    },
+    {
+     "part": 21,
+     "name": "Word problems",
+     "kind": "word",
+     "packet": null,
+     "packets": "73–90",
+     "questions": [
+      {
+       "n": 49,
+       "prompt": "Leo ran 3/4 km, then walked 1/3 km. How far did he go?",
+       "answer": "13/12 km"
+      },
+      {
+       "n": 50,
+       "prompt": "How many 1/3 cup scoops of rice are in 4 cups?",
+       "answer": "12 scoops"
+      },
+      {
+       "n": 51,
+       "prompt": "A bag of rice weighs 1.25 kg. How much do 8 bags weigh?",
+       "answer": "10 kg"
+      },
+      {
+       "n": 52,
+       "prompt": "Ava buys a book for $6.75 and a pen for $1.40. How much does she spend?",
+       "answer": "$8.15"
       }
      ]
     }
@@ -8269,6 +8657,73 @@
    "packet": 5
   },
   {
+   "id": "check-in:classifying-shapes",
+   "type": "check-in",
+   "title": "Classifying Shapes Check-In",
+   "total": 6,
+   "file": "90-classifying-shapes/color/classifying-shapes-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Every name that fits",
+     "kind": "all_names",
+     "packet": 90,
+     "packets": "90",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "all names: square 30",
+       "answer": "quadrilateral, parallelogram, rectangle, rhombus, square"
+      },
+      {
+       "n": 2,
+       "prompt": "all names: rhombus 20",
+       "answer": "quadrilateral, parallelogram, rhombus"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Triangles by their sides",
+     "kind": "tri_sides",
+     "packet": 90,
+     "packets": "90",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "triangle sides: 25 25",
+       "answer": "isosceles"
+      },
+      {
+       "n": 4,
+       "prompt": "triangle sides: 45 80",
+       "answer": "scalene"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "True or not?",
+     "kind": "yes_text1",
+     "packet": 90,
+     "packets": "90",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "A rectangle can have 4 equal sides.",
+       "answer": "yes"
+      },
+      {
+       "n": 6,
+       "prompt": "An isosceles triangle has 3 different sides.",
+       "answer": "no"
+      }
+     ]
+    }
+   ],
+   "packet": 90
+  },
+  {
    "id": "check-in:comparing-and-rounding-decimals",
    "type": "check-in",
    "title": "Comparing and Rounding Decimals Check-In",
@@ -8712,12 +9167,12 @@
       {
        "n": 3,
        "prompt": "3/4 = ?/12 and 4/6 = ?/12 so 3/4 ? 4/6",
-       "answer": "9 · 8 · >"
+       "answer": "9/12 and 4/6 = 8/12 so 3/4 > 4/6"
       },
       {
        "n": 4,
        "prompt": "3/4 = ?/12 and 5/6 = ?/12 so 3/4 ? 5/6",
-       "answer": "9 · 10 · <"
+       "answer": "9/12 and 5/6 = 10/12 so 3/4 < 5/6"
       }
      ]
     },
@@ -8762,6 +9217,83 @@
     }
    ],
    "packet": 62
+  },
+  {
+   "id": "check-in:converting-units",
+   "type": "check-in",
+   "title": "Converting Units Check-In",
+   "total": 8,
+   "file": "87-converting-units/color/converting-units-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Bigger to smaller",
+     "kind": "eq3",
+     "packet": 87,
+     "packets": "87",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "2.25 L = ? mL",
+       "answer": "2,250"
+      },
+      {
+       "n": 2,
+       "prompt": "7.2 cm = ? mm",
+       "answer": "72"
+      },
+      {
+       "n": 3,
+       "prompt": "4.5 km = ? m",
+       "answer": "4,500"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Smaller to bigger",
+     "kind": "eq3",
+     "packet": 87,
+     "packets": "87",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "450 cm = ? m",
+       "answer": "4.5"
+      },
+      {
+       "n": 5,
+       "prompt": "3,200 g = ? kg",
+       "answer": "3.2"
+      },
+      {
+       "n": 6,
+       "prompt": "2,800 m = ? km",
+       "answer": "2.8"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Left over",
+     "kind": "eq2",
+     "packet": 87,
+     "packets": "87",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "38 in = ? ft ? in",
+       "answer": "3 ft 2 in"
+      },
+      {
+       "n": 8,
+       "prompt": "90 min = ? hr ? min",
+       "answer": "1 hr 30 min"
+      }
+     ]
+    }
+   ],
+   "packet": 87
   },
   {
    "id": "check-in:counting-forward-and-backward",
@@ -8905,12 +9437,12 @@
       {
        "n": 5,
        "prompt": "1/5 ?/5 ?/5 4/5",
-       "answer": "2 · 3"
+       "answer": "1/5 2/5 3/5 4/5"
       },
       {
        "n": 6,
        "prompt": "2/10 3/10 ?/10 ?/10",
-       "answer": "4 · 5"
+       "answer": "2/10 3/10 4/10 5/10"
       }
      ]
     },
@@ -9134,6 +9666,69 @@
    "packet": 78
   },
   {
+   "id": "check-in:dividing-with-unit-fractions",
+   "type": "check-in",
+   "title": "Dividing with Unit Fractions Check-In",
+   "total": 7,
+   "file": "84-dividing-with-unit-fractions/color/dividing-with-unit-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Share a piece",
+     "kind": "unit_cut",
+     "packet": 84,
+     "packets": "84",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "unit fraction cut: 1/2 by 4",
+       "answer": "1/8"
+      },
+      {
+       "n": 2,
+       "prompt": "1/3 ÷ 7 = ?/?",
+       "answer": "1/21"
+      },
+      {
+       "n": 3,
+       "prompt": "1/4 ÷ 4 = ?/?",
+       "answer": "1/16"
+      },
+      {
+       "n": 4,
+       "prompt": "1/5 ÷ 3 = ?/?",
+       "answer": "1/15"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "How many pieces fit?",
+     "kind": "frac3",
+     "packet": 84,
+     "packets": "84",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "6 ÷ 1/2 = ?",
+       "answer": "12"
+      },
+      {
+       "n": 6,
+       "prompt": "3 ÷ 1/4 = ?",
+       "answer": "12"
+      },
+      {
+       "n": 7,
+       "prompt": "4 ÷ 1/6 = ?",
+       "answer": "24"
+      }
+     ]
+    }
+   ],
+   "packet": 84
+  },
+  {
    "id": "check-in:division",
    "type": "check-in",
    "title": "Division Check-In",
@@ -9348,12 +9943,12 @@
       {
        "n": 3,
        "prompt": "double 6 = ?, so 6 + 7 = ?",
-       "answer": "12 · 13"
+       "answer": "12, so 6 + 7 = 13"
       },
       {
        "n": 4,
        "prompt": "double 9 = ?, so 9 + 10 = ?",
-       "answer": "18 · 19"
+       "answer": "18, so 9 + 10 = 19"
       }
      ]
     },
@@ -9833,17 +10428,17 @@
       {
        "n": 3,
        "prompt": "? + ? = 68",
-       "answer": "34 · 34"
+       "answer": "34 + 34 = 68"
       },
       {
        "n": 4,
        "prompt": "? + ? = 28",
-       "answer": "14 · 14"
+       "answer": "14 + 14 = 28"
       },
       {
        "n": 5,
        "prompt": "? + ? = 88",
-       "answer": "44 · 44"
+       "answer": "44 + 44 = 88"
       }
      ]
     },
@@ -9949,12 +10544,12 @@
       {
        "n": 1,
        "prompt": "48 = 1 × ? and 2 × ? and 3 × ? and 4 × ? and 6 × ?",
-       "answer": "48 · 24 · 16 · 12 · 8"
+       "answer": "1 × 48 and 2 × 24 and 3 × 16 and 4 × 12 and 6 × 8"
       },
       {
        "n": 2,
        "prompt": "40 = 1 × ? and 2 × ? and 4 × ? and 5 × ?",
-       "answer": "40 · 20 · 10 · 8"
+       "answer": "1 × 40 and 2 × 20 and 4 × 10 and 5 × 8"
       }
      ]
     },
@@ -10194,6 +10789,92 @@
     }
    ],
    "packet": 41
+  },
+  {
+   "id": "check-in:fractions-as-division",
+   "type": "check-in",
+   "title": "Fractions as Division Check-In",
+   "total": 8,
+   "file": "83-fractions-as-division/color/fractions-as-division-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Share the strips",
+     "kind": "share_frac",
+     "packet": 83,
+     "packets": "83",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "share the strips: 3 by 4",
+       "answer": "3/4"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Write it as a fraction",
+     "kind": "frac3",
+     "packet": 83,
+     "packets": "83",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "9 ÷ 10 = ?/?",
+       "answer": "9/10"
+      },
+      {
+       "n": 3,
+       "prompt": "3 ÷ 8 = ?/?",
+       "answer": "3/8"
+      },
+      {
+       "n": 4,
+       "prompt": "5 ÷ 9 = ?/?",
+       "answer": "5/9"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "More than one each",
+     "kind": "frac2",
+     "packet": 83,
+     "packets": "83",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "14 ÷ 3 = ?/3 = ? ?/3",
+       "answer": "14/3 = 4 2/3"
+      },
+      {
+       "n": 6,
+       "prompt": "9 ÷ 2 = ?/2 = ? ?/2",
+       "answer": "9/2 = 4 1/2"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Between which wholes?",
+     "kind": "eq2",
+     "packet": 83,
+     "packets": "83",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "38 ÷ 5 is between ? and ?",
+       "answer": "38 ÷ 5 is between 7 and 8"
+      },
+      {
+       "n": 8,
+       "prompt": "50 ÷ 6 is between ? and ?",
+       "answer": "50 ÷ 6 is between 8 and 9"
+      }
+     ]
+    }
+   ],
+   "packet": 83
   },
   {
    "id": "check-in:fractions-of-a-group",
@@ -10886,6 +11567,68 @@
     }
    ],
    "packet": 15
+  },
+  {
+   "id": "check-in:line-plots-with-data",
+   "type": "check-in",
+   "title": "Line Plots with Data Check-In",
+   "total": 5,
+   "file": "88-line-plots-with-data/color/line-plots-with-data-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Read the X chart",
+     "kind": "read_share",
+     "packet": 88,
+     "packets": "88",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "read the x chart and share: Flour in 6 bowls (cups)",
+       "answer": "6 · 5/8 · 3 6/8 · 5/8"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Add the data",
+     "kind": "frac2",
+     "packet": 88,
+     "packets": "88",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "2/8 + 4/8 + 5/8 + 3/8 = ?/8",
+       "answer": "14"
+      },
+      {
+       "n": 3,
+       "prompt": "6/8 + 1/8 + 5/8 + 4/8 = ?/8",
+       "answer": "16"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Fair shares",
+     "kind": "frac2",
+     "packet": 88,
+     "packets": "88",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "4 3/8 lb shared by 7 = ?/8 lb each",
+       "answer": "5"
+      },
+      {
+       "n": 5,
+       "prompt": "3 3/8 L shared by 3 = ?/8 L each",
+       "answer": "9"
+      }
+     ]
+    }
+   ],
+   "packet": 88
   },
   {
    "id": "check-in:line-plots-with-fractions",
@@ -11813,12 +12556,12 @@
       {
        "n": 1,
        "prompt": "3 × 0.9 = ? tenths = ?",
-       "answer": "27 · 2.7"
+       "answer": "27 tenths = 2.7"
       },
       {
        "n": 2,
        "prompt": "6 × 0.6 = ? tenths = ?",
-       "answer": "36 · 3.6"
+       "answer": "36 tenths = 3.6"
       }
      ]
     },
@@ -12106,12 +12849,12 @@
       {
        "n": 3,
        "prompt": "2 × 6 = ? so 2 × 60 = ?",
-       "answer": "12 · 120"
+       "answer": "12 so 2 × 60 = 120"
       },
       {
        "n": 4,
        "prompt": "9 × 5 = ? so 9 × 50 = ?",
-       "answer": "45 · 450"
+       "answer": "45 so 9 × 50 = 450"
       }
      ]
     },
@@ -12344,6 +13087,164 @@
     }
    ],
    "packet": 58
+  },
+  {
+   "id": "check-in:number-patterns",
+   "type": "check-in",
+   "title": "Number Patterns Check-In",
+   "total": 7,
+   "file": "86-number-patterns/color/number-patterns-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Keep going",
+     "kind": "eq1",
+     "packet": 86,
+     "packets": "86",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "Start at 2, add 9:  2  11  20  ?  ?  ?",
+       "answer": "Start at 2, add 9:  2  11  20  29  38  47"
+      },
+      {
+       "n": 2,
+       "prompt": "Start at 9, add 6:  9  15  21  ?  ?  ?",
+       "answer": "Start at 9, add 6:  9  15  21  27  33  39"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Find the rule",
+     "kind": "eq2",
+     "packet": 86,
+     "packets": "86",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "5  20  35  50  rule: add ?",
+       "answer": "15"
+      },
+      {
+       "n": 4,
+       "prompt": "4  13  22  31  rule: add ?",
+       "answer": "9"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Two rules",
+     "kind": "two_rules",
+     "packet": 86,
+     "packets": "86",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "two rules: add 2 and add 8",
+       "answer": "4"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Compare the rules",
+     "kind": "eq1",
+     "packet": 86,
+     "packets": "86",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "A: add 5, B: add 25. Each B term is ? times the A term",
+       "answer": "5"
+      },
+      {
+       "n": 7,
+       "prompt": "A: add 3, B: add 18. Each B term is ? times the A term",
+       "answer": "6"
+      }
+     ]
+    }
+   ],
+   "packet": 86
+  },
+  {
+   "id": "check-in:order-of-operations",
+   "type": "check-in",
+   "title": "Order of Operations Check-In",
+   "total": 8,
+   "file": "85-order-of-operations/color/order-of-operations-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Parentheses",
+     "kind": "eq3",
+     "packet": 85,
+     "packets": "85",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "(20 − 11) × 6 = ?",
+       "answer": "54"
+      },
+      {
+       "n": 2,
+       "prompt": "(64 − 16) ÷ 6 = ?",
+       "answer": "8"
+      },
+      {
+       "n": 3,
+       "prompt": "(33 + 7) ÷ 5 = ?",
+       "answer": "8"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Times and divide first",
+     "kind": "eq3",
+     "packet": 85,
+     "packets": "85",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "70 − 8 × 8 = ?",
+       "answer": "6"
+      },
+      {
+       "n": 5,
+       "prompt": "8 × 4 − 9 = ?",
+       "answer": "23"
+      },
+      {
+       "n": 6,
+       "prompt": "2 + 9 × 6 = ?",
+       "answer": "56"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Words to numbers",
+     "kind": "eq1",
+     "packet": 85,
+     "packets": "85",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "Take 6 from 30, then divide by 8: ?",
+       "answer": "3"
+      },
+      {
+       "n": 8,
+       "prompt": "Multiply 8 by 6, then take away 10: ?",
+       "answer": "38"
+      }
+     ]
+    }
+   ],
+   "packet": 85
   },
   {
    "id": "check-in:over-the-next-ten",
@@ -14123,17 +15024,17 @@
       {
        "n": 6,
        "prompt": "? tens ? ones = 95",
-       "answer": "9 · 5"
+       "answer": "9 tens 5 ones = 95"
       },
       {
        "n": 7,
        "prompt": "? tens ? ones = 56",
-       "answer": "5 · 6"
+       "answer": "5 tens 6 ones = 56"
       },
       {
        "n": 8,
        "prompt": "? tens ? ones = 68",
-       "answer": "6 · 8"
+       "answer": "6 tens 8 ones = 68"
       },
       {
        "n": 9,
@@ -14264,6 +15165,63 @@
     }
    ],
    "packet": 66
+  },
+  {
+   "id": "check-in:the-coordinate-grid",
+   "type": "check-in",
+   "title": "The Coordinate Grid Check-In",
+   "total": 4,
+   "file": "89-the-coordinate-grid/color/the-coordinate-grid-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Read the points",
+     "kind": "grid_read",
+     "packet": 89,
+     "packets": "89",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "read the grid: A 3-6 B 7-2 C 1-9 D 8-8",
+       "answer": "(3, 6) · (7, 2) · (1, 9) · (8, 8)"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Plot the points",
+     "kind": "grid_plot",
+     "packet": 89,
+     "packets": "89",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "plot the grid: P 5-7 Q 2-3 R 9-1 S 0-5",
+       "answer": "P (5, 7), Q (2, 3), R (9, 1), S (0, 5)"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "How far apart?",
+     "kind": "eq2",
+     "packet": 89,
+     "packets": "89",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "(5, 3) to (5, 10): ? apart",
+       "answer": "7"
+      },
+      {
+       "n": 4,
+       "prompt": "(2, 7) to (9, 7): ? apart",
+       "answer": "7"
+      }
+     ]
+    }
+   ],
+   "packet": 89
   },
   {
    "id": "check-in:thousands",

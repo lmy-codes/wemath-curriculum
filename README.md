@@ -1,6 +1,6 @@
 # WeMath worksheets
 
-Eighty-three packets, in teaching order (K to grade 5). Each starts with a picture-first learning page, followed by practice.
+Ninety-one packets, in teaching order (K to grade 5). Each starts with a picture-first learning page, followed by practice.
 
 | Folder | Topic | Pages |
 |---|---|---|
@@ -87,6 +87,14 @@ Eighty-three packets, in teaching order (K to grade 5). Each starts with a pictu
 | `80-unlike-fractions/` | Cut strips into the same size pieces, given bottoms, add, subtract, mixed numbers | 7 |
 | `81-multiplying-fractions/` | A square cut both ways, tops × tops, fraction of a number, mixed numbers × a number, smaller or bigger? | 7 |
 | `82-volume/` | Count cubes, layers, length × width × height, base × height, missing edge, two boxes | 7 |
+| `83-fractions-as-division/` | Share strips among people, write the fraction, more than one each (mixed numbers), between which wholes, who gets more | 6 |
+| `84-dividing-with-unit-fractions/` | Share a piece (1/3 ÷ 4), how many pieces fit (4 ÷ 1/3), check with times | 6 |
+| `85-order-of-operations/` | Parentheses first, × and ÷ before + and −, same numbers with different answers, words to expressions, how many times as big | 7 |
+| `86-number-patterns/` | Keep going, find the rule, two rules in a table, pairs, compare the rules | 7 |
+| `87-converting-units/` | Metric both ways with decimals, left-over units (50 in = 4 ft 2 in), which is more, add mixed units | 6 |
+| `88-line-plots-with-data/` | Make and read X charts in eighths, add the data, fair shares | 6 |
+| `89-the-coordinate-grid/` | Read and plot points (over, then up), how far apart, move a point, graph two rules | 7 |
+| `90-classifying-shapes/` | The quadrilateral family, every name that fits, triangles by their sides, true or not, name it, riddles | 7 |
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 
@@ -108,7 +116,7 @@ Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hol
 | Grade 2 | 10–32: two-digit subtracting, borrowing, columns, three-digit numbers, skip counting, comparing, arrays, even/odd, hundred buddies, counting, halves, equal shares, time, money, across zeros, bar models, length, graphs | 98 problems | 98 problems |
 | Grade 3 | 33–52: multiplication, strategies, division, rounding, multiplying by tens, area, six fraction packets (unit fractions, counting fractions, fractions and wholes, equal fractions, comparing, fractions of a group), perimeter, elapsed time, two-step problems, times-table patterns, mass and volume, scaled graphs, quarter inches, quadrilaterals | 86 problems | 86 problems |
 | Grade 4 | 53–72: thousands, rounding big numbers, adding and subtracting big numbers, multiplying by one and two digits, dividing (remainders, bigger numbers), factors and multiples, equivalent and unlike fractions, adding fractions, mixed numbers, fraction × whole number, tenths and hundredths, decimals, conversions, area and perimeter formulas, line plots, angles, lines and shapes | 77 problems | 77 problems |
-| Grade 5 | 73–82: powers of ten, thousandths, comparing and rounding decimals, adding and subtracting decimals, multiplying bigger numbers, dividing by two-digit numbers, multiplying and dividing decimals, unlike fractions, multiplying fractions, volume | 34 problems | 34 problems |
+| Grade 5 | 73–90: powers of ten, thousandths, comparing and rounding decimals, adding and subtracting decimals, multiplying bigger numbers, dividing by two-digit numbers, multiplying and dividing decimals, unlike fractions, multiplying fractions, volume, fractions as division, dividing with unit fractions, order of operations, number patterns, converting units, line plot data, the coordinate grid, classifying shapes | 52 problems | 52 problems |
 
 Each answer key ends with a **scoring sheet**: every part, the packet it checks, and a score line. Use the **pre-assessment** for placement: start a student at the first packet where they miss more than 1 problem in its parts. Use the **post-assessment** to see growth: a part with more than 1 miss means that packet needs review.
 

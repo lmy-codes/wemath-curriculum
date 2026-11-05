@@ -28,3 +28,18 @@ Modules 1, 2, 3 and part of 4 and 5. WeMath rules hold: no number lines (decimal
 Later rounds: fractions as division and dividing with unit fractions (5.NF.3, 5.NF.7), expressions and order of operations (5.OA.1–2), number patterns (5.OA.3), line plots and conversions (5.MD.1–2), shapes (5.G.3–4). The coordinate plane (5.G.1–2) is built from two number lines, so it needs the founder's yes before it is planned.
 
 Each packet: learning page, help that fades, many no-help problems by kind, "Remember?", word problems with the challenge last, a Check-In, and parts in new grade 5 assessments.
+
+## Second round (packets 83–90): the rest of grade 5
+
+| # | Packet | Standard | Main picture |
+|---|---|---|---|
+| 83 | Fractions as Division | 5.NF.3 | strips shared out: 3 strips among 4 kids, each gets one piece of every strip = 3/4 |
+| 84 | Dividing with Unit Fractions | 5.NF.7 | a unit-fraction strip cut again (1/3 ÷ 4), and wholes cut into pieces (4 ÷ 1/3) |
+| 85 | Order of Operations | 5.OA.1–2 | parentheses first, then × and ÷, then + and −; expressions from words |
+| 86 | Number Patterns | 5.OA.3 | two rules side by side in a table; compare the terms; pairs |
+| 87 | Converting Units | 5.MD.1 | metric with the place-value chart (350 cm = 3.5 m); customary with left-overs |
+| 88 | Line Plots with Data | 5.MD.2 | X charts in halves, fourths and eighths; totals and fair shares |
+| 89 | The Coordinate Grid | 5.G.1–2 | a grid of streets: go over, then up; points from tables. The founder may veto this one: the axes are number lines |
+| 90 | Classifying Shapes | 5.G.3–4 | a family tree of shapes; triangles by sides and by angles |
+
+With these, every grade 5 standard has a packet. Each has a Check-In and parts in the grade 5 assessments.

@@ -17248,10 +17248,16 @@ WORDS_G5 = [
     ("2/3 of a garden is flowers. 1/4 of the flowers are red. What part of the garden is red?",
      f"1/4 {TIMES} 2/3 = 2/12", "2/12", "of the garden"),
     ("A bag of rice weighs 1.25 kg. How much do 8 bags weigh?", f"8 {TIMES} 1.25 = 10", "10", "kg"),
+    ("5 friends share 4 pizzas equally. How much pizza does each friend get?", f"4 {DIV} 5 = 4/5", "4/5",
+     "of a pizza"),
+    ("A ribbon is 3.5 m long. How many cm is that?", f"3.5 {TIMES} 100 = 350", "350", "cm"),
+    ("Mia buys 4 packs of 6 cards, then gives away 9. How many cards does she have left?",
+     f"4 {TIMES} 6 {MINUS} 9 = 15", "15", "cards"),
+    ("How many 1/3 cup scoops of rice are in 4 cups?", "4 ÷ 1/3 = 12", "12", "scoops"),
 ]
-GRADES.append(("grade-5", "Grade 5", "Packets 73–82", [
+GRADES.append(("grade-5", "Grade 5", "Packets 73–90", [
     S("Powers of ten", None, "eq3", TIMES_P10 + DIV_P10, 3, 73),
-    S("Word problems", None, "word", WORDS_G5, 4, "73–82"),
+    S("Word problems", None, "word", WORDS_G5, 4, "73–90"),
 ]))
 _g5 = GRADES[-1][3]
 
@@ -18845,6 +18851,1225 @@ CHECKINS["82-volume"] = [
 _g5[-1:-1] = [S("Volume", None, "eq1", VOL_POOL, 2, 82)]
 
 
+# ====================================================================== 83. Fractions as Division
+
+
+def share_strips(bk, x, top, w, k, n, h=12, gap=5):
+    """k wholes (strips), each cut into n; the first piece of every strip is shaded: one person's share."""
+    for i in range(k):
+        strip(bk, x, top - h - i * (h + gap), w, h, n, shaded=[0])
+    return top - k * (h + gap)
+
+
+def c_share_frac(bk, x, cy, w, item):
+    k, n = item
+    c = bk.c
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 10.5)
+    c.drawString(x + GUT, cy + 84, f"{k} shared by {n}")
+    share_strips(bk, x + GUT, cy + 78, 80, k, n, h=11, gap=4)
+    frac_fit(bk, x + GUT + 94, cy + 44, w - GUT - 100, f"{k} ÷ {n} = [{k}]/[{n}]", size=18)
+
+
+def as_frac(k, n):
+    return f"{k} ÷ {n} = [{k}]/[{n}]"
+
+
+def as_mixed(k, n):
+    """7 ÷ 3 = [7]/3 = [2] [1]/3."""
+    q, r = divmod(k, n)
+    return f"{k} ÷ {n} = [{k}]/{n} = [{q}] [{r}]/{n}"
+
+
+def between_w(k, n):
+    q = k // n
+    return f"{k} ÷ {n} is between [{q}] and [{q + 1}]"
+
+
+def learn_frac_division(bk):
+    y = bk.new_page("Fractions as Division", "Share wholes equally: each share is a fraction.", name_line=False,
+                    big=True, footer="WeMath  ·  Fractions as Division")
+    c = bk.c
+    label(bk, M, y - 6, "3 pizzas shared by 4 kids")
+    share_strips(bk, M + 14, y - 22, 220, 3, 4, h=20, gap=8)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 260, y - 34, "Cut every pizza into 4 pieces.")
+    c.drawString(M + 260, y - 52, "Each kid gets 1 piece of each pizza:")
+    c.drawString(M + 260, y - 68, "3 pieces of 1/4. That is 3/4.")
+    frac_expr(bk, M + 260, y - 102, "3 ÷ 4 = 3/4", size=22)
+    y -= 132
+
+    label(bk, M, y - 6, "The top is shared by the bottom")
+    frac_expr(bk, M + 14, y - 46, "2 ÷ 5 = 2/5", size=22)
+    frac_expr(bk, M + 180, y - 46, "5 ÷ 2 = 5/2", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 32, "The fraction bar means")
+    c.drawString(M + 340, y - 48, "“shared by”.")
+    y -= 78
+
+    label(bk, M, y - 6, "More than one each: 7 ÷ 3")
+    frac_expr(bk, M + 14, y - 46, "7 ÷ 3 = 7/3 = 2 1/3", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 260, y - 34, "Each kid gets 2 whole ones,")
+    c.drawString(M + 260, y - 50, "then the last one is cut in 3.")
+    y -= 80
+
+    bottom = your_turn(bk, y, h=80)
+    bk.ask("fractions as division your turn: 4 / 5")
+    frac_expr(bk, M + 190, bottom + 30, "4 ÷ 5 = [4]/[5]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: a fraction is a division (5.NF.3). Share real things: 3 pizzas among 4 kids. Say "
+                     "“How many wholes? How many people? Each gets top over bottom.”")
+
+
+def practice_frac_division(bk):
+    title = "Fractions as Division: Practice"
+    y = bk.new_page(title, "The top is shared by the bottom.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Share the strips", "One share is shaded. Count its pieces.", "share_frac",
+         [(2, 3), (3, 5), (4, 6), (2, 5), (5, 8), (3, 7)])
+    part(2, "Write it as a fraction", "No help this time.", "frac3",
+         [as_frac(k, n) for k, n in ((5, 6), (2, 9), (7, 8), (1, 4), (4, 9), (3, 10), (6, 7), (5, 12), (2, 3),
+                                     (8, 9), (1, 6), (7, 10))])
+    part(3, "More than one each", "No help this time. Write the fraction, then the mixed number.", "frac2",
+         [as_mixed(k, n) for k, n in ((7, 2), (11, 4), (9, 5), (13, 3), (17, 6), (10, 3), (19, 4), (23, 5),
+                                      (15, 8), (25, 6))])
+    part(4, "Between which wholes?", "No help this time.", "eq2",
+         [between_w(k, n) for k, n in ((17, 5), (29, 4), (40, 7), (22, 3), (51, 8), (33, 6),
+                                       (46, 9), (26, 10))])
+    part(5, "Who gets more?", "No help this time. Write < or >.", "frac3",
+         [f"{a} ÷ {b} [{sign_of(Fraction(a, b), Fraction(c_, d))}] {c_} ÷ {d}" for a, b, c_, d in
+          ((3, 4, 2, 4), (5, 6, 5, 8), (2, 3, 4, 3), (7, 10, 7, 5), (1, 2, 3, 8), (4, 5, 9, 10))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_83)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 7, "Word problems", "Who shares? How many wholes?")
+    for i, story in enumerate(WORDS_83):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 7, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_83 = ["4/5 × 5/6 = [20]/[30]", "2/5 + 1/6 = [17]/[30]", "4 × 3 × 5 = [60]", "0.8 × 0.4 = [0.32]",
+             "1.6 ÷ 4 = [0.4]", "426 × 13 = [5,538]"]
+WORDS_83 = [
+    ("4 friends share 3 sandwiches equally. How much does each friend get?", "3 ÷ 4 = 3/4", "3/4", "sandwich"),
+    ("5 m of ribbon is cut into 8 equal pieces. How long is each piece?", "5 ÷ 8 = 5/8", "5/8", "m"),
+    ("7 cups of juice are poured equally into 2 jugs. How much is in each jug?", "7 ÷ 2 = 7/2 = 3 1/2", "3 1/2",
+     "cups"),
+    ("6 kids share 10 granola bars. How many bars does each kid get?", "10 ÷ 6 = 10/6 = 1 4/6", "1 4/6", "bars"),
+    ("Challenge: 3 pies go to 5 kids, and 2 pies go to 3 kids. Which kids get more pie?",
+     "3/5 < 2/3, so the 3 kids", "the 3 kids", ""),
+]
+KINDS_83 = {
+    "share_frac": Kind(96, 2, lambda it: f"share the strips: {it[0]} by {it[1]}", c_share_frac, 8),
+}
+KINDS.update(KINDS_83)
+ASFRAC_POOL = [as_frac(k, n) for k, n in ((3, 8), (4, 7), (5, 9), (2, 7), (9, 10), (1, 8))]
+ASMIXED_POOL = [as_mixed(k, n) for k, n in ((9, 2), (14, 3), (11, 5), (21, 4), (13, 6))]
+CHECKINS["83-fractions-as-division"] = [
+    S("Share the strips", None, "share_frac", [(3, 4), (2, 6), (4, 5)], 1),
+    S("Write it as a fraction", None, "frac3", ASFRAC_POOL, 3),
+    S("More than one each", None, "frac2", ASMIXED_POOL, 2),
+    S("Between which wholes?", None, "eq2", [between_w(k, n) for k, n in ((38, 5), (27, 4), (50, 6))], 2),
+]
+_g5[-1:-1] = [S("Fractions as division", None, "frac3", ASFRAC_POOL, 2, 83)]
+
+
+# ====================================================================== 84. Dividing with Unit Fractions
+
+
+def unit_by_whole(b, k):
+    """1/3 ÷ 4 = [1]/[12]."""
+    return f"1/{b} ÷ {k} = [1]/[{b * k}]"
+
+
+def whole_by_unit(n, b):
+    """4 ÷ 1/3 = [12]."""
+    return f"{n} ÷ 1/{b} = [{n * b}]"
+
+
+def c_unit_cut(bk, x, cy, w, item):
+    """1/b shaded, every piece cut into k: one small piece is the answer."""
+    b, k = item
+    cut_strip(bk, x + GUT, cy + 30, 190, 26, b, 1, k)
+    bk.c.setFillColor(T.text2)
+    bk.c.setFont("Rnd", 10.5)
+    bk.c.drawString(x + GUT, cy + 12, f"Share the shaded part among {k}.")
+    frac_fit(bk, x + GUT + 210, cy + 40, w - GUT - 218, unit_by_whole(b, k), size=19)
+
+
+def c_whole_cut(bk, x, cy, w, item):
+    """n wholes, each cut into b: count the pieces."""
+    n, b = item
+    for i in range(n):
+        strip(bk, x + GUT, cy + 66 - i * 17, 96, 13, b)
+    frac_fit(bk, x + GUT + 110, cy + 36, w - GUT - 116, whole_by_unit(n, b), size=19)
+
+
+def learn_unit_division(bk):
+    y = bk.new_page("Dividing with Unit Fractions", "Share a piece, or count how many pieces fit.",
+                    name_line=False, big=True, footer="WeMath  ·  Dividing with Unit Fractions")
+    c = bk.c
+    label(bk, M, y - 6, "1/3 ÷ 2: share one third between 2 people")
+    cut_strip(bk, M + 14, y - 52, 240, 30, 3, 1, 2)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 280, y - 30, "Cut every third into 2.")
+    c.drawString(M + 280, y - 46, "Now the whole has 6 pieces.")
+    c.drawString(M + 280, y - 62, "Each person gets 1 of them.")
+    frac_expr(bk, M + 280, y - 96, "1/3 ÷ 2 = 1/6", size=22)
+    y -= 124
+
+    label(bk, M, y - 6, "3 ÷ 1/4: how many fourths fit in 3 wholes?")
+    for i in range(3):
+        strip(bk, M + 14, y - 34 - i * 24, 240, 18, 4)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 280, y - 30, "Each whole has 4 fourths.")
+    c.drawString(M + 280, y - 46, "3 wholes have 3 × 4 = 12 fourths.")
+    frac_expr(bk, M + 280, y - 82, "3 ÷ 1/4 = 12", size=22)
+    y -= 112
+
+    label(bk, M, y - 6, "Check with times")
+    frac_expr(bk, M + 14, y - 44, "1/6 × 2 = 2/6 = 1/3", size=20)
+    frac_expr(bk, M + 260, y - 44, "12 × 1/4 = 12/4 = 3", size=20)
+    y -= 72
+
+    bottom = your_turn(bk, y, h=80)
+    bk.ask("unit fraction division your turn: 1/2 / 4")
+    frac_expr(bk, M + 190, bottom + 30, "1/2 ÷ 4 = [1]/[8]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: divide a unit fraction by a whole number and a whole number by a unit fraction (5.NF.7). "
+                     "Say “Share the piece: cut it smaller” and “How many pieces fit?” No flip-and-"
+                     "multiply rule.")
+
+
+def practice_unit_division(bk):
+    title = "Dividing with Unit Fractions: Practice"
+    y = bk.new_page(title, "Share a piece: it gets smaller. Pieces in wholes: count them.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Share a piece", "Every piece is cut. What part of the whole is one small piece?", "unit_cut",
+         [(4, 2), (2, 3), (3, 3), (5, 2), (2, 5)])
+    part(2, "Share a piece", "No help this time.", "frac3",
+         [unit_by_whole(b, k) for b, k in ((4, 3), (2, 6), (5, 4), (3, 5), (6, 2), (8, 2), (2, 7), (4, 5),
+                                           (3, 6), (10, 3), (5, 5), (6, 4))])
+    part(3, "How many pieces fit?", "Count all the pieces.", "whole_cut",
+         [(2, 3), (3, 5), (4, 2), (2, 6), (3, 3)])
+    part(4, "How many pieces fit?", "No help this time.", "frac3",
+         [whole_by_unit(n, b) for n, b in ((5, 2), (3, 6), (6, 4), (2, 8), (7, 3), (4, 5), (8, 2), (5, 6),
+                                           (9, 3), (2, 10), (6, 5), (4, 8))])
+    part(5, "Check with times", "No help this time.", "frac3",
+         [f"1/{b * k} × {k} = [{k}]/{b * k}" for b, k in ((2, 5), (3, 4), (5, 3), (4, 6), (6, 3), (2, 9))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_84)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 7, "Word problems", "Share it, or how many fit?")
+    for i, story in enumerate(WORDS_84):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 7, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_84 = ["5 ÷ 7 = [5]/[7]", "5/6 × 12 = [10]", "5/7 − 1/3 = [8]/[21]", "6 × 0.35 = [2.1]", "2.4 + 3.75 = [6.15]",
+             "828 ÷ 36 = [23]"]
+WORDS_84 = [
+    ("Half a pizza is shared equally by 3 friends. What part of the whole pizza does each get?", "1/2 ÷ 3 = 1/6",
+     "1/6", "of the pizza"),
+    ("How many 1/4 cup scoops are in 5 cups of rice?", "5 ÷ 1/4 = 20", "20", "scoops"),
+    ("A 1/3 kg bag of nuts is split into 4 equal bags. How much is in each bag?", "1/3 ÷ 4 = 1/12", "1/12", "kg"),
+    ("A 6 m rope is cut into pieces 1/2 m long. How many pieces are there?", "6 ÷ 1/2 = 12", "12", "pieces"),
+    ("Challenge: 3 cups of flour, 1/3 cup per cake. Ava made 4 cakes. How many more can she make?",
+     "3 ÷ 1/3 = 9, 9 − 4 = 5", "5", "cakes"),
+]
+KINDS_84 = {
+    "unit_cut": Kind(70, 1, lambda it: f"unit fraction cut: 1/{it[0]} by {it[1]}", c_unit_cut, 8),
+    "whole_cut": Kind(96, 2, lambda it: f"wholes cut: {it[0]} by 1/{it[1]}", c_whole_cut, 8),
+}
+KINDS.update(KINDS_84)
+UBW_POOL = [unit_by_whole(b, k) for b, k in ((3, 7), (4, 4), (2, 8), (5, 3), (6, 5))]
+WBU_POOL = [whole_by_unit(n, b) for n, b in ((3, 4), (5, 3), (2, 7), (6, 2), (4, 6))]
+CHECKINS["84-dividing-with-unit-fractions"] = [
+    S("Share a piece", None, "unit_cut", [(3, 4), (4, 4), (2, 4)], 1),
+    S("Share a piece", "No help.", "frac3", UBW_POOL, 3),
+    S("How many pieces fit?", None, "frac3", WBU_POOL, 3),
+]
+_g5[-1:-1] = [S("Divide with unit fractions", None, "frac3", UBW_POOL + WBU_POOL, 2, 84)]
+
+
+# ====================================================================== 85. Order of Operations
+
+
+def ev(expr):
+    """Evaluate an expression written with ×, ÷, − (whole-number answers only)."""
+    v = eval(expr.replace("×", "*").replace("÷", "/").replace("−", "-"))
+    assert v == int(v), expr
+    return int(v)
+
+
+def oo(expr):
+    """"(9 − 4) × 6" -> "(9 − 4) × 6 = [30]"."""
+    return f"{expr} = [{ev(expr)}]"
+
+
+def oo_step(expr, inner):
+    """Two steps: the part to do first, then the rest. "(3 + 4) × 2 = [7] × 2 = [14]"."""
+    first = ev(inner)
+    rest = expr.replace(inner, f"[{first}]", 1)
+    return f"{expr} = {rest} = [{ev(expr)}]"
+
+
+def learn_order_ops(bk):
+    y = bk.new_page("Order of Operations", "Parentheses first. Then × and ÷. Then + and −.", name_line=False,
+                    big=True, footer="WeMath  ·  Order of Operations")
+    c = bk.c
+    for i, (txt, sub) in enumerate((("1. ( )", "Parentheses first"), ("2. × ÷", "Times and divide, left to right"),
+                                    ("3. + −", "Plus and minus, left to right"))):
+        px = M + i * (CW / 3)
+        panel(bk, px + 4, y - 74, CW / 3 - 8, 66)
+        c.setFillColor(T.ink)
+        c.setFont("AvB", 20)
+        c.drawString(px + 18, y - 38, txt)
+        c.setFillColor(T.text2)
+        c.setFont("Rnd", 10.5)
+        c.drawString(px + 18, y - 58, sub)
+    y -= 100
+
+    label(bk, M, y - 6, "(8 + 4) × 3")
+    color_eq(bk, M + 14, y - 40, [("(8 + 4)", "a"), ("×", "op"), ("3", None), ("=", "op"), ("12", "a"),
+                                  ("×", "op"), ("3", None), ("=", "op"), ("36", None)], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 330, y - 36, "The parentheses go first: 8 + 4 = 12.")
+    y -= 66
+
+    label(bk, M, y - 6, "8 + 4 × 3")
+    color_eq(bk, M + 14, y - 40, [("8", None), ("+", "op"), ("4 × 3", "b"), ("=", "op"), ("8", None), ("+", "op"),
+                                  ("12", "b"), ("=", "op"), ("20", None)], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 330, y - 36, "No parentheses: times goes first.")
+    y -= 66
+
+    label(bk, M, y - 6, "Words to numbers")
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 14)
+    c.drawString(M + 14, y - 34, "“Add 5 and 7, then multiply by 2”")
+    color_eq(bk, M + 300, y - 36, [("(5 + 7) × 2 = 24", None)], 18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 56, "The part you do first goes in parentheses.")
+    y -= 80
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("order of operations your turn: (10 - 4) x 5")
+    bk.eq(M + 170, bottom + 26, "(10 − 4) × 5 = [30]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: work out expressions with parentheses, and × and ÷ before + and − (5.OA.1–2). Say "
+                     "“What do we do first?” and have kids underline that part before they work it out.")
+
+
+def practice_order_ops(bk):
+    title = "Order of Operations: Practice"
+    y = bk.new_page(title, "Parentheses first. Then × and ÷. Then + and −.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Parentheses first", "Do the parentheses, then the rest.", "eq2",
+         [oo_step(e, i) for e, i in (("(3 + 4) × 2", "(3 + 4)"), ("(15 − 6) × 4", "(15 − 6)"),
+                                     ("36 ÷ (2 + 7)", "(2 + 7)"), ("(9 + 11) ÷ 5", "(9 + 11)"),
+                                     ("6 × (13 − 5)", "(13 − 5)"), ("(24 − 3) ÷ 7", "(24 − 3)"),
+                                     ("50 − (8 + 12)", "(8 + 12)"), ("(7 + 5) × 8", "(7 + 5)"))])
+    part(2, "Parentheses", "No help this time.", "eq3",
+         [oo(e) for e in ("(9 − 4) × 6", "40 ÷ (2 + 6)", "(15 + 9) ÷ 4", "7 × (8 − 3)", "(6 + 6) × 5",
+                          "(30 − 12) ÷ 3", "9 × (2 + 7)", "(45 − 5) ÷ 8", "100 − (25 + 35)", "(14 + 6) × 3",
+                          "72 ÷ (12 − 4)", "(11 − 2) × 9")])
+    part(3, "Times and divide first", "Do × or ÷, then the rest.", "eq2",
+         [oo_step(e, i) for e, i in (("5 + 3 × 4", "3 × 4"), ("20 − 12 ÷ 3", "12 ÷ 3"), ("6 × 7 + 8", "6 × 7"),
+                                     ("30 ÷ 5 − 2", "30 ÷ 5"), ("9 + 8 × 2", "8 × 2"), ("40 − 6 × 5", "6 × 5"),
+                                     ("48 ÷ 6 + 15", "48 ÷ 6"), ("17 + 36 ÷ 4", "36 ÷ 4"))])
+    part(4, "Times and divide first", "No help this time.", "eq3",
+         [oo(e) for e in ("4 + 6 × 3", "50 − 8 × 4", "7 × 6 − 12", "45 ÷ 9 + 11", "3 + 64 ÷ 8", "9 × 9 − 30",
+                          "100 − 56 ÷ 7", "8 + 7 × 7", "63 ÷ 7 + 26", "25 − 4 × 5", "12 × 3 + 14", "60 − 42 ÷ 6")])
+    part(5, "Same numbers, different answers", "No help this time. Parentheses change the order.", "eq1",
+         [f"{a} = [{ev(a)}] and {b} = [{ev(b)}]" for a, b in (("(2 + 3) × 4", "2 + 3 × 4"),
+                                                             ("(10 − 2) × 3", "10 − 2 × 3"),
+                                                             ("(18 + 6) ÷ 6", "18 + 6 ÷ 6"),
+                                                             ("5 × (4 + 2)", "5 × 4 + 2"))])
+    part(6, "Words to numbers", "No help this time. Write the expression, then work it out.", "eq1",
+         [f"{w}: [{ev(e)}]" for w, e in (("Add 6 and 9, then multiply by 3", "(6 + 9) * 3"),
+                                         ("Take 8 from 20, then divide by 4", "(20 - 8) / 4"),
+                                         ("Multiply 7 by 5, then add 12", "7 * 5 + 12"),
+                                         ("Add 14 and 22, then divide by 6", "(14 + 22) / 6"),
+                                         ("Divide 81 by 9, then take away 4", "81 / 9 - 4"),
+                                         ("Take 3 from 11, then multiply by 7", "(11 - 3) * 7"))])
+    part(7, "How many times as big?", "No help this time. Don't work it out.", "eq1",
+         [f"{k} × ({a} + {b}) is [{k}] times as big as {a} + {b}" for k, a, b in
+          ((4, 27, 35), (6, 189, 52), (3, 418, 296), (8, 75, 64))])
+    part(8, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_85)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 9, "Word problems", "Write one expression, then work it out.")
+    for i, story in enumerate(WORDS_85):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 9, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_85 = ["1/8 ÷ 3 = [1]/[24]", "5 ÷ 1/3 = [15]", "6 ÷ 8 = [6]/[8]", "7 × 0.9 = [6.3]",
+             "5 cm × 2 cm × 6 cm = [60] cubic cm", "3.6 to the nearest whole number = [4]"]
+WORDS_85 = [
+    ("Mia buys 3 packs of 8 pens and 5 more pens. How many pens does she have?", "3 × 8 + 5 = 29", "29", "pens"),
+    ("Leo has 40 stickers. He gives away 12 and shares the rest among 4 friends. How many each?",
+     "(40 − 12) ÷ 4 = 7", "7", "stickers"),
+    ("A ticket costs $6. 4 adults and 5 kids go. How much do they pay in all?", "(4 + 5) × 6 = 54", "$54", ""),
+    ("Zoe has 50 beads. She uses 6 beads on each of 7 bracelets. How many beads are left?", "50 − 6 × 7 = 8", "8",
+     "beads"),
+    ("Challenge: Ben reads 15 pages a day for 4 days, then 25 pages. Sam reads 80. Who reads more?",
+     "15 × 4 + 25 = 85 > 80", "Ben", ""),
+]
+OO_PAREN = [oo(e) for e in ("(8 + 7) × 4", "56 ÷ (3 + 4)", "(20 − 11) × 6", "(33 + 7) ÷ 5", "8 × (12 − 9)",
+                            "(64 − 16) ÷ 6")]
+OO_FIRST = [oo(e) for e in ("6 + 5 × 7", "40 − 27 ÷ 3", "8 × 4 − 9", "35 ÷ 5 + 18", "2 + 9 × 6", "70 − 8 × 8")]
+CHECKINS["85-order-of-operations"] = [
+    S("Parentheses", None, "eq3", OO_PAREN, 3),
+    S("Times and divide first", None, "eq3", OO_FIRST, 3),
+    S("Words to numbers", None, "eq1", [f"{w}: [{ev(e)}]" for w, e in
+                                        (("Add 9 and 11, then multiply by 4", "(9 + 11) * 4"),
+                                         ("Take 6 from 30, then divide by 8", "(30 - 6) / 8"),
+                                         ("Multiply 8 by 6, then take away 10", "8 * 6 - 10"))], 2),
+]
+_g5[-1:-1] = [S("Order of operations", None, "eq3", OO_PAREN + OO_FIRST, 3, 85)]
+
+
+# ====================================================================== 86. Number Patterns
+
+
+def seq_terms(start, step, n=6):
+    return [start + i * step for i in range(n)]
+
+
+def seq_eq(start, step, shown=3, n=6):
+    """"Start at 4, add 6: 4, 10, 16, [22], [28], [34]" (no commas right after a box: spaces only)."""
+    t = seq_terms(start, step, n)
+    return f"Start at {start}, add {step}:  " + "  ".join(str(v) if i < shown else f"[{v}]" for i, v in enumerate(t))
+
+
+def rule_eq(terms, rule):
+    kind, k = rule
+    return "  ".join(map(str, terms)) + f"  rule: {kind} [{k}]"
+
+
+def two_rules_table(bk, x, top, a, b, given=3, n=6, cw=36, rh=24, shown=None):
+    """Two rules that start at 0: row A adds a, row B adds b. The first `given` terms are printed."""
+    c = bk.c
+    lw = 112
+    for r, (name, step) in enumerate((("A: add", a), ("B: add", b))):
+        yy = top - (r + 1) * rh
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", 12)
+        c.drawString(x, yy + 7, f"Rule {name} {step}")
+        for i, v in enumerate(seq_terms(0, step, n)):
+            cx = x + lw + i * cw
+            c.setStrokeColor(T.line)
+            c.setLineWidth(0.8)
+            c.rect(cx, yy, cw, rh, stroke=1, fill=0)
+            if i < given or shown:
+                c.setFillColor(T.ink if i < given else shown)
+                c.setFont("Rnd", 13)
+                c.drawCentredString(cx + cw / 2, yy + 7, str(v))
+            elif bk.key:
+                c.setFillColor(T.answer)
+                c.setFont("Rnd", 13)
+                c.drawCentredString(cx + cw / 2, yy + 7, str(v))
+    return x + lw + n * cw
+
+
+def c_two_rules(bk, x, cy, w, item):
+    a, b = item
+    end = two_rules_table(bk, x + GUT, cy + 86, a, b)
+    bk.fit_eq(x + GUT, cy + 14, w - GUT - 10, f"Each B term is [{b // a}] times the A term", size=15)
+
+
+def learn_num_patterns(bk):
+    y = bk.new_page("Number Patterns", "Two rules side by side. How are the numbers related?", name_line=False,
+                    big=True, footer="WeMath  ·  Number Patterns")
+    c = bk.c
+    label(bk, M, y - 6, "Start at 0. Rule A: add 3. Rule B: add 6.")
+    two_rules_table(bk, M + 14, y - 18, 3, 6, given=6, cw=40, rh=28)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 92, "Look down each column: 3 and 6, 6 and 12, 9 and 18.")
+    c.drawString(M + 14, y - 108, "Each B term is 2 times the A term, because 6 is 2 times 3.")
+    y -= 132
+
+    label(bk, M, y - 6, "Find the rule")
+    color_eq(bk, M + 14, y - 40, [("5   9   13   17", None)], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 220, y - 30, "Each number is 4 more than the one before.")
+    c.drawString(M + 220, y - 46, "The rule is: add 4.")
+    y -= 70
+
+    label(bk, M, y - 6, "Pairs")
+    color_eq(bk, M + 14, y - 40, [("(3, 6)   (6, 12)   (9, 18)", None)], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 300, y - 30, "Write each A term with its B term.")
+    c.drawString(M + 300, y - 46, "The A term comes first.")
+    y -= 70
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("patterns your turn: start 2 add 5")
+    bk.eq(M + 90, bottom + 26, "Start at 2, add 5:  2  7  12  [17]  [22]", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: make two patterns from two rules and compare them (5.OA.3). Say “Look down the "
+                     "columns: how do the A and B terms compare?” Pairs get graphed in the Coordinate Grid packet.")
+
+
+def practice_num_patterns(bk):
+    title = "Number Patterns: Practice"
+    y = bk.new_page(title, "Find the rule. Keep going. Compare the two rules.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Keep going", "Use the rule.", "eq1",
+         [seq_eq(s, d) for s, d in ((4, 6), (3, 7), (10, 5), (1, 9), (8, 4), (5, 11), (12, 8), (0, 15))])
+    part(2, "Find the rule", "No help this time.", "eq2",
+         [rule_eq(seq_terms(s, d, 4), ("add", d)) for s, d in ((7, 5), (2, 8), (11, 3), (6, 12), (9, 7), (20, 25))]
+         + [rule_eq([s * m ** i for i in range(4)], ("times", m)) for s, m in ((3, 2), (1, 3), (5, 2), (2, 10))])
+    part(3, "Two rules", "Fill in the table. Then compare the columns.", "two_rules",
+         [(2, 4), (4, 12), (5, 10), (3, 9)])
+    part(4, "Make pairs", "No help this time. Start at 0. Write the next pair.", "eq1",
+         [f"A: add {a}, B: add {b}:  (0, 0)  ({a}, {b})  ({2 * a}, {2 * b})  next: [{3 * a}] and [{3 * b}]" for a, b in
+          ((2, 6), (5, 15), (4, 8), (3, 12), (6, 18), (10, 30))])
+    part(5, "Compare the rules", "No help this time. Start at 0.", "eq1",
+         [f"A: add {a}, B: add {b}. Each B term is [{b // a}] times the A term" for a, b in
+          ((3, 12), (2, 10), (5, 20), (4, 24), (6, 12), (7, 21))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_86)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 7, "Word problems", "Make a table if it helps.")
+    for i, story in enumerate(WORDS_86):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 7, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_86 = ["(12 + 8) × 3 = [60]", "5 + 6 × 4 = [29]", "1/5 ÷ 2 = [1]/[10]", "3 ÷ 1/5 = [15]",
+             "2.5 × 4 = [10]", "8 ÷ 11 = [8]/[11]"]
+WORDS_86 = [
+    ("Mia saves $4 a week. Leo saves $8 a week. When Mia has $20, how much does Leo have?",
+     f"Leo has 2 times as much: 20 {TIMES} 2 = 40", "$40", ""),
+    ("A plant grows 3 cm each week. How tall is it after 6 weeks if it started at 5 cm?", "5 + 6 × 3 = 23", "23",
+     "cm"),
+    ("Ben runs 2 laps a day and Sam runs 6. When Ben has run 10 laps, how many has Sam run?",
+     f"Sam runs 3 times as many: 10 {TIMES} 3 = 30", "30", "laps"),
+    ("The pattern is 7, 14, 21, 28. What is the 10th number?", "add 7 each time: 10 × 7 = 70", "70", ""),
+    ("Challenge: Rule A starts at 0 and adds 5. Rule B starts at 0 and adds 20. What is B when A is 35?",
+     "B is 4 times A: 4 × 35 = 140", "140", ""),
+]
+KINDS_86 = {
+    "two_rules": Kind(110, 1, lambda it: f"two rules: add {it[0]} and add {it[1]}", c_two_rules, 8),
+}
+KINDS.update(KINDS_86)
+SEQ_POOL = [seq_eq(s, d) for s, d in ((6, 7), (2, 9), (15, 4), (3, 12), (9, 6))]
+RULE_POOL = [rule_eq(seq_terms(s, d, 4), ("add", d)) for s, d in ((4, 9), (13, 6), (5, 15), (8, 11))]
+CHECKINS["86-number-patterns"] = [
+    S("Keep going", None, "eq1", SEQ_POOL, 2),
+    S("Find the rule", None, "eq2", RULE_POOL, 2),
+    S("Two rules", None, "two_rules", [(3, 6), (2, 8), (4, 20)], 1),
+    S("Compare the rules", None, "eq1", [f"A: add {a}, B: add {b}. Each B term is [{b // a}] times the A term"
+                                         for a, b in ((2, 14), (5, 25), (3, 18))], 2),
+]
+_g5[-1:-1] = [S("Number patterns", None, "eq1", SEQ_POOL, 2, 86)]
+
+
+# ====================================================================== 87. Converting Units
+
+
+MCONV = {("km", "m"): 1000, ("m", "cm"): 100, ("cm", "mm"): 10, ("m", "mm"): 1000, ("kg", "g"): 1000,
+         ("L", "mL"): 1000}
+
+
+def dnf(x):
+    """A Decimal with commas for thousands: 2500 -> "2,500", 3.5 -> "3.5"."""
+    s = format(D(x).normalize(), "f")
+    whole, _, frac = s.partition(".")
+    return f"{int(whole):,}" + ("." + frac if frac else "")
+
+
+def down_eq(x, big, small):
+    """2.5 m = [250] cm."""
+    return f"{dnf(x)} {big} = [{dnf(D(x) * MCONV[(big, small)])}] {small}"
+
+
+def up_eq(x, small, big):
+    """350 cm = [3.5] m."""
+    return f"{dnf(x)} {small} = [{dnf(D(x) / MCONV[(big, small)])}] {big}"
+
+
+def left_eq(n, small, big, f):
+    """50 in = [4] ft [2] in."""
+    q, r = divmod(n, f)
+    return f"{n} {unit_plural(small, n)} = [{q}] {unit_plural(big, q)} [{r}] {unit_plural(small, r)}"
+
+
+def more_eq(a, ua, b, ub):
+    """1.2 kg [>] 1,150 g (both changed to the small unit)."""
+    f = MCONV.get((ua, ub)) or 1
+    g = MCONV.get((ub, ua)) or 1
+    va, vb = D(a) * f, D(b) * g
+    return f"{dnf(a)} {ua} [{dsign(va, vb)}] {dnf(b)} {ub}"
+
+
+def learn_converting(bk):
+    y = bk.new_page("Converting Units", "Bigger unit to smaller: multiply. Smaller to bigger: divide.",
+                    name_line=False, big=True, footer="WeMath  ·  Converting Units")
+    c = bk.c
+    label(bk, M, y - 6, "Metric units go by 10, 100 and 1,000")
+    rows = (("1 km = 1,000 m", "1 kg = 1,000 g"), ("1 m = 100 cm", "1 L = 1,000 mL"), ("1 cm = 10 mm", "1 m = 1,000 mm"))
+    for i, (l, r) in enumerate(rows):
+        color_eq(bk, M + 14, y - 34 - i * 24, [(l, None)], 16)
+        color_eq(bk, M + 200, y - 34 - i * 24, [(r, None)], 16)
+    y -= 112
+
+    label(bk, M, y - 6, "2.5 m in cm: a bigger unit, so more of the smaller one")
+    color_eq(bk, M + 14, y - 40, [("2.5", "a"), ("×", "op"), ("100", None), ("=", "op"), ("250", "b")], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 230, y - 36, "Times 100: the digits move 2 places left.")
+    color_eq(bk, M + 14, y - 70, [("2.5 m = 250 cm", None)], 18)
+    y -= 96
+
+    label(bk, M, y - 6, "350 cm in m: a smaller unit, so fewer of the bigger one")
+    color_eq(bk, M + 14, y - 40, [("350", "a"), ("÷", "op"), ("100", None), ("=", "op"), ("3.5", "b")], 20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 230, y - 36, "Divide by 100: the digits move 2 places right.")
+    y -= 66
+
+    label(bk, M, y - 6, "Feet and inches: what is left over")
+    color_eq(bk, M + 14, y - 40, [("50 in = 4 ft 2 in", None)], 18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 230, y - 36, "12 in = 1 ft. 50 ÷ 12 = 4, and 2 left over.")
+    y -= 66
+
+    bottom = your_turn(bk, y, h=70)
+    bk.ask("converting your turn: 4.6 kg to g")
+    bk.eq(M + 170, bottom + 24, "4.6 kg = [4,600] g", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: convert both ways inside one system, with decimals in metric (5.MD.1). It uses packet 73's "
+                     "digit moves. Say “Bigger unit, so I need more of the small ones: multiply.”")
+
+
+def practice_converting(bk):
+    title = "Converting Units: Practice"
+    y = bk.new_page(title, "Bigger to smaller: multiply. Smaller to bigger: divide.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Bigger to smaller", "Multiply by 10, 100 or 1,000.", "eq3",
+         [down_eq(x, b, s) for x, b, s in (("2.5", "m", "cm"), ("3.4", "kg", "g"), ("1.75", "L", "mL"),
+                                          ("6.2", "km", "m"), ("4.8", "cm", "mm"), ("0.6", "m", "cm"),
+                                          ("2.05", "kg", "g"), ("0.9", "L", "mL"), ("7.3", "m", "mm"),
+                                          ("12.5", "km", "m"), ("0.35", "m", "cm"), ("5.4", "cm", "mm"))])
+    part(2, "Smaller to bigger", "Divide by 10, 100 or 1,000.", "eq3",
+         [up_eq(x, s, b) for x, s, b in (("350", "cm", "m"), ("2600", "g", "kg"), ("750", "mL", "L"),
+                                         ("4200", "m", "km"), ("85", "mm", "cm"), ("1250", "g", "kg"),
+                                         ("60", "cm", "m"), ("3400", "mm", "m"), ("500", "m", "km"),
+                                         ("1900", "mL", "L"), ("47", "mm", "cm"), ("820", "cm", "m"))])
+    part(3, "Left over", "No help this time.", "eq2",
+         [left_eq(n, s, b, f) for n, s, b, f in ((50, "in", "ft", 12), (75, "min", "hr", 60), (40, "oz", "lb", 16),
+                                                 (11, "ft", "yd", 3), (100, "in", "ft", 12), (150, "sec", "min", 60),
+                                                 (30, "hr", "day", 24), (45, "day", "week", 7))])
+    part(4, "Which is more?", "No help this time. Change to the same unit first.", "eq3",
+         [more_eq(a, ua, b, ub) for a, ua, b, ub in (("1.2", "kg", "1150", "g"), ("3.5", "m", "400", "cm"),
+                                                     ("0.8", "L", "850", "mL"), ("2.3", "km", "2300", "m"),
+                                                     ("45", "mm", "4.4", "cm"), ("1.06", "m", "160", "cm"),
+                                                     ("700", "g", "0.7", "kg"), ("2.5", "L", "2050", "mL"),
+                                                     ("9", "cm", "85", "mm"))])
+    part(5, "Add mixed units", "No help this time. Change to the small unit first.", "eq2",
+         [f"{a} {ua} + {b} {ub} = [{dnf(D(a) * MCONV[(ua, ub)] + D(b))}] {ub}" for a, ua, b, ub in
+                 (("1.5", "m", "30", "cm"), ("2", "kg", "450", "g"), ("1.2", "L", "350", "mL"), ("3", "km", "800", "m"),
+                  ("2.4", "cm", "5", "mm"), ("0.5", "kg", "175", "g"))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_87)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 7, "Word problems", "Change to the same unit first.")
+    for i, story in enumerate(WORDS_87):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 7, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_87 = ["(16 − 7) × 4 = [36]", "Start at 3, add 9:  3  12  [21]", "1/6 ÷ 3 = [1]/[18]", "8 ÷ 1/3 = [24]",
+             "5.6 × 1,000 = [5,600]", "3/8 × 2/3 = [6]/[24]"]
+WORDS_87 = [
+    ("A ribbon is 2.4 m long. Mia cuts off 60 cm. How many cm are left?", f"240 {MINUS} 60 = 180", "180", "cm"),
+    ("A bag of flour weighs 2.5 kg. A cake uses 300 g. How many grams are left after 3 cakes?",
+     f"2,500 {MINUS} 3 {TIMES} 300 = 1,600", "1,600", "g"),
+    ("Leo drinks 250 mL of milk each day. How many liters does he drink in 6 days?", f"6 {TIMES} 250 = 1,500 mL",
+     "1.5", "L"),
+    ("A race is 5 km. Zoe has run 3,750 m. How many more meters does she need to run?",
+     f"5,000 {MINUS} 3,750 = 1,250", "1,250", "m"),
+    ("Challenge: A shelf is 1.2 m long. How many 15 cm books fit on it side by side?",
+     f"120 {DIV} 15 = 8", "8", "books"),
+]
+DOWN_POOL = [down_eq(x, b, s) for x, b, s in (("3.6", "m", "cm"), ("1.8", "kg", "g"), ("2.25", "L", "mL"),
+                                              ("4.5", "km", "m"), ("7.2", "cm", "mm"))]
+UP_POOL = [up_eq(x, s, b) for x, s, b in (("450", "cm", "m"), ("3200", "g", "kg"), ("1600", "mL", "L"),
+                                          ("62", "mm", "cm"), ("2800", "m", "km"))]
+CHECKINS["87-converting-units"] = [
+    S("Bigger to smaller", None, "eq3", DOWN_POOL, 3),
+    S("Smaller to bigger", None, "eq3", UP_POOL, 3),
+    S("Left over", None, "eq2", [left_eq(n, s, b, f) for n, s, b, f in ((38, "in", "ft", 12), (90, "min", "hr", 60),
+                                                                       (20, "ft", "yd", 3))], 2),
+]
+_g5[-1:-1] = [S("Converting units", None, "eq3", DOWN_POOL + UP_POOL, 3, 87)]
+
+
+# ====================================================================== 88. Line Plots with Data
+
+
+def share_questions(vals, unit):
+    """Questions for 5.MD.2: how many, most, all together, and the fair share (vals in eighths)."""
+    mode = max(set(vals), key=vals.count)
+    total = sum(vals)
+    return [("How many?", len(vals)), ("Most common?", e8(mode)),
+            (f"All together ({unit})?", e8(total)), (f"Fair share ({unit})?", e8(total // len(vals)))]
+
+
+def c_read_share(bk, x, cy, w, item):
+    title, vals, unit = item
+    span = list(range(min(vals), max(vals) + 1))
+    cw = 36 if len(span) <= 6 else 32
+    x_chart(bk, x + GUT + 6, cy + 168, title, [e8(k) for k in span], [vals.count(k) for k in span], colw=cw)
+    graph_questions(bk, x + GUT + 6 + cw * len(span) + 24, cy + 140, w - GUT - cw * len(span) - 46,
+                    share_questions(vals, unit))
+
+
+def eighths_sum(vals):
+    return " + ".join(f"{v}/8" for v in vals) + f" = [{sum(vals)}]/8"
+
+
+def fair_eq(total8, n, unit):
+    """"Share 3 L equally among 4 jars: [3]/[4] L each" style, in eighths: total8/8 ÷ n."""
+    return f"{e8(total8)} {unit} shared by {n} = [{total8 // n}]/8 {unit} each"
+
+
+def learn_line_data(bk):
+    y = bk.new_page("Line Plots with Data", "An X for each one. Then add them up and share them out.",
+                    name_line=False, big=True, footer="WeMath  ·  Line Plots with Data")
+    c = bk.c
+    vals = [3, 4, 4, 5, 5, 5, 6, 8]
+    label(bk, M, y - 6, "8 jars of water, in eighths of a liter")
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 30, ",  ".join(f"{e8(v)} L" for v in vals))
+    x_chart(bk, M + 14, y - 40, "Water in each jar (L)", [e8(k) for k in range(3, 9)],
+            [vals.count(k) for k in range(3, 9)], colw=44, cell=14)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 300, y - 70, "All together: 3 + 4 + 4 + 5 + 5 + 5 + 6 + 8")
+    c.drawString(M + 300, y - 86, "= 40 eighths = 5 L.")
+    c.drawString(M + 300, y - 110, "Pour it so every jar has the same:")
+    c.drawString(M + 300, y - 126, "40 eighths ÷ 8 jars = 5/8 L each.")
+    y -= 170
+
+    label(bk, M, y - 6, "Fair share means total ÷ how many")
+    frac_expr(bk, M + 14, y - 46, "40/8 ÷ 8 = 5/8", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 220, y - 34, "Add everything up, then share it equally.")
+    c.drawString(M + 220, y - 50, "Count in eighths so it stays easy.")
+    y -= 80
+
+    bottom = your_turn(bk, y, h=80)
+    bk.ask("line plot data your turn: 2/8 3/8 3/8 4/8")
+    frac_expr(bk, M + 120, bottom + 30, "2/8 + 3/8 + 3/8 + 4/8 = [12]/8", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: make X charts of measurements in eighths and use fraction operations on the data "
+                     "(5.MD.2): totals and fair shares. Say “Add it all up, then share it out equally.”")
+
+
+def practice_line_data(bk):
+    title = "Line Plots with Data: Practice"
+    y = bk.new_page(title, "Add it all up. Share it out equally.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Make the X chart", "Put an X for each one.", "make_x8",
+         [("Rain on 8 days (inches)", [2, 3, 3, 4, 4, 4, 6, 6]), ("Snow on 8 days (inches)", [4, 5, 5, 5, 6, 7, 7, 9])])
+    part(2, "Read the X chart", "Answer each question.", "read_share",
+         [("Juice in 8 glasses (cups)", [3, 4, 4, 5, 5, 6, 6, 7], "cups"),
+          ("Ribbons for 6 bows (yd)", [2, 4, 4, 6, 6, 8], "yd"),
+          ("Seeds in 7 bags (lb)", [5, 6, 6, 7, 7, 8, 10], "lb")])
+    part(3, "Add the data", "No help this time.", "frac2",
+         [eighths_sum(v) for v in ([3, 5, 6, 2], [1, 4, 4, 6], [6, 6, 3, 5], [2, 7, 5, 3], [4, 3, 8, 3],
+                                   [5, 5, 6, 4, 4], [7, 2, 3, 6, 5], [1, 3, 5, 4])])
+    part(4, "Fair shares", "No help this time. Total ÷ how many.", "frac2",
+         [fair_eq(t, n, u) for t, n, u in ((24, 4, "L"), (35, 5, "lb"), (18, 6, "cups"), (28, 7, "L"),
+                                          (16, 8, "yd"), (30, 6, "lb"))])
+    part(5, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_88)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 6, "Word problems", "Add it up, then share it out.")
+    for i, story in enumerate(WORDS_88):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 6, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_88 = ["3.2 m = [320] cm", "1,500 g = [1.5] kg", "(9 + 3) × 5 = [60]", "7 ÷ 1/2 = [14]", "3 ÷ 5 = [3]/[5]",
+             "0.3 × 0.7 = [0.21]"]
+WORDS_88 = [
+    ("4 jugs hold 3/8, 5/8, 6/8 and 2/8 L. How much water is there in all?", "3/8 + 5/8 + 6/8 + 2/8 = 16/8 = 2",
+     "2", "L"),
+    ("6 bags of nuts weigh 30/8 lb in all. If each bag had the same, how much would each weigh?",
+     "30/8 ÷ 6 = 5/8", "5/8", "lb"),
+    ("Mia's 3 jumps were 7/8 m, 5/8 m and 6/8 m. How much longer was the longest than the shortest?",
+     f"7/8 {MINUS} 5/8 = 2/8", "2/8", "m"),
+    ("5 cups hold 1/8, 2/8, 3/8, 4/8 and 5/8 cup of juice. Shared equally, how much is in each?",
+     "15/8 ÷ 5 = 3/8", "3/8", "cup"),
+    ("Challenge: 8 plants grew 2, 3, 3, 4, 4, 4, 5, 7 eighths of an inch. Find the fair share.",
+     "32/8 ÷ 8 = 4/8", "4/8", "in"),
+]
+KINDS_88 = {
+    "read_share": Kind(176, 1, lambda it: f"read the x chart and share: {it[0]}", c_read_share, 10),
+}
+KINDS.update(KINDS_88)
+ESUM_POOL = [eighths_sum(v) for v in ([2, 4, 5, 3], [6, 1, 5, 4], [3, 3, 7, 2], [5, 2, 4, 6])]
+FAIR_POOL = [fair_eq(t, n, u) for t, n, u in ((20, 4, "L"), (35, 7, "lb"), (12, 6, "cups"), (27, 3, "L"))]
+CHECKINS["88-line-plots-with-data"] = [
+    S("Read the X chart", None, "read_share", [("Paint in 6 cans (gal)", [3, 4, 4, 5, 6, 8], "gal"),
+                                                ("Flour in 6 bowls (cups)", [2, 3, 5, 5, 6, 9], "cups")], 1),
+    S("Add the data", None, "frac2", ESUM_POOL, 2),
+    S("Fair shares", None, "frac2", FAIR_POOL, 2),
+]
+_g5[-1:-1] = [S("Line plot data", None, "frac2", ESUM_POOL + FAIR_POOL, 2, 88)]
+
+
+# ====================================================================== 89. The Coordinate Grid
+
+
+def coord_grid(bk, x, y, n=10, cell=14, pts=(), answer_pts=(), join=False):
+    """A first-quadrant grid 0..n with numbered lines. pts = [(px, py, name)] drawn now; answer_pts drawn only
+    on the key (in the answer colour); join=True joins the answer points with a line. y = bottom."""
+    c = bk.c
+    c.setStrokeColor(T.line)
+    c.setLineWidth(0.6)
+    for i in range(n + 1):
+        c.line(x + i * cell, y, x + i * cell, y + n * cell)
+        c.line(x, y + i * cell, x + n * cell, y + i * cell)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.4)
+    c.line(x, y, x + n * cell, y)
+    c.line(x, y, x, y + n * cell)
+    c.setFillColor(T.text2)
+    c.setFont("AvM", 8)
+    for i in range(n + 1):
+        c.drawCentredString(x + i * cell, y - 10, str(i))
+        c.drawRightString(x - 4, y + i * cell - 3, str(i))
+
+    def dot(px, py, name, col):
+        c.setFillColor(col)
+        c.circle(x + px * cell, y + py * cell, 3.2, stroke=0, fill=1)
+        if name:
+            c.setFont("AvD", 10)
+            c.drawString(x + px * cell + 4, y + py * cell + 4, name)
+
+    for px, py, name in pts:
+        dot(px, py, name, T.ink)
+    if bk.key:
+        if join and len(answer_pts) > 1:
+            c.setStrokeColor(T.answer)
+            c.setLineWidth(1.2)
+            for (a, b, _), (p, q, _) in zip(answer_pts, answer_pts[1:]):
+                c.line(x + a * cell, y + b * cell, x + p * cell, y + q * cell)
+        for px, py, name in answer_pts:
+            dot(px, py, name, T.answer)
+
+
+def pt(p):
+    return f"({p[0]}, {p[1]})"
+
+
+def c_grid_read(bk, x, cy, w, item):
+    pts = item
+    coord_grid(bk, x + GUT + 16, cy + 22, pts=pts)
+    graph_questions(bk, x + GUT + 210, cy + 150, w - GUT - 226, [(f"Point {nm}: (over, up)", pt((a, b)))
+                                                                for a, b, nm in pts])
+
+
+def c_grid_plot(bk, x, cy, w, item):
+    pts = item
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 14)
+    for i, (a, b, nm) in enumerate(pts):
+        c.drawString(x + GUT + 210, cy + 140 - i * 28, f"{nm}  {pt((a, b))}")
+    coord_grid(bk, x + GUT + 16, cy + 22, answer_pts=pts)
+
+
+def c_grid_rule(bk, x, cy, w, item):
+    """Pairs from two rules (start at 0): plot them; the key joins them."""
+    a, b = item
+    pairs = [(a * i, b * i) for i in range(4)]
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 12)
+    c.drawString(x + GUT + 210, cy + 150, f"Rule A: add {a}. Rule B: add {b}.")
+    c.drawString(x + GUT + 210, cy + 130, "Plot each (A, B) pair:")
+    c.setFont("Rnd", 14)
+    c.drawString(x + GUT + 210, cy + 106, "   ".join(pt(p) for p in pairs))
+    coord_grid(bk, x + GUT + 16, cy + 22, answer_pts=[(p, q, "") for p, q in pairs], join=True)
+    bk.fit_eq(x + GUT + 210, cy + 60, w - GUT - 220, f"B is [{b // a}] times A", size=15)
+
+
+def learn_coord_grid(bk):
+    y = bk.new_page("The Coordinate Grid", "Start at 0. Go over, then go up.", name_line=False, big=True,
+                    footer="WeMath  ·  The Coordinate Grid")
+    c = bk.c
+    label(bk, M, y - 6, "Point A is at (3, 5)")
+    coord_grid(bk, M + 30, y - 190, cell=16, pts=[(3, 5, "A"), (6, 2, "B")])
+    c.setStrokeColor(T.accent)
+    c.setLineWidth(2)
+    c.line(M + 30, y - 190, M + 30 + 3 * 16, y - 190)
+    c.line(M + 30 + 3 * 16, y - 190, M + 30 + 3 * 16, y - 190 + 5 * 16)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    lines = ("Start at 0, the corner.", "Go over 3, along the bottom.", "Then go up 5.",
+             "The first number is over. The second is up.", "Point B is at (6, 2): over 6, up 2.")
+    for i, t in enumerate(lines):
+        c.drawString(M + 240, y - 50 - i * 18, t)
+    color_eq(bk, M + 240, y - 160, [("(3, 5)", None), ("=", "op"), ("over 3, up 5", "a")], 18)
+    y -= 214
+
+    label(bk, M, y - 6, "Over first, always")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 30, "(2, 7) and (7, 2) are different points: the order matters.")
+    c.drawString(M + 14, y - 48, "Same up number? The points are on one flat line. Count over to find how far apart.")
+    y -= 70
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("coordinate grid your turn: B")
+    bk.eq(M + 150, bottom + 26, "B is over [6] and up [2]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: read and plot points on a grid and graph pairs from two rules (5.G.1–2, 5.OA.3). "
+                     "Say “Over, then up.” Walk it with a finger from 0 every time.")
+
+
+def practice_coord_grid(bk):
+    title = "The Coordinate Grid: Practice"
+    y = bk.new_page(title, "Start at 0. Over, then up.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Read the points", "Write each point as (over, up).", "grid_read",
+         [[(2, 7, "A"), (5, 3, "B"), (8, 6, "C"), (4, 9, "D")], [(7, 1, "E"), (1, 4, "F"), (6, 8, "G"), (9, 5, "H")],
+          [(3, 2, "J"), (0, 6, "K"), (8, 0, "L"), (5, 5, "M")]])
+    part(2, "Plot the points", "Put a dot for each point and write its letter.", "grid_plot",
+         [[(4, 6, "P"), (7, 2, "Q"), (1, 8, "R"), (9, 9, "S")], [(3, 0, "T"), (6, 5, "U"), (0, 3, "V"), (8, 7, "W")]])
+    part(3, "How far apart?", "No help this time. Same up number: count over. Same over number: count up.", "eq2",
+         [f"{pt(p)} to {pt(q)}: [{abs(p[0] - q[0]) + abs(p[1] - q[1])}] apart" for p, q in
+          (((2, 3), (7, 3)), ((4, 1), (4, 8)), ((1, 6), (9, 6)), ((5, 2), (5, 7)), ((0, 4), (6, 4)),
+           ((8, 9), (8, 3)), ((3, 5), (10, 5)), ((6, 0), (6, 9)))])
+    part(4, "Move the point", "No help this time.", "eq1",
+         [f"Start at {pt(p)}. Go {dx} right and {dy} up: over [{p[0] + dx}] and up [{p[1] + dy}]" for p, dx, dy in
+          (((2, 3), 4, 1), ((5, 1), 2, 6), ((0, 4), 7, 3), ((3, 6), 5, 2), ((1, 1), 3, 7), ((6, 2), 1, 5))])
+    part(5, "Graph the rules", "Plot the pairs. What do you notice?", "grid_rule", [(1, 2), (1, 3)])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_89)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 7, "Word problems", "Over, then up.")
+    for i, story in enumerate(WORDS_89):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 7, "Word problems", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+REVIEW_89 = ["Start at 5, add 6:  5  11  [17]", "2.7 kg = [2,700] g", "(25 − 9) ÷ 4 = [4]",
+             "1/7 ÷ 2 = [1]/[14]", "9 ÷ 4 = [9]/4 = [2] [1]/4", "0.6 × 9 = [5.4]"]
+WORDS_89 = [
+    ("On a map, the school is at (3, 4) and the park is at (3, 9). How many blocks apart are they?",
+     f"9 {MINUS} 4 = 5", "5", "blocks"),
+    ("Mia starts at (1, 2). She walks 6 blocks right. Where is she now?", "over 1 + 6 = 7, up 2", "(7, 2)", ""),
+    ("A treasure is at (8, 5). Leo is at (2, 5). How far must he walk to reach it?", f"8 {MINUS} 2 = 6", "6",
+     "blocks"),
+    ("A bus stop is 4 over and 7 up from 0. Write it as a point.", "over 4, up 7", "(4, 7)", ""),
+    ("Challenge: A square has corners at (2, 2), (6, 2) and (6, 6). Where is the fourth corner?",
+     "over 2, up 6", "(2, 6)", ""),
+]
+KINDS_89 = {
+    "grid_read": Kind(186, 1, lambda it: "read the grid: " + " ".join(f"{n} {a}-{b}" for a, b, n in it), c_grid_read,
+                      10),
+    "grid_plot": Kind(186, 1, lambda it: "plot the grid: " + " ".join(f"{n} {a}-{b}" for a, b, n in it), c_grid_plot,
+                      10),
+    "grid_rule": Kind(186, 1, lambda it: f"graph the rules: add {it[0]} and add {it[1]}", c_grid_rule, 10),
+}
+KINDS.update(KINDS_89)
+APART_POOL = [f"{pt(p)} to {pt(q)}: [{abs(p[0] - q[0]) + abs(p[1] - q[1])}] apart" for p, q in
+              (((1, 2), (8, 2)), ((5, 3), (5, 10)), ((2, 7), (9, 7)), ((7, 1), (7, 6)))]
+CHECKINS["89-the-coordinate-grid"] = [
+    S("Read the points", None, "grid_read", [[(3, 6, "A"), (7, 2, "B"), (1, 9, "C"), (8, 8, "D")]], 1),
+    S("Plot the points", None, "grid_plot", [[(5, 7, "P"), (2, 3, "Q"), (9, 1, "R"), (0, 5, "S")]], 1),
+    S("How far apart?", None, "eq2", APART_POOL, 2),
+]
+_g5[-1:-1] = [S("The coordinate grid", None, "eq2", APART_POOL, 2, 89)]
+
+
+# ====================================================================== 90. Classifying Shapes
+
+
+QUAD_NAMES = ["quadrilateral", "parallelogram", "rectangle", "rhombus", "square"]
+FITS = {"square": QUAD_NAMES, "rectangle": ["quadrilateral", "parallelogram", "rectangle"],
+        "rhombus": ["quadrilateral", "parallelogram", "rhombus"], "parallelogram": ["quadrilateral", "parallelogram"],
+        "trapezoid": ["quadrilateral"], "kite": ["quadrilateral"]}
+
+
+def circle_all(bk, x, y, words, right, size=11.5, gap=12):
+    """Words in a row; the key rings every right one."""
+    c = bk.c
+    for word in words:
+        ww = sw(word, "AvD", size)
+        c.setFillColor(T.text2)
+        c.setFont("AvD", size)
+        c.drawString(x, y, word)
+        if bk.key and word in right:
+            c.setStrokeColor(T.answer)
+            c.setLineWidth(1.5)
+            c.ellipse(x - 5, y - 6, x + ww + 5, y + size + 2, stroke=1, fill=0)
+        x += ww + gap
+
+
+def c_all_names(bk, x, cy, w, item):
+    kind, rot = item
+    draw_shape(bk, kind, x + GUT + 36, cy + 36, 22, rot)
+    circle_all(bk, x + GUT + 96, cy + 32, QUAD_NAMES, FITS[kind], gap=18)
+
+
+def tri_sides(A, B):
+    C = 180 - A - B
+    n = len({A, B, C})
+    return "equilateral" if n == 1 else "isosceles" if n == 2 else "scalene"
+
+
+def side_ticks(bk, pts):
+    """One tick across each side that is as long as another side."""
+    c = bk.c
+    sides = [(pts[i], pts[(i + 1) % 3]) for i in range(3)]
+    lens = [math.dist(p, q) for p, q in sides]
+    for (p, q), L in zip(sides, lens):
+        if sum(abs(L - M_) < 0.5 for M_ in lens) > 1:
+            mx, my = (p[0] + q[0]) / 2, (p[1] + q[1]) / 2
+            dx, dy = (q[0] - p[0]) / L, (q[1] - p[1]) / L
+            c.setStrokeColor(T.ink)
+            c.setLineWidth(1.3)
+            c.line(mx - dy * 5, my + dx * 5, mx + dy * 5, my - dx * 5)
+
+
+def c_tri_sides(bk, x, cy, w, item):
+    A, B = item
+    pts = triangle_pts(0, 0, 70, A, B)
+    h = max(p[1] for p in pts)
+    k = min(1, 58 / h)
+    pts = [(x + GUT + 10 + px * k, cy + 12 + py * k) for px, py in pts]
+    c = bk.c
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.6)
+    c.drawPath(_poly(c, pts), stroke=1, fill=0)
+    side_ticks(bk, pts)
+    for i, word in enumerate(("equilateral", "isosceles", "scalene")):
+        circle_choice(bk, x + GUT + 118, cy + 60 - i * 22, [word], tri_sides(A, B), size=11.5)
+
+
+def learn_classify(bk):
+    y = bk.new_page("Classifying Shapes", "A square is a rectangle, a rhombus and a parallelogram too.",
+                    name_line=False, big=True, footer="WeMath  ·  Classifying Shapes")
+    c = bk.c
+    label(bk, M, y - 6, "The quadrilateral family")
+    boxes = {"quadrilateral": (M + 190, y - 40), "parallelogram": (M + 190, y - 92),
+             "rectangle": (M + 90, y - 144), "rhombus": (M + 290, y - 144), "square": (M + 190, y - 196)}
+    for a, b in (("quadrilateral", "parallelogram"), ("parallelogram", "rectangle"), ("parallelogram", "rhombus"),
+                 ("rectangle", "square"), ("rhombus", "square")):
+        (x1, y1), (x2, y2) = boxes[a], boxes[b]
+        c.setStrokeColor(T.muted)
+        c.setLineWidth(1)
+        c.line(x1 + 50, y1 - 6, x2 + 50, y2 + 22)
+    notes = {"quadrilateral": "4 sides", "parallelogram": "2 pairs of parallel sides",
+             "rectangle": "+ 4 right angles", "rhombus": "+ 4 equal sides", "square": "both"}
+    for name, (bx, by) in boxes.items():
+        panel(bk, bx, by - 6, 100, 30)
+        c.setFillColor(T.ink)
+        c.setFont("AvD", 11)
+        c.drawCentredString(bx + 50, by + 10, name)
+        c.setFillColor(T.text2)
+        c.setFont("AvM", 8)
+        c.drawCentredString(bx + 50, by - 1, notes[name])
+    draw_shape(bk, "square", M + 420, y - 110, 26)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 380, y - 160, "A square has every")
+    c.drawString(M + 380, y - 176, "name above it.")
+    y -= 228
+
+    label(bk, M, y - 6, "Triangles by their sides")
+    for i, (A, B, nm, note) in enumerate(((60, 60, "equilateral", "3 equal sides"), (70, 70, "isosceles", "2 equal sides"),
+                                          (45, 70, "scalene", "no equal sides"))):
+        pts = [(M + 20 + i * 170 + px * 0.9, y - 84 + py * 0.9) for px, py in triangle_pts(0, 0, 70, A, B)]
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(1.6)
+        c.drawPath(_poly(c, pts), stroke=1, fill=0)
+        side_ticks(bk, pts)
+        c.setFillColor(T.ink)
+        c.setFont("AvD", 11)
+        c.drawString(M + 100 + i * 170 - 10, y - 50, nm)
+        c.setFillColor(T.text2)
+        c.setFont("Rnd", 10)
+        c.drawString(M + 100 + i * 170 - 10, y - 64, note)
+    y -= 106
+
+    bottom = your_turn(bk, y, h=78)
+    bk.ask("classify shapes your turn: rhombus names")
+    draw_shape(bk, "rhombus", M + 70, bottom + 28, 15)
+    circle_all(bk, M + 120, bottom + 24, QUAD_NAMES, FITS["rhombus"], gap=18)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: sort shapes into families and name every name that fits (5.G.3–4). Say “What does "
+                     "it have? Then it gets that name, and every name above it.” Tick marks show equal sides.")
+
+
+def practice_classify(bk):
+    title = "Classifying Shapes: Practice"
+    y = bk.new_page(title, "A shape gets every name that fits.")
+    num = 1
+
+    def part(n, name, sub, kind, items):
+        nonlocal y, num
+        k = KINDS[kind]
+        y, num = flow(bk, title, y, n, name, sub, items, num, k.cols, k.h, k.gap,
+                      lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+
+    part(1, "Every name that fits", "Circle all the names. Right-angle marks and ticks tell you what is equal.",
+         "all_names", [("rectangle", 0), ("square", 15), ("parallelogram", 0), ("rhombus", 0), ("trapezoid", 0),
+                       ("square", 0), ("kite", 0)])
+    part(2, "Triangles by their sides", "Tick marks show equal sides. Circle one.", "tri_sides",
+         [(60, 60), (40, 40), (50, 75), (90, 45), (30, 110), (90, 30), (80, 45), (65, 65)])
+    part(3, "True or not?", "Circle yes or no.", "yes_text1", SHAPE_FACTS)
+    part(4, "Name it", "No help this time. Write the best name.", "eq1",
+         [f"{d}: [{n}]" for d, n in (("4 sides, 4 right angles, all sides equal", "square"),
+                                     ("2 pairs of parallel sides, no right angles, sides not all equal",
+                                      "parallelogram"),
+                                     ("3 sides, all different lengths", "scalene"),
+                                     ("4 equal sides, no right angles", "rhombus"),
+                                     ("3 sides, exactly 2 the same length", "isosceles"),
+                                     ("4 right angles, long and short sides", "rectangle"),
+                                     ("3 equal sides", "equilateral"))])
+    part(5, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_90)
+    if y - 14 - 110 < 46:
+        y = bk.new_page(title, first=False)
+    y = bk.part(y, 6, "Shape riddles", "Who am I?")
+    for i, story in enumerate(WORDS_90):
+        if y - 110 < 46:
+            y = bk.new_page(title, first=False)
+            y = bk.part(y, 6, "Shape riddles", "(continued)")
+        y = word_card(bk, y, num + i, *story)
+
+
+SHAPE_FACTS = [("Every square is a rectangle.", True), ("Every rectangle is a square.", False),
+               ("A trapezoid is always a parallelogram.", False), ("Every rhombus is a parallelogram.", True),
+               ("A square is a rhombus.", True), ("Every parallelogram has 4 right angles.", False),
+               ("An equilateral triangle is also isosceles.", True), ("A scalene triangle has 2 equal sides.", False),
+               ("A rhombus always has right angles.", False), ("A parallelogram has 2 pairs of parallel sides.", True),
+               ("A triangle can have 2 right angles.", False), ("Every quadrilateral has 4 sides.", True)]
+REVIEW_90 = ["(4, 2) to (4, 9): [7] apart", "Start at 1, add 8:  1  9  [17]", "6.5 cm = [65] mm", "(30 + 6) ÷ 9 = [4]",
+             "1/9 ÷ 2 = [1]/[18]", "7 × 1/2 = [7]/2"]
+WORDS_90 = [
+    ("I have 4 right angles and 2 pairs of parallel sides, but my sides are not all equal.",
+     "4 right angles, 2 pairs of parallel sides", "rectangle", ""),
+    ("I am a triangle. Two of my sides are the same length and one is different.", "2 equal sides", "isosceles", ""),
+    ("I have 4 equal sides and 4 right angles. Name me with the best name.", "equal sides and right angles",
+     "square", ""),
+    ("I have 4 equal sides but no right angles. My opposite sides are parallel.",
+     "equal sides, no right angles", "rhombus", ""),
+    ("Challenge: I am a right triangle, and my two short sides are equal. What am I by my sides?",
+     "a right triangle with 2 equal sides", "isosceles", ""),
+]
+KINDS_90 = {
+    "all_names": Kind(70, 1, lambda it: f"all names: {it[0]} {it[1]}", c_all_names, 8),
+    "tri_sides": Kind(86, 2, lambda it: f"triangle sides: {it[0]} {it[1]}", c_tri_sides, 8),
+}
+KINDS.update(KINDS_90)
+SHAPE_FACTS2 = [("Every rhombus is a square.", False), ("A square is a parallelogram.", True),
+                ("A rectangle can have 4 equal sides.", True), ("An isosceles triangle has 3 different sides.", False)]
+CHECKINS["90-classifying-shapes"] = [
+    S("Every name that fits", "Circle all the names.", "all_names", [("rhombus", 20), ("rectangle", 10),
+                                                                     ("square", 30)], 2),
+    S("Triangles by their sides", "Circle one.", "tri_sides", [(55, 55), (45, 80), (60, 60), (25, 25)], 2),
+    S("True or not?", "Circle yes or no.", "yes_text1", SHAPE_FACTS2, 2),
+]
+_g5[-1:-1] = [S("Classifying shapes", "Circle yes or no.", "yes_text1", SHAPE_FACTS2, 2, 90)]
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -18856,7 +20081,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4", "grade-5": "5"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -18941,6 +20166,14 @@ ANSWER_OF = {
     "dec_grid": lambda it: dn2(D(it[0] * it[1]) / 100),
     "frac_grid": lambda it: f"{it[0] * it[2]}/{it[1] * it[3]}",
     "cube_count": lambda it: str(it[0] * it[1] * it[2]),
+    "share_frac": lambda it: f"{it[0]}/{it[1]}",
+    "unit_cut": lambda it: f"1/{it[0] * it[1]}",
+    "whole_cut": lambda it: str(it[0] * it[1]),
+    "two_rules": lambda it: str(it[1] // it[0]),
+    "read_share": lambda it: " · ".join(str(a) for _, a in share_questions(it[1], it[2])),
+    "grid_plot": lambda it: ", ".join(f"{n} ({a}, {b})" for a, b, n in it),
+    "all_names": lambda it: ", ".join(FITS[it[0]]),
+    "tri_sides": lambda it: tri_sides(it[0], it[1]),
     "group_frac": lambda it: str(it[0] // it[1] * it[2]),
     "tens_groups": lambda it: f"{it[0] * it[1]} tens = {it[0] * it[1] * 10}",
     "area_rows": lambda it: f"{it[0] * it[1]} square units",
@@ -19024,6 +20257,13 @@ def manifest_entry(id_, type_, title, record, packet=None, grade=None, file=None
             answer = f"{answers[0]} {answers[1]}/{answers[2]}"  # 1 1/2 + 2 1/3 = 3 5/6
         elif s.kind not in ANSWER_OF and re.search(r"= \?/\?$", prompt) and len(answers) == 2:
             answer = f"{answers[0]}/{answers[1]}"  # 1/2 + 1/5 = 7/10
+        if answer == " · ".join(answers) and len(answers) > 1 and prompt.count("?") == len(answers):
+            answer = prompt  # the boxes filled in, from the first "=" when all the boxes are after it
+            rhs = prompt.split("=", 1)[1].strip() if "=" in prompt else ""
+            if rhs.count("?") == len(answers):
+                answer = rhs  # 38 in = ? ft ? in -> "3 ft 2 in"
+            for v in answers:
+                answer = answer.replace("?", v, 1)
         if s.kind == "word":
             answer = f"{item[2]} {item[3]}".strip()
         parts[-1]["questions"].append({"n": num, "prompt": prompt, "answer": answer})
@@ -19201,6 +20441,22 @@ PACKETS = [
     ("81-multiplying-fractions", "multiplying-fractions", "Multiplying Fractions", learn_mult_fractions, practice_mult_fractions,
      False),
     ("82-volume", "volume", "Volume", learn_volume, practice_volume,
+     False),
+    ("83-fractions-as-division", "fractions-as-division", "Fractions as Division", learn_frac_division, practice_frac_division,
+     False),
+    ("84-dividing-with-unit-fractions", "dividing-with-unit-fractions", "Dividing with Unit Fractions", learn_unit_division, practice_unit_division,
+     False),
+    ("85-order-of-operations", "order-of-operations", "Order of Operations", learn_order_ops, practice_order_ops,
+     False),
+    ("86-number-patterns", "number-patterns", "Number Patterns", learn_num_patterns, practice_num_patterns,
+     False),
+    ("87-converting-units", "converting-units", "Converting Units", learn_converting, practice_converting,
+     False),
+    ("88-line-plots-with-data", "line-plots-with-data", "Line Plots with Data", learn_line_data, practice_line_data,
+     False),
+    ("89-the-coordinate-grid", "the-coordinate-grid", "The Coordinate Grid", learn_coord_grid, practice_coord_grid,
+     False),
+    ("90-classifying-shapes", "classifying-shapes", "Classifying Shapes", learn_classify, practice_classify,
      False),
 ]
 
