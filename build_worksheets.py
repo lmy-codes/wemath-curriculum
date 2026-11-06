@@ -20308,6 +20308,35 @@ def _zero_mid(r):
 
 
 EXTRA.update({
+    "26-halves-thirds-and-fourths": (11, [
+        ("Equal shares?", "Circle yes or no.", "eq_share", shuf("m26a", EQ_SHARE), 12),
+        ("Name the share", "Circle the name of the shaded part.", "name_share", shuf("m26b", NAME_SHARE), 8),
+        ("Shade it", None, "shade", shuf("m26c", SHADE), 9),
+        ("Make a whole and compare", None, "eq2", shuf("m26d", MAKE_WHOLE + COMPARE_SHARES), 16),
+    ], False),
+    "30-two-step-word-problems": (6, [
+        ("Read the bar", "Find the number that goes in the box.", "bar",
+         _many(30, lambda r: ("pw", r.randint(15, 60), r.randint(11, 39), r.choice(["whole", "part"])) if r.random() < .5
+               else (lambda big, small: ("cmp", big, small, r.choice(["diff", "big", "small"])) if big - small > 8 else None)(
+                   r.randint(40, 95), r.randint(12, 45))), 16),
+        ("One step", "Draw a bar if it helps.", "word",
+         shuf("m30w", stories("m30a", "compare", [(a, b) for a in rng(40, 95, 4) for b in rng(15, 38, 3)])
+              + stories("m30b", "sub", [(a, b) for a in rng(41, 96, 4) for b in rng(13, 39, 4)])), 8),
+        ("Two steps", "Step 1, then step 2.", "two_step", shuf("m30t", TWO_STEP), 6),
+    ], False),
+    "32-graphs": (8, [
+        ("Count the tally marks", None, "tally_read", list(rng(3, 30)), 12),
+        ("Draw tally marks", None, "tally_draw", list(rng(3, 30)), 12),
+        ("Read the bar graph", None, "mini_bar", shuf("m32", MINI_BARS), 4),
+    ], False),
+    "52-shapes-and-quadrilaterals": (7, [
+        ("Quadrilateral or not?", None, "is_quad", shuf("m52a", [(k, r) for k in SHAPES for r in range(0, 360, 15)]), 15),
+        ("Right angles", None, "right_count", shuf("m52b", [(k, r) for k in ("rectangle", "rtrap", "square", "rtri", "rhombus")
+                                                           for r in range(0, 360, 15)]), 9),
+        ("Name it", None, "name_quad", shuf("m52c", [(k, r, ["square", "rectangle", "rhombus", "other"])
+                                                     for k in ("square", "rectangle", "rhombus", "trapezoid", "kite")
+                                                     for r in range(0, 360, 20)]), 8),
+    ], False),
     "10-subtracting-two-digit-numbers": (9, [
         ("More take away", "No help. Tens, then ones.", "eq3",
          [f"{a} {MINUS} {b} = [{a - b}]" for a, b in _many(10, _no_borrow)], 36),

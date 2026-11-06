@@ -30,13 +30,13 @@ Ninety-one packets, in teaching order (K to grade 5). Each starts with a picture
 | `23-hundred-buddies/` | Pairs that make 100 (64 + 36): fill the hundred grid, jump up to the next ten then 100, tens make 9 and ones make 10; buddies of 50 and 1000 | 9 |
 | `24-counting-forward-and-backward/` | Count by 2s, 3s, 4s, 5s, 10s and 25s from any number, forward and backward, across 100 | 11 |
 | `25-halves/` | Half means 2 parts the same: share fairly, half undoes double, half the tens and ones, odd numbers (half of 7 = 3½), half of what? | 10 |
-| `26-halves-thirds-and-fourths/` | Equal shares of circles, rectangles and squares: equal or not, name the share, shade it, cut it, which share is bigger, rows and columns of squares; 1 third + 2 thirds = 1 whole | 9 |
+| `26-halves-thirds-and-fourths/` | Equal shares of circles, rectangles and squares: equal or not, name the share, shade it, cut it, which share is bigger, rows and columns of squares; 1 third + 2 thirds = 1 whole | 13 |
 | `27-telling-time/` | Clocks: o'clock, half past, count by 5s, quarter past and quarter to, the short hand between numbers, draw the hands, a.m. and p.m. | 11 |
 | `28-money/` | Coins at real size: count by the coin, biggest first with running totals, 100¢ = $1, dollar bills, compare amounts, ¢ or $ | 13 |
 | `29-subtracting-across-zeros/` | 403 − 157: 403 is 40 tens + 3 ones = 39 tens + 13 ones, break once; zero in the tens, in the ones, two zeros; check by adding | 11 |
-| `30-two-step-word-problems/` | Bar models: part + part = whole, compare bars, unknown start, then two steps where the first answer becomes a part of the second bar | 10 |
+| `30-two-step-word-problems/` | Bar models: part + part = whole, compare bars, unknown start, then two steps where the first answer becomes a part of the second bar | 16 |
 | `31-measuring-length/` | Rulers and tape measures: start at 0, paper clips with no gaps, inches and centimeters (smaller units, more of them), not starting at 0, true-size things to measure with a real ruler, which unit, adding lengths | 13 |
-| `32-graphs/` | Tally marks, picture graphs, bar graphs and X charts (line plots without a line): read them, make them, how many more, in all | 8 |
+| `32-graphs/` | Tally marks, picture graphs, bar graphs and X charts (line plots without a line): read them, make them, how many more, in all | 10 |
 | `33-multiplication/` | Grade 3. Equal groups to the × sign, arrays, turnarounds, count by; the ×2, ×5 and ×10 facts | 11 |
 | `34-multiplication-strategies/` | Break-apart arrays: ×3 = ×2 + one group, ×4 = double double, ×6 = ×5 + one group, ×7 = ×5 + ×2, ×8 = double ×4, ×9 = ×10 − one group; all 36 facts of 3, 4, 6, 7, 8, 9 | 12 |
 | `35-division/` | Share it, make groups, think multiplication (missing factor), fact families, all division facts to 10 × 10 | 10 |
@@ -56,7 +56,7 @@ Ninety-one packets, in teaching order (K to grade 5). Each starts with a picture
 | `49-mass-and-liquid-volume/` | Grams and kilograms on a pan balance (add the weights), liters in a marked beaker, how much more, problems with mass and liquid volume | 11 |
 | `50-scaled-graphs/` | Picture graphs where one picture is 2, 5 or 10, bar graphs that count by 2s or 5s, make one, how many more | 10 |
 | `51-measuring-to-the-quarter-inch/` | Rulers with half and quarter marks, true-size things to measure, X charts of the lengths | 10 |
-| `52-shapes-and-quadrilaterals/` | Sides, corners and right angles; quadrilateral or not; square, rectangle, rhombus or other; a square is a rectangle and a rhombus; draw one | 8 |
+| `52-shapes-and-quadrilaterals/` | Sides, corners and right angles; quadrilateral or not; square, rectangle, rhombus or other; a square is a rectangle and a rhombus; draw one | 11 |
 | `53-thousands/` | Grade 4. Quick drawings with cubes, expanded form, what a digit is worth, ten times as much, compare, 1,000 more and less | 9 |
 | `54-rounding-big-numbers/` | The founder's method to the nearest 1,000 and 100: the one below, the one above, which is closer; estimate sums | 10 |
 | `55-adding-and-subtracting-big-numbers/` | Four-digit columns: carry boxes, break boxes, across zeros, then no help | 10 |
