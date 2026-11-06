@@ -134,6 +134,7 @@ class Book:
         self.num_off = 0
         self.part_off = 0
         self.repeat_ok = False  # True: questions may repeat (Kindergarten and grade 1 extra practice)
+        self.max_part = 0
         self.heading = subtitle
         self.c.setTitle(f"{subtitle}: " + ("Answer Key" if key else "Student Workbook"))
         self.c.setAuthor("WeMath")
@@ -234,6 +235,7 @@ class Book:
         """Section label: 'Part 2   Fill in the buddy.   sub'"""
         if self.extra and n >= self.extra[0]:
             y = self.extra_pages(y, n)
+        self.max_part = max(self.max_part, n)
         n += self.part_off
         c = self.c
         label = f"Part {n}"
@@ -249,11 +251,30 @@ class Book:
             c.drawString(x + sw(text, "AvM", 11.5) + 8, y, sub)
         return y - 14
 
-    def extra_pages(self, y, n):
+    def extra_pages(self, y, n, tail=False):
         """Draw the packet's extra practice (EXTRA) as parts n, n+1, … on new pages, then shift the part and
-        problem numbers of everything after it. Returns the y on a fresh page for part n itself."""
+        problem numbers of everything after it. Returns the y on a fresh page for part n itself.
+        Sections are (name, sub, kind, items) or, with no repeats allowed, (name, sub, kind, candidates, count):
+        the first `count` candidates not used anywhere in practice, check-ins or assessments (EXCLUDE)."""
         before, sections, repeat_ok = self.extra
         self.extra = None
+        chosen = []
+        for sec in sections:
+            name, sub, kind, items = sec[:4]
+            if len(sec) == 5:
+                k, seen, keep = KINDS[kind], set(), []
+                for it in items:
+                    q = qkey(k.key(it))
+                    if q in seen or q in self.asked or (EXCLUDE is not None and q in EXCLUDE):
+                        continue
+                    seen.add(q)
+                    keep.append(it)
+                    if len(keep) == sec[4]:
+                        break
+                items = spread(keep) if keep and isinstance(keep[0], str) else keep
+            if items:
+                chosen.append((name, sub, kind, items))
+        sections = chosen
         title = self.heading
         num = self.max_num + 1
         first = num
@@ -267,7 +288,7 @@ class Book:
         self.repeat_ok = False
         self.part_off = len(sections)
         self.num_off = num - first
-        return self.new_page(title, first=False)
+        return y if tail else self.new_page(title, first=False)
 
     def note(self, y, text):
         self.c.setFillColor(T.text2)
@@ -20166,6 +20187,8 @@ while len(_ADD22) < 36:
     if a % 10 and b % 10 and a + b < 100 and (a, b) not in _ADD22 and ((a % 10 + b % 10 >= 10) == (len(_ADD22) % 2 == 1)):
         _ADD22.append((a, b))
 
+EXCLUDE = None  # set by find_exclude() before a full build
+
 EXTRA = {
     "0-adding-and-taking-away": (15, [
         ("More adding", "Every way to add up to 9.", "kbig", mix("x0a", [f"{a} + {b} = [{a + b}]" for a, b in _ADD9])),
@@ -20216,6 +20239,525 @@ EXTRA = {
          mix("x9a", [f"{a} + {b} = [{a + b}]" for a, b in _ADD22])),
     ], True),
 }
+
+
+# ---------------------------------------------------------------------- Extra practice, grades 2-5 (packets 10-90)
+# New problems only, in each packet's own no-help format: (name, subtitle, kind, candidates, how many).
+# Candidates already used anywhere (practice, check-ins, assessments) are skipped when the pages are drawn.
+
+
+def _rr(n):
+    return random.Random(f"more-{n}")
+
+
+def _many(n, make, count=400):
+    """count candidates from make(r) (None = skip), duplicates removed, in a fixed shuffled order."""
+    r, out, seen = _rr(n), [], set()
+    for _ in range(count * 4):
+        it = make(r)
+        if it is None or str(it) in seen:
+            continue
+        seen.add(str(it))
+        out.append(it)
+        if len(out) == count:
+            break
+    return out
+
+
+def _tstr(t):
+    return f"{t[0]}:{t[1]:02d}"
+
+
+SAY_PLACE = {2: "half", 3: "third", 4: "fourth"}
+
+
+def _no_borrow(r):
+    a, b = r.randint(21, 99), r.randint(11, 89)
+    return (a, b) if a % 10 >= b % 10 and a // 10 > b // 10 else None
+
+
+def _borrow(r):
+    a, b = r.randint(21, 99), r.randint(11, 89)
+    return (a, b) if a % 10 < b % 10 and a > b + 9 else None
+
+
+def _carry(r):
+    a, b = r.randint(15, 89), r.randint(11, 69)
+    return (a, b) if a % 10 + b % 10 >= 10 and a + b < 100 else None
+
+
+def _sub3(r):
+    a, b = r.randint(300, 999), r.randint(101, 699)
+    return (a, b) if a > b + 50 and (a % 10 < b % 10) != (a // 10 % 10 < b // 10 % 10) else None
+
+
+def _add3(r):
+    a, b = r.randint(101, 699), r.randint(101, 399)
+    return (a, b) if a + b < 1000 else None
+
+
+def _frac_pairs(r, dens=(2, 3, 4, 5, 6, 8, 10, 12)):
+    b = r.choice(dens)
+    return r.randint(1, b - 1), b
+
+
+def _zero_mid(r):
+    a = r.randint(2, 9) * 100 + r.choice([0, 0, r.randint(1, 9)])
+    b = r.randint(101, a - 11) if a > 120 else None
+    return (a, b) if b and (a % 10 < b % 10 or a % 100 < b % 100) else None
+
+
+EXTRA.update({
+    "10-subtracting-two-digit-numbers": (9, [
+        ("More take away", "No help. Tens, then ones.", "eq3",
+         [f"{a} {MINUS} {b} = [{a - b}]" for a, b in _many(10, _no_borrow)], 36),
+        ("Take away tens", None, "eq3",
+         [f"{a} {MINUS} {t} = [{a - t}]" for a, t in _many(1010, lambda r: (r.randint(31, 99), r.randint(1, 8) * 10))
+          if a > t], 15),
+    ], False),
+    "11-missing-numbers": (8, [
+        ("More missing numbers", "Jump to the next ten, then by tens, then the ones.", "eq3",
+         [f"{a} + [{c - a}] = {c}" for a, c in _many(11, lambda r: (r.randint(12, 79), r.randint(30, 99))) if c - a > 9],
+         36),
+        ("Up to a ten", None, "eq3",
+         [f"{a} + [{c - a}] = {c}" for a, c in _many(1011, lambda r: (r.randint(11, 88), r.randint(3, 9) * 10))
+          if c - a > 2], 15),
+    ], False),
+    "12-subtracting-with-borrowing": (8, [
+        ("More breaking a ten", "No help.", "eq3", [f"{a} {MINUS} {b} = [{a - b}]" for a, b in _many(12, _borrow)], 39),
+        ("From a tens number", None, "eq3",
+         [f"{a} {MINUS} {b} = [{a - b}]" for a, b in _many(1012, lambda r: (r.randint(3, 9) * 10, r.randint(11, 28)))],
+         12),
+    ], False),
+    "13-adding-in-columns": (9, [
+        ("More in columns", "Carry the new ten.", "col_add", _many(13, _carry), 30),
+    ], False),
+    "14-subtracting-in-columns": (9, [
+        ("More in columns", "Break a ten when you need to.", "col_sub", _many(14, _borrow), 30),
+    ], False),
+    "15-hundreds-tens-and-ones": (9, [
+        ("Put it together", None, "eq2", [f"{n // 100} hundreds {n // 10 % 10} tens {n % 10} ones = [{n}]"
+                                         for n in _many(15, lambda r: r.randint(101, 999))], 24),
+        ("Expanded form", None, "eq2", [f"{n // 100 * 100} + {n // 10 % 10 * 10} + {n % 10} = [{n}]"
+                                       for n in _many(1015, lambda r: r.randint(111, 999)) if n % 10 and n // 10 % 10],
+         24),
+    ], False),
+    "16-skip-counting": (9, [
+        ("Keep counting", None, "eq1",
+         [f"Count by {s}s:  {a}  {a + s}  {a + 2 * s}  [{a + 3 * s}]  [{a + 4 * s}]" for s, a in
+          _many(16, lambda r: (lambda s: (s, r.randint(1, 40 if s < 100 else 6) * s))(r.choice([5, 10, 100])))], 30),
+    ], False),
+    "17-comparing-numbers": (9, [
+        ("More comparing", "Write <, > or =.", "eq3",
+         [f"{a} [{sign_of(a, b)}] {b}" for a, b in _many(17, lambda r: (r.randint(100, 999), r.randint(100, 999)))
+          if abs(a - b) < 200], 45),
+    ], False),
+    "18-10-and-100-more-or-less": (9, [
+        ("More 10 and 100", None, "eq3",
+         [f"{n} {op} {k} = [{n + k if op == '+' else n - k}]" for n, op, k in
+          _many(18, lambda r: (r.randint(110, 889), r.choice(["+", MINUS]), r.choice([10, 100])))], 45),
+    ], False),
+    "19-adding-three-digit-numbers": (9, [
+        ("More in columns", None, "col_add3", _many(19, _add3), 24),
+        ("Add", "No help.", "eq2", [f"{a} + {b} = [{a + b}]" for a, b in _many(1019, _add3)], 24),
+    ], False),
+    "20-subtracting-three-digit-numbers": (10, [
+        ("More in columns", None, "col_sub3", _many(20, _sub3), 24),
+        ("Subtract", "No help.", "eq2", [f"{a} {MINUS} {b} = [{a - b}]" for a, b in _many(1020, _sub3)], 24),
+    ], False),
+    "21-equal-groups-and-arrays": (9, [
+        ("Add the groups", None, "eq2", [" + ".join([str(k)] * g) + f" = [{g * k}]"
+                                        for g, k in _many(21, lambda r: (r.randint(2, 5), r.randint(2, 9)))], 24),
+        ("Rows and columns", None, "eq2", [f"{a} rows of {b} = [{a * b}]"
+                                          for a, b in _many(1021, lambda r: (r.randint(2, 5), r.randint(2, 6)))], 20),
+    ], False),
+    "22-even-and-odd": (8, [
+        ("Even or odd?", "Look at the ones.", "eo_ones", _many(22, lambda r: r.randint(11, 199)), 30),
+        ("Two equal parts", "Even numbers make two equal parts.", "eq3",
+         [f"[{n}] + [{n}] = {2 * n}" for n in _many(1022, lambda r: r.randint(11, 49))], 21),
+    ], False),
+    "23-hundred-buddies": (9, [
+        ("More hundred buddies", None, "eq3", [f"{a} + [{100 - a}] = 100" for a in _many(23, lambda r: r.randint(11, 89))],
+         30),
+        ("Fifty buddies", None, "eq3", [f"{a} + [{50 - a}] = 50" for a in _many(1023, lambda r: r.randint(6, 44))], 12),
+        ("Thousand buddies", None, "eq3", [f"{a} + [{1000 - a}] = 1,000" for a in
+                                           _many(2023, lambda r: r.randint(11, 98) * 10)], 12),
+    ], False),
+    "24-counting-forward-and-backward": (9, [
+        ("Keep counting", None, "eq1",
+         [f"Count {'back' if s < 0 else 'on'} by {abs(s)}:  {a}  {a + s}  {a + 2 * s}  [{a + 3 * s}]  [{a + 4 * s}]"
+          for s, a in _many(24, lambda r: (r.choice([2, 3, 4, 5, 10, -2, -3, -5, -10]), r.randint(50, 180)))], 30),
+    ], False),
+    "25-halves": (10, [
+        ("Half of", None, "eq3", [f"half of {2 * n} = [{n}]" for n in _many(25, lambda r: r.randint(6, 60))], 30),
+        ("Half of an odd number", None, "eq3", [f"half of {n} = [{half_str(n)}]"
+                                                for n in _many(1025, lambda r: r.randint(3, 49) * 2 + 1)], 12),
+        ("What was it half of?", None, "eq3", [f"half of [{2 * n}] = {n}" for n in _many(2025, lambda r: r.randint(11, 50))],
+         12),
+    ], False),
+    "27-telling-time": (12, [
+        ("Time words", None, "eq2",
+         [f"{w} {h} = [{_tstr(t)}]" for w, h, t in
+          [("quarter past", h, (h, 15)) for h in range(1, 13)] + [("half past", h, (h, 30)) for h in range(1, 13)]
+          + [("quarter to", h, (h - 1 or 12, 45)) for h in range(1, 13)]], 30),
+    ], False),
+    "28-money": (12, [
+        ("Add cents", None, "eq3", [f"{a}¢ + {b}¢ = [{a + b}¢]" for a, b in
+                                    _many(28, lambda r: (r.randint(5, 70), r.randint(5, 60))) if a + b < 100], 30),
+        ("Make a dollar", None, "eq3", [f"{a}¢ + [{100 - a}¢] = 100¢" for a in _many(1028, lambda r: r.randint(1, 19) * 5)],
+         15),
+    ], False),
+    "29-subtracting-across-zeros": (10, [
+        ("More across zeros", None, "eq2", [f"{a} {MINUS} {b} = [{a - b}]" for a, b in _many(29, _zero_mid)], 36),
+    ], False),
+    "31-measuring-length": (11, [
+        ("Add and take away lengths", None, "eq2",
+         [f"{a} {u} {op} {b} {u} = [{a + b if op == '+' else a - b}] {u}" for a, b, op, u in
+          _many(31, lambda r: (r.randint(20, 80), r.randint(5, 40), r.choice(["+", MINUS]), r.choice(["cm", "in"])))
+          if a > b], 30),
+    ], False),
+    "33-multiplication": (11, [
+        ("Groups of", None, "eq2", shuf("m33g", [f"{a} groups of {b} = [{a * b}]" for a in range(2, 6) for b in range(2, 11)]),
+         24),
+        ("Times 2, 5 and 10", None, "eq3", [f"{b} {TIMES} {a} = [{a * b}]" for a in (2, 5, 10) for b in range(1, 11)]
+         + [f"{a} {TIMES} {b} = [{a * b}]" for a in (2, 5, 10) for b in range(1, 11)], 30),
+    ], False),
+    "34-multiplication-strategies": (11, [
+        ("Break it apart", "Use a fact you know, then add the rest.", "eq1",
+         shuf("m34b", [f"{a} {TIMES} {b} = {a} {TIMES} 5 + {a} {TIMES} {b - 5} = [{a * b}]" for a in (3, 4, 6, 7, 8, 9)
+                       for b in (6, 7, 8, 9)]), 24),
+        ("Every fact", None, "eq3", shuf("m34", [f"{a} {TIMES} {b} = [{a * b}]" for a in (3, 4, 6, 7, 8, 9)
+                                                  for b in range(2, 11)]), 45),
+    ], False),
+    "35-division": (9, [
+        ("Divide", None, "eq3", shuf("m35", [f"{a * b} {DIV} {a} = [{b}]" for a in range(2, 10) for b in range(2, 11)]),
+         45),
+    ], False),
+    "36-rounding": (9, [
+        ("Round to the nearest ten", None, "eq2", [f"{n} rounds to [{round_to(n, 10)}]"
+                                                   for n in _many(36, lambda r: r.randint(11, 98)) if n % 10], 24),
+        ("Round to the nearest hundred", None, "eq2", [f"Round {n} to the nearest 100: [{round_to(n, 100)}]"
+                                                       for n in _many(1036, lambda r: r.randint(110, 980))], 24),
+    ], False),
+    "37-multiplying-by-tens": (8, [
+        ("Tens first", None, "eq3", shuf("m37b", [f"{b * 10} {TIMES} {a} = [{a * b * 10}]" for a in range(2, 10)
+                                                  for b in range(2, 10)]), 30),
+        ("Times tens", None, "eq3", shuf("m37", [f"{a} {TIMES} {b * 10} = [{a * b * 10}]" for a in range(2, 10)
+                                                 for b in range(2, 10)]), 45),
+    ], False),
+    "38-area": (9, [
+        ("Find the area", None, "eq2", [f"{a} {u} by {b} {u}: area = [{a * b}] sq {u}" for a, b, u in
+                                        _many(38, lambda r: (r.randint(2, 10), r.randint(2, 10), r.choice(["cm", "m", "ft", "in"])))],
+         24),
+        ("Find the missing side", None, "eq2", [f"{a} {u} {TIMES} [{b}] {u} = {a * b} sq {u}" for a, b, u in
+                                                _many(1038, lambda r: (r.randint(2, 10), r.randint(2, 10), r.choice(["cm", "m"])))],
+         18),
+    ], False),
+    "39-unit-fractions": (10, [
+        ("Bigger piece", "Write < or >.", "frac3", [f"1/{a} [{sign_of(Fraction(1, a), Fraction(1, b))}] 1/{b}"
+                                                     for a in (2, 3, 4, 5, 6, 8, 10, 12) for b in (2, 3, 4, 5, 6, 8, 10, 12)
+                                                     if a != b], 30),
+    ], False),
+    "40-counting-fractions": (10, [
+        ("How many pieces?", None, "frac2", [f"{a}/{b} = [{a}] pieces of 1/{b}" for a, b in _many(40, _frac_pairs)], 24),
+        ("Shaded and not shaded", None, "frac2", [f"{a}/{b} shaded, [{b - a}]/{b} not shaded"
+                                                  for a, b in _many(1040, _frac_pairs)], 18),
+    ], False),
+    "41-fractions-and-wholes": (11, [
+        ("Wholes and pieces", None, "frac2", [f"{b + a}/{b} = 1 whole and [{a}]/{b}" for a, b in _many(41, _frac_pairs)],
+         24),
+        ("Whole numbers as fractions", None, "frac3", [f"{w} = [{w * b}]/{b}" for w, b in
+                                                       _many(1041, lambda r: (r.randint(2, 5), r.choice([2, 3, 4, 6, 8])))],
+         18),
+    ], False),
+    "42-equal-fractions": (9, [
+        ("Make it simpler", None, "frac3", [f"{a * k}/{b * k} = [{a}]/{b}" for a in range(1, 6) for b in (2, 3, 4, 6)
+                                            for k in (2, 3, 4) if a < b and math.gcd(a, b) == 1 and b * k <= 12], 18),
+        ("Equal fractions", None, "frac3", [f"{a}/{b} = [{a * k}]/{b * k}" for a, b, k in
+                                            _many(42, lambda r: (lambda a, b: (a, b, r.choice([2, 3, 4])))(*_frac_pairs(r, (2, 3, 4, 6))))
+                                            if b * k <= 12], 36),
+    ], False),
+    "43-comparing-fractions": (8, [
+        ("Same bottom", "Write <, > or =.", "frac3", [f"{a}/{b} [{sign_of(Fraction(a, b), Fraction(c, b))}] {c}/{b}"
+                                                      for a, b, c in _many(43, lambda r: (lambda b: (r.randint(1, b - 1), b, r.randint(1, b - 1)))(r.choice([3, 4, 6, 8, 10, 12])))
+                                                      if a != c], 24),
+        ("Same top", None, "frac3", [f"{a}/{b} [{sign_of(Fraction(a, b), Fraction(a, c))}] {a}/{c}"
+                                      for a, b, c in _many(1043, lambda r: (r.randint(1, 3), r.choice([4, 6, 8, 10, 12]), r.choice([4, 6, 8, 10, 12])))
+                                      if b != c and a < min(b, c)], 18),
+    ], False),
+    "44-fractions-of-a-group": (8, [
+        ("A fraction of a group", None, "frac3", [f"1/{d} of {d * k} = [{k}]" for d, k in
+                                                  _many(44, lambda r: (r.choice([2, 3, 4, 5, 6, 8]), r.randint(2, 9)))], 24),
+        ("More than one part", None, "frac2", [f"{a}/{d} of {d * k} = [{a * k}]" for a, d, k in
+                                               _many(1044, lambda r: (lambda d: (r.randint(2, d - 1), d, r.randint(2, 8)))(r.choice([3, 4, 5, 6, 8])))],
+         18),
+    ], False),
+    "45-perimeter": (10, [
+        ("Find the perimeter", None, "eq2", [f"{a} {u} by {b} {u}: perimeter = [{2 * (a + b)}] {u}" for a, b, u in
+                                             _many(45, lambda r: (r.randint(2, 15), r.randint(2, 12), r.choice(["cm", "m", "ft", "in"])))],
+         24),
+        ("Find the missing side", None, "eq2", [f"{a} {u} by [{b}] {u}: perimeter = {2 * (a + b)} {u}" for a, b, u in
+                                                _many(1045, lambda r: (r.randint(3, 15), r.randint(2, 12), r.choice(["cm", "m"])))],
+         18),
+    ], False),
+    "46-elapsed-time": (10, [
+        ("How long?", None, "eq2", [f"{_tstr(a)} to {_tstr(tadd(a, m))} = [{m}] minutes" for a, m in
+                                    _many(46, lambda r: ((r.randint(1, 11), r.choice([5, 10, 15, 20, 25, 35, 40, 45, 50])), r.choice([15, 20, 25, 35, 40, 45, 50])))],
+         24),
+        ("What time will it be?", None, "eq2", [f"{m} minutes after {_tstr(a)} = [{_tstr(tadd(a, m))}]" for a, m in
+                                                _many(1046, lambda r: ((r.randint(1, 11), r.choice([0, 10, 15, 20, 30, 40, 45])), r.choice([15, 20, 25, 35, 40, 50])))],
+         24),
+    ], False),
+    "47-four-operations": (6, [
+        ("More stories", "Times or divide? Draw a bar if it helps.", "word",
+         shuf("more47", stories_x("more47a", "times", [(g, k) for g in range(3, 9) for k in range(3, 9)])[:12]
+              + stories_x("more47b", "share", [(g, k) for g in range(3, 9) for k in range(3, 9)])[:12]), 12),
+    ], False),
+    "48-patterns-in-the-times-table": (7, [
+        ("Double it", None, "eq2", [f"{a} {TIMES} {b} = {a * b} so {2 * a} {TIMES} {b} = [{2 * a * b}]"
+                                    for a, b in _many(48, lambda r: (r.randint(2, 5), r.randint(2, 9)))], 24),
+        ("Even or odd?", None, "eo_product", _many(1048, lambda r: (r.randint(2, 9), r.randint(2, 9))), 18),
+    ], False),
+    "49-mass-and-liquid-volume": (7, [
+        ("Add and take away", None, "eq2",
+         [f"{a} {u} {op} {b} {u} = [{a + b if op == '+' else a - b}] {u}" for a, b, op, u in
+          _many(49, lambda r: (r.randint(20, 900), r.randint(10, 500), r.choice(["+", MINUS]), r.choice(["g", "kg", "L", "mL"])))
+          if a > b and a + b < 1000], 30),
+    ], False),
+    "50-scaled-graphs": (7, [
+        ("How many does it show?", None, "eq2", [f"each picture = {p}: {k} pictures = [{p * k}]" for p, k in
+                                                 _many(50, lambda r: (r.choice([2, 5, 10]), r.randint(2, 9)))], 18),
+        ("How many pictures?", None, "eq2", [f"each picture = {p}: [{k}] pictures = {p * k}" for p, k in
+                                             _many(1050, lambda r: (r.choice([2, 5, 10]), r.randint(2, 9)))], 18),
+    ], False),
+    "51-measuring-to-the-quarter-inch": (8, [
+        ("Quarter inches", None, "eq2", [f"{qstr(q)} inches = [{q}] quarter inches" for q in _many(51, lambda r: r.randint(5, 40))
+                                         if q % 4], 24),
+    ], False),
+    "53-thousands": (8, [
+        ("Put it together", None, "eq2", [expanded_eq(n) for n in _many(53, lambda r: r.randint(1001, 9999))
+                                          if n % 10 and n // 10 % 10 and n // 100 % 10], 24),
+        ("What is the digit worth?", None, "eq2", [worth_eq(n, p) for n, p in
+                                                   _many(1053, lambda r: (r.randint(1111, 9999), r.choice([10, 100, 1000])))
+                                                   if n // p % 10], 24),
+    ], False),
+    "54-rounding-big-numbers": (9, [
+        ("Round", None, "eq2", [round_eq(n, p) for n, p in _many(54, lambda r: (r.randint(1050, 9950), r.choice([100, 1000])))],
+         36),
+    ], False),
+    "55-adding-and-subtracting-big-numbers": (8, [
+        ("Add and subtract", None, "eq2",
+         [f"{nf(a)} {op} {nf(b)} = [{nf(a + b if op == '+' else a - b)}]" for a, b, op in
+          _many(55, lambda r: (r.randint(1200, 8900), r.randint(1100, 4900), r.choice(["+", MINUS])))
+          if (a + b < 10000 if op == "+" else a > b)], 36),
+    ], False),
+    "56-multiplying-by-one-digit": (7, [
+        ("Multiply", None, "eq3", [f"{a} {TIMES} {b} = [{nf(a * b)}]" for a, b in
+                                   _many(56, lambda r: (r.randint(13, 98), r.randint(3, 9))) if a % 10], 24),
+        ("Bigger numbers", None, "eq2", [f"{a} {TIMES} {b} = [{nf(a * b)}]" for a, b in
+                                         _many(1056, lambda r: (r.randint(112, 899), r.randint(3, 9)))], 18),
+    ], False),
+    "57-division-with-remainders": (6, [
+        ("What is left?", None, "eq3", [rem_eq(n, d) for n, d in _many(57, lambda r: (r.randint(11, 89), r.randint(3, 9)))
+                                        if n % d and n // d < 10], 36),
+    ], False),
+    "58-multiplying-two-digit-numbers": (8, [
+        ("Multiply", None, "eq3", [f"{a} {TIMES} {b} = [{nf(a * b)}]" for a, b in
+                                   _many(58, lambda r: (r.randint(12, 89), r.randint(12, 49))) if a % 10 and b % 10], 36),
+    ], False),
+    "59-dividing-bigger-numbers": (9, [
+        ("Divide", None, "eq2", [div_eq(d * q, d) for d, q in _many(59, lambda r: (r.randint(2, 9), r.randint(21, 999)))], 30),
+        ("What is left?", None, "eq3", [rem_eq(n, d) for n, d in _many(1059, lambda r: (r.randint(100, 899), r.randint(3, 9)))
+                                        if n % d], 15),
+    ], False),
+    "60-factors-and-multiples": (8, [
+        ("Is it a factor?", "Circle yes or no.", "yes_text",
+         [(f"Is {f} a factor of {n}?", n % f == 0) for f, n in
+          _many(60, lambda r: (lambda f: (f, f * r.randint(3, 11) if r.random() < .5 else r.randint(12, 99)))(r.randint(2, 9)))], 16),
+        ("Prime or composite?", None, "prime", _many(1060, lambda r: r.randint(11, 99)), 14),
+    ], False),
+    "61-equivalent-fractions": (7, [
+        ("Equal fractions", None, "frac3", [f"{a}/{b} = [{a * k}]/{b * k}" for a, b, k in
+                                            _many(61, lambda r: (lambda a, b: (a, b, r.choice([2, 3, 4, 5])))(*_frac_pairs(r, (2, 3, 4, 5, 6))))],
+         24),
+        ("Make it simpler", None, "frac3", [f"{a * k}/{b * k} = [{a}]/{b}" for a, b, k in
+                                            _many(1061, lambda r: (lambda a, b: (a, b, r.choice([2, 3, 4])))(*_frac_pairs(r, (3, 4, 5, 6))))
+                                            if math.gcd(a, b) == 1], 18),
+    ], False),
+    "62-comparing-unlike-fractions": (8, [
+        ("Compare", "Write <, > or =.", "frac3",
+         [f"{a}/{b} [{sign_of(Fraction(a, b), Fraction(c, d))}] {c}/{d}" for (a, b), (c, d) in
+          _many(62, lambda r: (_frac_pairs(r, (3, 4, 5, 6, 8, 10, 12)), _frac_pairs(r, (3, 4, 5, 6, 8, 10, 12)))) if b != d],
+         36),
+    ], False),
+    "63-adding-and-subtracting-fractions": (7, [
+        ("Add", None, "frac3", [fsum(a, c, b) for a, c, b in _many(63, lambda r: (lambda b: (r.randint(1, b - 2), r.randint(1, b - 2), b))(r.choice([5, 6, 8, 10, 12])))
+                                if a + c <= b], 24),
+        ("Take away", None, "frac3", [fdiff(a, c, b) for a, c, b in _many(1063, lambda r: (lambda b: (r.randint(2, b - 1), r.randint(1, b - 2), b))(r.choice([5, 6, 8, 10, 12])))
+                                      if a > c], 18),
+    ], False),
+    "64-mixed-numbers": (8, [
+        ("Fraction to mixed number", None, "mixed3",
+         [mx(f"{t}/{n} = [{t // n}] [{t % n}]/{n}", mixed(t, n)) for t, n in
+          _many(64, lambda r: (lambda n: (r.randint(n + 1, 4 * n), n))(r.choice([3, 4, 5, 6, 8, 10]))) if t % n], 18),
+        ("Mixed number to fraction", None, "mixed3",
+         [mx(f"{w} {a}/{n} = [{w * n + a}]/{n}", f"{w * n + a}/{n}") for w, a, n in
+          _many(1064, lambda r: (lambda n: (r.randint(1, 5), r.randint(1, n - 1), n))(r.choice([3, 4, 5, 6, 8, 10])))], 18),
+    ], False),
+    "65-fractions-times-whole-numbers": (6, [
+        ("Times a fraction", None, "frac3", [f"{k} {TIMES} {a}/{b} = [{k * a}]/{b}" for k, (a, b) in
+                                             _many(65, lambda r: (r.randint(2, 9), _frac_pairs(r)))], 36),
+    ], False),
+    "66-tenths-and-hundredths": (8, [
+        ("Fraction to decimal", None, "frac3", [f"{k}/100 = [{dec(k)}]" for k in _many(66, lambda r: r.randint(1, 99)) if k % 10],
+         18),
+        ("Decimal to fraction", None, "frac3", [f"{dec(k)} = [{k}]/100" for k in _many(1066, lambda r: r.randint(1, 99))
+                                                if k % 10], 18),
+    ], False),
+    "67-comparing-decimals": (7, [
+        ("Compare", "Write <, > or =.", "eq3", [f"{dstr(a)} [{dsign(a, b)}] {dstr(b)}" for a, b in
+                                                _many(67, lambda r: (r.randint(1, 99), r.randint(1, 99))) if a != b], 36),
+    ], False),
+    "68-measurement-conversions": (7, [
+        ("Convert", None, "eq3", [conv_eq(n, big, small) for n, (big, small) in
+                                  _many(68, lambda r: (r.randint(2, 12), r.choice(list(CONV))))], 36),
+    ], False),
+    "69-area-and-perimeter-formulas": (7, [
+        ("Area", None, "eq2", [area_f(l, w, u) for l, w, u in _many(69, lambda r: (r.randint(6, 25), r.randint(2, 12), r.choice(["cm", "m", "ft", "in"])))],
+         18),
+        ("Perimeter", None, "eq2", [perim_f(l, w, u) for l, w, u in _many(1069, lambda r: (r.randint(6, 30), r.randint(2, 15), r.choice(["cm", "m", "ft", "in"])))],
+         18),
+    ], False),
+    "70-line-plots-with-fractions": (6, [
+        ("Add the eighths", None, "frac3", [f"{a}/8 + {b}/8 = [{a + b}]/8" for a, b in
+                                            _many(70, lambda r: (r.randint(1, 7), r.randint(1, 7)))], 18),
+        ("Times eighths", None, "frac3", [f"{k} {TIMES} {a}/8 = [{k * a}]/8" for k, a in
+                                          _many(1070, lambda r: (r.randint(2, 6), r.randint(1, 7)))], 18),
+    ], False),
+    "71-angles": (7, [
+        ("Make a right angle", None, "eq2", [f"{a} + [{90 - a}] = 90 degrees" for a in _many(71, lambda r: r.randint(5, 85))],
+         18),
+        ("Make a straight angle", None, "eq2", [f"{a} + [{180 - a}] = 180 degrees" for a in _many(1071, lambda r: r.randint(15, 165))],
+         18),
+    ], False),
+    "72-lines-and-shapes": (6, [
+        ("What kind of triangle?", None, "triangle_kind",
+         [(a, b) for a, b in _many(72, lambda r: (r.randint(3, 15) * 5, r.randint(3, 15) * 5)) if a + b < 170], 12),
+    ], False),
+    "73-powers-of-ten": (6, [
+        ("Times 10, 100 and 1,000", None, "eq3", [times_p10(dn(D(n) / 10 ** p), k) for n, p, k in
+                                                   _many(73, lambda r: (r.randint(2, 999), r.randint(0, 2), r.randint(1, 3)))], 24),
+        ("Divide by 10, 100 and 1,000", None, "eq3", [div_p10(str(n), k) for n, k in
+                                                       _many(1073, lambda r: (r.randint(2, 9999), r.randint(1, 3)))], 24),
+    ], False),
+    "74-thousandths": (9, [
+        ("What is the digit worth?", None, "eq2", [worth_dec(f"{w}.{f:03d}", i) for w, f, i in
+                                                   _many(74, lambda r: (r.randint(0, 9), r.randint(101, 999), r.randint(1, 3)))
+                                                   if f % 10 and str(f)[i - 1] != "0"], 24),
+        ("Put it together", None, "eq2", [" + ".join(dec_parts(x)) + f" = [{x}]" for x in
+                                          (f"{w}.{f:03d}" for w, f in _many(1074, lambda r: (r.randint(1, 15), r.randint(11, 999))))
+                                          if not x.endswith("0")], 24),
+    ], False),
+    "75-comparing-and-rounding-decimals": (9, [
+        ("Compare", "Write <, > or =.", "eq3", [dcompare(a, b) for a, b in
+                                                _many(75, lambda r: (f"{r.randint(0, 9)}.{r.randint(1, 99)}", f"{r.randint(0, 9)}.{r.randint(101, 999)}"))
+                                                if not a.endswith("0") and not b.endswith("0")], 24),
+        ("Round to the nearest tenth", None, "eq2", [drt(x, 1) for x in (f"{r}.{f:02d}" for r, f in _many(1075, lambda r: (r.randint(0, 20), r.randint(11, 99))))
+                                                     if not x.endswith("0") and not x.endswith("5") and int(x.split(".")[1][0]) < 9], 24),
+    ], False),
+    "76-adding-and-subtracting-decimals": (7, [
+        ("Add", None, "eq3", [dec_add(a, b) for a, b in _many(76, lambda r: (f"{r.randint(1, 20)}.{r.randint(1, 9)}", f"{r.randint(0, 9)}.{r.randint(11, 99)}"))
+                              if not b.endswith("0")], 24),
+        ("Subtract", None, "eq3", [dec_sub(a, b) for a, b in _many(1076, lambda r: (f"{r.randint(5, 20)}.{r.randint(1, 9)}", f"{r.randint(0, 4)}.{r.randint(11, 99)}"))
+                                   if not b.endswith("0")], 24),
+    ], False),
+    "77-multiplying-bigger-numbers": (7, [
+        ("Multiply", None, "eq2", [mult32(a, b) for a, b in _many(77, lambda r: (r.randint(112, 899), r.randint(12, 59)))
+                                   if a % 10 and b % 10], 36),
+    ], False),
+    "78-dividing-by-two-digit-numbers": (8, [
+        ("Divide", None, "eq3", [div_eq(d * q, d) for d, q in _many(78, lambda r: (r.randint(12, 49), r.randint(12, 69)))],
+         36),
+    ], False),
+    "79-multiplying-and-dividing-decimals": (9, [
+        ("Multiply", None, "eq3", [dtimes(k, f"{w}.{f}") for k, w, f in _many(79, lambda r: (r.randint(2, 9), r.randint(0, 6), r.randint(1, 9)))],
+         18),
+        ("Divide", None, "eq3", [ddiv(dn2(D(k) * D(q) / 10), k) for k, q in _many(1079, lambda r: (r.randint(2, 9), r.randint(2, 30)))],
+         18),
+        ("Tenths times tenths", None, "eq3", [f"0.{a} {TIMES} 0.{b} = [{dn2(D(a * b) / 100)}]" for a in range(1, 10)
+                                              for b in range(1, 10)], 12),
+    ], False),
+    "80-unlike-fractions": (6, [
+        ("Add", None, "frac2", [unlike(a, b, p, q, "+", False) for (a, b), (p, q) in
+                                _many(80, lambda r: (_frac_pairs(r, (2, 3, 4, 5, 6, 8)), _frac_pairs(r, (2, 3, 4, 5, 6, 8))))
+                                if b != q and b % q and q % b], 18),
+        ("Subtract", None, "frac2", [unlike(a, b, p, q, "-", False) for (a, b), (p, q) in
+                                     _many(1080, lambda r: (_frac_pairs(r, (2, 3, 4, 5, 6, 8)), _frac_pairs(r, (2, 3, 4, 5, 6, 8))))
+                                     if b != q and b % q and q % b and Fraction(a, b) > Fraction(p, q)], 18),
+    ], False),
+    "81-multiplying-fractions": (7, [
+        ("Multiply", None, "frac2", [ftimes2(a, b, p, q) for (a, b), (p, q) in _many(81, lambda r: (_frac_pairs(r), _frac_pairs(r)))],
+         24),
+        ("A fraction of a number", None, "frac3", [fwhole(a, b, b * k) for (a, b), k in
+                                                   _many(1081, lambda r: (_frac_pairs(r, (2, 3, 4, 5, 6, 8)), r.randint(2, 6)))], 18),
+    ], False),
+    "82-volume": (8, [
+        ("Find the volume", None, "eq1", [vol_eq(L, W, H, u) for L, W, H, u in
+                                          _many(82, lambda r: (r.randint(2, 12), r.randint(2, 8), r.randint(2, 6), r.choice(["cm", "m", "in", "ft"])))],
+         18),
+        ("Find the missing edge", None, "eq2", [f"{L} {TIMES} {W} {TIMES} [{H}] = {L * W * H}" for L, W, H in
+                                                _many(1082, lambda r: (r.randint(2, 9), r.randint(2, 9), r.randint(2, 9)))], 18),
+    ], False),
+    "83-fractions-as-division": (6, [
+        ("Write it as a fraction", None, "frac3", [as_frac(k, n) for k, n in _many(83, lambda r: (r.randint(1, 11), r.randint(2, 12)))
+                                                   if k < n], 24),
+        ("More than one each", None, "frac2", [as_mixed(k, n) for k, n in _many(1083, lambda r: (r.randint(5, 40), r.randint(2, 9)))
+                                               if k > n and k % n], 18),
+    ], False),
+    "84-dividing-with-unit-fractions": (6, [
+        ("Share a piece", None, "frac3", [unit_by_whole(b, k) for b, k in _many(84, lambda r: (r.randint(2, 10), r.randint(2, 9)))],
+         24),
+        ("How many pieces fit?", None, "frac3", [whole_by_unit(n, b) for n, b in _many(1084, lambda r: (r.randint(2, 12), r.randint(2, 10)))],
+         24),
+    ], False),
+    "85-order-of-operations": (8, [
+        ("Parentheses first", None, "eq3", [oo(f"({a} + {b}) {TIMES} {c}") for a, b, c in
+                                            _many(85, lambda r: (r.randint(2, 15), r.randint(2, 15), r.randint(2, 9)))], 18),
+        ("Times first", None, "eq3", [oo(f"{a} + {b} {TIMES} {c}") for a, b, c in
+                                      _many(1085, lambda r: (r.randint(2, 40), r.randint(2, 9), r.randint(2, 9)))], 18),
+        ("Divide first", None, "eq3", [oo(f"{a} {MINUS} {b * c} {DIV} {c}") for a, b, c in
+                                       _many(2085, lambda r: (r.randint(20, 60), r.randint(2, 9), r.randint(2, 9)))
+                                       if a > b], 12),
+    ], False),
+    "86-number-patterns": (6, [
+        ("Keep going", None, "eq1", [seq_eq(s, d) for s, d in _many(86, lambda r: (r.randint(0, 20), r.randint(3, 15)))], 18),
+        ("Find the rule", None, "eq2", [rule_eq(seq_terms(s, d, 4), ("add", d)) for s, d in
+                                        _many(1086, lambda r: (r.randint(1, 30), r.randint(3, 25)))], 18),
+    ], False),
+    "87-converting-units": (6, [
+        ("Bigger to smaller", None, "eq3", [down_eq(x, big, small) for x, (big, small) in
+                                            _many(87, lambda r: (f"{r.randint(1, 12)}.{r.randint(1, 9)}", r.choice(list(MCONV))))], 24),
+        ("Smaller to bigger", None, "eq3", [up_eq(str(x), small, big) for x, (big, small) in
+                                            _many(1087, lambda r: (r.randint(11, 99) * 10, r.choice(list(MCONV))))], 24),
+    ], False),
+    "88-line-plots-with-data": (5, [
+        ("Add the data", None, "frac2", [eighths_sum(v) for v in
+                                         _many(88, lambda r: tuple(r.randint(1, 7) for _ in range(4)))], 18),
+        ("Fair shares", None, "frac2", [fair_eq(n * k, n, u) for n, k, u in
+                                        _many(1088, lambda r: (r.randint(2, 8), r.randint(1, 7), r.choice(["L", "lb", "cups", "yd"])))
+                                        if n * k > 8], 18),
+    ], False),
+    "89-the-coordinate-grid": (6, [
+        ("How far apart?", None, "eq2", [f"{pt(p)} to {pt(q)}: [{abs(p[0] - q[0]) + abs(p[1] - q[1])}] apart" for p, q in
+                                         _many(89, lambda r: (lambda a, b, c: ((a, b), (a, c)) if r.random() < .5 else ((b, a), (c, a)))(r.randint(0, 10), r.randint(0, 10), r.randint(0, 10)))
+                                         if p != q], 24),
+    ], False),
+    "90-classifying-shapes": (5, [
+        ("Triangles by their sides", "Circle one.", "tri_sides",
+         [(a, b) for a, b in _many(90, lambda r: (lambda a: (a, a) if r.random() < .4 else (a, r.randint(5, 16) * 5))(r.randint(5, 16) * 5))
+          if a + b < 170], 16),
+    ], False),
+})
 
 
 # ====================================================================== curriculum.json (for the website)
@@ -20613,22 +21155,45 @@ PACKETS = [
 OPTIONS = []  # e.g. packet 12 was built as "rows" and "columns"; the founder chose rows
 
 
-def build_packet(packet, ink_folder, key, asked, suffix="", save=True):
+def build_packet(packet, ink_folder, key, asked, suffix="", save=True, extras=True):
     folder, slug, name, learn, practice, _ = packet
     out = ROOT / folder / ink_folder
     path = out / f"{slug}-{'answer-key' if key else 'packet'}{suffix}.pdf"
     bk = Book(path, key, subtitle=name, asked=asked)
     bk.c.setTitle(f"{name}: " + ("Answer Key" if key else "Packet"))
-    bk.extra = EXTRA.get(folder)
+    bk.extra = EXTRA.get(folder) if extras else None
     learn(bk)
     practice(bk)
+    if bk.extra:  # no part came after the extra practice's place: put it at the end
+        bk.extra_pages(0, bk.max_part + 1, tail=True)
     if not save:
         return bk  # still open: the Check-In is added at the end, then saved
     bk.save()
     return path
 
 
+def find_exclude():
+    """A dry run without the extra practice: every practice question and every question the check-ins and
+    assessments pick. The extra practice skips all of these, so adding it changes no check-in or assessment."""
+    import shutil
+    import tempfile
+    global ROOT, T, EXCLUDE
+    real, ROOT, T = ROOT, Path(tempfile.mkdtemp()), theme(True)
+    asked = {}
+    books = [build_packet(p, "color", True, asked, save=False, extras=False) for p in PACKETS]
+    picker = Picker(asked)
+    for p, bk in zip(PACKETS, books):
+        build_check_in(p, "color", True, picker, None, into=bk)
+    for grade in GRADES:
+        for when in ("pre", "post"):
+            build_assessment(grade, when, "color", True, picker, None)
+    EXCLUDE = set(asked) | picker.used
+    shutil.rmtree(ROOT, ignore_errors=True)
+    ROOT = real
+
+
 if __name__ == "__main__":
+    find_exclude()
     for color, ink_folder in [(True, "color"), (False, "black-and-white")]:
         T = theme(color)
         for key in (False, True):
