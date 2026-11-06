@@ -128,6 +128,13 @@ class Book:
         self.footer = ""
         self.asked = {} if asked is None else asked  # shared across packets
         self.rec = None  # a list while a check-in or assessment card is drawn: its answers (curriculum.json)
+        # Extra practice pages (EXTRA): drawn just before part `before`; later numbers shift past them.
+        self.extra = None  # (before_part, sections, repeat_ok)
+        self.max_num = 0
+        self.num_off = 0
+        self.part_off = 0
+        self.repeat_ok = False  # True: questions may repeat (Kindergarten and grade 1 extra practice)
+        self.heading = subtitle
         self.c.setTitle(f"{subtitle}: " + ("Answer Key" if key else "Student Workbook"))
         self.c.setAuthor("WeMath")
 
@@ -142,6 +149,8 @@ class Book:
         self.page += 1
         if footer:
             self.footer = footer
+        if not big:
+            self.heading = heading
 
         # top line: small mark + WeMath, Name/Date (or Answer Key) on the right
         top = H - 40
@@ -210,6 +219,8 @@ class Book:
 
     def ask(self, question):
         """Register a question; the build fails if the same question appears twice."""
+        if self.repeat_ok:
+            return
         key = re.sub(r"\[[^\]]*\]", "[]", question)
         key = re.sub(r"\s+", " ", key).strip()
         where = f"page {self.page}"
@@ -221,6 +232,9 @@ class Book:
 
     def part(self, y, n, text, sub=None):
         """Section label: 'Part 2   Fill in the buddy.   sub'"""
+        if self.extra and n >= self.extra[0]:
+            y = self.extra_pages(y, n)
+        n += self.part_off
         c = self.c
         label = f"Part {n}"
         c.setFillColor(T.ink)
@@ -234,6 +248,26 @@ class Book:
             c.setFont("Av", 10)
             c.drawString(x + sw(text, "AvM", 11.5) + 8, y, sub)
         return y - 14
+
+    def extra_pages(self, y, n):
+        """Draw the packet's extra practice (EXTRA) as parts n, n+1, … on new pages, then shift the part and
+        problem numbers of everything after it. Returns the y on a fresh page for part n itself."""
+        before, sections, repeat_ok = self.extra
+        self.extra = None
+        title = self.heading
+        num = self.max_num + 1
+        first = num
+        if y < H - 113:  # reuse a continuation page nothing has been drawn on yet
+            y = self.new_page(title, first=False)
+        self.repeat_ok = repeat_ok
+        for i, (name, sub, kind, items) in enumerate(sections):
+            k = KINDS[kind]
+            y, num = flow(self, title, y, n + i, name, sub, items, num, k.cols, k.h, k.gap,
+                          lambda x, cy, w, it, k=k: (self.ask(k.key(it)), k.draw(self, x, cy, w, it)))
+        self.repeat_ok = False
+        self.part_off = len(sections)
+        self.num_off = num - first
+        return self.new_page(title, first=False)
 
     def note(self, y, text):
         self.c.setFillColor(T.text2)
@@ -253,6 +287,13 @@ class Book:
         c.setStrokeColor(T.line)
         c.setLineWidth(0.8)
         c.roundRect(x, y, w, h, 6, stroke=1, fill=0)
+        if isinstance(num, int):
+            num += self.num_off
+            self.max_num = max(self.max_num, num)
+        elif isinstance(num, str) and re.fullmatch(r"\d+–\d+", num):
+            a, b = (int(v) + self.num_off for v in num.split("–"))
+            self.max_num = max(self.max_num, b)
+            num = f"{a}–{b}"
         if num is not None:
             c.setFillColor(T.text2)
             c.setFont("AvD", 10)
@@ -6450,6 +6491,7 @@ def build_check_in(packet, ink_folder, key, picker, manifest=None, into=None):
             continue
         first = target.page
         asked, target.asked = target.asked, {}  # the packet's no-repeat registry doesn't apply to its Check-In
+        target.extra, target.num_off, target.part_off = None, 0, 0
         target.subtitle = f"{name} Check-In"  # the header names the Check-In, as in its own PDF
         y = target.new_page(title, "Show what you know. No help this time.", footer=f"WeMath  ·  {name} Check-In")
         score_tag(target, total)
@@ -20070,6 +20112,112 @@ CHECKINS["90-classifying-shapes"] = [
 _g5[-1:-1] = [S("Classifying shapes", "Circle yes or no.", "yes_text1", SHAPE_FACTS2, 2, 90)]
 
 
+# ====================================================================== Extra practice (founder: more pages)
+# Kindergarten and grade 1: big print, few problems per page, every basic fact, repeats allowed (pages apart).
+# EXTRA[folder] = (before_part, sections, repeat_ok): the pages are drawn just before that part.
+
+
+def c_kbig(bk, x, cy, w, text):
+    """One big-print problem, centred in its card."""
+    size = 28
+    while bk.eq_width(text, size) > w - GUT - 16 and size > 14:
+        size -= 1
+    ew = bk.eq_width(text, size)
+    bk.eq(x + GUT + (w - GUT - 10 - ew) / 2, cy + 46 - size * 0.35, text, size=size)
+
+
+def c_kframe(bk, x, cy, w, a):
+    """A ten-frame with a dots; the key fills the buddy. a + [b] = 10 beside it."""
+    bk.ten_frame(x + GUT + 10, cy + 18, 25, dots(a) + (dots(10 - a, "b") if bk.key else []))
+    text = f"{a} + [{10 - a}] = 10"
+    bk.eq(x + GUT + 180, cy + 34, text, size=28)
+
+
+def c_kteen(bk, x, cy, w, n):
+    """A full ten-frame and n more: 10 + n = [1n]."""
+    bk.ten_frame(x + GUT + 6, cy + 20, 20, dots(10))
+    bk.ten_frame(x + GUT + 118, cy + 20, 20, dots(n, "b"))
+    bk.eq(x + GUT + 240, cy + 32, f"10 + {n} = [{10 + n}]", size=28)
+
+
+KINDS["kbig"] = Kind(92, 2, lambda t: t, c_kbig, 12)
+KINDS["kframe"] = Kind(84, 1, lambda a: f"frame buddy {a}", c_kframe, 12)
+KINDS["kteen"] = Kind(84, 1, lambda n: f"frame teen {n}", c_kteen, 12)
+
+
+def mix(seed, items):
+    return spread(shuf(seed, items))
+
+
+_ADD9 = [(a, b) for a in range(1, 9) for b in range(1, 9) if a + b <= 9]
+_OVER = [(a, b) for a in range(2, 10) for b in range(2, 10) if a + b > 10]
+_BACK = [(c, b) for c in range(11, 19) for b in range(2, 10) if 1 <= c - b <= 9]
+_r = random.Random("extra-k1")
+_TWO_ONE = []
+while len(_TWO_ONE) < 36:
+    t, o, b = _r.randint(1, 5), _r.randint(2, 9), _r.randint(2, 9)
+    if o + b > 10 and (t * 10 + o, b) not in _TWO_ONE:
+        _TWO_ONE.append((t * 10 + o, b))
+_NUMS = _r.sample([n for n in range(21, 99) if n % 10], 36)
+_TENS = _r.sample([n for n in range(12, 90) if n % 10], 36)
+_ADD22 = []
+while len(_ADD22) < 36:
+    a, b = _r.randint(11, 69), _r.randint(11, 29)
+    if a % 10 and b % 10 and a + b < 100 and (a, b) not in _ADD22 and ((a % 10 + b % 10 >= 10) == (len(_ADD22) % 2 == 1)):
+        _ADD22.append((a, b))
+
+EXTRA = {
+    "0-adding-and-taking-away": (15, [
+        ("More adding", "Every way to add up to 9.", "kbig", mix("x0a", [f"{a} + {b} = [{a + b}]" for a, b in _ADD9])),
+        ("More taking away", "Every way to take away within 9.", "kbig",
+         mix("x0b", [f"{a + b} {MINUS} {a} = [{b}]" for a, b in _ADD9])),
+    ], True),
+    "1-ten-buddies": (5, [
+        ("Fill the ten-frame", "Draw the buddy dots. Then write the buddy.", "kframe", shuf("x1a", range(0, 11))),
+        ("Every ten buddy", "Fill in the buddy.", "kbig", mix("x1b", [f"{a} + [{10 - a}] = 10" for a in range(11)])),
+        ("Every ten buddy again", "Now the first number is missing.", "kbig",
+         mix("x1c", [f"[{a}] + {10 - a} = 10" for a in range(11)])),
+    ], True),
+    "2-ten-and-some-more": (4, [
+        ("Ten and some more", "A full ten-frame and some more.", "kteen", shuf("x2a", range(1, 10))),
+        ("Every teen number", "No pictures this time.", "kbig", mix("x2b", [f"10 + {n} = [{10 + n}]" for n in range(10)])),
+        ("Which number goes with 10?", None, "kbig", mix("x2c", [f"10 + [{n}] = {10 + n}" for n in range(1, 10)])),
+    ], True),
+    "3-up-to-and-over-ten": (7, [
+        ("Bigger number first", "Every fact that goes over 10.", "kbig",
+         mix("x3a", [f"{a} + {b} = [{a + b}]" for a, b in _OVER if a >= b])),
+        ("Smaller number first", "Start with the bigger one in your head.", "kbig",
+         mix("x3b", [f"{a} + {b} = [{a + b}]" for a, b in _OVER if a < b])),
+    ], True),
+    "4-over-the-next-ten": (5, [
+        ("More over the next ten", "Fill up to the next ten first.", "kbig",
+         mix("x4a", [f"{a} + {b} = [{a + b}]" for a, b in _TWO_ONE])),
+    ], True),
+    "5-back-through-ten": (9, [
+        ("Every take-away through ten", "Jump to 10, then the rest.", "kbig",
+         mix("x5a", [f"{c} {MINUS} {b} = [{c - b}]" for c, b in _BACK])),
+    ], True),
+    "6-doubles-and-near-doubles": (9, [
+        ("Every double", None, "kbig", mix("x6a", [f"{a} + {a} = [{2 * a}]" for a in range(1, 11)])),
+        ("Every near double", "Find the double, then one more.", "kbig",
+         mix("x6b", [f"{a} + {a + 1} = [{2 * a + 1}]" for a in range(1, 10)]
+             + [f"{a + 1} + {a} = [{2 * a + 1}]" for a in range(1, 10)])),
+    ], True),
+    "7-tens-and-ones": (8, [
+        ("Tens plus ones", None, "kbig", mix("x7a", [f"{n // 10 * 10} + {n % 10} = [{n}]" for n in _NUMS[:18]])),
+        ("Tens and ones", None, "kbig", mix("x7b", [f"[{n // 10}] tens [{n % 10}] ones = {n}" for n in _NUMS[18:]])),
+    ], True),
+    "8-ten-more-ten-less": (9, [
+        ("10 more", None, "kbig", mix("x8a", [f"{n} + 10 = [{n + 10}]" for n in _TENS[:18]])),
+        ("10 less", None, "kbig", mix("x8b", [f"{n} {MINUS} 10 = [{n - 10}]" for n in _TENS[18:]])),
+    ], True),
+    "9-adding-two-digit-numbers": (9, [
+        ("More adding", "Add the tens, then the ones.", "kbig",
+         mix("x9a", [f"{a} + {b} = [{a + b}]" for a, b in _ADD22])),
+    ], True),
+}
+
+
 # ====================================================================== curriculum.json (for the website)
 # Every check-in and assessment question, numbered as printed, with the packet it checks and its answer,
 # so tutors can mark them question by question online and the site can recommend packets. Written by every
@@ -20471,6 +20619,7 @@ def build_packet(packet, ink_folder, key, asked, suffix="", save=True):
     path = out / f"{slug}-{'answer-key' if key else 'packet'}{suffix}.pdf"
     bk = Book(path, key, subtitle=name, asked=asked)
     bk.c.setTitle(f"{name}: " + ("Answer Key" if key else "Packet"))
+    bk.extra = EXTRA.get(folder)
     learn(bk)
     practice(bk)
     if not save:
