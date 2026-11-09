@@ -20173,6 +20173,615 @@ CHECKINS["90-classifying-shapes"] = [
 _g5[-1:-1] = [S("Classifying shapes", "Circle yes or no.", "yes_text1", SHAPE_FACTS2, 2, 90)]
 
 
+# ====================================================================== 91. Ratios (grade 6 starts)
+
+
+def _part_fn(bk, title, state):
+    """The usual `part` helper for flow-built practice pages. state = [y, num]."""
+    def part(n, name, sub, kind, items):
+        k = KINDS[kind]
+        state[0], state[1] = flow(bk, title, state[0], n, name, sub, items, state[1], k.cols, k.h, k.gap,
+                                  lambda x, cy, w, it: (bk.ask(k.key(it)), k.draw(bk, x, cy, w, it)))
+    return part
+
+
+def _words(bk, title, state, n, sub, stories):
+    if state[0] - 14 - 110 < 46:
+        state[0] = bk.new_page(title, first=False)
+    state[0] = bk.part(state[0], n, "Word problems", sub)
+    for i, story in enumerate(stories):
+        state[0] = word_card(bk, state[0], state[1] + i, *story)
+
+
+def shapes_row(bk, x, y, a, b, s=11, gap=5):
+    """a circles (first colour), then b squares (second colour). y = centre line."""
+    c = bk.c
+    for i in range(a):
+        bk.dot(x + i * (s + gap) + s / 2, y, s / 2, "a")
+    x0 = x + a * (s + gap) + 6
+    for j in range(b):
+        sx = x0 + j * (s + gap)
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(1)
+        if T.dot_b:
+            c.setFillColor(T.dot_b)
+            c.rect(sx, y - s / 2, s, s, stroke=0, fill=1)
+        else:
+            c.rect(sx, y - s / 2, s, s, stroke=1, fill=0)
+    return x0 + b * (s + gap)
+
+
+def c_ratio_pic(bk, x, cy, w, item):
+    a, b = item
+    shapes_row(bk, x + GUT, cy + 52, a, b)
+    bk.fit_eq(x + GUT, cy + 14, w - GUT - 10, f"circles to squares = [{a}] : [{b}]", size=15)
+
+
+def ratio_table(bk, x, top, labels, cols, given, cw=44, rh=24, lw=70):
+    """A ratio table: one row per label, a column per pair. Cells not in `given` (column indexes) are boxes."""
+    c = bk.c
+    for r, (lab, vals) in enumerate(zip(labels, cols)):
+        yy = top - (r + 1) * rh
+        c.setFillColor(T.ink)
+        c.setFont("AvM", 11)
+        c.drawString(x, yy + 8, lab)
+        for i, v in enumerate(vals):
+            cx = x + lw + i * cw
+            c.setStrokeColor(T.line)
+            c.setLineWidth(0.8)
+            c.rect(cx, yy, cw, rh, stroke=1, fill=0)
+            if i in given:
+                c.setFillColor(T.ink)
+                c.setFont("Rnd", 13)
+                c.drawCentredString(cx + cw / 2, yy + 7, nf(v))
+            else:
+                bk.box(cx + 4, yy + 3, cw - 8, rh - 6, nf(v), size=12)
+
+
+def c_ratio_tab(bk, x, cy, w, item):
+    """item = (label_a, label_b, a, b, multipliers): the first column is given, the rest are boxes."""
+    la, lb, a, b, ks = item
+    ratio_table(bk, x + GUT, cy + 64, [la, lb], [[a * k for k in ks], [b * k for k in ks]], given={0})
+
+
+def eq_ratio(a, b, k, blank):
+    """2 : 3 = [8] : 12 (blank = 0 or 1: which of the second pair is missing)."""
+    p, q = a * k, b * k
+    return f"{a} : {b} = [{p}] : {q}" if blank == 0 else f"{a} : {b} = {p} : [{q}]"
+
+
+def learn_ratios(bk):
+    y = bk.new_page("Ratios", "A ratio compares two amounts: for every 3 of these, 2 of those.", name_line=False,
+                    big=True, footer="WeMath  ·  Ratios")
+    c = bk.c
+    label(bk, M, y - 6, "3 circles for every 2 squares")
+    end = shapes_row(bk, M + 14, y - 34, 3, 2, s=16, gap=7)
+    shapes_row(bk, end + 22, y - 34, 3, 2, s=16, gap=7)
+    color_eq(bk, M + 14, y - 72, [("3", "a"), (":", "op"), ("2", "b")], 22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 120, y - 70, "Say “3 to 2”. Two groups is 6 : 4, the same ratio.")
+    y -= 100
+
+    label(bk, M, y - 6, "A ratio table: multiply both rows by the same number")
+    ratio_table(bk, M + 14, y - 16, ["cups of flour", "eggs"], [[2, 4, 6, 8], [3, 6, 9, 12]], given={0, 1, 2, 3},
+                cw=50, rh=28, lw=100)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 330, y - 34, "× 2, × 3, × 4:")
+    c.drawString(M + 330, y - 50, "both numbers change together.")
+    y -= 96
+
+    label(bk, M, y - 6, "Part to part, part to whole")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 30, "A class has 3 boys for every 5 girls. Boys to girls is 3 : 5.")
+    c.drawString(M + 14, y - 48, "Out of every 8 kids, 3 are boys. Boys to all kids is 3 : 8.")
+    y -= 70
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("ratios your turn: 4 : 5 = 12 : ?")
+    bk.eq(M + 170, bottom + 26, "4 : 5 = 12 : [15]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: ratio language, equal ratios and ratio tables (6.RP.1, 6.RP.3a). Say “For every "
+                     "3 of these there are 2 of those.” A ratio table multiplies both rows by the same number.")
+
+
+def practice_ratios(bk):
+    title = "Ratios: Practice"
+    st = [bk.new_page(title, "Both numbers change together."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Write the ratio", "Count the circles, then the squares.", "ratio_pic",
+         [(3, 2), (4, 1), (2, 5), (5, 3), (1, 4), (6, 2), (3, 4), (2, 3), (5, 2)])
+    part(2, "Ratio tables", "Multiply both rows by the same number.", "ratio_tab",
+         [("cups", "people", 2, 3, (1, 2, 3, 4, 5)), ("laps", "minutes", 3, 4, (1, 2, 4, 6, 10)),
+          ("red", "blue", 5, 2, (1, 3, 4, 7, 9)), ("pens", "dollars", 4, 3, (1, 2, 5, 8, 10)),
+          ("cats", "dogs", 1, 6, (1, 3, 5, 6, 12)), ("boys", "girls", 7, 5, (1, 2, 3, 6, 10))])
+    part(3, "Equal ratios", "No help this time.", "eq3",
+         [eq_ratio(a, b, k, z) for a, b, k, z in
+          ((2, 3, 4, 0), (5, 4, 3, 1), (1, 6, 5, 0), (3, 7, 2, 1), (4, 9, 3, 0), (6, 5, 4, 1), (2, 9, 6, 0),
+           (7, 3, 5, 1), (8, 5, 2, 0), (3, 10, 4, 1), (9, 4, 3, 0), (5, 8, 6, 1), (4, 7, 5, 0), (1, 9, 8, 1),
+           (6, 7, 3, 0), (10, 3, 2, 1), (3, 8, 7, 0), (2, 11, 3, 1), (7, 4, 6, 0), (5, 9, 4, 1), (8, 3, 3, 0),
+           (11, 4, 2, 1), (3, 5, 9, 0), (12, 5, 2, 1))])
+    part(4, "Simplest form", "Divide both numbers by the same number.", "eq3",
+         [f"{a * k} : {b * k} = [{a}] : [{b}]" for a, b, k in
+          ((2, 3, 4), (3, 5, 2), (1, 4, 6), (5, 2, 3), (4, 7, 2), (3, 8, 3), (7, 2, 4), (5, 6, 5), (2, 9, 3),
+           (6, 5, 2), (1, 3, 7), (8, 3, 2))])
+    part(5, "Part to whole", "No help this time.", "eq1",
+         [f"{a} {'boy' if a == 1 else 'boys'} for every {b} {'girl' if b == 1 else 'girls'}: boys to all kids = [{a}] : [{a + b}]" for a, b in
+          ((3, 5), (2, 7), (4, 3), (1, 5), (5, 6), (6, 1), (2, 3), (7, 4))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_91)
+    _words(bk, title, st, 7, "Use a ratio table if it helps.", WORDS_91)
+
+
+REVIEW_91 = ["(6 + 9) × 4 = [60]", "9 × 2/7 = [18]/7", "0.6 × 0.9 = [0.54]", "3,472 ÷ 8 = [434]",
+             "7/8 − 1/3 = [13]/[24]", "4 ft 2 in = [50] in"]
+WORDS_91 = [
+    ("A recipe uses 2 cups of rice for every 3 cups of water. How much water goes with 8 cups of rice?",
+     "2 : 3 = 8 : 12", "12", "cups"),
+    ("There are 4 red marbles for every 5 blue ones. There are 20 blue marbles. How many red ones?",
+     "4 : 5 = 16 : 20", "16", "red marbles"),
+    ("A team won 6 games and lost 9. What is the ratio of wins to losses in simplest form?", "6 : 9 = 2 : 3",
+     "2 : 3", ""),
+    ("Paint is mixed 3 cans of blue to 1 can of white. How many cans of blue go with 7 cans of white?",
+     "3 : 1 = 21 : 7", "21", "cans"),
+    ("Challenge: A class has 3 boys for every 4 girls. There are 28 kids. How many are girls?",
+     "3 + 4 = 7 kids per group, 28 ÷ 7 = 4 groups, 4 × 4 = 16", "16", "girls"),
+]
+KINDS.update({
+    "ratio_pic": Kind(78, 3, lambda it: f"ratio picture: {it[0]} circles {it[1]} squares", c_ratio_pic, 8),
+    "ratio_tab": Kind(80, 1, lambda it: f"ratio table: {it[0]} {it[1]} {it[2]}-{it[3]} " + "-".join(map(str, it[4])),
+                      c_ratio_tab, 8),
+})
+EQ_RATIO_POOL = [eq_ratio(a, b, k, z) for a, b, k, z in ((3, 4, 5, 0), (2, 5, 7, 1), (6, 1, 4, 0), (4, 3, 6, 1),
+                                                         (9, 2, 3, 0), (5, 7, 2, 1))]
+CHECKINS["91-ratios"] = [
+    S("Write the ratio", None, "ratio_pic", [(4, 3), (2, 6), (5, 1)], 1),
+    S("Ratio tables", None, "ratio_tab", [("cups", "people", 3, 5, (1, 2, 4, 6)), ("pages", "minutes", 2, 7, (1, 3, 5, 8))], 1),
+    S("Equal ratios", None, "eq3", EQ_RATIO_POOL, 3),
+    S("Simplest form", None, "eq3", [f"{a * k} : {b * k} = [{a}] : [{b}]" for a, b, k in ((3, 4, 3), (5, 3, 2), (2, 7, 4))], 2),
+]
+WORDS_G6 = [
+    ("Juice is mixed 2 cups of mango for every 5 cups of water. How much water goes with 6 cups of mango?",
+     "2 : 5 = 6 : 15", "15", "cups"),
+    ("A car goes 336 miles in 6 hours. How many miles does it go in 1 hour?", f"336 {DIV} 6 = 56", "56", "miles"),
+    ("A $45 shirt is 20% off. How many dollars do you save?", "20% of 45 = 9", "$9", ""),
+    ("You have 3/4 of a pizza. Each slice is 1/8 of the pizza. How many slices is that?", "3/4 ÷ 1/8 = 6", "6",
+     "slices"),
+    ("A school buys 2,016 pencils in boxes of 24. How many boxes?", f"2,016 {DIV} 24 = 84", "84", "boxes"),
+    ("6 bottles of water cost $4.20. How much is 1 bottle?", f"$4.20 {DIV} 6 = $0.70", "$0.70", ""),
+]
+GRADES.append(("grade-6", "Grade 6", "Packets 91–95", [
+    S("Ratios", None, "eq3", EQ_RATIO_POOL, 2, 91),
+    S("Word problems", None, "word", WORDS_G6, 4, "91–95"),
+]))
+_g6 = GRADES[-1][3]
+
+
+# ====================================================================== 92. Rates and Unit Rates
+
+
+def _pl(word):
+    return word + ("es" if word.endswith(("ch", "sh", "s", "x")) else "s")
+
+
+def unit_rate(total, n, what, per):
+    """"120 miles in 3 hours = [40] miles per hour"."""
+    return f"{nf(total)} {what} in {n} {_pl(per)} = [{nf(total // n)}] {what} per {per}"
+
+
+def unit_price(n, cents, thing):
+    """"6 pencils for $3 = [$0.50] each" (prices in cents, so they divide evenly)."""
+    return f"{n} {thing} for ${cents * n / 100:.2f} = [${cents / 100:.2f}] each"
+
+
+def use_rate(r, what, per, n):
+    return f"{r} {what} per {per}: {n} {_pl(per)} = [{nf(r * n)}] {what}"
+
+
+def c_rate_tab(bk, x, cy, w, item):
+    """A table that finds 1 first: n items cost t; the key fills 1 and k."""
+    la, lb, n, t, ks = item
+    ratio_table(bk, x + GUT, cy + 64, [la, lb], [[n] + [1] + list(ks), [t] + [t // n] + [t // n * k for k in ks]],
+                given={0})
+
+
+def learn_rates(bk):
+    y = bk.new_page("Rates and Unit Rates", "A unit rate is how much for 1.", name_line=False, big=True,
+                    footer="WeMath  ·  Rates and Unit Rates")
+    c = bk.c
+    label(bk, M, y - 6, "12 apples cost $6. How much for 1?")
+    ratio_table(bk, M + 14, y - 16, ["apples", "dollars"], [[12, 6, 2, 1], [6, 3, 1, 0.5]], given={0, 1, 2, 3},
+                cw=50, rh=28, lw=80)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 310, y - 34, "Halve both, and halve again,")
+    c.drawString(M + 310, y - 50, "until there is 1 apple.")
+    c.drawString(M + 310, y - 66, "$6 ÷ 12 = $0.50 each.")
+    y -= 100
+
+    label(bk, M, y - 6, "Per means “for each 1”")
+    color_eq(bk, M + 14, y - 40, [("150 miles in 3 hours", None), ("=", "op"), ("50", "b"), ("miles per hour", None)], 18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 62, "150 ÷ 3 = 50. Then 5 hours is 5 × 50 = 250 miles.")
+    y -= 86
+
+    label(bk, M, y - 6, "The better buy has the lower price for 1")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 30, "4 pens for $2 is $0.50 each. 6 pens for $2.40 is $0.40 each: the better buy.")
+    y -= 54
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("rates your turn: 96 words in 4 minutes")
+    bk.fit_eq(M + 60, bottom + 26, CW - 80, "96 words in 4 minutes = [24] words per minute", size=19)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: unit rates and using them (6.RP.2, 6.RP.3b). Say “How much for 1? Then multiply "
+                     "for any number.” Prices in money: divide the cents.")
+
+
+def practice_rates(bk):
+    title = "Rates and Unit Rates: Practice"
+    st = [bk.new_page(title, "Find 1 first. Then multiply."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Find 1 in the table", "Divide down to 1, then multiply.", "rate_tab",
+         [("tickets", "dollars", 4, 32, (3, 6)), ("hours", "miles", 3, 165, (2, 5)), ("boxes", "cookies", 5, 60, (4, 7)),
+          ("days", "pages", 6, 90, (2, 9)), ("bags", "apples", 2, 14, (5, 8))])
+    part(2, "Unit rates", "No help this time.", "eq1",
+         [unit_rate(t, n, w, p) for t, n, w, p in
+          ((120, 3, "miles", "hour"), (84, 4, "words", "minute"), (90, 5, "pages", "day"), (240, 6, "miles", "hour"),
+           (56, 8, "laps", "hour"), (135, 9, "points", "game"), (72, 3, "cookies", "batch"), (325, 5, "miles", "hour"),
+           (96, 12, "dollars", "hour"), (63, 7, "beads", "bracelet"), (180, 4, "steps", "minute"), (144, 6, "dollars", "day"),
+           (85, 5, "words", "minute"), (210, 7, "miles", "hour"), (48, 4, "eggs", "box"), (156, 3, "points", "game"))])
+    part(3, "Price for 1", "No help this time.", "eq2",
+         [unit_price(n, c_, t) for n, c_, t in
+          ((6, 50, "pencils"), (4, 75, "apples"), (8, 25, "stickers"), (5, 120, "notebooks"), (3, 45, "pears"),
+           (10, 35, "erasers"), (12, 15, "candies"), (4, 130, "juices"), (6, 85, "bagels"), (5, 60, "cards"),
+           (8, 40, "pens"), (3, 225, "books"))])
+    part(4, "Use the rate", "No help this time.", "eq1",
+         [use_rate(r, w, p, n) for r, w, p, n in
+          ((45, "miles", "hour", 6), (12, "pages", "day", 9), (8, "dollars", "hour", 15), (65, "words", "minute", 4),
+           (24, "cookies", "batch", 7), (15, "laps", "hour", 8), (35, "miles", "hour", 12), (9, "beads", "bracelet", 14),
+           (18, "points", "game", 11), (55, "steps", "minute", 6), (14, "dollars", "day", 21), (6, "eggs", "box", 25))])
+    part(5, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_92)
+    _words(bk, title, st, 6, "Find 1 first.", WORDS_92)
+
+
+REVIEW_92 = ["11 : 4 = [44] : 16", "2.4 + 3.65 = [6.05]", "1/2 × 3/5 = [3]/[10]", "6 × 2.35 = [14.1]",
+             "5.6 ÷ 7 = [0.8]", "12 + 6 × 3 = [30]"]
+WORDS_92 = [
+    ("A car goes 270 miles in 6 hours. How far does it go in 1 hour?", f"270 {DIV} 6 = 45", "45", "miles"),
+    ("A pack of 8 juice boxes costs $4. How much is 1 juice box?", f"$4 {DIV} 8 = $0.50", "$0.50", ""),
+    ("Mia types 42 words a minute. How many words can she type in 9 minutes?", f"42 {TIMES} 9 = 378", "378", "words"),
+    ("Store A: 5 pens for $3. Store B: 4 pens for $2. Which store has the lower price for 1 pen?",
+     "$3 ÷ 5 = $0.60, $2 ÷ 4 = $0.50", "Store B", ""),
+    ("Challenge: A printer prints 36 pages in 3 minutes. How long does it take to print 180 pages?",
+     f"36 {DIV} 3 = 12 a minute, 180 {DIV} 12 = 15", "15", "minutes"),
+]
+KINDS["rate_tab"] = Kind(80, 1, lambda it: f"rate table: {it[0]} {it[1]} {it[2]}-{it[3]} " + "-".join(map(str, it[4])),
+                         c_rate_tab, 8)
+UNIT_RATE_POOL = [unit_rate(t, n, w, p) for t, n, w, p in ((150, 5, "miles", "hour"), (72, 6, "pages", "day"),
+                                                           (108, 9, "points", "game"), (64, 4, "words", "minute"),
+                                                           (98, 7, "dollars", "day"))]
+CHECKINS["92-rates-and-unit-rates"] = [
+    S("Find 1 in the table", None, "rate_tab", [("hours", "dollars", 4, 48, (3, 5)), ("boxes", "pens", 3, 36, (2, 7))], 1),
+    S("Unit rates", None, "eq1", UNIT_RATE_POOL, 3),
+    S("Price for 1", None, "eq2", [unit_price(n, c_, t) for n, c_, t in ((5, 40, "pens"), (4, 85, "muffins"), (6, 30, "cards"))], 2),
+    S("Use the rate", None, "eq1", [use_rate(r, w, p, n) for r, w, p, n in ((55, "miles", "hour", 4), (16, "pages", "day", 7))], 2),
+]
+_g6[-1:-1] = [S("Rates", None, "eq1", UNIT_RATE_POOL, 2, 92)]
+
+
+# ====================================================================== 93. Percents
+
+
+def pct_of(p, n):
+    return f"{p}% of {nf(n)} = [{nf(p * n // 100)}]"
+
+
+def c_grid_pct(bk, x, cy, w, k):
+    grid_100(bk, x + GUT, cy + 10, 76, k)
+    bk.fit_eq(x + GUT + 96, cy + 42, w - GUT - 104, f"[{k}] % shaded", size=19)
+
+
+def learn_percents(bk):
+    y = bk.new_page("Percents", "Percent means “out of 100”.", name_line=False, big=True,
+                    footer="WeMath  ·  Percents")
+    c = bk.c
+    label(bk, M, y - 6, "35% is 35 out of 100")
+    grid_100(bk, M + 14, y - 112, 96, 35)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 140, y - 40, "35 of the 100 squares are shaded.")
+    color_eq(bk, M + 140, y - 76, [("35%", "a"), ("=", "op"), ("35/100", None), ("=", "op"), ("0.35", None)], 20)
+    y -= 132
+
+    label(bk, M, y - 6, "Start with 10%: divide by 10")
+    rows = (("10% of 80", "8"), ("20% of 80", "16"), ("5% of 80", "4"), ("25% of 80", "20"))
+    for i, (a, b) in enumerate(rows):
+        color_eq(bk, M + 14 + (i % 2) * 230, y - 38 - (i // 2) * 30, [(a, None), ("=", "op"), (b, "b")], 18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 112, "20% is 2 × 10%. 5% is half of 10%. 25% is 20% + 5% (or a fourth).")
+    y -= 134
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("percents your turn: 30% of 60")
+    bk.eq(M + 170, bottom + 26, "30% of 60 = [18]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: percent as a rate per 100; percent of a number and the whole from a part (6.RP.3c). "
+                     "Say “Find 10% first, then build the percent you need.”")
+
+
+def practice_percents(bk):
+    title = "Percents: Practice"
+    st = [bk.new_page(title, "10% first, then build."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Read the grid", "How many of the 100 squares are shaded?", "grid_pct", [27, 50, 8, 75, 43, 90, 15, 62])
+    part(2, "10% and 1%", "Divide by 10, or by 100.", "eq3",
+         [pct_of(10, n) for n in (70, 250, 40, 860, 1200, 30)] + [pct_of(1, n) for n in (300, 2500, 700, 4100, 900, 600)])
+    part(3, "Percent of a number", "No help this time.", "eq3",
+         [pct_of(p, n) for p, n in ((20, 45), (30, 70), (50, 86), (25, 60), (5, 140), (40, 35), (75, 80), (15, 60),
+                                    (60, 25), (90, 30), (35, 40), (80, 15), (45, 20), (70, 50), (12, 50), (25, 360),
+                                    (2, 450), (65, 20), (55, 60), (95, 40))])
+    part(4, "What percent?", "Make it out of 100.", "eq2",
+         [f"{a} out of {b} = [{a * 100 // b}] %" for a, b in ((7, 20), (3, 25), (9, 10), (12, 50), (1, 4), (3, 5),
+                                                            (18, 25), (33, 50), (7, 10), (11, 20), (4, 5), (21, 50))])
+    part(5, "Find the whole", "The part and the percent are given.", "eq3",
+         [f"{p}% of [{w}] = {p * w // 100}" for p, w in ((10, 90), (25, 48), (50, 74), (20, 35), (10, 260), (75, 40),
+                                                        (5, 120), (40, 55), (30, 70), (25, 84))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_93)
+    _words(bk, title, st, 7, "10% first.", WORDS_93)
+
+
+REVIEW_93 = ["120 miles in 4 hours = [30] miles per hour", "5 : 2 = 25 : [10]", "1/5 + 1/4 = [9]/[20]",
+             "0.4 × 0.4 = [0.16]", "2.7 m = [270] cm", "(18 − 4) ÷ 7 = [2]"]
+WORDS_93 = [
+    ("A jacket costs $60. It is 25% off. How many dollars do you save?", "25% of 60 = 15", "$15", ""),
+    ("Ben got 18 out of 20 questions right. What percent is that?", "18 out of 20 = 90 out of 100", "90", "%"),
+    ("A class of 30 kids: 40% walk to school. How many kids walk?", "40% of 30 = 12", "12", "kids"),
+    ("Mia has read 20% of her book. That is 45 pages. How many pages are in the book?", "20% of 225 = 45", "225",
+     "pages"),
+    ("Challenge: A $80 game is 15% off. What is the new price?", f"15% of 80 = 12, 80 {MINUS} 12 = 68", "$68", ""),
+]
+KINDS["grid_pct"] = Kind(96, 2, lambda k: f"percent grid {k}", c_grid_pct, 8)
+PCT_POOL = [pct_of(p, n) for p, n in ((20, 85), (30, 90), (25, 44), (5, 160), (75, 120), (40, 65))]
+CHECKINS["93-percents"] = [
+    S("Read the grid", None, "grid_pct", [36, 64, 12, 85], 2),
+    S("Percent of a number", None, "eq3", PCT_POOL, 3),
+    S("What percent?", None, "eq2", [f"{a} out of {b} = [{a * 100 // b}] %" for a, b in ((9, 25), (13, 20), (2, 5))], 2),
+    S("Find the whole", None, "eq3", [f"{p}% of [{w}] = {p * w // 100}" for p, w in ((10, 130), (25, 56), (50, 92))], 2),
+]
+_g6[-1:-1] = [S("Percents", None, "eq3", PCT_POOL, 2, 93)]
+
+
+# ====================================================================== 94. Dividing Fractions
+
+
+def fdiv_same(a, b, c_, d):
+    """a/b ÷ c/d with the same bottoms first: 2/3 ÷ 1/6 = [4]/6 ÷ 1/6 = [4]."""
+    n = math.lcm(b, d)
+    top1, top2 = a * n // b, c_ * n // d
+    q = Fraction(top1, top2)
+    ans = f"[{q.numerator}]" if q.denominator == 1 else f"[{q.numerator}]/[{q.denominator}]"
+    left = f"[{top1}]/{n}" if b != n else f"{top1}/{n}"
+    right = f"[{top2}]/{n}" if d != n else f"{top2}/{n}"
+    return f"{a}/{b} ÷ {c_}/{d} = {left} ÷ {right} = {ans}"
+
+
+def fdiv(a, b, c_, d):
+    q = Fraction(a, b) / Fraction(c_, d)
+    ans = f"[{q.numerator}]" if q.denominator == 1 else f"[{q.numerator}]/[{q.denominator}]"
+    return f"{a}/{b} ÷ {c_}/{d} = {ans}"
+
+
+def c_fit_strip(bk, x, cy, w, item):
+    """How many c/d fit in a/b: the strip shows a/b, cut into the smaller pieces."""
+    a, b, c_, d = item
+    n = math.lcm(b, d)
+    cut_strip(bk, x + GUT, cy + 30, 200, 26, b, a, n // b)
+    bk.c.setFillColor(T.text2)
+    bk.c.setFont("Rnd", 10.5)
+    bk.c.drawString(x + GUT, cy + 12, f"How many pieces of {c_}/{d} fit in the shaded part?")
+    frac_fit(bk, x + GUT + 220, cy + 40, w - GUT - 228, fdiv(a, b, c_, d), size=19)
+
+
+def learn_frac_div(bk):
+    y = bk.new_page("Dividing Fractions", "How many of these fit in that? Make the pieces the same size.",
+                    name_line=False, big=True, footer="WeMath  ·  Dividing Fractions")
+    c = bk.c
+    label(bk, M, y - 6, "2/3 ÷ 1/6: how many sixths fit in two thirds?")
+    cut_strip(bk, M + 14, y - 56, 260, 30, 3, 2, 2)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 300, y - 30, "Cut the thirds into sixths.")
+    c.drawString(M + 300, y - 46, "The shaded part is 4 sixths.")
+    frac_expr(bk, M + 300, y - 84, "2/3 ÷ 1/6 = 4", size=22)
+    y -= 112
+
+    label(bk, M, y - 6, "Same bottoms: divide the tops")
+    frac_expr(bk, M + 14, y - 46, "3/4 ÷ 1/8 = 6/8 ÷ 1/8 = 6", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 72, "When the pieces are the same size, it is 6 pieces ÷ 1 piece.")
+    y -= 94
+
+    label(bk, M, y - 6, "It doesn't have to come out even")
+    frac_expr(bk, M + 14, y - 46, "3/4 ÷ 2/4 = 3/2 = 1 1/2", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 300, y - 34, "3 pieces ÷ 2 pieces:")
+    c.drawString(M + 300, y - 50, "one and a half twos fit.")
+    y -= 80
+
+    bottom = your_turn(bk, y, h=80)
+    bk.ask("dividing fractions your turn: 1/2 / 1/8")
+    frac_expr(bk, M + 170, bottom + 30, "1/2 ÷ 1/8 = [4]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: divide fractions by fractions (6.NS.1). It builds on packet 84 (how many pieces fit). "
+                     "Say “Make the pieces the same size, then divide the tops.”")
+
+
+def practice_frac_div(bk):
+    title = "Dividing Fractions: Practice"
+    st = [bk.new_page(title, "Same size pieces, then divide the tops."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "How many fit?", "The strip is cut into the smaller pieces.", "fit_strip",
+         [(1, 2, 1, 6), (3, 4, 1, 8), (2, 3, 1, 9), (1, 3, 1, 6), (4, 5, 1, 10), (5, 6, 1, 12)])
+    part(2, "Same bottoms first", "Write both with the same bottom, then divide the tops.", "frac1",
+         [fdiv_same(a, b, c_, d) for a, b, c_, d in ((1, 2, 1, 8), (2, 3, 2, 9), (3, 5, 3, 10), (5, 6, 1, 12),
+                                                     (3, 4, 3, 8), (1, 4, 1, 12), (2, 5, 1, 10), (7, 8, 1, 16))])
+    part(3, "Divide", "No help this time.", "frac3",
+         [fdiv(a, b, c_, d) for a, b, c_, d in ((4, 5, 1, 5), (6, 7, 2, 7), (5, 8, 1, 8), (9, 10, 3, 10), (2, 3, 1, 12),
+                                                (3, 4, 1, 16), (1, 2, 1, 10), (5, 6, 5, 12), (4, 9, 2, 9), (7, 10, 7, 20),
+                                                (2, 5, 2, 15), (3, 8, 3, 16))])
+    part(4, "When it isn't even", "No help this time.", "frac2",
+         [fdiv(a, b, c_, d) for a, b, c_, d in ((3, 4, 2, 4), (5, 6, 2, 6), (2, 3, 3, 4), (4, 5, 2, 3), (1, 2, 3, 4),
+                                                (7, 8, 1, 4), (5, 9, 2, 3), (3, 10, 1, 4), (5, 6, 3, 8), (1, 3, 2, 5),
+                                                (9, 10, 3, 4), (2, 7, 1, 2))])
+    part(5, "Whole numbers and fractions", "No help this time.", "frac3",
+         [f"{n} ÷ {a}/{b} = [{Fraction(n * b, a).numerator}]" if Fraction(n * b, a).denominator == 1 else
+          f"{n} ÷ {a}/{b} = [{Fraction(n * b, a).numerator}]/[{Fraction(n * b, a).denominator}]"
+          for n, a, b in ((3, 3, 4), (4, 2, 5), (6, 3, 4), (2, 2, 3), (5, 5, 6), (8, 2, 3), (3, 3, 8), (6, 2, 7))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_94)
+    _words(bk, title, st, 7, "How many fit?", WORDS_94)
+
+
+REVIEW_94 = ["25% of 84 = [21]", "6 notebooks for $9.00 = [$1.50] each", "6 × 2/9 = [12]/9", "4.2 × 3 = [12.6]",
+             "12 : 5 = [36] : 15", "6.04 [<] 6.4"]
+WORDS_94 = [
+    ("A ribbon is 3/4 m long. Each bow uses 1/8 m. How many bows can you make?", "3/4 ÷ 1/8 = 6", "6", "bows"),
+    ("You have 2/3 cup of flour. A batch uses 1/6 cup. How many batches can you make?", "2/3 ÷ 1/6 = 4", "4",
+     "batches"),
+    ("A 6 m rope is cut into pieces 3/4 m long. How many pieces?", "6 ÷ 3/4 = 8", "8", "pieces"),
+    ("A jug holds 5/6 L. A glass holds 1/3 L. How many glasses does the jug fill?", "5/6 ÷ 1/3 = 2 1/2", "2 1/2",
+     "glasses"),
+    ("Challenge: A cake needs 2/3 cup sugar. A scoop is 1/6 cup. You added 2 scoops. How many more?",
+     f"2/3 ÷ 1/6 = 4, 4 {MINUS} 2 = 2", "2", "scoops"),
+]
+KINDS["fit_strip"] = Kind(80, 1, lambda it: f"fraction fit strip {it[0]}/{it[1]} by {it[2]}/{it[3]}", c_fit_strip, 8)
+KINDS.setdefault("frac1", Kind(48, 1, lambda t: t, c_frac, 8))
+FDIV_POOL = [fdiv(a, b, c_, d) for a, b, c_, d in ((3, 5, 1, 10), (5, 8, 1, 4), (2, 3, 1, 9), (7, 9, 7, 18),
+                                                   (4, 5, 3, 10), (5, 6, 2, 3))]
+CHECKINS["94-dividing-fractions"] = [
+    S("How many fit?", None, "fit_strip", [(2, 3, 1, 12), (1, 2, 1, 4), (3, 5, 1, 10)], 1),
+    S("Divide", None, "frac3", FDIV_POOL, 4),
+    S("Whole numbers and fractions", None, "frac3", [f"{n} ÷ {a}/{b} = [{n * b // a}]" for n, a, b in ((4, 1, 3), (6, 2, 3), (10, 5, 6))], 2),
+]
+_g6[-1:-1] = [S("Dividing fractions", None, "frac3", FDIV_POOL, 2, 94)]
+
+
+# ====================================================================== 95. Long Division
+
+
+def long_div(bk, x, top, n, d, size=17):
+    """The division house: d ) n, the quotient above in a box (key only), room underneath to work."""
+    c = bk.c
+    ns = nf(n)
+    nw = sw(ns, "Rnd", size)
+    dw = sw(str(d), "Rnd", size)
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", size)
+    c.drawString(x, top - 30, str(d))
+    hx = x + dw + 6
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.4)
+    p = c.beginPath()
+    p.moveTo(hx, top - 36)
+    p.curveTo(hx + 5, top - 28, hx + 5, top - 18, hx, top - 10)
+    p.lineTo(hx + nw + 14, top - 10)
+    c.drawPath(p, stroke=1, fill=0)
+    c.drawString(hx + 8, top - 30, ns)
+    q, r = divmod(n, d)
+    ans = nf(q) + (f" R {r}" if r else "")
+    bk.box(hx + 6, top - 8, max(nw + 4, sw(ans, "Rnd", size * 0.9) + 12), size * 1.4, ans, size=size * 0.9)
+
+
+def c_long_div(bk, x, cy, w, item):
+    n, d = item
+    long_div(bk, x + GUT, cy + 104, n, d)
+
+
+def learn_long_div(bk):
+    y = bk.new_page("Long Division", "Divide, multiply, take away, bring down. Repeat.", name_line=False, big=True,
+                    footer="WeMath  ·  Long Division")
+    c = bk.c
+    label(bk, M, y - 6, "7,488 ÷ 24")
+    rows = (("74 ÷ 24 → 3", "3 × 24 = 72", "74 − 72 = 2, bring down 8: 28"),
+            ("28 ÷ 24 → 1", "1 × 24 = 24", "28 − 24 = 4, bring down 8: 48"),
+            ("48 ÷ 24 → 2", "2 × 24 = 48", "48 − 48 = 0"))
+    for i, (a, b, d_) in enumerate(rows):
+        yy = y - 34 - i * 26
+        for j, t in enumerate((a, b, d_)):
+            color_eq(bk, M + 14 + j * 150, yy, [(t, None)], 13)
+    color_eq(bk, M + 14, y - 126, [("7,488 ÷ 24", None), ("=", "op"), ("312", "b")], 22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 230, y - 122, "Each step is one digit of the answer.")
+    y -= 150
+
+    label(bk, M, y - 6, "Use easy parts to guess each digit (packet 78)")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 30, "How many 24s in 74? 24 × 3 = 72 fits, 24 × 4 = 96 is too much. So 3.")
+    c.drawString(M + 14, y - 48, "If what is left at the end is not 0, write it as R: 500 ÷ 24 = 20 R 20.")
+    y -= 70
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("long division your turn: 936 / 12")
+    bk.eq(M + 170, bottom + 26, "936 ÷ 12 = [78]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: divide multi-digit numbers with the standard algorithm (6.NS.2). Say “Divide, "
+                     "multiply, take away, bring down.” Kids can still use packet 78's easy parts to find each digit.")
+
+
+def practice_long_div(bk):
+    title = "Long Division: Practice"
+    st = [bk.new_page(title, "Divide, multiply, take away, bring down."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "One-digit divisors", "Work under the number.", "long_div",
+         [(852, 4), (1_356, 6), (2_745, 5), (918, 3), (4_096, 8), (3_542, 7), (1_872, 9), (6_215, 5), (2_334, 2)])
+    part(2, "Two-digit divisors", "Use easy parts to find each digit.", "long_div",
+         [(7_488, 24), (5_208, 31), (9_177, 23), (6_912, 18), (8_316, 42), (4_675, 25), (3_402, 14), (9_870, 47),
+          (5_985, 63)])
+    part(3, "Divide", "No help this time.", "eq2",
+         [div_eq(d * q, d) for d, q in ((16, 245), (32, 117), (27, 308), (45, 162), (13, 526), (58, 141), (21, 433),
+                                        (36, 207), (19, 384), (64, 125), (28, 316), (51, 173))])
+    part(4, "What is left?", "No help this time.", "eq2",
+         [rem_eq2(n, d) for n, d in ((2_000, 37), (5_431, 16), (7_777, 25), (3_210, 43), (9_001, 12), (6_543, 58),
+                                     (4_444, 33), (8_123, 21))])
+    part(5, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_95)
+    _words(bk, title, st, 6, "Divide, multiply, take away, bring down.", WORDS_95)
+
+
+REVIEW_95 = ["3/4 ÷ 1/8 = [6]", "35% of 60 = [21]", "72 pages in 4 days = [18] pages per day", "13 : 6 = [39] : 18",
+             "3.2 × 5 = [16]", "7/10 − 1/4 = [9]/[20]"]
+WORDS_95 = [
+    ("A school has 1,248 books on 16 shelves. Each shelf holds the same. How many books on a shelf?",
+     f"1,248 {DIV} 16 = 78", "78", "books"),
+    ("A farm packs 3,456 eggs in cartons of 12. How many cartons?", f"3,456 {DIV} 12 = 288", "288", "cartons"),
+    ("A trip of 2,310 miles takes 42 hours. How many miles an hour is that?", f"2,310 {DIV} 42 = 55", "55", "miles"),
+    ("1,000 stickers are shared by 24 kids. How many does each kid get?", f"1,000 {DIV} 24 = 41 R 16", "41",
+     "stickers"),
+    ("Challenge: 1,000 people go to a game. A bus holds 45. How many buses are needed?",
+     f"1,000 {DIV} 45 = 22 R 10, so one more", "23", "buses"),
+]
+KINDS["long_div"] = Kind(116, 3, lambda it: f"long division {it[0]} by {it[1]}", c_long_div, 8)
+LONG_POOL = [div_eq(d * q, d) for d, q in ((14, 213), (23, 148), (35, 172), (17, 326), (41, 109), (26, 245))]
+CHECKINS["95-long-division"] = [
+    S("Long division", None, "long_div", [(2_592, 8), (6_552, 26), (8_235, 45)], 2),
+    S("Divide", None, "eq2", LONG_POOL, 4),
+    S("What is left?", None, "eq2", [rem_eq2(n, d) for n, d in ((3_000, 29), (7_250, 34))], 2),
+]
+_g6[-1:-1] = [S("Long division", None, "eq2", LONG_POOL, 2, 95)]
+
+
 # ====================================================================== Extra practice (founder: more pages)
 # Kindergarten and grade 1: big print, few problems per page, every basic fact, repeats allowed (pages apart).
 # EXTRA[folder] = (before_part, sections, repeat_ok): the pages are drawn just before that part.
@@ -20348,6 +20957,44 @@ def _zero_mid(r):
 
 
 EXTRA.update({
+    "91-ratios": (6, [
+        ("More equal ratios", None, "eq3", [eq_ratio(a, b, k, z) for a, b, k, z in
+                                            _many(91, lambda r: (r.randint(1, 12), r.randint(2, 12), r.randint(2, 9), r.randint(0, 1)))
+                                            if a != b], 24),
+        ("More simplest form", None, "eq3", [f"{a * k} : {b * k} = [{a}] : [{b}]" for a, b, k in
+                                             _many(1091, lambda r: (r.randint(1, 9), r.randint(2, 9), r.randint(2, 8)))
+                                             if math.gcd(a, b) == 1 and a != b], 12),
+    ], False),
+    "92-rates-and-unit-rates": (5, [
+        ("More unit rates", None, "eq1", [unit_rate(n * u, n, w, p) for n, u, (w, p) in
+                                          _many(92, lambda r: (r.randint(2, 9), r.randint(6, 75), r.choice([("miles", "hour"), ("pages", "day"), ("words", "minute"), ("points", "game"), ("dollars", "hour")])))],
+         18),
+        ("More prices for 1", None, "eq2", [unit_price(n, c_, t) for n, c_, t in
+                                            _many(1092, lambda r: (r.randint(2, 12), r.randint(3, 60) * 5, r.choice(["pens", "apples", "cards", "bagels", "juices", "erasers"])))],
+         12),
+    ], False),
+    "93-percents": (6, [
+        ("More percents of numbers", None, "eq3", [pct_of(p, n) for p, n in
+                                                    _many(93, lambda r: (r.choice([10, 20, 25, 30, 40, 50, 60, 75, 5, 15]), r.randint(2, 40) * 20))],
+         24),
+        ("More finding the whole", None, "eq3", [f"{p}% of [{w}] = {p * w // 100}" for p, w in
+                                                 _many(1093, lambda r: (r.choice([10, 20, 25, 50]), r.randint(2, 40) * 4))
+                                                 if p * w % 100 == 0], 12),
+    ], False),
+    "94-dividing-fractions": (6, [
+        ("More dividing", None, "frac3", [fdiv(a, b, c_, d) for (a, b), (c_, d) in
+                                          _many(94, lambda r: (_frac_pairs(r, (2, 3, 4, 5, 6, 8, 10)), _frac_pairs(r, (2, 3, 4, 5, 6, 8, 10, 12))))],
+         24),
+        ("More whole numbers", None, "frac3", [f"{n} ÷ {a}/{b} = [{n * b // a}]" for n, a, b in
+                                               _many(1094, lambda r: (r.randint(2, 9), r.randint(1, 5), r.randint(2, 10)))
+                                               if a < b and n * b % a == 0], 12),
+    ], False),
+    "95-long-division": (5, [
+        ("More long division", None, "long_div", [(d * q, d) for d, q in
+                                                  _many(95, lambda r: (r.randint(12, 59), r.randint(21, 299)))], 9),
+        ("More dividing", None, "eq2", [div_eq(d * q, d) for d, q in _many(1095, lambda r: (r.randint(12, 79), r.randint(21, 399)))],
+         18),
+    ], False),
     "26-halves-thirds-and-fourths": (11, [
         ("Equal shares?", "Circle yes or no.", "eq_share", shuf("m26a", EQ_SHARE), 12),
         ("Name the share", "Circle the name of the shaded part.", "name_share", shuf("m26b", NAME_SHARE), 8),
@@ -20840,8 +21487,8 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4", "grade-5": "5"}
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95]
+GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4", "grade-5": "5", "grade-6": "6"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
 _yes = lambda b: "yes" if b else "no"
@@ -21216,6 +21863,16 @@ PACKETS = [
     ("89-the-coordinate-grid", "the-coordinate-grid", "The Coordinate Grid", learn_coord_grid, practice_coord_grid,
      False),
     ("90-classifying-shapes", "classifying-shapes", "Classifying Shapes", learn_classify, practice_classify,
+     False),
+    ("91-ratios", "ratios", "Ratios", learn_ratios, practice_ratios,
+     False),
+    ("92-rates-and-unit-rates", "rates-and-unit-rates", "Rates and Unit Rates", learn_rates, practice_rates,
+     False),
+    ("93-percents", "percents", "Percents", learn_percents, practice_percents,
+     False),
+    ("94-dividing-fractions", "dividing-fractions", "Dividing Fractions", learn_frac_div, practice_frac_div,
+     False),
+    ("95-long-division", "long-division", "Long Division", learn_long_div, practice_long_div,
      False),
 ]
 

@@ -1,6 +1,6 @@
 # WeMath worksheets
 
-Ninety-one packets, in teaching order (K to grade 5). Each starts with a picture-first learning page, followed by practice.
+Ninety-six packets, in teaching order (K to grade 6). Each starts with a picture-first learning page, followed by practice.
 
 | Folder | Topic | Pages |
 |---|---|---|
@@ -95,6 +95,11 @@ Ninety-one packets, in teaching order (K to grade 5). Each starts with a picture
 | `88-line-plots-with-data/` | Make and read X charts in eighths, add the data, fair shares | 9 |
 | `89-the-coordinate-grid/` | Read and plot points (over, then up), how far apart, move a point, graph two rules | 9 |
 | `90-classifying-shapes/` | The quadrilateral family, every name that fits, triangles by their sides, true or not, name it, riddles | 9 |
+| `91-ratios/` | Grade 6. Ratios as pictures and tables, equal ratios, simplest form, part to whole | 12 |
+| `92-rates-and-unit-rates/` | Find 1 first: unit rates, price for 1, use the rate, the better buy | 11 |
+| `93-percents/` | Percent means out of 100: hundred grids, percent of a number, finding the whole | 12 |
+| `94-dividing-fractions/` | How many fit? Strips, same bottoms, then any fractions and whole numbers | 12 |
+| `95-long-division/` | Divide, multiply, take away, bring down: one- and two-digit divisors, remainders | 9 |
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 
@@ -117,6 +122,7 @@ Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hol
 | Grade 3 | 33–52: multiplication, strategies, division, rounding, multiplying by tens, area, six fraction packets (unit fractions, counting fractions, fractions and wholes, equal fractions, comparing, fractions of a group), perimeter, elapsed time, two-step problems, times-table patterns, mass and volume, scaled graphs, quarter inches, quadrilaterals | 86 problems | 86 problems |
 | Grade 4 | 53–72: thousands, rounding big numbers, adding and subtracting big numbers, multiplying by one and two digits, dividing (remainders, bigger numbers), factors and multiples, equivalent and unlike fractions, adding fractions, mixed numbers, fraction × whole number, tenths and hundredths, decimals, conversions, area and perimeter formulas, line plots, angles, lines and shapes | 77 problems | 77 problems |
 | Grade 5 | 73–90: powers of ten, thousandths, comparing and rounding decimals, adding and subtracting decimals, multiplying bigger numbers, dividing by two-digit numbers, multiplying and dividing decimals, unlike fractions, multiplying fractions, volume, fractions as division, dividing with unit fractions, order of operations, number patterns, converting units, line plot data, the coordinate grid, classifying shapes | 52 problems | 52 problems |
+| Grade 6 | 91–95 so far: ratios, rates and unit rates, percents, dividing fractions, long division | 14 problems | 14 problems |
 
 Each answer key ends with a **scoring sheet**: every part, the packet it checks, and a score line. Use the **pre-assessment** for placement: start a student at the first packet where they miss more than 1 problem in its parts. Use the **post-assessment** to see growth: a part with more than 1 miss means that packet needs review.
 

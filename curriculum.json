@@ -1,5 +1,5 @@
 {
- "version": "df0e32199a74",
+ "version": "ef9161cd7d23",
  "packets": [
   {
    "number": 0,
@@ -728,6 +728,46 @@
    "file": "classifying-shapes",
    "title": "Classifying Shapes",
    "grade": "5"
+  },
+  {
+   "number": 91,
+   "slug": "ratios",
+   "folder": "91-ratios",
+   "file": "ratios",
+   "title": "Ratios",
+   "grade": "6"
+  },
+  {
+   "number": 92,
+   "slug": "rates-and-unit-rates",
+   "folder": "92-rates-and-unit-rates",
+   "file": "rates-and-unit-rates",
+   "title": "Rates and Unit Rates",
+   "grade": "6"
+  },
+  {
+   "number": 93,
+   "slug": "percents",
+   "folder": "93-percents",
+   "file": "percents",
+   "title": "Percents",
+   "grade": "6"
+  },
+  {
+   "number": 94,
+   "slug": "dividing-fractions",
+   "folder": "94-dividing-fractions",
+   "file": "dividing-fractions",
+   "title": "Dividing Fractions",
+   "grade": "6"
+  },
+  {
+   "number": 95,
+   "slug": "long-division",
+   "folder": "95-long-division",
+   "file": "long-division",
+   "title": "Long Division",
+   "grade": "6"
   }
  ],
  "tests": [
@@ -3770,6 +3810,140 @@
     }
    ],
    "grade": "5"
+  },
+  {
+   "id": "grade-6-pre",
+   "type": "pre",
+   "title": "Grade 6 Pre-Assessment",
+   "total": 14,
+   "file": "assessments/color/grade-6-pre-assessment-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Ratios",
+     "kind": "eq3",
+     "packet": 91,
+     "packets": "91",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "6 : 1 = ? : 4",
+       "answer": "24"
+      },
+      {
+       "n": 2,
+       "prompt": "9 : 2 = ? : 6",
+       "answer": "27"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Rates",
+     "kind": "eq1",
+     "packet": 92,
+     "packets": "92",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "150 miles in 5 hours = ? miles per hour",
+       "answer": "30"
+      },
+      {
+       "n": 4,
+       "prompt": "72 pages in 6 days = ? pages per day",
+       "answer": "12"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Percents",
+     "kind": "eq3",
+     "packet": 93,
+     "packets": "93",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "20% of 85 = ?",
+       "answer": "17"
+      },
+      {
+       "n": 6,
+       "prompt": "25% of 44 = ?",
+       "answer": "11"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Dividing fractions",
+     "kind": "frac3",
+     "packet": 94,
+     "packets": "94",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "5/8 ÷ 1/4 = ?/?",
+       "answer": "5/2"
+      },
+      {
+       "n": 8,
+       "prompt": "2/3 ÷ 1/9 = ?",
+       "answer": "6"
+      }
+     ]
+    },
+    {
+     "part": 5,
+     "name": "Long division",
+     "kind": "eq2",
+     "packet": 95,
+     "packets": "95",
+     "questions": [
+      {
+       "n": 9,
+       "prompt": "3,404 ÷ 23 = ?",
+       "answer": "148"
+      },
+      {
+       "n": 10,
+       "prompt": "6,370 ÷ 26 = ?",
+       "answer": "245"
+      }
+     ]
+    },
+    {
+     "part": 6,
+     "name": "Word problems",
+     "kind": "word",
+     "packet": null,
+     "packets": "91–95",
+     "questions": [
+      {
+       "n": 11,
+       "prompt": "A car goes 336 miles in 6 hours. How many miles does it go in 1 hour?",
+       "answer": "56 miles"
+      },
+      {
+       "n": 12,
+       "prompt": "Juice is mixed 2 cups of mango for every 5 cups of water. How much water goes with 6 cups of mango?",
+       "answer": "15 cups"
+      },
+      {
+       "n": 13,
+       "prompt": "6 bottles of water cost $4.20. How much is 1 bottle?",
+       "answer": "$0.70"
+      },
+      {
+       "n": 14,
+       "prompt": "A school buys 2,016 pencils in boxes of 24. How many boxes?",
+       "answer": "84 boxes"
+      }
+     ]
+    }
+   ],
+   "grade": "6"
   },
   {
    "id": "kindergarten-pre",
@@ -7160,6 +7334,140 @@
    "grade": "5"
   },
   {
+   "id": "grade-6-post",
+   "type": "post",
+   "title": "Grade 6 Post-Assessment",
+   "total": 14,
+   "file": "assessments/color/grade-6-post-assessment-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Ratios",
+     "kind": "eq3",
+     "packet": 91,
+     "packets": "91",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "2 : 5 = 14 : ?",
+       "answer": "35"
+      },
+      {
+       "n": 2,
+       "prompt": "5 : 7 = 10 : ?",
+       "answer": "14"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Rates",
+     "kind": "eq1",
+     "packet": 92,
+     "packets": "92",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "98 dollars in 7 days = ? dollars per day",
+       "answer": "14"
+      },
+      {
+       "n": 4,
+       "prompt": "108 points in 9 games = ? points per game",
+       "answer": "12"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Percents",
+     "kind": "eq3",
+     "packet": 93,
+     "packets": "93",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "75% of 120 = ?",
+       "answer": "90"
+      },
+      {
+       "n": 6,
+       "prompt": "30% of 90 = ?",
+       "answer": "27"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Dividing fractions",
+     "kind": "frac3",
+     "packet": 94,
+     "packets": "94",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "5/8 ÷ 1/4 = ?/?",
+       "answer": "5/2"
+      },
+      {
+       "n": 8,
+       "prompt": "2/3 ÷ 1/9 = ?",
+       "answer": "6"
+      }
+     ]
+    },
+    {
+     "part": 5,
+     "name": "Long division",
+     "kind": "eq2",
+     "packet": 95,
+     "packets": "95",
+     "questions": [
+      {
+       "n": 9,
+       "prompt": "3,404 ÷ 23 = ?",
+       "answer": "148"
+      },
+      {
+       "n": 10,
+       "prompt": "6,370 ÷ 26 = ?",
+       "answer": "245"
+      }
+     ]
+    },
+    {
+     "part": 6,
+     "name": "Word problems",
+     "kind": "word",
+     "packet": null,
+     "packets": "91–95",
+     "questions": [
+      {
+       "n": 11,
+       "prompt": "A $45 shirt is 20% off. How many dollars do you save?",
+       "answer": "$9"
+      },
+      {
+       "n": 12,
+       "prompt": "You have 3/4 of a pizza. Each slice is 1/8 of the pizza. How many slices is that?",
+       "answer": "6 slices"
+      },
+      {
+       "n": 13,
+       "prompt": "A car goes 336 miles in 6 hours. How many miles does it go in 1 hour?",
+       "answer": "56 miles"
+      },
+      {
+       "n": 14,
+       "prompt": "Juice is mixed 2 cups of mango for every 5 cups of water. How much water goes with 6 cups of mango?",
+       "answer": "15 cups"
+      }
+     ]
+    }
+   ],
+   "grade": "6"
+  },
+  {
    "id": "kindergarten-post",
    "type": "post",
    "title": "Kindergarten Post-Assessment",
@@ -9666,6 +9974,78 @@
    "packet": 78
   },
   {
+   "id": "check-in:dividing-fractions",
+   "type": "check-in",
+   "title": "Dividing Fractions Check-In",
+   "total": 7,
+   "file": "94-dividing-fractions/color/dividing-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "How many fit?",
+     "kind": "fit_strip",
+     "packet": 94,
+     "packets": "94",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "fraction fit strip 3/5 by 1/10",
+       "answer": "6"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Divide",
+     "kind": "frac3",
+     "packet": 94,
+     "packets": "94",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "5/6 ÷ 2/3 = ?/?",
+       "answer": "5/4"
+      },
+      {
+       "n": 3,
+       "prompt": "3/5 ÷ 1/10 = ?",
+       "answer": "6"
+      },
+      {
+       "n": 4,
+       "prompt": "7/9 ÷ 7/18 = ?",
+       "answer": "2"
+      },
+      {
+       "n": 5,
+       "prompt": "4/5 ÷ 3/10 = ?/?",
+       "answer": "8/3"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Whole numbers and fractions",
+     "kind": "frac3",
+     "packet": 94,
+     "packets": "94",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "10 ÷ 5/6 = ?",
+       "answer": "12"
+      },
+      {
+       "n": 7,
+       "prompt": "6 ÷ 2/3 = ?",
+       "answer": "9"
+      }
+     ]
+    }
+   ],
+   "packet": 94
+  },
+  {
    "id": "check-in:dividing-with-unit-fractions",
    "type": "check-in",
    "title": "Dividing with Unit Fractions Check-In",
@@ -11789,6 +12169,83 @@
    "packet": 72
   },
   {
+   "id": "check-in:long-division",
+   "type": "check-in",
+   "title": "Long Division Check-In",
+   "total": 8,
+   "file": "95-long-division/color/long-division-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Long division",
+     "kind": "long_div",
+     "packet": 95,
+     "packets": "95",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "long division 6552 by 26",
+       "answer": "252"
+      },
+      {
+       "n": 2,
+       "prompt": "long division 2592 by 8",
+       "answer": "324"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Divide",
+     "kind": "eq2",
+     "packet": 95,
+     "packets": "95",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "5,542 ÷ 17 = ?",
+       "answer": "326"
+      },
+      {
+       "n": 4,
+       "prompt": "2,982 ÷ 14 = ?",
+       "answer": "213"
+      },
+      {
+       "n": 5,
+       "prompt": "4,469 ÷ 41 = ?",
+       "answer": "109"
+      },
+      {
+       "n": 6,
+       "prompt": "6,020 ÷ 35 = ?",
+       "answer": "172"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "What is left?",
+     "kind": "eq2",
+     "packet": 95,
+     "packets": "95",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "7,250 ÷ 34 = ? R ?",
+       "answer": "213 R 8"
+      },
+      {
+       "n": 8,
+       "prompt": "3,000 ÷ 29 = ? R ?",
+       "answer": "103 R 13"
+      }
+     ]
+    }
+   ],
+   "packet": 95
+  },
+  {
    "id": "check-in:mass-and-liquid-volume",
    "type": "check-in",
    "title": "Mass and Liquid Volume Check-In",
@@ -13434,6 +13891,97 @@
    "packet": 48
   },
   {
+   "id": "check-in:percents",
+   "type": "check-in",
+   "title": "Percents Check-In",
+   "total": 9,
+   "file": "93-percents/color/percents-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Read the grid",
+     "kind": "grid_pct",
+     "packet": 93,
+     "packets": "93",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "percent grid 12",
+       "answer": "12"
+      },
+      {
+       "n": 2,
+       "prompt": "percent grid 64",
+       "answer": "64"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Percent of a number",
+     "kind": "eq3",
+     "packet": 93,
+     "packets": "93",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "30% of 90 = ?",
+       "answer": "27"
+      },
+      {
+       "n": 4,
+       "prompt": "5% of 160 = ?",
+       "answer": "8"
+      },
+      {
+       "n": 5,
+       "prompt": "40% of 65 = ?",
+       "answer": "26"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "What percent?",
+     "kind": "eq2",
+     "packet": 93,
+     "packets": "93",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "13 out of 20 = ? %",
+       "answer": "65"
+      },
+      {
+       "n": 7,
+       "prompt": "9 out of 25 = ? %",
+       "answer": "36"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Find the whole",
+     "kind": "eq3",
+     "packet": 93,
+     "packets": "93",
+     "questions": [
+      {
+       "n": 8,
+       "prompt": "50% of ? = 46",
+       "answer": "92"
+      },
+      {
+       "n": 9,
+       "prompt": "25% of ? = 14",
+       "answer": "56"
+      }
+     ]
+    }
+   ],
+   "packet": 93
+  },
+  {
    "id": "check-in:perimeter",
    "type": "check-in",
    "title": "Perimeter Check-In",
@@ -13619,6 +14167,173 @@
     }
    ],
    "packet": 73
+  },
+  {
+   "id": "check-in:rates-and-unit-rates",
+   "type": "check-in",
+   "title": "Rates and Unit Rates Check-In",
+   "total": 8,
+   "file": "92-rates-and-unit-rates/color/rates-and-unit-rates-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Find 1 in the table",
+     "kind": "rate_tab",
+     "packet": 92,
+     "packets": "92",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "rate table: boxes pens 3-36 2-7",
+       "answer": "1 · 2 · 7 · 12 · 24 · 84"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Unit rates",
+     "kind": "eq1",
+     "packet": 92,
+     "packets": "92",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "64 words in 4 minutes = ? words per minute",
+       "answer": "16"
+      },
+      {
+       "n": 3,
+       "prompt": "108 points in 9 games = ? points per game",
+       "answer": "12"
+      },
+      {
+       "n": 4,
+       "prompt": "98 dollars in 7 days = ? dollars per day",
+       "answer": "14"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Price for 1",
+     "kind": "eq2",
+     "packet": 92,
+     "packets": "92",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "5 pens for $2.00 = ? each",
+       "answer": "$0.40"
+      },
+      {
+       "n": 6,
+       "prompt": "6 cards for $1.80 = ? each",
+       "answer": "$0.30"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Use the rate",
+     "kind": "eq1",
+     "packet": 92,
+     "packets": "92",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "55 miles per hour: 4 hours = ? miles",
+       "answer": "220"
+      },
+      {
+       "n": 8,
+       "prompt": "16 pages per day: 7 days = ? pages",
+       "answer": "112"
+      }
+     ]
+    }
+   ],
+   "packet": 92
+  },
+  {
+   "id": "check-in:ratios",
+   "type": "check-in",
+   "title": "Ratios Check-In",
+   "total": 7,
+   "file": "91-ratios/color/ratios-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Write the ratio",
+     "kind": "ratio_pic",
+     "packet": 91,
+     "packets": "91",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "ratio picture: 4 circles 3 squares",
+       "answer": "4 · 3"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Ratio tables",
+     "kind": "ratio_tab",
+     "packet": 91,
+     "packets": "91",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "ratio table: cups people 3-5 1-2-4-6",
+       "answer": "6 · 12 · 18 · 10 · 20 · 30"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Equal ratios",
+     "kind": "eq3",
+     "packet": 91,
+     "packets": "91",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "3 : 4 = ? : 20",
+       "answer": "15"
+      },
+      {
+       "n": 4,
+       "prompt": "4 : 3 = 24 : ?",
+       "answer": "18"
+      },
+      {
+       "n": 5,
+       "prompt": "5 : 7 = 10 : ?",
+       "answer": "14"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Simplest form",
+     "kind": "eq3",
+     "packet": 91,
+     "packets": "91",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "8 : 28 = ? : ?",
+       "answer": "2 : 7"
+      },
+      {
+       "n": 7,
+       "prompt": "10 : 6 = ? : ?",
+       "answer": "5 : 3"
+      }
+     ]
+    }
+   ],
+   "packet": 91
   },
   {
    "id": "check-in:rounding",
