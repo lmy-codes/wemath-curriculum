@@ -135,15 +135,24 @@ class Book:
         self.part_off = 0
         self.repeat_ok = False  # True: questions may repeat (Kindergarten and grade 1 extra practice)
         self.max_part = 0
+        self.cap = None  # most problems on one practice page (founder: 15 easier, 12 harder)
+        self.y_low = H  # lowest point drawn on this page (cards and part headers)
+        self.page_probs = 0
+        self.last_part = None
         self.heading = subtitle
         self.c.setTitle(f"{subtitle}: " + ("Answer Key" if key else "Student Workbook"))
         self.c.setAuthor("WeMath")
 
     # ------------------------------------------------------------------ page chrome
 
-    def new_page(self, heading, goal=None, first=True, name_line=True, footer=None, big=False):
-        """Starts a page (closing the previous one). Returns the y where content begins."""
+    def new_page(self, heading, goal=None, first=True, name_line=True, footer=None, big=False, force=False):
+        """Starts a page (closing the previous one). Returns the y where content begins.
+        On practice pages a "continued" page break is skipped while the current page still has room (the page
+        limit, not the old fixed layout, decides where pages end); force=True always breaks."""
         c = self.c
+        if (self.cap and not force and not first and not big and goal is None and heading == self.heading
+                and self.page_probs < self.cap and self.y_low - 30 > 260):
+            return self.y_low - 30
         if self.page:
             self._footer()
             c.showPage()
@@ -152,6 +161,8 @@ class Book:
             self.footer = footer
         if not big:
             self.heading = heading
+        self.page_probs = 0
+        self.y_low = H
 
         # top line: small mark + WeMath, Name/Date (or Answer Key) on the right
         top = H - 40
@@ -235,7 +246,11 @@ class Book:
         """Section label: 'Part 2   Fill in the buddy.   sub'"""
         if self.extra and n >= self.extra[0]:
             y = self.extra_pages(y, n)
+        if self.cap and sub != "(continued)" and self.page_probs and (self.page_probs > self.cap - 3 or y < 130):
+            y = self.new_page(self.heading, first=False, force=True)  # no part header alone at the bottom
         self.max_part = max(self.max_part, n)
+        self.last_part = (n, text)
+        self.y_low = min(self.y_low, y - 14)
         n += self.part_off
         c = self.c
         label = f"Part {n}"
@@ -250,6 +265,16 @@ class Book:
             c.setFont("Av", 10)
             c.drawString(x + sw(text, "AvM", 11.5) + 8, y, sub)
         return y - 14
+
+    def room(self, y, h, count):
+        """Before a row of `count` cards `h` tall: a new page (with the part's "(continued)" header) when the row
+        would run into the footer or past the page's problem limit. Returns the y to draw the row at."""
+        full = self.cap and self.page_probs and self.page_probs + count > self.cap
+        if full or y - h < 46:
+            y = self.new_page(self.heading, first=False, force=True)
+            if self.last_part:
+                y = self.part(y, self.last_part[0], self.last_part[1], "(continued)")
+        return y
 
     def extra_pages(self, y, n, tail=False):
         """Draw the packet's extra practice (EXTRA) as parts n, n+1, … on new pages, then shift the part and
@@ -308,12 +333,15 @@ class Book:
         c.setStrokeColor(T.line)
         c.setLineWidth(0.8)
         c.roundRect(x, y, w, h, 6, stroke=1, fill=0)
+        self.y_low = min(self.y_low, y)
         if isinstance(num, int):
             num += self.num_off
             self.max_num = max(self.max_num, num)
+            self.page_probs += 1
         elif isinstance(num, str) and re.fullmatch(r"\d+–\d+", num):
             a, b = (int(v) + self.num_off for v in num.split("–"))
             self.max_num = max(self.max_num, b)
+            self.page_probs += b - a + 1
             num = f"{a}–{b}"
         if num is not None:
             c.setFillColor(T.text2)
@@ -642,14 +670,18 @@ def dots(n, kind="a"):
 def ba_grid(bk, y, probs, first_num, cols=2, h=130, gap=12):
     """Break-apart cards. probs: (bigger, smaller) pairs; (None, None) = blank."""
     rows = (len(probs) + cols - 1) // cols
-    for k, (x, cy, w) in enumerate(bk.grid(y, cols, rows, h, gap)):
-        if k < len(probs):
-            keep, split = probs[k]
-            if keep is not None:
-                bk.ask(f"{keep} + {split} = []")
-            bk.card(x, cy, w, h, first_num + k)
-            bk.break_apart(x + w / 2 + 6, cy + h - 8, keep, split)
-    return y - rows * h - (rows - 1) * gap
+    for r in range(rows):
+        row = probs[r * cols:(r + 1) * cols]
+        y = bk.room(y, h, len(row))
+        for c, (x, cy, w) in enumerate(bk.grid(y, cols, 1, h, gap)):
+            if c < len(row):
+                keep, split = row[c]
+                if keep is not None:
+                    bk.ask(f"{keep} + {split} = []")
+                bk.card(x, cy, w, h, first_num + r * cols + c)
+                bk.break_apart(x + w / 2 + 6, cy + h - 8, keep, split)
+        y -= h + gap
+    return y + gap
 
 
 # ---------------------------------------------------------------------- the sets
@@ -685,6 +717,7 @@ def buddy_strip(bk, y):
 
 def word_card(bk, y, num, text, sentence, answer, unit):
     bk.ask(f"story: {sentence}")
+    y = bk.room(y, 110, 1)
     h = 110
     cy = y - h
     bk.card(M, cy, CW, h, num)
@@ -807,12 +840,23 @@ def teacher_note(bk, text):
 
 
 def practice_cards(bk, y, items, first_num, cols, rows, h, gap, draw):
-    """Grid of numbered cards; draw(x, cy, w, item) fills each one."""
-    for k, (x, cy, w) in enumerate(bk.grid(y, cols, rows, h, gap)):
-        if k < len(items):
-            bk.card(x, cy, w, h, first_num + k)
-            draw(x, cy, w, items[k])
-    return y - rows * h - (rows - 1) * gap
+    """Grid of numbered cards; draw(x, cy, w, item) fills each one. Rows move to a new page when the page is
+    full (footer, or the page's problem limit). Returns the bottom of the last row."""
+    bottom = y - h
+    for r in range(rows):
+        row = items[r * cols:(r + 1) * cols]
+        if not row:
+            bottom = y - h
+            y -= h + gap
+            continue
+        y = bk.room(y, h, len(row))
+        for c, (x, cy, w) in enumerate(bk.grid(y, cols, 1, h, gap)):
+            if c < len(row):
+                bk.card(x, cy, w, h, first_num + r * cols + c)
+                draw(x, cy, w, row[c])
+        bottom = y - h
+        y -= h + gap
+    return bottom
 
 
 def compact(bk, y, problems, first_num, cols=3):
@@ -5016,11 +5060,7 @@ def flow(bk, title, y, n, name, sub, items, num, cols, h, gap, draw):
         y = bk.new_page(title, first=False)
     y = bk.part(y, n, name, sub)
     for i in range(0, len(items), cols):
-        if y - h < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, n, name, "(continued)")
-        practice_cards(bk, y, items[i:i + cols], num + i, cols, 1, h, gap, draw)
-        y -= h + gap
+        y = practice_cards(bk, y, items[i:i + cols], num + i, cols, 1, h, gap, draw) - gap
     return y - 30 + gap, num + len(items)
 
 
@@ -21184,6 +21224,9 @@ PACKETS = [
 OPTIONS = []  # e.g. packet 12 was built as "rows" and "columns"; the founder chose rows
 
 
+PAGE_CAP_EASY, PAGE_CAP_HARD = 15, 12  # founder: no more than 15 problems a page (K-2), 12 (grade 3 and up)
+
+
 def build_packet(packet, ink_folder, key, asked, suffix="", save=True, extras=True):
     folder, slug, name, learn, practice, _ = packet
     out = ROOT / folder / ink_folder
@@ -21192,9 +21235,11 @@ def build_packet(packet, ink_folder, key, asked, suffix="", save=True, extras=Tr
     bk.c.setTitle(f"{name}: " + ("Answer Key" if key else "Packet"))
     bk.extra = EXTRA.get(folder) if extras else None
     learn(bk)
+    bk.cap = PAGE_CAP_EASY if int(folder.split("-")[0]) <= 32 else PAGE_CAP_HARD
     practice(bk)
     if bk.extra:  # no part came after the extra practice's place: put it at the end
         bk.extra_pages(0, bk.max_part + 1, tail=True)
+    bk.cap = None
     if not save:
         return bk  # still open: the Check-In is added at the end, then saved
     bk.save()
