@@ -287,11 +287,11 @@ class Book:
         later, self.extra = self.extra, None  # this block's own part headers must not start the next block
         num_off, part_off = self.num_off, self.part_off
         self.num_off = 0  # the extra cards are numbered from max_num, which already includes earlier shifts
-        chosen = []
+        chosen, taken = [], set()  # taken: picked by an earlier section of this block
         for sec in sections:
             name, sub, kind, items = sec[:4]
             if len(sec) == 5:
-                k, seen, keep = KINDS[kind], set(), []
+                k, seen, keep = KINDS[kind], taken, []
                 for it in items:
                     q = qkey(k.key(it))
                     if q in seen or q in self.asked or (EXCLUDE is not None and q in EXCLUDE):
@@ -888,7 +888,16 @@ def compact(bk, y, problems, first_num, cols=3):
 
 
 def words(bk, y, stories, first_num):
+    # how many cards fit on this page; never leave the last card (the challenge) alone on a new page
+    fit = max(0, int((y - 110 - 46) // 118) + 1)
+    if bk.cap:
+        fit = min(fit, max(0, bk.cap - bk.page_probs))
+    early = fit - 1 if len(stories) - fit == 1 and fit >= 2 else None
     for i, (story, sentence, answer, unit) in enumerate(stories):
+        if i == early:
+            y = bk.new_page(bk.heading, first=False, force=True)
+            if bk.last_part:
+                y = bk.part(y, bk.last_part[0], bk.last_part[1], "(continued)")
         y = word_card(bk, y, first_num + i, story, sentence, answer, unit)
     return y
 
@@ -7495,11 +7504,7 @@ def practice_shares(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 12, "Word problems", "Draw the shapes. Share them fairly.")
-    for i, story in enumerate(WORDS_26):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 12, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_26, num)
 
 
 REVIEW_26 = ["half of 74 = [37]", "36 + [64] = 100", "double 14 = [28]", "58 + 10 = [68]", "half of 92 = [46]",
@@ -7823,11 +7828,7 @@ def practice_time(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 13, "Word problems", "Draw a clock if it helps.")
-    for i, story in enumerate(WORDS_27):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 13, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_27, num)
 
 
 REVIEW_27 = ["15 + 15 + 15 = [45]", "60 + 30 = [90]", "55 + [45] = 100", "25 + 25 = [50]",
@@ -8092,11 +8093,7 @@ def practice_money(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 13, "Word problems", "Draw the coins.")
-    for i, story in enumerate(WORDS_28):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 13, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_28, num)
 
 
 SYMBOLS = [("A pencil costs 40", "¢"), ("A bike costs 90", "$"), ("A gumball costs 25", "¢"),
@@ -8278,11 +8275,7 @@ def practice_across_zeros(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 11, "Word problems", "Break once. Check by adding.")
-    for i, story in enumerate(WORDS_29):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 11, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_29, num)
 
 
 REVIEW_29 = ["65¢ + 25¢ = [90¢]", "half past 7 = [7:30]", "352 + 216 = [568]", "64 + [36] = 100",
@@ -8579,11 +8572,7 @@ def practice_bar_models(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 4, "Draw the bar", "Draw it yourself. Is the whole missing, or a part?")
-    for i, story in enumerate(WORDS_30_ONE):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 4, "Draw the bar", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_30_ONE, num)
     num += len(WORDS_30_ONE)
     y -= 22
 
@@ -8886,11 +8875,7 @@ def practice_length(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 12, "Word problems", "Draw a bar. Keep the unit.")
-    for i, story in enumerate(WORDS_31):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 12, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_31, num)
 
 
 ESTIMATES = [("A door is about 2", ["centimeters", "meters"], "meters"),
@@ -9262,11 +9247,7 @@ def practice_graphs(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Make a tally chart if it helps.")
-    for i, story in enumerate(WORDS_32):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_32, num)
 
 
 REVIEW_32 = ["30 cm + 25 cm = [55] cm", "half past 4 = [4:30]", "3 quarters = [75¢]", f"800 {MINUS} 356 = [444]",
@@ -9462,11 +9443,7 @@ def practice_multiplication(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 12, "Word problems", "Find the groups and how many in each.")
-    for i, story in enumerate(WORDS_33):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 12, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_33, num)
 
 
 REVIEW_33 = ["36 cm + 47 cm = [83] cm", "quarter to 2 = [1:45]", "2 quarters + 2 dimes = [70¢]",
@@ -9622,11 +9599,7 @@ def practice_strategies(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 12, "Word problems", "Find the groups and how many in each.")
-    for i, story in enumerate(WORDS_34):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 12, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_34, num)
 
 
 def _fact_parts():
@@ -9853,11 +9826,7 @@ def practice_division(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 10, "Word problems", "Share it, or make groups?")
-    for i, story in enumerate(WORDS_35):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 10, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_35, num)
 
 
 def _div_parts():
@@ -10195,11 +10164,7 @@ def practice_unit_fractions(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 11, "Word problems", "Draw a picture.")
-    for i, story in enumerate(WORDS_UNIT):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 11, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_UNIT, num)
 
 
 REVIEW_UNIT = ["9 × 50 = [450]", "7 cm by 4 cm: area = [28] sq cm", "Round 268 to the nearest hundred: [300]",
@@ -10402,11 +10367,7 @@ def practice_counting_fractions(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 11, "Word problems", "Draw a picture.")
-    for i, story in enumerate(WORDS_COUNTF):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 11, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_COUNTF, num)
 
 
 REVIEW_COUNTF = ["8 groups of 3 = [24]", "6 cm by 8 cm: area = [48] sq cm", "Round 547 to the nearest ten: [550]",
@@ -10602,11 +10563,7 @@ def practice_fractions_wholes(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 12, "Word problems", "Draw the bars.")
-    for i, story in enumerate(WORDS_WHOLES):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 12, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_WHOLES, num)
 
 
 REVIEW_WHOLES = ["9 cm by 3 cm: area = [27] sq cm", "Round 436 to the nearest ten: [440]", "two tenths = [2]/10",
@@ -10766,11 +10723,7 @@ def practice_equal_fractions(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 10, "Word problems", "Draw strips to check.")
-    for i, story in enumerate(WORDS_EQUALF):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 10, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_EQUALF, num)
 
 
 REVIEW_EQUALF = ["Round 655 to the nearest ten: [660]", "8 m by 6 m: area = [48] sq m", "three fifths = [3]/5",
@@ -10935,11 +10888,7 @@ def practice_comparing_fractions(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Draw strips to compare.")
-    for i, story in enumerate(WORDS_COMPAREF):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_COMPAREF, num)
 
 
 REVIEW_COMPAREF = ["4/5 = 8/[10]", "12/3 = [4]", "Round 384 to the nearest hundred: [400]", "3 groups of 8 = [24]",
@@ -11099,11 +11048,7 @@ def practice_fraction_of_group(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Draw the groups.")
-    for i, story in enumerate(WORDS_GROUPF):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_GROUPF, num)
 
 
 REVIEW_GROUPF = ["4/10 [<] 7/10", "4/10 = 2/[5]", "15/3 = [5]", "Round 917 to the nearest hundred: [900]",
@@ -11304,11 +11249,7 @@ def practice_rounding(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 10, "Word problems", "About how many? Round.")
-    for i, story in enumerate(WORDS_37):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 10, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_37, num)
 
 
 REVIEW_37 = ["4 groups of 9 = [36]", f"63 {DIV} 9 = [7]",
@@ -11448,11 +11389,7 @@ def practice_times_tens(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "How many groups? How many in each?")
-    for i, story in enumerate(WORDS_38):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_38, num)
 
 
 TENS_PARTS_38 = [
@@ -11696,11 +11633,7 @@ def practice_area(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 10, "Word problems", "Draw the rectangle if it helps.")
-    for i, story in enumerate(WORDS_39):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 10, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_39, num)
 
 
 def area_eq(a, b, unit):
@@ -11954,11 +11887,7 @@ def practice_perimeter(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 11, "Word problems", "Draw the shape and label the sides.")
-    for i, story in enumerate(WORDS_40):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 11, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_40, num)
 
 
 def perim_eq(a, b, unit):
@@ -12201,11 +12130,7 @@ def practice_elapsed(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 11, "Word problems", "Jump to the o'clock if it helps.")
-    for i, story in enumerate(WORDS_41):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 11, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_41, num)
 
 
 REVIEW_41 = ["7 × 80 = [560]", "4 m by 9 m: area = [36] sq m", "8 in by 3 in: perimeter = [22] in",
@@ -12431,11 +12356,7 @@ def practice_four_ops(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 7, "Word problems", "No help this time. Two steps each.")
-    for i, story in enumerate(WORDS_42):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 7, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_42, num)
 
 
 REVIEW_42 = ["3 × 80 = [240]", "6 cm by 9 cm: area = [54] sq cm", "7 m by 2 m: perimeter = [18] m",
@@ -12660,11 +12581,7 @@ def practice_patterns(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Look for a pattern.")
-    for i, story in enumerate(WORDS_43):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_43, num)
 
 
 def double_fact(a, b):
@@ -12901,11 +12818,7 @@ def practice_mass_volume(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Draw a bar if it helps.")
-    for i, story in enumerate(WORDS_44):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_44, num)
 
 
 MASS_UNITS = [("A grape is about 5", ["grams", "kilograms"], "grams"),
@@ -13138,11 +13051,7 @@ def practice_scaled_graphs(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Draw a graph if it helps.")
-    for i, story in enumerate(WORDS_45):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_45, num)
 
 
 def pictures_eq(per, n):
@@ -13362,11 +13271,7 @@ def practice_quarter_inch(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Draw a ruler if it helps.")
-    for i, story in enumerate(WORDS_46):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_46, num)
 
 
 def longer_eq(a, b):
@@ -13635,11 +13540,7 @@ def practice_quadrilaterals(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Draw the shapes if it helps.")
-    for i, story in enumerate(WORDS_47):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_47, num)
 
 
 QUAD_FACTS = [("Every square is a rectangle.", True), ("Every rectangle is a square.", False),
@@ -13853,11 +13754,7 @@ def practice_thousands(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Think about the places.")
-    for i, story in enumerate(WORDS_48):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_48, num)
 
 
 REVIEW_48 = ["100 more than 467 = [567]", "Round 845 to the nearest hundred: [800]", "2 × 80 = [160]",
@@ -13990,11 +13887,7 @@ def practice_round_big(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 10, "Word problems", "About how many? Round.")
-    for i, story in enumerate(WORDS_49):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 10, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_49, num)
 
 
 def about_k(a, op, b):
@@ -14114,11 +14007,7 @@ def practice_big_add_sub(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Draw a bar if it helps.")
-    for i, story in enumerate(WORDS_50):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_50, num)
 
 
 REVIEW_50 = ["5,628 to the nearest thousand = [6,000]", "in 4,217 the 2 is worth [200]", "450 g + 300 g = [750] g",
@@ -14300,11 +14189,7 @@ def practice_mult_one_digit(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Draw the area model if it helps.")
-    for i, story in enumerate(WORDS_51):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_51, num)
 
 
 REVIEW_51 = ["3,846 to the nearest hundred = [3,800]", "2,457 + 1,386 = [3,843]", "in 7,062 the 7 is worth [7,000]",
@@ -14464,11 +14349,7 @@ def practice_remainders(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 7, "Word problems", "What does the remainder mean in the story?")
-    for i, story in enumerate(WORDS_52):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 7, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_52, num)
 
 
 REVIEW_52 = ["43 × 6 = [258]", "7,281 to the nearest thousand = [7,000]", f"6,304 {MINUS} 2,857 = [3,447]",
@@ -14675,11 +14556,7 @@ def practice_mult_two_digit(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Draw the area model if it helps.")
-    for i, story in enumerate(WORDS_58):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_58, num)
 
 
 REVIEW_58 = ["136 × 4 = [544]", f"47 {DIV} 6 = [7] R [5]", "6,284 to the nearest thousand = [6,000]",
@@ -14848,11 +14725,7 @@ def practice_dividing_big(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 10, "Word problems", "Share it, or make groups.")
-    for i, story in enumerate(WORDS_59):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 10, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_59, num)
 
 
 REVIEW_59 = ["26 × 14 = [364]", "40 × 70 = [2,800]", "5,729 to the nearest hundred = [5,700]",
@@ -15015,11 +14888,7 @@ def practice_factors(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Draw the rectangles.")
-    for i, story in enumerate(WORDS_60):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_60, num)
 
 
 def c_factor_list(bk, x, cy, w, n):
@@ -15182,11 +15051,7 @@ def practice_equivalent(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Draw a strip and cut the pieces.")
-    for i, story in enumerate(WORDS_61):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_61, num)
 
 
 REVIEW_61 = ["1,248 ÷ 4 = [312]", "42 × 13 = [546]", "784 ÷ 4 = [196]",
@@ -15354,11 +15219,7 @@ def practice_comparing_unlike(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Draw strips to compare.")
-    for i, story in enumerate(WORDS_62):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_62, num)
 
 
 REVIEW_62 = ["9/10 = [90]/100", "56 × 12 = [672]", "1,515 ÷ 5 = [303]", "4,816 to the nearest ten = [4,820]",
@@ -15514,11 +15375,7 @@ def practice_add_fractions(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Draw a strip.")
-    for i, story in enumerate(WORDS_63):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_63, num)
 
 
 REVIEW_63 = ["3/4 = [75]/100", "2/3 [<] 7/8", "64 × 15 = [960]", "1,035 ÷ 5 = [207]", "4/5 of 40 = [32]",
@@ -15678,11 +15535,7 @@ def practice_mixed_numbers(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Draw the bars.")
-    for i, story in enumerate(WORDS_64):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_64, num)
 
 
 REVIEW_64 = ["5/8 + 2/8 = [7]/8", "9/10 − 4/10 = [5]/10".replace("−", MINUS), "7/12 [>] 1/2", "72 × 21 = [1,512]",
@@ -15821,11 +15674,7 @@ def practice_frac_times(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 7, "Word problems", "Draw the groups.")
-    for i, story in enumerate(WORDS_65):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 7, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_65, num)
 
 
 REVIEW_65 = ["2 3/8 + 1 4/8 = [3] [7]/8", "11/4 = [2] [3]/4", "3/12 [<] 1/2",
@@ -15987,11 +15836,7 @@ def practice_decimals(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Draw a grid or a strip.")
-    for i, story in enumerate(WORDS_66):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_66, num)
 
 
 REVIEW_66 = ["3 × 2/5 = [6]/5", "1 3/8 + 2 2/8 = [3] [5]/8", "2/3 [<] 3/4", "84 × 12 = [1,008]",
@@ -16155,11 +16000,7 @@ def practice_compare_decimals(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Draw grids if it helps.")
-    for i, story in enumerate(WORDS_67):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_67, num)
 
 
 REVIEW_67 = ["47/100 = [0.47]", "0.3 = [30] hundredths", "4 × 2/3 = [8]/3", "3 2/5 − 1 1/5 = [2] [1]/5",
@@ -16330,11 +16171,7 @@ def practice_conversions(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Change to the same unit first.")
-    for i, story in enumerate(WORDS_68):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_68, num)
 
 
 REVIEW_68 = ["0.7 [>] 0.65", "38/100 = [0.38]", "5 × 3/4 = [15]/4", "2 5/6 + 1 3/6 = [4] [2]/6",
@@ -16472,11 +16309,7 @@ def practice_area_formulas(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Draw the rectangle and label the sides.")
-    for i, story in enumerate(WORDS_69):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_69, num)
 
 
 REVIEW_69 = ["8 ft = [96] in", "7 kg = [7,000] g", "0.45 [<] 0.5",
@@ -16631,11 +16464,7 @@ def practice_line_plots(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 7, "Word problems", "Use eighths.")
-    for i, story in enumerate(WORDS_70):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 7, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_70, num)
 
 
 REVIEW_70 = ["area: 13 × 6 = [78] sq m", "5 ft = [60] in", "0.8 [>] 0.75", "5 × 3/10 = [15]/10",
@@ -16847,11 +16676,7 @@ def practice_angles(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Draw the angles.")
-    for i, story in enumerate(WORDS_71):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_71, num)
 
 
 REVIEW_71 = ["area: 16 × 9 = [144] sq ft", "6 m = [600] cm",
@@ -17075,11 +16900,7 @@ def practice_lines_shapes(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 7, "Word problems", "Draw a picture.")
-    for i, story in enumerate(WORDS_72):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 7, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_72, num)
 
 
 REVIEW_72 = ["40 + [50] = 90 degrees", "2 1/8 + 5/8 = [2] [6]/8",
@@ -17325,11 +17146,7 @@ def practice_powers_of_ten(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 7, "Word problems", "Think about how the digits move.")
-    for i, story in enumerate(WORDS_73):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 7, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_73, num)
 
 
 REVIEW_73 = ["0.62 [>] 0.6", "4 × 7/10 = [28]/10", "area: 18 × 7 = [126] sq ft", "48 × 25 = [1,200]",
@@ -17576,11 +17393,7 @@ def practice_thousandths(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 10, "Word problems", "Think about the places.")
-    for i, story in enumerate(WORDS_74):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 10, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_74, num)
 
 
 REVIEW_74 = ["6.3 × 100 = [630]", "740 ÷ 100 = [7.4]", "10 × 10 × 10 = [1,000]",
@@ -17786,11 +17599,7 @@ def practice_compare_round_dec(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 10, "Word problems", "Line up the points.")
-    for i, story in enumerate(WORDS_75):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 10, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_75, num)
 
 
 REVIEW_75 = ["in 6.274 the 7 is worth [0.07]", "0.9 = [900] thousandths", "3.8 × 1,000 = [3,800]",
@@ -17974,11 +17783,7 @@ def practice_add_sub_dec(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Points under points.")
-    for i, story in enumerate(WORDS_76):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_76, num)
 
 
 REVIEW_76 = ["2.36 to the nearest tenth = [2.4]", "0.57 [>] 0.507", "in 8.193 the 3 is worth [0.003]",
@@ -18117,11 +17922,7 @@ def practice_mult_bigger(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "Split, multiply, add.")
-    for i, story in enumerate(WORDS_77):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_77, num)
 
 
 REVIEW_77 = ["3.6 + 2.75 = [6.35]", f"8.2 {MINUS} 4.67 = [3.53]", "4.28 to the nearest tenth = [4.3]", "0.45 [>] 0.405",
@@ -18246,11 +18047,7 @@ def practice_div_two_digit(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "How many groups? How many in each?")
-    for i, story in enumerate(WORDS_78):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_78, num)
 
 
 REVIEW_78 = ["324 × 27 = [8,748]", "5.6 + 3.85 = [9.45]", f"7 {MINUS} 2.36 = [4.64]", "1.807 [>] 1.78",
@@ -18442,11 +18239,7 @@ def practice_mult_div_dec(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 10, "Word problems", "Count the tenths and hundredths.")
-    for i, story in enumerate(WORDS_79):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 10, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_79, num)
 
 
 REVIEW_79 = ["858 ÷ 26 = [33]", "215 × 34 = [7,310]", "4.6 + 0.85 = [5.45]", "3.74 to the nearest tenth = [3.7]",
@@ -18591,11 +18384,7 @@ def practice_unlike_fractions(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 7, "Word problems", "Same size pieces first.")
-    for i, story in enumerate(WORDS_80):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 7, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_80, num)
 
 
 REVIEW_80 = ["7 × 0.6 = [4.2]", "3.6 ÷ 4 = [0.9]", "0.7 × 0.3 = [0.21]", "945 ÷ 35 = [27]", "5/6 = [15]/18",
@@ -18765,11 +18554,7 @@ def practice_mult_fractions(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 8, "Word problems", "× means “of”.")
-    for i, story in enumerate(WORDS_81):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 8, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_81, num)
 
 
 REVIEW_81 = ["1/3 + 1/2 = [5]/[6]", "4/5 − 1/4 = [11]/[20]", "6 × 0.7 = [4.2]", "0.4 × 0.6 = [0.24]",
@@ -18942,11 +18727,7 @@ def practice_volume(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Length × width × height.")
-    for i, story in enumerate(WORDS_82):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_82, num)
 
 
 REVIEW_82 = ["2/3 × 3/5 = [6]/[15]", "3/4 × 16 = [12]", "1/2 + 2/5 = [9]/[10]", "8 × 0.45 = [3.6]",
@@ -19084,11 +18865,7 @@ def practice_frac_division(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 7, "Word problems", "Who shares? How many wholes?")
-    for i, story in enumerate(WORDS_83):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 7, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_83, num)
 
 
 REVIEW_83 = ["4/5 × 5/6 = [20]/[30]", "2/5 + 1/6 = [17]/[30]", "4 × 3 × 5 = [60]", "0.8 × 0.4 = [0.32]",
@@ -19214,11 +18991,7 @@ def practice_unit_division(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 7, "Word problems", "Share it, or how many fit?")
-    for i, story in enumerate(WORDS_84):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 7, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_84, num)
 
 
 REVIEW_84 = ["5 ÷ 7 = [5]/[7]", "5/6 × 12 = [10]", "5/7 − 1/3 = [8]/[21]", "6 × 0.35 = [2.1]", "2.4 + 3.75 = [6.15]",
@@ -19366,11 +19139,7 @@ def practice_order_ops(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 9, "Word problems", "Write one expression, then work it out.")
-    for i, story in enumerate(WORDS_85):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 9, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_85, num)
 
 
 REVIEW_85 = ["1/8 ÷ 3 = [1]/[24]", "5 ÷ 1/3 = [15]", "6 ÷ 8 = [6]/[8]", "7 × 0.9 = [6.3]",
@@ -19513,11 +19282,7 @@ def practice_num_patterns(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 7, "Word problems", "Make a table if it helps.")
-    for i, story in enumerate(WORDS_86):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 7, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_86, num)
 
 
 REVIEW_86 = ["(12 + 8) × 3 = [60]", "5 + 6 × 4 = [29]", "1/5 ÷ 2 = [1]/[10]", "3 ÷ 1/5 = [15]",
@@ -19668,11 +19433,7 @@ def practice_converting(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 7, "Word problems", "Change to the same unit first.")
-    for i, story in enumerate(WORDS_87):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 7, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_87, num)
 
 
 REVIEW_87 = ["(16 − 7) × 4 = [36]", "Start at 3, add 9:  3  12  [21]", "1/6 ÷ 3 = [1]/[18]", "8 ÷ 1/3 = [24]",
@@ -19793,11 +19554,7 @@ def practice_line_data(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 6, "Word problems", "Add it up, then share it out.")
-    for i, story in enumerate(WORDS_88):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 6, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_88, num)
 
 
 REVIEW_88 = ["3.2 m = [320] cm", "1,500 g = [1.5] kg", "(9 + 3) × 5 = [60]", "7 ÷ 1/2 = [14]", "3 ÷ 5 = [3]/[5]",
@@ -19969,11 +19726,7 @@ def practice_coord_grid(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 7, "Word problems", "Over, then up.")
-    for i, story in enumerate(WORDS_89):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 7, "Word problems", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_89, num)
 
 
 REVIEW_89 = ["Start at 5, add 6:  5  11  [17]", "2.7 kg = [2,700] g", "(25 − 9) ÷ 4 = [4]",
@@ -20157,11 +19910,7 @@ def practice_classify(bk):
     if y - 14 - 110 < 46:
         y = bk.new_page(title, first=False)
     y = bk.part(y, 6, "Shape riddles", "Who am I?")
-    for i, story in enumerate(WORDS_90):
-        if y - 110 < 46:
-            y = bk.new_page(title, first=False)
-            y = bk.part(y, 6, "Shape riddles", "(continued)")
-        y = word_card(bk, y, num + i, *story)
+    y = words(bk, y, WORDS_90, num)
 
 
 SHAPE_FACTS = [("Every square is a rectangle.", True), ("Every rectangle is a square.", False),
@@ -20215,8 +19964,7 @@ def _words(bk, title, state, n, sub, stories):
     if state[0] - 14 - 110 < 46:
         state[0] = bk.new_page(title, first=False)
     state[0] = bk.part(state[0], n, "Word problems", sub)
-    for i, story in enumerate(stories):
-        state[0] = word_card(bk, state[0], state[1] + i, *story)
+    state[0] = words(bk, state[0], stories, state[1])
 
 
 def shapes_row(bk, x, y, a, b, s=11, gap=5):
@@ -21176,14 +20924,29 @@ EXTRA.update({
                                                      for k in ("square", "rectangle", "rhombus", "trapezoid", "kite")
                                                      for r in range(0, 360, 20)]), 8),
     ], False),
-    "10-subtracting-two-digit-numbers": (9, [
+    "10-subtracting-two-digit-numbers": [
+        (4, [
+            ("More taking away tens", "Cross out the tens you take away.", "sub_tens_pic",
+             [(a, b) for a, b in _many(2010, lambda r: (r.randint(41, 89), r.choice([10, 20, 30]))) if a % 10], 10),
+            ("More splitting", "Tens, then ones, then the total.", "sub_split", _many(2110, _no_borrow), 20),
+        ], False),
+        (9, [
         ("More take away", "No help. Tens, then ones.", "eq3",
          [f"{a} {MINUS} {b} = [{a - b}]" for a, b in _many(10, _no_borrow)], 36),
         ("Take away tens", None, "eq3",
          [f"{a} {MINUS} {t} = [{a - t}]" for a, t in _many(1010, lambda r: (r.randint(31, 99), r.randint(1, 8) * 10))
           if a > t], 15),
     ], False),
-    "11-missing-numbers": (8, [
+    ],
+    "11-missing-numbers": [
+        (4, [
+            ("More jumping up", "Jump to the next ten, then by tens, then the ones.", "jump_up",
+             [(a, t) for a, t in _many(2011, lambda r: (r.randint(12, 69), r.randint(25, 99))) if t % 10 and t - a > 12],
+             16),
+            ("More finding the stops", "Write the tens you jump to.", "find_stops",
+             [(a, a + b) for a, b in _many(2111, _carry)], 16),
+        ], False),
+        (8, [
         ("More missing numbers", "Jump to the next ten, then by tens, then the ones.", "eq3",
          [f"{a} + [{c - a}] = {c}" for a, c in _many(11, lambda r: (r.randint(12, 79), r.randint(30, 99))) if c - a > 9],
          36),
@@ -21191,18 +20954,38 @@ EXTRA.update({
          [f"{a} + [{c - a}] = {c}" for a, c in _many(1011, lambda r: (r.randint(11, 88), r.randint(3, 9) * 10))
           if c - a > 2], 15),
     ], False),
-    "12-subtracting-with-borrowing": (8, [
+    ],
+    "12-subtracting-with-borrowing": [
+        (4, [
+            ("More breaking a ten", "One ten becomes 10 ones.", "break_ten",
+             [n for n in _many(2012, lambda r: r.randint(21, 98)) if n % 10], 12),
+            ("More break, then subtract", "Fill in every box.", "borrow_rows", _many(2112, _borrow), 20),
+        ], False),
+        (8, [
         ("More breaking a ten", "No help.", "eq3", [f"{a} {MINUS} {b} = [{a - b}]" for a, b in _many(12, _borrow)], 39),
         ("From a tens number", None, "eq3",
          [f"{a} {MINUS} {b} = [{a - b}]" for a, b in _many(1012, lambda r: (r.randint(3, 9) * 10, r.randint(11, 28)))],
          12),
     ], False),
-    "13-adding-in-columns": (9, [
+    ],
+    "13-adding-in-columns": [
+        (5, [
+            ("More carrying", "Write the new ten in the box on top.", "col_add_boxes", _many(2013, _carry), 25),
+        ], False),
+        (9, [
         ("More in columns", "Carry the new ten.", "col_add", _many(13, _carry), 30),
     ], False),
-    "14-subtracting-in-columns": (9, [
+    ],
+    "14-subtracting-in-columns": [
+        (5, [
+            ("More with the mat", "Open a ten. Cross out what you take away.", "sub_mat", _many(2014, _borrow), 6),
+            ("More breaking it yourself", "Cross out, write the new digits, then subtract.", "col_sub_boxes",
+             _many(2114, _borrow), 20),
+        ], False),
+        (9, [
         ("More in columns", "Break a ten when you need to.", "col_sub", _many(14, _borrow), 30),
     ], False),
+    ],
     "15-hundreds-tens-and-ones": (9, [
         ("Put it together", None, "eq2", [f"{n // 100} hundreds {n // 10 % 10} tens {n % 10} ones = [{n}]"
                                          for n in _many(15, lambda r: r.randint(101, 999))], 24),

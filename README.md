@@ -4,21 +4,21 @@ Ninety-six packets, in teaching order (K to grade 6). Each starts with a picture
 
 | Folder | Topic | Pages |
 |---|---|---|
-| `0-adding-and-taking-away/` | Before everything: add and take away within 9 with pictures of real things (gummy bears, apples, ducks…); cross out what goes away | 24 |
-| `1-ten-buddies/` | Pairs that make 10 | 9 |
-| `2-ten-and-some-more/` | 10 + a number (teen numbers) | 9 |
+| `0-adding-and-taking-away/` | Before everything: add and take away within 9 with pictures of real things (gummy bears, apples, ducks…); cross out what goes away | 41 |
+| `1-ten-buddies/` | Pairs that make 10 | 14 |
+| `2-ten-and-some-more/` | 10 + a number (teen numbers) | 13 |
 | `3-up-to-and-over-ten/` | Crossing 10 with buddies (break-apart) | 11 + blank template |
 | `4-over-the-next-ten/` | Crossing 20, 30, 40… with buddies, then without hints | 10 + blank template |
-| `5-back-through-ten/` | Subtracting across ten with the jump diagram (15 − 8: jump 5, jump 2) | 12 |
-| `6-doubles-and-near-doubles/` | Doubles to 10 + 10, then near doubles (6 + 7 = double 6 + 1) | 12 |
-| `7-tens-and-ones/` | Two-digit numbers as tens and ones: ten-sticks, quick tens, 40 + 6, which is more | 11 |
-| `8-ten-more-ten-less/` | 34 + 10 and 34 − 10: add an orange ten or cross one out; only the tens digit changes | 12 |
-| `9-adding-two-digit-numbers/` | 34 + 25 by place value: add the tens, add the ones, put them together; making a new ten (38 + 25) | 12 |
-| `10-subtracting-two-digit-numbers/` | 58 − 23 by place value: take away the tens, take away the ones, put them together. Only problems with enough ones; borrowing comes later | 12 |
-| `11-missing-numbers/` | Missing addends by jumping up: 8 + ☐ = 13 (8 → 10 → 13), 42 + ☐ = 75 (42 → 50 → 70 → 75). Addition only | 12 |
-| `12-subtracting-with-borrowing/` | 52 − 27: not enough ones, so break a ten (52 = 40 + 12), then tens, ones, total | 12 |
-| `13-adding-in-columns/` | Two-digit addition stacked in columns; carry the new ten as a small 1 | 10 |
-| `14-subtracting-in-columns/` | Two-digit subtraction stacked; cross out the tens digit and write 10 more ones | 10 |
+| `5-back-through-ten/` | Subtracting across ten with the jump diagram (15 − 8: jump 5, jump 2) | 21 |
+| `6-doubles-and-near-doubles/` | Doubles to 10 + 10, then near doubles (6 + 7 = double 6 + 1) | 18 |
+| `7-tens-and-ones/` | Two-digit numbers as tens and ones: ten-sticks, quick tens, 40 + 6, which is more | 17 |
+| `8-ten-more-ten-less/` | 34 + 10 and 34 − 10: add an orange ten or cross one out; only the tens digit changes | 19 |
+| `9-adding-two-digit-numbers/` | 34 + 25 by place value: add the tens, add the ones, put them together; making a new ten (38 + 25) | 19 |
+| `10-subtracting-two-digit-numbers/` | 58 − 23 by place value: take away the tens, take away the ones, put them together. Only problems with enough ones; borrowing comes later | 15 |
+| `11-missing-numbers/` | Missing addends by jumping up: 8 + ☐ = 13 (8 → 10 → 13), 42 + ☐ = 75 (42 → 50 → 70 → 75). Addition only | 17 |
+| `12-subtracting-with-borrowing/` | 52 − 27: not enough ones, so break a ten (52 = 40 + 12), then tens, ones, total | 16 |
+| `13-adding-in-columns/` | Two-digit addition stacked in columns; carry the new ten as a small 1 | 12 |
+| `14-subtracting-in-columns/` | Two-digit subtraction stacked; cross out the tens digit and write 10 more ones | 13 |
 | `15-hundreds-tens-and-ones/` | Three-digit place value: flats, sticks and dots; quick drawings; 300 + 40 + 5 | 12 |
 | `16-skip-counting/` | Count by 5s, 10s and 100s from any number | 10 |
 | `17-comparing-numbers/` | <, > and = with two- and three-digit numbers; biggest place first | 11 |
