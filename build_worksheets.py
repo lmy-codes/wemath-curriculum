@@ -129,13 +129,15 @@ class Book:
         self.asked = {} if asked is None else asked  # shared across packets
         self.rec = None  # a list while a check-in or assessment card is drawn: its answers (curriculum.json)
         # Extra practice pages (EXTRA): drawn just before part `before`; later numbers shift past them.
-        self.extra = None  # (before_part, sections, repeat_ok)
+        self.extra = None  # [(before_part, sections, repeat_ok), ...] in part order
         self.max_num = 0
         self.num_off = 0
         self.part_off = 0
         self.repeat_ok = False  # True: questions may repeat (Kindergarten and grade 1 extra practice)
         self.max_part = 0
-        self.cap = None  # most problems on one practice page (founder: 15 easier, 12 harder)
+        self.cap = None  # most problems on one practice page (founder: 10 K-1, 15 easier, 12 harder)
+        self.big_print = False  # K-1 practice: one-line problems get 2 columns and bigger type
+        self.boost = False
         self.y_low = H  # lowest point drawn on this page (cards and part headers)
         self.page_probs = 0
         self.last_part = None
@@ -244,9 +246,9 @@ class Book:
 
     def part(self, y, n, text, sub=None):
         """Section label: 'Part 2   Fill in the buddy.   sub'"""
-        if self.extra and n >= self.extra[0]:
+        while self.extra and n >= self.extra[0][0]:
             y = self.extra_pages(y, n)
-        if self.cap and sub != "(continued)" and self.page_probs and (self.page_probs > self.cap - 3 or y < 130):
+        if self.cap and sub != "(continued)" and self.page_probs and (self.page_probs > self.cap - (2 if self.cap <= 10 else 3) or y < 130):
             y = self.new_page(self.heading, first=False, force=True)  # no part header alone at the bottom
         self.max_part = max(self.max_part, n)
         self.last_part = (n, text)
@@ -281,8 +283,10 @@ class Book:
         problem numbers of everything after it. Returns the y on a fresh page for part n itself.
         Sections are (name, sub, kind, items) or, with no repeats allowed, (name, sub, kind, candidates, count):
         the first `count` candidates not used anywhere in practice, check-ins or assessments (EXCLUDE)."""
-        before, sections, repeat_ok = self.extra
-        self.extra = None
+        before, sections, repeat_ok = self.extra.pop(0)
+        later, self.extra = self.extra, None  # this block's own part headers must not start the next block
+        num_off, part_off = self.num_off, self.part_off
+        self.num_off = 0  # the extra cards are numbered from max_num, which already includes earlier shifts
         chosen = []
         for sec in sections:
             name, sub, kind, items = sec[:4]
@@ -311,8 +315,9 @@ class Book:
             y, num = flow(self, title, y, n + i, name, sub, items, num, k.cols, k.h, k.gap,
                           lambda x, cy, w, it, k=k: (self.ask(k.key(it)), k.draw(self, x, cy, w, it)))
         self.repeat_ok = False
-        self.part_off = len(sections)
-        self.num_off = num - first
+        self.extra = later or None
+        self.part_off = part_off + len(sections)
+        self.num_off = num_off + num - first
         return y if tail else self.new_page(title, first=False)
 
     def note(self, y, text):
@@ -418,6 +423,8 @@ class Book:
 
     def fit_eq(self, x, y, w, text, size=17, color=None):
         """eq(), shrinking the type until it fits in width w."""
+        if self.boost:  # big print (K-1): one-line card grown from 42 to 66 tall
+            size, y = size * 1.45, y + 9
         while self.eq_width(text, size) > w and size > 9:
             size -= 0.5
         return self.eq(x, y, text, size=size, color=color)
@@ -842,6 +849,17 @@ def teacher_note(bk, text):
 def practice_cards(bk, y, items, first_num, cols, rows, h, gap, draw):
     """Grid of numbered cards; draw(x, cy, w, item) fills each one. Rows move to a new page when the page is
     full (footer, or the page's problem limit). Returns the bottom of the last row."""
+    if bk.big_print and h == 42:  # K-1: one-line problems in big print, two to a row
+        cols, h, gap = min(cols, 2), 66, 10
+        rows = (len(items) + cols - 1) // cols
+        plain_draw = draw
+
+        def draw(x, cy, w, item):
+            bk.boost = True
+            try:
+                plain_draw(x, cy, w, item)
+            finally:
+                bk.boost = False
     bottom = y - h
     for r in range(rows):
         row = items[r * cols:(r + 1) * cols]
@@ -5220,6 +5238,14 @@ def practice_adding_taking_away(bk):
 
     def P(items):
         return [f"{a} {sign_of_op(op)} {b} = [{result(a, op, b)}]" for a, op, b in items]
+
+    # this packet's own cards, for its extra practice pages (EXTRA), drawn while this book is open
+    for name_, h_, cols_, fn in (("k0_add5", 92, 2, together_card), ("k0_take5", 100, 2, take_card),
+                                 ("k0_add9", 80, 1, wide_together), ("k0_take9", 80, 1, wide_take),
+                                 ("k0_draw_more", 90, 1, wide_draw_more), ("k0_draw", 114, 2, draw_solve_card),
+                                 ("k0_sentence", 80, 1, wide_sentence)):
+        KINDS[name_] = Kind(h_, cols_, lambda it: f"k0 {it}", lambda bk_, x, cy, w, it, fn=fn: fn(x, cy, w, it),
+                            10 if cols_ == 2 else 8)
 
     num = 1
     y, num = flow(bk, title, y, 1, "Put together", "Count them all. How many in all?",
@@ -20838,55 +20864,181 @@ while len(_ADD22) < 36:
 
 EXCLUDE = None  # set by find_exclude() before a full build
 
+def _deal(seed, pool, n):
+    """n items from pool: every item once (shuffled), then again, so repeats land pages apart."""
+    r, out = random.Random(seed), []
+    while len(out) < n:
+        batch = list(pool)
+        r.shuffle(batch)
+        out += batch
+    out = out[:n]
+    for i in range(1, len(out)):  # no item twice in a row
+        if out[i] == out[i - 1]:
+            j = next((j for j in range(i + 1, len(out)) if out[j] != out[i]), None)
+            if j:
+                out[i], out[j] = out[j], out[i]
+    return out
+
+
+def _with_obj(seed, facts):
+    """Give each picture fact an object, cycling through every object in a shuffled order."""
+    r = random.Random(seed)
+    objs = list(OBJ)
+    r.shuffle(objs)
+    return [(objs[i % len(objs)],) + tuple(f) for i, f in enumerate(facts)]
+
+
+_UP9_ADD = [(a, b) for a in range(1, 9) for b in range(1, 9) if 6 <= a + b <= 9]
+_UP9_SUB = [(n, b) for n in range(6, 10) for b in range(1, n)]
+_SPLIT = [(a, b) for a, b in TWO_ADD_NO + TWO_ADD_NEW if a > b]
+
+# Kindergarten and grade 1: first more of the picture / diagram work (several pages before the no-help parts),
+# then the big-print plain pages. Each block is (before_part, sections, repeat_ok); repeats come pages apart.
 EXTRA = {
-    "0-adding-and-taking-away": (15, [
-        ("More adding", "Every way to add up to 9.", "kbig", mix("x0a", [f"{a} + {b} = [{a + b}]" for a, b in _ADD9])),
-        ("More taking away", "Every way to take away within 9.", "kbig",
-         mix("x0b", [f"{a + b} {MINUS} {a} = [{b}]" for a, b in _ADD9])),
-    ], True),
-    "1-ten-buddies": (5, [
-        ("Fill the ten-frame", "Draw the buddy dots. Then write the buddy.", "kframe", shuf("x1a", range(0, 11))),
-        ("Every ten buddy", "Fill in the buddy.", "kbig", mix("x1b", [f"{a} + [{10 - a}] = 10" for a in range(11)])),
-        ("Every ten buddy again", "Now the first number is missing.", "kbig",
-         mix("x1c", [f"[{a}] + {10 - a} = 10" for a in range(11)])),
-    ], True),
-    "2-ten-and-some-more": (4, [
-        ("Ten and some more", "A full ten-frame and some more.", "kteen", shuf("x2a", range(1, 10))),
-        ("Every teen number", "No pictures this time.", "kbig", mix("x2b", [f"10 + {n} = [{10 + n}]" for n in range(10)])),
-        ("Which number goes with 10?", None, "kbig", mix("x2c", [f"10 + [{n}] = {10 + n}" for n in range(1, 10)])),
-    ], True),
-    "3-up-to-and-over-ten": (7, [
-        ("Bigger number first", "Every fact that goes over 10.", "kbig",
-         mix("x3a", [f"{a} + {b} = [{a + b}]" for a, b in _OVER if a >= b])),
-        ("Smaller number first", "Start with the bigger one in your head.", "kbig",
-         mix("x3b", [f"{a} + {b} = [{a + b}]" for a, b in _OVER if a < b])),
-    ], True),
-    "4-over-the-next-ten": (5, [
-        ("More over the next ten", "Fill up to the next ten first.", "kbig",
-         mix("x4a", [f"{a} + {b} = [{a + b}]" for a, b in _TWO_ONE])),
-    ], True),
-    "5-back-through-ten": (9, [
-        ("Every take-away through ten", "Jump to 10, then the rest.", "kbig",
-         mix("x5a", [f"{c} {MINUS} {b} = [{c - b}]" for c, b in _BACK])),
-    ], True),
-    "6-doubles-and-near-doubles": (9, [
-        ("Every double", None, "kbig", mix("x6a", [f"{a} + {a} = [{2 * a}]" for a in range(1, 11)])),
-        ("Every near double", "Find the double, then one more.", "kbig",
-         mix("x6b", [f"{a} + {a + 1} = [{2 * a + 1}]" for a in range(1, 10)]
-             + [f"{a + 1} + {a} = [{2 * a + 1}]" for a in range(1, 10)])),
-    ], True),
-    "7-tens-and-ones": (8, [
-        ("Tens plus ones", None, "kbig", mix("x7a", [f"{n // 10 * 10} + {n % 10} = [{n}]" for n in _NUMS[:18]])),
-        ("Tens and ones", None, "kbig", mix("x7b", [f"[{n // 10}] tens [{n % 10}] ones = {n}" for n in _NUMS[18:]])),
-    ], True),
-    "8-ten-more-ten-less": (9, [
-        ("10 more", None, "kbig", mix("x8a", [f"{n} + 10 = [{n + 10}]" for n in _TENS[:18]])),
-        ("10 less", None, "kbig", mix("x8b", [f"{n} {MINUS} 10 = [{n - 10}]" for n in _TENS[18:]])),
-    ], True),
-    "9-adding-two-digit-numbers": (9, [
-        ("More adding", "Add the tens, then the ones.", "kbig",
-         mix("x9a", [f"{a} + {b} = [{a + b}]" for a, b in _ADD22])),
-    ], True),
+    "0-adding-and-taking-away": [
+        (4, [
+            ("More putting together", "Count them all.", "k0_add5", _with_obj("g0a", _deal("g0a", ADD5, 16))),
+            ("More taking away", "Cross out. Count what is left.", "k0_take5", _with_obj("g0b", _deal("g0b", SUB5, 16))),
+        ], True),
+        (10, [
+            ("More putting together up to 9", "Count them all.", "k0_add9",
+             _with_obj("g0c", _deal("g0c", _UP9_ADD, 16))),
+            ("More taking away from up to 9", "Cross out. Count what is left.", "k0_take9",
+             _with_obj("g0d", _deal("g0d", _UP9_SUB, 16))),
+            ("More drawing", "Draw circles for the ones you add. Count them all.", "k0_draw_more",
+             _with_obj("g0e", _deal("g0e", [(a, b) for a, b in _UP9_ADD if a <= 5], 8))),
+            ("More number sentences", "Look at the picture. Write the numbers.", "k0_sentence",
+             _with_obj("g0f", _deal("g0f", [(a, "+", b) for a, b in _UP9_ADD] + [(n, "-", b) for n, b in _UP9_SUB], 10))),
+            ("More drawing to solve", "Draw circles. Cross out to take away.", "k0_draw",
+             _deal("g0g", [(a, "+", b) for a, b in _UP9_ADD] + [(n, "-", b) for n, b in _UP9_SUB], 12)),
+        ], True),
+        (15, [
+            ("More adding", "Every way to add up to 9.", "kbig", mix("x0a", [f"{a} + {b} = [{a + b}]" for a, b in _ADD9])),
+            ("More taking away", "Every way to take away within 9.", "kbig",
+             mix("x0b", [f"{a + b} {MINUS} {a} = [{b}]" for a, b in _ADD9])),
+        ], True),
+    ],
+    "1-ten-buddies": [
+        (2, [
+            ("Fill the ten-frame", "Draw the buddy dots. Then write the buddy.", "kframe", _deal("g1a", range(0, 11), 11)),
+            ("More dots and buddies", "How many dots? What is its buddy?", "frame_buddy", _deal("g1b", range(1, 10), 18)),
+            ("How many more to make 10?", "Draw the dots you need.", "more10",
+             [(f"{a} + [{10 - a}] = 10", a, 10 - a) for a in _deal("g1c", range(1, 10), 18)]),
+        ], True),
+        (5, [
+            ("Every ten buddy", "Fill in the buddy.", "kbig", mix("x1b", [f"{a} + [{10 - a}] = 10" for a in range(11)])),
+            ("Every ten buddy again", "Now the first number is missing.", "kbig",
+             mix("x1c", [f"[{a}] + {10 - a} = 10" for a in range(11)])),
+        ], True),
+    ],
+    "2-ten-and-some-more": [
+        (2, [
+            ("More ten and some more", "Count the extra dots.", "teen",
+             [(f"10 + {n} = [{10 + n}]", n) for n in _deal("g2a", range(1, 10), 9)]
+             + [(f"10 + [{n}] = {10 + n}", n) for n in _deal("g2b", range(1, 10), 9)]),
+            ("A full ten and some more", "A full ten-frame and some more.", "kteen", _deal("g2c", range(1, 10), 9)),
+        ], True),
+        (4, [
+            ("Every teen number", "No pictures this time.", "kbig", mix("x2b", [f"10 + {n} = [{10 + n}]" for n in range(10)])),
+            ("Which number goes with 10?", None, "kbig", mix("x2c", [f"10 + [{n}] = {10 + n}" for n in range(1, 10)])),
+        ], True),
+        (6, [
+            ("More buddies first", "Circle the two numbers that make 10. Then add.", "three",
+             _deal("g2d", [(a, 10 - a, c) for a in range(1, 10) for c in range(1, 10)]
+                   + [(c, a, 10 - a) for a in range(1, 10) for c in range(1, 10)], 16)),
+        ], True),
+    ],
+    "3-up-to-and-over-ten": [
+        (3, [
+            ("More breaking apart", "Find the buddy, then what is left over. Every fact that goes over 10.", "ba",
+             _deal("g3a", OVER10, 40)),
+            ("Buddy first, then the rest", "Make 10 first. Then add what is left.", "ladder", _deal("g3b", OVER10, 20)),
+        ], True),
+        (7, [
+            ("Bigger number first", "Every fact that goes over 10.", "kbig",
+             mix("x3a", [f"{a} + {b} = [{a + b}]" for a, b in _OVER if a >= b])),
+            ("Smaller number first", "Start with the bigger one in your head.", "kbig",
+             mix("x3b", [f"{a} + {b} = [{a + b}]" for a, b in _OVER if a < b])),
+        ], True),
+    ],
+    "4-over-the-next-ten": [
+        (3, [
+            ("More up to the next ten", "Fill up to the next ten. Then add the rest.", "ladder", _deal("g4a", NEXT10, 16)),
+            ("More breaking apart", "Find the buddy, then what is left over.", "ba", _deal("g4b", NEXT10, 30)),
+        ], True),
+        (4, [
+            ("More with less help", "Write the next ten. Then add.", "hint", _deal("g4c", NEXT10, 20)),
+        ], True),
+        (5, [
+            ("More over the next ten", "Fill up to the next ten first.", "kbig",
+             mix("x4a", [f"{a} + {b} = [{a + b}]" for a, b in _TWO_ONE])),
+        ], True),
+    ],
+    "5-back-through-ten": [
+        (3, [
+            ("More jumps with dots", "Jump back to 10, then the rest.", "jump_dots", _deal("g5a", TEEN_SUB, 12)),
+            ("More jumps through ten", "Fill in both jumps.", "jump", _deal("g5b", TEEN_SUB, 24)),
+        ], True),
+        (6, [
+            ("More with less help", "Fill in the two jumps.", "jump_less", _deal("g5c", TEEN_SUB, 24)),
+        ], True),
+        (9, [
+            ("Every take-away through ten", "Jump to 10, then the rest.", "kbig",
+             mix("x5a", [f"{c} {MINUS} {b} = [{c - b}]" for c, b in _BACK])),
+        ], True),
+    ],
+    "6-doubles-and-near-doubles": [
+        (2, [
+            ("More doubles with dots", "Count the dots.", "double_dots", _deal("g6a", range(1, 10), 18)),
+        ], True),
+        (4, [
+            ("More near doubles with dots", "Find the double, then add 1.", "near_dots",
+             _deal("g6b", [(n, n + 1) for n in range(1, 10)], 18)),
+        ], True),
+        (9, [
+            ("Every double", None, "kbig", mix("x6a", [f"{a} + {a} = [{2 * a}]" for a in range(1, 11)])),
+            ("Every near double", "Find the double, then one more.", "kbig",
+             mix("x6b", [f"{a} + {a + 1} = [{2 * a + 1}]" for a in range(1, 10)]
+                 + [f"{a + 1} + {a} = [{2 * a + 1}]" for a in range(1, 10)])),
+        ], True),
+    ],
+    "7-tens-and-ones": [
+        (3, [
+            ("More counting tens and ones", "Count the sticks, then the dots.", "count_to",
+             _deal("g7a", [n for n in TWO_DIG if n < 70], 16)),
+            ("More drawing", "A line for each ten, a dot for each one.", "draw_qt", _deal("g7b", [n for n in TWO_DIG if n < 60], 12)),
+            ("Count the tens", None, "count_tens", _deal("g7c", range(10, 100, 10), 9)),
+        ], True),
+        (8, [
+            ("Tens plus ones", None, "kbig", mix("x7a", [f"{n // 10 * 10} + {n % 10} = [{n}]" for n in _NUMS[:18]])),
+            ("Tens and ones", None, "kbig", mix("x7b", [f"[{n // 10}] tens [{n % 10}] ones = {n}" for n in _NUMS[18:]])),
+        ], True),
+    ],
+    "8-ten-more-ten-less": [
+        (3, [
+            ("More pictures", "Add a ten-stick, or cross one out.", "ten_pic",
+             _deal("g8a", [(n, "+") for n in TWO_DIG if n < 70] + [(n, "-") for n in TWO_DIG if 20 < n < 80], 24)),
+        ], True),
+        (5, [
+            ("More 10 less and 10 more", None, "side", _deal("g8b", [n for n in TWO_DIG if 20 < n < 90], 16)),
+            ("Keep going", None, "chain10", _deal("g8c", [("+", n) for n in range(2, 39)] + [("−", n) for n in range(60, 99)], 8)),
+        ], True),
+        (9, [
+            ("10 more", None, "kbig", mix("x8a", [f"{n} + 10 = [{n + 10}]" for n in _TENS[:18]])),
+            ("10 less", None, "kbig", mix("x8b", [f"{n} {MINUS} 10 = [{n - 10}]" for n in _TENS[18:]])),
+        ], True),
+    ],
+    "9-adding-two-digit-numbers": [
+        (5, [
+            ("More adding tens", "Count the tens. Then the ones.", "add_tens_pic",
+             _deal("g9a", [(a, b) for a in range(12, 46) for b in (20, 30, 40) if a % 10], 12)),
+            ("More splitting", "Tens, then ones, then the total.", "add_split", _deal("g9b", _SPLIT, 24)),
+        ], True),
+        (9, [
+            ("More adding", "Add the tens, then the ones.", "kbig",
+             mix("x9a", [f"{a} + {b} = [{a + b}]" for a, b in _ADD22])),
+        ], True),
+    ],
 }
 
 
@@ -21882,6 +22034,7 @@ OPTIONS = []  # e.g. packet 12 was built as "rows" and "columns"; the founder ch
 
 
 PAGE_CAP_EASY, PAGE_CAP_HARD = 15, 12  # founder: no more than 15 problems a page (K-2), 12 (grade 3 and up)
+PAGE_CAP_K1 = 10  # founder: Kindergarten and grade 1 (packets 0-9) need fewer problems a page, more pages
 
 
 def build_packet(packet, ink_folder, key, asked, suffix="", save=True, extras=True):
@@ -21890,11 +22043,15 @@ def build_packet(packet, ink_folder, key, asked, suffix="", save=True, extras=Tr
     path = out / f"{slug}-{'answer-key' if key else 'packet'}{suffix}.pdf"
     bk = Book(path, key, subtitle=name, asked=asked)
     bk.c.setTitle(f"{name}: " + ("Answer Key" if key else "Packet"))
-    bk.extra = EXTRA.get(folder) if extras else None
+    ex = EXTRA.get(folder) if extras else None
+    bk.extra = sorted([ex] if isinstance(ex, tuple) else ex, key=lambda e: e[0]) if ex else None
     learn(bk)
-    bk.cap = PAGE_CAP_EASY if int(folder.split("-")[0]) <= 32 else PAGE_CAP_HARD
+    pn = int(folder.split("-")[0])
+    bk.cap = PAGE_CAP_K1 if pn <= 9 else PAGE_CAP_EASY if pn <= 32 else PAGE_CAP_HARD
+    bk.big_print = pn <= 9
     practice(bk)
-    if bk.extra:  # no part came after the extra practice's place: put it at the end
+    bk.big_print = False
+    while bk.extra:  # no part came after the extra practice's place: put it at the end
         bk.extra_pages(0, bk.max_part + 1, tail=True)
     bk.cap = None
     if not save:
