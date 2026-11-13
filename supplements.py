@@ -291,14 +291,15 @@ def _plan(spec):
     """[(QType, per_page, items)] for the pages, and [(Section, items)] for the Check-In (no repeats of the pages)."""
     types = {t.id: t for t in TYPES[spec["packet"]]}
     pages, check = [], []
-    chosen = [s for s in spec["types"] if s["id"] in types and int(s.get("pages", 0)) > 0]
+    # A chosen type with 0 pages has no practice pages but is still on the Check-In.
+    chosen = [s for s in spec["types"] if s["id"] in types and int(s.get("pages", 0)) >= 0]
     for s in chosen:
         t = types[s["id"]]
         cols = fit(t.kind)[0]
         per = int(s.get("per_page") or default_per_page(t.kind))
         per = max(cols, min(per, max_per_page(t.kind)) // cols * cols)
-        n_pages = min(int(s["pages"]), 40)
-        items = t.make(_rng(spec, t.id), per * n_pages)
+        n_pages = max(0, min(int(s["pages"]), 40))
+        items = t.make(_rng(spec, t.id), per * n_pages) if n_pages else []
         pages.append((t, per, items))
     number = int(spec["packet"].split("-")[0])
     many = len(chosen) > 4
@@ -369,7 +370,7 @@ def build(spec, kind="packet", ink="color", record=None):
     pages, check = _plan(spec)
     check = _fit_one_page(name, check)
     if not pages:
-        raise ValueError("Choose at least one problem type with at least one page")
+        raise ValueError("Choose at least one problem type")
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "supplement.pdf"
         bk = Book(path, key, subtitle=f"{name} · Supplemental", asked={})
@@ -379,7 +380,11 @@ def build(spec, kind="packet", ink="color", record=None):
             num = 1
             bk.big_print = True
             bk.repeat_ok = True
-            for i, (t, per, items) in enumerate(pages):
+            drawn = 0
+            for t, per, items in pages:
+                if not items:
+                    continue  # 0 pages: on the Check-In only
+                i, drawn = drawn, drawn + 1
                 bk.cap = per
                 k = KINDS[t.kind]
                 if i == 0:
@@ -394,6 +399,45 @@ def build(spec, kind="packet", ink="color", record=None):
         _draw_check_in(bk, name, check, record)
         bk.save()
         return path.read_bytes()
+
+
+def example_pdf(folder, type_id, ink="color"):
+    """One row of a problem type's cards (the student's version), for the website's "what is this?" preview."""
+    t = next(t for t in TYPES[folder] if t.id == type_id)
+    W.T = W.theme(ink == "color")
+    k = KINDS[t.kind]
+    cols = fit(t.kind)[0]
+    items = t.make(random.Random(f"example:{folder}:{type_id}"), cols)
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "example.pdf"
+        bk = Book(path, False, subtitle=NAME[folder], asked={})
+        bk.repeat_ok = True
+        bk.big_print = True
+        y = bk.new_page(NAME[folder], first=False, force=True)
+        flow(bk, NAME[folder], y, 1, t.label, None, items, 1, k.cols, k.h, k.gap,
+             lambda x, cy, w, it: k.draw(bk, x, cy, w, it))
+        bk.save()
+        return path.read_bytes()
+
+
+def examples(out_dir):
+    """A PNG of every problem type (out_dir/<slug>/<type id>.png): what each choice looks like on the page."""
+    import pypdfium2 as pdfium
+    from PIL import ImageChops, Image
+    out = Path(out_dir)
+    for folder, types in TYPES.items():
+        slug = folder.split("-", 1)[1]
+        (out / slug).mkdir(parents=True, exist_ok=True)
+        for t in types:
+            page = pdfium.PdfDocument(example_pdf(folder, t.id))[0]
+            img = page.render(scale=2).to_pil().convert("RGB")
+            top = int(95 * 2)  # below the page header line
+            body = img.crop((0, top, img.width, img.height - 50 * 2))
+            box = ImageChops.difference(body, Image.new("RGB", body.size, "white")).getbbox()
+            if box:
+                body = body.crop((max(0, box[0] - 16), max(0, box[1] - 12), min(body.width, box[2] + 16),
+                                  min(body.height, box[3] + 16)))
+            body.save(out / slug / f"{t.id}.png", optimize=True)
 
 
 def checkin(spec):
@@ -413,5 +457,7 @@ if __name__ == "__main__":
     elif cmd == "pdf":
         spec = json.loads(Path(sys.argv[2]).read_text())
         sys.stdout.buffer.write(build(spec, sys.argv[3], sys.argv[4]))
+    elif cmd == "examples":
+        examples(sys.argv[2])
     elif cmd == "checkin":
         json.dump(checkin(json.loads(Path(sys.argv[2]).read_text())), sys.stdout, ensure_ascii=False)
