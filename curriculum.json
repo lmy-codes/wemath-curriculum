@@ -1,5 +1,5 @@
 {
- "version": "ef9161cd7d23",
+ "version": "ec8c8f52df9b",
  "packets": [
   {
    "number": 0,
@@ -767,6 +767,46 @@
    "folder": "95-long-division",
    "file": "long-division",
    "title": "Long Division",
+   "grade": "6"
+  },
+  {
+   "number": 96,
+   "slug": "decimal-operations",
+   "folder": "96-decimal-operations",
+   "file": "decimal-operations",
+   "title": "Decimal Operations",
+   "grade": "6"
+  },
+  {
+   "number": 97,
+   "slug": "gcf-and-lcm",
+   "folder": "97-gcf-and-lcm",
+   "file": "gcf-and-lcm",
+   "title": "GCF and LCM",
+   "grade": "6"
+  },
+  {
+   "number": 98,
+   "slug": "negative-numbers",
+   "folder": "98-negative-numbers",
+   "file": "negative-numbers",
+   "title": "Negative Numbers",
+   "grade": "6"
+  },
+  {
+   "number": 99,
+   "slug": "expressions",
+   "folder": "99-expressions",
+   "file": "expressions",
+   "title": "Expressions",
+   "grade": "6"
+  },
+  {
+   "number": 100,
+   "slug": "one-step-equations",
+   "folder": "100-one-step-equations",
+   "file": "one-step-equations",
+   "title": "One-Step Equations",
    "grade": "6"
   }
  ],
@@ -3815,7 +3855,7 @@
    "id": "grade-6-pre",
    "type": "pre",
    "title": "Grade 6 Pre-Assessment",
-   "total": 14,
+   "total": 26,
    "file": "assessments/color/grade-6-pre-assessment-key.pdf",
    "parts": [
     {
@@ -3915,30 +3955,135 @@
     },
     {
      "part": 6,
-     "name": "Word problems",
-     "kind": "word",
-     "packet": null,
-     "packets": "91–95",
+     "name": "Decimal operations",
+     "kind": "eq2",
+     "packet": 96,
+     "packets": "96",
      "questions": [
       {
        "n": 11,
+       "prompt": "16.2 ÷ 0.9 = ?",
+       "answer": "18"
+      },
+      {
+       "n": 12,
+       "prompt": "9.75 ÷ 1.5 = ?",
+       "answer": "6.5"
+      }
+     ]
+    },
+    {
+     "part": 7,
+     "name": "GCF and LCM",
+     "kind": "eq2",
+     "packet": 97,
+     "packets": "97",
+     "questions": [
+      {
+       "n": 13,
+       "prompt": "GCF of 50 and 80 = ?",
+       "answer": "10"
+      },
+      {
+       "n": 14,
+       "prompt": "LCM of 4 and 7 = ?",
+       "answer": "28"
+      }
+     ]
+    },
+    {
+     "part": 8,
+     "name": "Negative numbers",
+     "kind": "eq3",
+     "packet": 98,
+     "packets": "98",
+     "questions": [
+      {
+       "n": 15,
+       "prompt": "5 ? −5",
+       "answer": ">"
+      },
+      {
+       "n": 16,
+       "prompt": "−2 ? −12",
+       "answer": ">"
+      }
+     ]
+    },
+    {
+     "part": 9,
+     "name": "Expressions",
+     "kind": "eq2",
+     "packet": 99,
+     "packets": "99",
+     "questions": [
+      {
+       "n": 17,
+       "prompt": "when n = 3:  7n + 8 = ?",
+       "answer": "29"
+      },
+      {
+       "n": 18,
+       "prompt": "when n = 10:  4n + 3 = ?",
+       "answer": "43"
+      }
+     ]
+    },
+    {
+     "part": 10,
+     "name": "One-step equations",
+     "kind": "eq2",
+     "packet": 100,
+     "packets": "100",
+     "questions": [
+      {
+       "n": 19,
+       "prompt": "x + 26 = 43:   x = ?",
+       "answer": "17"
+      },
+      {
+       "n": 20,
+       "prompt": "9x = 99:   x = ?",
+       "answer": "11"
+      }
+     ]
+    },
+    {
+     "part": 11,
+     "name": "Word problems",
+     "kind": "word",
+     "packet": null,
+     "packets": "91–100",
+     "questions": [
+      {
+       "n": 21,
        "prompt": "A car goes 336 miles in 6 hours. How many miles does it go in 1 hour?",
        "answer": "56 miles"
       },
       {
-       "n": 12,
+       "n": 22,
        "prompt": "Juice is mixed 2 cups of mango for every 5 cups of water. How much water goes with 6 cups of mango?",
        "answer": "15 cups"
       },
       {
-       "n": 13,
+       "n": 23,
        "prompt": "6 bottles of water cost $4.20. How much is 1 bottle?",
        "answer": "$0.70"
       },
       {
-       "n": 14,
+       "n": 24,
        "prompt": "A school buys 2,016 pencils in boxes of 24. How many boxes?",
        "answer": "84 boxes"
+      },
+      {
+       "n": 25,
+       "prompt": "A $45 shirt is 20% off. How many dollars do you save?",
+       "answer": "$9"
+      },
+      {
+       "n": 26,
+       "prompt": "You have 3/4 of a pizza. Each slice is 1/8 of the pizza. How many slices is that?",
+       "answer": "6 slices"
       }
      ]
     }
@@ -7337,7 +7482,7 @@
    "id": "grade-6-post",
    "type": "post",
    "title": "Grade 6 Post-Assessment",
-   "total": 14,
+   "total": 26,
    "file": "assessments/color/grade-6-post-assessment-key.pdf",
    "parts": [
     {
@@ -7437,30 +7582,135 @@
     },
     {
      "part": 6,
-     "name": "Word problems",
-     "kind": "word",
-     "packet": null,
-     "packets": "91–95",
+     "name": "Decimal operations",
+     "kind": "eq2",
+     "packet": 96,
+     "packets": "96",
      "questions": [
       {
        "n": 11,
-       "prompt": "A $45 shirt is 20% off. How many dollars do you save?",
-       "answer": "$9"
+       "prompt": "6.72 ÷ 6 = ?",
+       "answer": "1.12"
       },
       {
        "n": 12,
-       "prompt": "You have 3/4 of a pizza. Each slice is 1/8 of the pizza. How many slices is that?",
-       "answer": "6 slices"
-      },
+       "prompt": "13.5 ÷ 0.45 = ?",
+       "answer": "30"
+      }
+     ]
+    },
+    {
+     "part": 7,
+     "name": "GCF and LCM",
+     "kind": "eq2",
+     "packet": 97,
+     "packets": "97",
+     "questions": [
       {
        "n": 13,
+       "prompt": "LCM of 3 and 11 = ?",
+       "answer": "33"
+      },
+      {
+       "n": 14,
+       "prompt": "GCF of 24 and 64 = ?",
+       "answer": "8"
+      }
+     ]
+    },
+    {
+     "part": 8,
+     "name": "Negative numbers",
+     "kind": "eq3",
+     "packet": 98,
+     "packets": "98",
+     "questions": [
+      {
+       "n": 15,
+       "prompt": "−18 ? −21",
+       "answer": ">"
+      },
+      {
+       "n": 16,
+       "prompt": "−13 ? 2",
+       "answer": "<"
+      }
+     ]
+    },
+    {
+     "part": 9,
+     "name": "Expressions",
+     "kind": "eq2",
+     "packet": 99,
+     "packets": "99",
+     "questions": [
+      {
+       "n": 17,
+       "prompt": "when n = 6:  6n + 5 = ?",
+       "answer": "41"
+      },
+      {
+       "n": 18,
+       "prompt": "when n = 3:  7n + 8 = ?",
+       "answer": "29"
+      }
+     ]
+    },
+    {
+     "part": 10,
+     "name": "One-step equations",
+     "kind": "eq2",
+     "packet": 100,
+     "packets": "100",
+     "questions": [
+      {
+       "n": 19,
+       "prompt": "7x = 63:   x = ?",
+       "answer": "9"
+      },
+      {
+       "n": 20,
+       "prompt": "x + 8 = 65:   x = ?",
+       "answer": "57"
+      }
+     ]
+    },
+    {
+     "part": 11,
+     "name": "Word problems",
+     "kind": "word",
+     "packet": null,
+     "packets": "91–100",
+     "questions": [
+      {
+       "n": 21,
        "prompt": "A car goes 336 miles in 6 hours. How many miles does it go in 1 hour?",
        "answer": "56 miles"
       },
       {
-       "n": 14,
+       "n": 22,
+       "prompt": "You have 3/4 of a pizza. Each slice is 1/8 of the pizza. How many slices is that?",
+       "answer": "6 slices"
+      },
+      {
+       "n": 23,
        "prompt": "Juice is mixed 2 cups of mango for every 5 cups of water. How much water goes with 6 cups of mango?",
        "answer": "15 cups"
+      },
+      {
+       "n": 24,
+       "prompt": "6 bottles of water cost $4.20. How much is 1 bottle?",
+       "answer": "$0.70"
+      },
+      {
+       "n": 25,
+       "prompt": "A school buys 2,016 pencils in boxes of 24. How many boxes?",
+       "answer": "84 boxes"
+      },
+      {
+       "n": 26,
+       "prompt": "A $45 shirt is 20% off. How many dollars do you save?",
+       "answer": "$9"
       }
      ]
     }
@@ -9796,6 +10046,87 @@
    "packet": 40
   },
   {
+   "id": "check-in:decimal-operations",
+   "type": "check-in",
+   "title": "Decimal Operations Check-In",
+   "total": 7,
+   "file": "96-decimal-operations/color/decimal-operations-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Add and subtract",
+     "kind": "eq2",
+     "packet": 96,
+     "packets": "96",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "82.3 − 19.56 = ?",
+       "answer": "62.74"
+      },
+      {
+       "n": 2,
+       "prompt": "26.07 − 8.9 = ?",
+       "answer": "17.17"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Multiply",
+     "kind": "eq2",
+     "packet": 96,
+     "packets": "96",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "0.38 × 2.5 = ?",
+       "answer": "0.95"
+      },
+      {
+       "n": 4,
+       "prompt": "1.8 × 6.3 = ?",
+       "answer": "11.34"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Divide",
+     "kind": "eq2",
+     "packet": 96,
+     "packets": "96",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "2.88 ÷ 0.24 = ?",
+       "answer": "12"
+      },
+      {
+       "n": 6,
+       "prompt": "8.64 ÷ 0.8 = ?",
+       "answer": "10.8"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Word problem",
+     "kind": "word",
+     "packet": 96,
+     "packets": "96",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "Grapes cost $3.20 a pound. Sam buys 2.5 pounds. How much does he pay?",
+       "answer": "$8"
+      }
+     ]
+    }
+   ],
+   "packet": 96
+  },
+  {
    "id": "check-in:dividing-bigger-numbers",
    "type": "check-in",
    "title": "Dividing Bigger Numbers Check-In",
@@ -10908,6 +11239,97 @@
    "packet": 22
   },
   {
+   "id": "check-in:expressions",
+   "type": "check-in",
+   "title": "Expressions Check-In",
+   "total": 9,
+   "file": "99-expressions/color/expressions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Exponents",
+     "kind": "pow6",
+     "packet": 99,
+     "packets": "99",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "exponent: 3^5 = 3 × 3 × 3 × 3 × 3",
+       "answer": "243"
+      },
+      {
+       "n": 2,
+       "prompt": "exponent: 10^2 = 10 × 10",
+       "answer": "100"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Find the value",
+     "kind": "eq2",
+     "packet": 99,
+     "packets": "99",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "when n = 7:  3n + 2 = ?",
+       "answer": "23"
+      },
+      {
+       "n": 4,
+       "prompt": "when n = 4:  5n + 9 = ?",
+       "answer": "29"
+      },
+      {
+       "n": 5,
+       "prompt": "when n = 8:  2n + 13 = ?",
+       "answer": "29"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Put like terms together",
+     "kind": "eq2",
+     "packet": 99,
+     "packets": "99",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "4w + 11w = ? w",
+       "answer": "15"
+      },
+      {
+       "n": 7,
+       "prompt": "12e + 3e = ? e",
+       "answer": "15"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Open the parentheses",
+     "kind": "eq2",
+     "packet": 99,
+     "packets": "99",
+     "questions": [
+      {
+       "n": 8,
+       "prompt": "4 ( x + 9 ) = 4x + ?",
+       "answer": "36"
+      },
+      {
+       "n": 9,
+       "prompt": "3 ( n + 12 ) = 3n + ?",
+       "answer": "36"
+      }
+     ]
+    }
+   ],
+   "packet": 99
+  },
+  {
    "id": "check-in:factors-and-multiples",
    "type": "check-in",
    "title": "Factors and Multiples Check-In",
@@ -11428,6 +11850,97 @@
     }
    ],
    "packet": 65
+  },
+  {
+   "id": "check-in:gcf-and-lcm",
+   "type": "check-in",
+   "title": "GCF and LCM Check-In",
+   "total": 9,
+   "file": "97-gcf-and-lcm/color/gcf-and-lcm-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Common factors",
+     "kind": "gcf_lists",
+     "packet": 97,
+     "packets": "97",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "factor lists of 18 and 30",
+       "answer": "6"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Find the GCF",
+     "kind": "eq2",
+     "packet": 97,
+     "packets": "97",
+     "questions": [
+      {
+       "n": 2,
+       "prompt": "GCF of 33 and 55 = ?",
+       "answer": "11"
+      },
+      {
+       "n": 3,
+       "prompt": "GCF of 36 and 60 = ?",
+       "answer": "12"
+      },
+      {
+       "n": 4,
+       "prompt": "GCF of 28 and 42 = ?",
+       "answer": "14"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Find the LCM",
+     "kind": "eq2",
+     "packet": 97,
+     "packets": "97",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "LCM of 12 and 8 = ?",
+       "answer": "24"
+      },
+      {
+       "n": 6,
+       "prompt": "LCM of 6 and 15 = ?",
+       "answer": "30"
+      },
+      {
+       "n": 7,
+       "prompt": "LCM of 9 and 6 = ?",
+       "answer": "18"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Pull out the GCF",
+     "kind": "eq2",
+     "packet": 97,
+     "packets": "97",
+     "questions": [
+      {
+       "n": 8,
+       "prompt": "30 + 45 = ? × ( 2 + 3 )",
+       "answer": "15"
+      },
+      {
+       "n": 9,
+       "prompt": "48 + 18 = ? × ( 8 + 3 )",
+       "answer": "6"
+      }
+     ]
+    }
+   ],
+   "packet": 97
   },
   {
    "id": "check-in:graphs",
@@ -13546,6 +14059,107 @@
    "packet": 58
   },
   {
+   "id": "check-in:negative-numbers",
+   "type": "check-in",
+   "title": "Negative Numbers Check-In",
+   "total": 11,
+   "file": "98-negative-numbers/color/negative-numbers-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Read the thermometer",
+     "kind": "thermo_read",
+     "packet": 98,
+     "packets": "98",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "thermometer read 5",
+       "answer": "5"
+      },
+      {
+       "n": 2,
+       "prompt": "thermometer read −8",
+       "answer": "−8"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Opposites",
+     "kind": "eq3",
+     "packet": 98,
+     "packets": "98",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "opposite of 54 = ?",
+       "answer": "−54"
+      },
+      {
+       "n": 4,
+       "prompt": "opposite of 16 = ?",
+       "answer": "−16"
+      },
+      {
+       "n": 5,
+       "prompt": "opposite of 6 = ?",
+       "answer": "−6"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Warmer or colder?",
+     "kind": "eq3",
+     "packet": 98,
+     "packets": "98",
+     "questions": [
+      {
+       "n": 6,
+       "prompt": "−6 ? −1",
+       "answer": "<"
+      },
+      {
+       "n": 7,
+       "prompt": "−4 ? −9",
+       "answer": ">"
+      },
+      {
+       "n": 8,
+       "prompt": "−13 ? 2",
+       "answer": "<"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "How far from 0?",
+     "kind": "eq3",
+     "packet": 98,
+     "packets": "98",
+     "questions": [
+      {
+       "n": 9,
+       "prompt": "| −45 | = ?",
+       "answer": "45"
+      },
+      {
+       "n": 10,
+       "prompt": "| −19 | = ?",
+       "answer": "19"
+      },
+      {
+       "n": 11,
+       "prompt": "| 28 | = ?",
+       "answer": "28"
+      }
+     ]
+    }
+   ],
+   "packet": 98
+  },
+  {
    "id": "check-in:number-patterns",
    "type": "check-in",
    "title": "Number Patterns Check-In",
@@ -13625,6 +14239,83 @@
     }
    ],
    "packet": 86
+  },
+  {
+   "id": "check-in:one-step-equations",
+   "type": "check-in",
+   "title": "One-Step Equations Check-In",
+   "total": 8,
+   "file": "100-one-step-equations/color/one-step-equations-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Is it true?",
+     "kind": "yes_text1",
+     "packet": 100,
+     "packets": "100",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "x = 8 in 7x = 56",
+       "answer": "yes"
+      },
+      {
+       "n": 2,
+       "prompt": "x = 7 in 5x = 30",
+       "answer": "no"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Find the missing part",
+     "kind": "x_bar",
+     "packet": 100,
+     "packets": "100",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "x + 16 = 25",
+       "answer": "9 · 9"
+      },
+      {
+       "n": 4,
+       "prompt": "x + 21 = 35",
+       "answer": "14 · 14"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Solve",
+     "kind": "eq2",
+     "packet": 100,
+     "packets": "100",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "7x = 63:   x = ?",
+       "answer": "9"
+      },
+      {
+       "n": 6,
+       "prompt": "4x = 64:   x = ?",
+       "answer": "16"
+      },
+      {
+       "n": 7,
+       "prompt": "x + 14 = 53:   x = ?",
+       "answer": "39"
+      },
+      {
+       "n": 8,
+       "prompt": "x + 8 = 65:   x = ?",
+       "answer": "57"
+      }
+     ]
+    }
+   ],
+   "packet": 100
   },
   {
    "id": "check-in:order-of-operations",

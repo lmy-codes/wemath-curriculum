@@ -14,7 +14,7 @@ Every packet follows the newer rules: a lot of practice (80–110 problems), no 
 | 94 | Dividing Fractions | 6.NS.1 | strips cut into the same pieces: how many 1/6 fit in 2/3? Same bottoms, divide the tops |
 | 95 | Long Division | 6.NS.2 | the division "house", built from packet 78's easy parts |
 
-## Round 2 (packets 96–100)
+## Round 2 (packets 96–100): built
 
 | # | Packet | Standard |
 |---|---|---|

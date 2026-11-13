@@ -370,7 +370,10 @@ class Book:
             return
         self.c.setFillColor(reveal or T.answer)
         self.c.setFont("AvD" if str(value) in OPS else "Rnd", size)
-        self.c.drawCentredString(cx, cy - size * 0.36, str(value))
+        if str(value) in OPS:
+            self.c.drawCentredString(cx, cy - size * 0.36, str(value))
+        else:
+            draw_mixed(self.c, cx, cy - size * 0.36, str(value), size, centred=True)
 
     def dot(self, cx, cy, r, kind):
         """kind 'a' = the starting number, 'b' = the buddy / extra."""
@@ -391,11 +394,11 @@ class Book:
                 ans = tok[1:-1]
                 out.append(("box", ans, size * 1.75 + max(len(ans) - 1, 0) * size * 0.55))
             elif tok.startswith("{") and tok.endswith("}"):
-                out.append(("hi", tok[1:-1], sw(tok[1:-1], "Rnd", size)))
+                out.append(("hi", tok[1:-1], mixed_w(tok[1:-1], size)))
             elif tok in OPS:
                 out.append(("op", tok, sw(tok, "AvD", size)))
             else:
-                out.append(("num", tok, sw(tok, "Rnd", size)))
+                out.append(("num", tok, mixed_w(tok, size)))
         return out
 
     def eq_width(self, text, size=17):
@@ -417,7 +420,7 @@ class Book:
             else:
                 c.setFillColor(T.accent if kind == "hi" else color)
                 c.setFont("Rnd", size)
-                c.drawString(x, y, t)
+                draw_mixed(c, x, y, t, size)
             x += w + gap
         return x - gap
 
@@ -3748,6 +3751,34 @@ def practice_skip_counting(bk):
 
 def sign_of(a, b):
     return "<" if a < b else (">" if a > b else "=")
+
+
+SIGNS = "−×÷"  # Arial Rounded has none of these, so they are drawn in Avenir
+
+
+def _sign_split(text):
+    return re.split("([" + SIGNS + "])", text)
+
+
+def mixed_w(text, size, font="Rnd"):
+    """Width of text drawn by draw_mixed (each sign measured in Avenir)."""
+    return sum(sw(t, "AvD" if t and t in SIGNS else font, size) for t in _sign_split(text))
+
+
+def draw_mixed(c, x, y, text, size, font="Rnd", centred=False):
+    """drawString that puts every −, × and ÷ (a negative number like −7) in Avenir, which has the signs."""
+    if not any(ch in text for ch in SIGNS):
+        (c.drawCentredString if centred else c.drawString)(x, y, text)
+        return
+    if centred:
+        x -= mixed_w(text, size, font) / 2
+    for t in _sign_split(text):
+        if not t:
+            continue
+        f = "AvD" if t in SIGNS else font
+        c.setFont(f, size)
+        c.drawString(x, y, t)
+        x += sw(t, f, size)
 
 
 def mini_tens(bk, x, y, n, h=28):
@@ -20126,9 +20157,9 @@ WORDS_G6 = [
     ("A school buys 2,016 pencils in boxes of 24. How many boxes?", f"2,016 {DIV} 24 = 84", "84", "boxes"),
     ("6 bottles of water cost $4.20. How much is 1 bottle?", f"$4.20 {DIV} 6 = $0.70", "$0.70", ""),
 ]
-GRADES.append(("grade-6", "Grade 6", "Packets 91–95", [
+GRADES.append(("grade-6", "Grade 6", "Packets 91–100", [
     S("Ratios", None, "eq3", EQ_RATIO_POOL, 2, 91),
-    S("Word problems", None, "word", WORDS_G6, 4, "91–95"),
+    S("Word problems", None, "word", WORDS_G6, 6, "91–100"),
 ]))
 _g6 = GRADES[-1][3]
 
@@ -20556,6 +20587,683 @@ CHECKINS["95-long-division"] = [
 _g6[-1:-1] = [S("Long division", None, "eq2", LONG_POOL, 2, 95)]
 
 
+# ====================================================================== 96. Decimal Operations (grade 6, round 2)
+
+
+def _df(x):
+    """A Decimal as plain text: 3.10 -> 3.1, 4.0 -> 4."""
+    return format(D(x).normalize(), "f")
+
+
+def dmul_steps(a, b):
+    """"2.7 × 1.4: 27 × 14 = [378], so 2.7 × 1.4 = [3.78]": multiply whole numbers, then name the piece."""
+    wa, wb = a.replace(".", "").lstrip("0") or "0", b.replace(".", "").lstrip("0") or "0"
+    return f"{a} {TIMES} {b}: {wa} {TIMES} {wb} = [{int(wa) * int(wb)}]  so {a} {TIMES} {b} = [{_df(D(a) * D(b))}]"
+
+
+def dmul(a, b):
+    return f"{a} {TIMES} {b} = [{_df(D(a) * D(b))}]"
+
+
+def ddiv_whole(a, b):
+    """Make the divisor whole: "4.68 ÷ 0.6 = [46.8] ÷ 6 = [7.8]"."""
+    k = 10 ** dplaces(b)
+    return f"{a} {DIV} {b} = [{_df(D(a) * k)}] {DIV} {_df(D(b) * k)} = [{_df(D(a) / D(b))}]"
+
+
+def ddiv6(a, b):
+    return f"{a} {DIV} {b} = [{_df(D(a) / D(b))}]"
+
+
+def learn_dec_ops(bk):
+    y = bk.new_page("Decimal Operations", "Line up the points. Then think in tenths and hundredths.",
+                    name_line=False, big=True, footer="WeMath  ·  Decimal Operations")
+    c = bk.c
+    label(bk, M, y - 6, "Add and subtract: line up the points")
+    dec_stack(bk, M + 60, y - 40, "12.5", "3.75", "+", hint=True, size=20, shown=T.dot_a)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 200, y - 44, "12.5 is 12.50: write the zero so every column is filled.")
+    c.drawString(M + 200, y - 62, "Then add like whole numbers. The point drops straight down.")
+    y -= 126
+
+    label(bk, M, y - 6, "Multiply: whole numbers first, then name the piece")
+    bk.eq(M + 14, y - 38, f"2.4 {TIMES} 1.3: 24 {TIMES} 13 = 312", size=18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 60, "Tenths times tenths are hundredths, so 312 hundredths = 3.12.")
+    bk.eq(M + 330, y - 38, f"2.4 {TIMES} 1.3 = 3.12", size=18, color=T.dot_a)
+    y -= 84
+
+    label(bk, M, y - 6, "Divide: make the divisor a whole number")
+    bk.eq(M + 14, y - 38, f"4.68 {DIV} 0.6 = 46.8 {DIV} 6 = 7.8", size=18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    draw_mixed(c, M + 14, y - 60, "Both numbers × 10: the answer stays the same. Then divide by a whole number.", 12)
+    y -= 84
+
+    bottom = your_turn(bk, y, h=74)
+    bk.ask("decimal operations your turn: 3.6 x 0.4")
+    bk.eq(M + 150, bottom + 26, f"3.6 {TIMES} 0.4 = [1.44]", size=22)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: add, subtract, multiply and divide multi-digit decimals (6.NS.3). Say “Line up the "
+                     "points” and “What size are the pieces?” Never just “count the decimal places”: name tenths and "
+                     "hundredths.")
+
+
+def practice_dec_ops(bk):
+    title = "Decimal Operations: Practice"
+    st = [bk.new_page(title, "Line up the points. Name the pieces."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Line up the points", "Write the gray zeros if they help.", "dstack",
+         [("23.6", "8.75", "+", True), ("40.2", "17.48", "-", True), ("6.08", "19.7", "+", True),
+          ("52.3", "6.84", "-", True), ("315.4", "8.29", "+", True), ("70.05", "36.8", "-", True),
+          ("9.4", "126.37", "+", True), ("83.1", "45.66", "-", True), ("204.7", "3.58", "+", True)])
+    part(2, "Add and subtract", "No help this time.", "eq2",
+         [dec_add("38.27", "4.6"), dec_sub("61.4", "27.85"), dec_add("7.09", "16.8"), dec_sub("100.3", "45.67"),
+          dec_add("245.6", "18.75"), dec_sub("32.06", "9.4"), dec_add("0.86", "13.7"), dec_sub("508.2", "136.45"),
+          dec_add("71.4", "29.68"), dec_sub("44.1", "6.37"), dec_add("153.07", "8.9"), dec_sub("90.6", "52.78"),
+          dec_add("26.35", "119.8"), dec_sub("17.2", "8.46"), dec_add("4.75", "63.9")])
+    part(3, "Multiply: whole numbers first", "Then name the pieces.", "eq1",
+         [dmul_steps(a, b) for a, b in (("2.7", "1.4"), ("3.6", "2.3"), ("0.8", "4.7"), ("5.2", "1.9"),
+                                        ("1.25", "3.4"), ("6.4", "0.35"), ("4.8", "2.6"), ("0.72", "1.5"),
+                                        ("7.3", "4.1"), ("2.15", "6.2"))])
+    part(4, "Multiply", "No help this time.", "eq2",
+         [dmul(a, b) for a, b in (("3.25", "4"), ("6.7", "8.2"), ("0.45", "2.8"), ("12.6", "3.5"), ("9.4", "0.26"),
+                                  ("5.08", "7"), ("2.35", "1.6"), ("8.6", "4.4"), ("0.94", "5.5"), ("14.2", "0.7"),
+                                  ("3.75", "2.4"), ("6.05", "1.2"))])
+    part(5, "Make the divisor whole", "Multiply both by 10 or 100. Then divide.", "eq1",
+         [ddiv_whole(a, b) for a, b in (("4.68", "0.6"), ("7.35", "0.5"), ("2.16", "0.08"), ("9.45", "0.7"),
+                                        ("1.56", "0.12"), ("11.7", "0.9"), ("3.24", "0.04"), ("6.75", "1.5"),
+                                        ("0.928", "0.4"), ("18.2", "2.6"))])
+    part(6, "Divide", "No help this time.", "eq2",
+         [ddiv6(a, b) for a, b in (("9.36", "4"), ("27.6", "0.6"), ("8.05", "0.7"), ("15.84", "3.6"), ("4.5", "0.09"),
+                                  ("31.2", "8"), ("6.39", "0.3"), ("2.94", "0.42"), ("50.4", "1.2"), ("7.56", "6"),
+                                  ("1.44", "0.18"), ("22.5", "0.05"))])
+    part(7, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_96)
+    _words(bk, title, st, 8, "Line up the points. Name the pieces.", WORDS_96)
+
+
+REVIEW_96 = ["4,872 ÷ 24 = [203]", "40% of 85 = [34]", "2/3 ÷ 1/9 = [6]", "7 : 3 = [28] : 12",
+             "90 km in 6 hours = [15] km per hour", "(7 + 8) × 6 = [90]"]
+WORDS_96 = [
+    ("Mia buys 3.5 pounds of apples at $2.40 a pound. How much does she pay?",
+     f"3.5 {TIMES} $2.40 = $8.40", "$8.40", ""),
+    ("A ribbon is 7.2 m long. It is cut into pieces 0.6 m long. How many pieces?",
+     f"7.2 {DIV} 0.6 = 12", "12", "pieces"),
+    ("Leo ran 4.75 km on Monday and 6.8 km on Tuesday. How far did he run in all?",
+     "4.75 + 6.8 = 11.55", "11.55", "km"),
+    ("A jug holds 3.2 liters. Ava pours out 1.45 liters. How much is left?",
+     f"3.2 {MINUS} 1.45 = 1.75", "1.75", "liters"),
+    ("Challenge: Pens cost $1.35 each. How many can you buy with $12.15?",
+     f"$12.15 {DIV} $1.35 = 9", "9", "pens"),
+]
+DMUL_POOL = [dmul(a, b) for a, b in (("4.6", "3.5"), ("0.38", "2.5"), ("7.25", "4"), ("1.8", "6.3"), ("9.05", "0.6"),
+                                     ("2.4", "5.15"))]
+DDIV6_POOL = [ddiv6(a, b) for a, b in (("8.64", "0.8"), ("13.5", "0.45"), ("6.72", "6"), ("2.88", "0.24"),
+                                     ("16.2", "0.9"), ("9.75", "1.5"))]
+DADD6_POOL = [dec_add("57.8", "6.47"), dec_sub("82.3", "19.56"), dec_add("3.09", "28.6"), dec_sub("140.5", "37.28"),
+             dec_add("9.84", "70.3"), dec_sub("26.07", "8.9")]
+CHECKINS["96-decimal-operations"] = [
+    S("Add and subtract", None, "eq2", DADD6_POOL, 2),
+    S("Multiply", None, "eq2", DMUL_POOL, 2),
+    S("Divide", None, "eq2", DDIV6_POOL, 2),
+    S("Word problem", None, "word", [
+        ("Grapes cost $3.20 a pound. Sam buys 2.5 pounds. How much does he pay?", f"2.5 {TIMES} $3.20 = $8", "$8",
+         "")], 1),
+]
+_g6[-1:-1] = [S("Decimal operations", None, "eq2", DMUL_POOL + DDIV6_POOL, 2, 96)]
+
+
+# ====================================================================== 97. GCF and LCM
+
+
+def gcf_eq(a, b):
+    return f"GCF of {a} and {b} = [{math.gcd(a, b)}]"
+
+
+def lcm_eq(a, b):
+    return f"LCM of {a} and {b} = [{math.lcm(a, b)}]"
+
+
+def pull_gcf(a, b):
+    """"36 + 8 = [4] × (9 + 2)": take out the greatest common factor."""
+    g = math.gcd(a, b)
+    return f"{a} + {b} = [{g}] {TIMES} ( {a // g} + {b // g} )"
+
+
+def ringed_list(bk, x, y, nums, ring, size=13, gap=8):
+    """Numbers in a row; the key rings the ones in `ring`. Returns the end x."""
+    c = bk.c
+    for n in nums:
+        t = str(n)
+        tw = sw(t, "Rnd", size)
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", size)
+        c.drawString(x, y, t)
+        if bk.key and n in ring:
+            c.setStrokeColor(T.answer)
+            c.setLineWidth(1.3)
+            c.circle(x + tw / 2, y + size * 0.35, max(tw / 2 + 4, size * 0.7), stroke=1, fill=0)
+        x += tw + gap + 6
+    return x
+
+
+def c_gcf_lists(bk, x, cy, w, item):
+    a, b = item
+    common = set(factors(a)) & set(factors(b))
+    c = bk.c
+    for i, n in enumerate((a, b)):
+        yy = cy + 62 - i * 24
+        c.setFillColor(T.text2)
+        c.setFont("AvD", 11)
+        c.drawString(x + GUT, yy, f"Factors of {n}:")
+        ringed_list(bk, x + GUT + 92, yy, factors(n), common)
+    bk.fit_eq(x + GUT, cy + 10, w - GUT - 10, f"Common factors are ringed. GCF = [{math.gcd(a, b)}]", size=14)
+
+
+def c_lcm_lists(bk, x, cy, w, item):
+    a, b = item
+    m = math.lcm(a, b)
+    c = bk.c
+    for i, n in enumerate((a, b)):
+        yy = cy + 62 - i * 24
+        c.setFillColor(T.text2)
+        c.setFont("AvD", 11)
+        c.drawString(x + GUT, yy, f"Multiples of {n}:")
+        ringed_list(bk, x + GUT + 104, yy, [n * k for k in range(1, 9)], {m})
+    bk.fit_eq(x + GUT, cy + 10, w - GUT - 10, f"The first one in both lists: LCM = [{m}]", size=14)
+
+
+def learn_gcf_lcm(bk):
+    y = bk.new_page("GCF and LCM", "The biggest factor they share. The smallest multiple they share.",
+                    name_line=False, big=True, footer="WeMath  ·  GCF and LCM")
+    c = bk.c
+    label(bk, M, y - 6, "Greatest common factor (GCF) of 12 and 18")
+    for i, (n, fs) in enumerate(((12, factors(12)), (18, factors(18)))):
+        yy = y - 34 - i * 24
+        c.setFillColor(T.text2)
+        c.setFont("AvD", 12)
+        c.drawString(M + 14, yy, f"Factors of {n}:")
+        xx = M + 120
+        for f in fs:
+            t = str(f)
+            c.setFillColor(T.dot_a if f in (1, 2, 3, 6) else T.ink)
+            c.setFont("Rnd", 15)
+            c.drawString(xx, yy, t)
+            xx += sw(t, "Rnd", 15) + 14
+    bk.eq(M + 340, y - 46, "GCF = 6", size=22, color=T.dot_a)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 80, "1, 2, 3 and 6 are in both lists. The biggest one is 6.")
+    y -= 100
+
+    label(bk, M, y - 6, "Least common multiple (LCM) of 4 and 6")
+    for i, n in enumerate((4, 6)):
+        yy = y - 34 - i * 24
+        c.setFillColor(T.text2)
+        c.setFont("AvD", 12)
+        c.drawString(M + 14, yy, f"Multiples of {n}:")
+        xx = M + 130
+        for k in range(1, 7):
+            t = str(n * k)
+            c.setFillColor(T.dot_b if (T.color and n * k == 12) else T.ink)
+            c.setFont("Rnd", 15)
+            c.drawString(xx, yy, t)
+            xx += sw(t, "Rnd", 15) + 14
+    bk.eq(M + 340, y - 46, "LCM = 12", size=22, color=T.dot_a)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 80, "Count by each number. 12 is the first one in both lists.")
+    y -= 100
+
+    label(bk, M, y - 6, "Use the GCF to pull a sum apart")
+    bk.eq(M + 14, y - 38, f"36 + 8 = 4 {TIMES} ( 9 + 2 )", size=20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 250, y - 36, "4 is the GCF of 36 and 8.")
+    draw_mixed(c, M + 250, y - 52, "36 is 4 × 9 and 8 is 4 × 2.", 12)
+    y -= 70
+
+    bottom = your_turn(bk, y, h=70)
+    bk.ask("gcf and lcm your turn: 8 and 12")
+    bk.eq(M + 110, bottom + 24, "GCF of 8 and 12 = [4]     LCM of 8 and 12 = [24]", size=18)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: find the GCF of two numbers up to 100 and the LCM of two numbers up to 12, and use the "
+                     "GCF to pull a sum apart (6.NS.4). Say “List the factors. Which is the biggest one in both?”")
+
+
+def practice_gcf_lcm(bk):
+    title = "GCF and LCM: Practice"
+    st = [bk.new_page(title, "Factors for the GCF. Multiples for the LCM."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Common factors", "Ring the factors in both lists. The biggest one is the GCF.", "gcf_lists",
+         [(16, 24), (15, 25), (18, 27), (20, 30), (14, 21), (12, 32)])
+    part(2, "Find the GCF", "No help this time.", "eq2",
+         [gcf_eq(a, b) for a, b in ((24, 36), (40, 56), (27, 45), (32, 48), (35, 63), (42, 70), (36, 54), (26, 39),
+                                    (48, 80), (21, 49), (30, 75), (44, 66), (18, 42), (60, 84), (45, 72), (28, 70))])
+    part(3, "Common multiples", "Ring the first number in both lists.", "lcm_lists",
+         [(3, 4), (6, 8), (4, 10), (5, 6), (9, 12), (6, 10)])
+    part(4, "Find the LCM", "No help this time.", "eq2",
+         [lcm_eq(a, b) for a, b in ((4, 6), (3, 8), (6, 9), (10, 12), (5, 7), (8, 12), (4, 9), (6, 7), (2, 9),
+                                    (9, 10), (3, 10), (8, 10), (5, 12), (7, 8), (11, 4), (12, 9))])
+    part(5, "Pull out the GCF", "Write the GCF. The numbers in the ( ) have no common factor left.", "eq2",
+         [pull_gcf(a, b) for a, b in ((36, 8), (45, 30), (24, 40), (14, 35), (54, 18), (27, 63), (20, 50), (32, 56),
+                                      (42, 12), (64, 40))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_97)
+    _words(bk, title, st, 7, "Factors or multiples? Read carefully.", WORDS_97)
+
+
+REVIEW_97 = [dmul("2.6", "1.5"), "60% of 45 = [27]", "4/7 ÷ 1/14 = [8]", "5,688 ÷ 24 = [237]",
+             "8 : 5 = 32 : [20]", ddiv6("3.92", "0.7")]
+WORDS_97 = [
+    ("Hot dogs come in packs of 8 and buns in packs of 6. What is the fewest of each so none are left?",
+     "LCM of 8 and 6 = 24", "24", "of each"),
+    ("24 apples and 36 oranges go into the same number of bags, all alike. What is the most bags?",
+     "GCF of 24 and 36 = 12", "12", "bags"),
+    ("One bus comes every 10 minutes, another every 15. Both just came. In how many minutes again?",
+     "LCM of 10 and 15 = 30", "30", "minutes"),
+    ("A 42 cm by 56 cm board is cut into the biggest squares with no waste. How long is a side?",
+     "GCF of 42 and 56 = 14", "14", "cm"),
+    ("Challenge: 18 boys and 27 girls make teams, all alike. What is the most teams? How many girls each?",
+     f"GCF = 9 teams, 27 {DIV} 9 = 3", "3", "girls"),
+]
+KINDS.update({
+    "gcf_lists": Kind(84, 1, lambda it: f"factor lists of {it[0]} and {it[1]}", c_gcf_lists, 8),
+    "lcm_lists": Kind(84, 1, lambda it: f"multiple lists of {it[0]} and {it[1]}", c_lcm_lists, 8),
+})
+GCF_POOL = [gcf_eq(a, b) for a, b in ((36, 60), (28, 42), (45, 75), (24, 64), (50, 80), (33, 55))]
+LCM_POOL = [lcm_eq(a, b) for a, b in ((6, 15), (4, 7), (10, 6), (9, 6), (12, 8), (3, 11))]
+PULL_POOL = [pull_gcf(a, b) for a, b in ((48, 18), (35, 21), (16, 60), (72, 27), (30, 45))]
+CHECKINS["97-gcf-and-lcm"] = [
+    S("Common factors", None, "gcf_lists", [(18, 30), (16, 40)], 1),
+    S("Find the GCF", None, "eq2", GCF_POOL, 3),
+    S("Find the LCM", None, "eq2", LCM_POOL, 3),
+    S("Pull out the GCF", None, "eq2", PULL_POOL, 2),
+]
+_g6[-1:-1] = [S("GCF and LCM", None, "eq2", GCF_POOL + LCM_POOL, 2, 97)]
+
+
+# ====================================================================== 98. Negative Numbers (a thermometer, no number line)
+
+
+def neg(n):
+    return f"{MINUS}{-n}" if n < 0 else str(n)
+
+
+def thermometer(bk, x, y, h, lo, hi, level=None, answer=False, label_every=5):
+    """A thermometer (a measuring tool, like the ruler): degrees lo..hi up a tube, a tick every degree and a
+    number every `label_every`; 0 is a bold line. The liquid rises to `level` (drawn only on the key when
+    answer=True). y = bottom of the tube."""
+    c = bk.c
+    tw = 12
+    step = h / (hi - lo)
+    yo = lambda d: y + (d - lo) * step
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.2)
+    c.roundRect(x, y - 4, tw, h + 10, 6, stroke=1, fill=0)
+    c.circle(x + tw / 2, y - 12, 11, stroke=1, fill=0)
+    show = level is not None and (bk.key or not answer)
+    if show:
+        col = (T.answer if answer else T.accent) if T.color else (T.answer if answer else T.ink)
+        c.setFillColor(col)
+        c.circle(x + tw / 2, y - 12, 8, stroke=0, fill=1)
+        c.rect(x + 3, y - 6, tw - 6, yo(level) - y + 6, stroke=0, fill=1)
+    for d in range(lo, hi + 1):
+        yy = yo(d)
+        big = d % label_every == 0
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(1.6 if d == 0 else 0.8 if big else 0.5)
+        c.line(x + tw, yy, x + tw + (12 if d == 0 else 8 if big else 4), yy)
+        if big:
+            c.setFillColor(T.ink if d == 0 else T.text2)
+            draw_mixed(c, x + tw + 15, yy - 3, neg(d), 9 if d else 10, font="AvM" if d else "AvD")
+
+
+def c_thermo_read(bk, x, cy, w, t):
+    thermometer(bk, x + GUT, cy + 26, 110, -15, 15, level=t)
+    bk.fit_eq(x + GUT + 54, cy + 66, w - GUT - 60, f"[{neg(t)}] degrees", size=16)
+
+
+def c_thermo_show(bk, x, cy, w, t):
+    thermometer(bk, x + GUT, cy + 26, 110, -15, 15, level=t, answer=True)
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 13)
+    draw_mixed(c, x + GUT + 54, cy + 74, f"Show {neg(t)}", 15)
+    c.setFillColor(T.text2)
+    c.setFont("AvM", 9)
+    c.drawString(x + GUT + 54, cy + 58, "Color the tube.")
+
+
+def opp_eq(n):
+    return f"opposite of {neg(n)} = [{neg(-n)}]"
+
+
+def abs_eq(n):
+    return f"| {neg(n)} | = [{abs(n)}]"
+
+
+def cmp_neg(a, b):
+    return f"{neg(a)} [{sign_of(a, b)}] {neg(b)}"
+
+
+def order_eq(nums):
+    return "  ".join(neg(n) for n in nums) + "   in order:  " + " ".join(f"[{neg(n)}]" for n in sorted(nums))
+
+
+def learn_negatives(bk):
+    y = bk.new_page("Negative Numbers", "Below zero, the numbers get colder.", name_line=False, big=True,
+                    footer="WeMath  ·  Negative Numbers")
+    c = bk.c
+    label(bk, M, y - 6, "Read the thermometer")
+    thermometer(bk, M + 30, y - 210, 170, -15, 15, level=-6, label_every=5)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    for i, t in enumerate(("Above 0 the numbers are positive: 5, 10, 15.",
+                           "Below 0 they are negative. We write a minus sign:",
+                           "6 below zero is written −6.",
+                           "The lower it is, the colder: −10 is colder than −6.")):
+        draw_mixed(c, M + 120, y - 40 - i * 20, t, 12)
+    bk.eq(M + 120, y - 136, f"This one shows {MINUS}6 degrees.", size=18)
+    y -= 238
+
+    label(bk, M, y - 6, "Opposites and distance from 0")
+    bk.eq(M + 14, y - 38, f"The opposite of 4 is {MINUS}4.     | {MINUS}4 | = 4", size=18)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 60, "Opposites are the same distance from 0, one above and one below.")
+    c.drawString(M + 14, y - 76, "The bars | | mean: how far from 0? It is never negative.")
+    y -= 96
+
+    bottom = your_turn(bk, y, h=68)
+    bk.ask("negative numbers your turn: -3 and -9")
+    bk.eq(M + 150, bottom + 24, f"{MINUS}3 [>] {MINUS}9", size=24)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: read, compare and order negative numbers, opposites and absolute value (6.NS.5–7) "
+                     "with a thermometer, not a number line. Say “Which is colder? It is lower on the thermometer.”")
+
+
+def practice_negatives(bk):
+    title = "Negative Numbers: Practice"
+    st = [bk.new_page(title, "Lower on the thermometer means colder."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Read the thermometer", "Write the temperature. Below 0, write the minus sign.", "thermo_read",
+         [-4, 7, -12, 3, -9, 13, -2, -14, 11])
+    part(2, "Show the temperature", None, "thermo_show", [-7, 12, -1, -13, 6, -10])
+    part(3, "Opposites", "Same distance from 0, the other side.", "eq3",
+         [opp_eq(n) for n in (7, -3, 12, -18, 25, -9, 41, -60, 15, -1, 100, -33)])
+    part(4, "Warmer or colder?", "Write < or >.", "eq3",
+         [cmp_neg(a, b) for a, b in ((-3, -8), (-5, 2), (-11, -7), (4, -6), (-1, -10), (-15, -12), (0, -4),
+                                     (-20, 3), (-9, -2), (8, -8), (-14, -16), (-6, 0), (-25, -19), (-7, -13),
+                                     (1, -1))])
+    part(5, "How far from 0?", "| | means distance from 0.", "eq3",
+         [abs_eq(n) for n in (-8, 14, -23, -5, 31, -50, -17, 9, -42, -3, 66, -11)])
+    part(6, "Coldest to warmest", "Put them in order.", "eq1",
+         [order_eq(v) for v in ((-2, 5, -7, 0), (3, -1, -8, 6), (-12, 4, -5, -15), (9, -9, -3, 1),
+                                (-6, -11, 2, -4), (7, -14, 0, -10))])
+    part(7, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_98)
+    _words(bk, title, st, 8, "Positive or negative?", WORDS_98)
+
+
+REVIEW_98 = [gcf_eq(54, 90), lcm_eq(6, 14), dmul("3.4", "2.5"), "25% of 96 = [24]", "1,782 ÷ 18 = [99]",
+             "3/8 ÷ 1/16 = [6]"]
+WORDS_98 = [
+    ("At night it was 8 degrees below zero. Write the temperature as a number.", f"8 below zero = {MINUS}8",
+     f"{MINUS}8", "degrees"),
+    ("A diver is 30 feet below the sea. A bird is 30 feet above it. Write both heights.",
+     f"{MINUS}30 and 30", f"{MINUS}30", "and 30 feet"),
+    ("Mon. was −5 degrees and Tue. was −9 degrees. Which day was colder?", f"{MINUS}9 < {MINUS}5", "Tue.", ""),
+    ("Sam owes his sister $12. Write it as a negative number.", f"owes $12 = {MINUS}12", f"{MINUS}12", "dollars"),
+    ("Challenge: Town A is at −14 feet and Town B at −22 feet. Which is lower, and by how much?",
+     f"{MINUS}22 < {MINUS}14, 22 {MINUS} 14 = 8", "8", "feet, Town B"),
+]
+KINDS.update({
+    "thermo_read": Kind(150, 3, lambda t: f"thermometer read {neg(t)}", c_thermo_read, 8),
+    "thermo_show": Kind(150, 3, lambda t: f"thermometer show {neg(t)}", c_thermo_show, 8),
+})
+CMP_NEG_POOL = [cmp_neg(a, b) for a, b in ((-4, -9), (-13, 2), (-6, -1), (5, -5), (-18, -21), (-2, -12))]
+ABS_POOL = [abs_eq(n) for n in (-19, -7, 28, -45, -2, 13)]
+OPP_POOL = [opp_eq(n) for n in (16, -21, -8, 54, -70, 6)]
+CHECKINS["98-negative-numbers"] = [
+    S("Read the thermometer", None, "thermo_read", [-8, 5, -11], 2),
+    S("Opposites", None, "eq3", OPP_POOL, 3),
+    S("Warmer or colder?", "Write < or >.", "eq3", CMP_NEG_POOL, 3, balance=lambda t: "[<]" in t),
+    S("How far from 0?", None, "eq3", ABS_POOL, 3),
+]
+_g6[-1:-1] = [S("Negative numbers", "Write < or >.", "eq3", CMP_NEG_POOL, 2, 98, balance=lambda t: "[<]" in t)]
+
+
+# ====================================================================== 99. Expressions
+
+
+def pw_item(b, e):
+    return (f"{b}^{e} = " + f" {TIMES} ".join([str(b)] * e), b ** e)
+
+
+def c_pow6(bk, x, cy, w, item):
+    lhs, ans = item
+    end = pow_text(bk, x + GUT, cy + 14, lhs, size=17)
+    bk.fit_eq(end, cy + 14, w - (end - x) - 10, f"= [{ans}]", size=17)
+
+
+def learn_expressions(bk):
+    y = bk.new_page("Expressions", "Letters stand for numbers.", name_line=False, big=True,
+                    footer="WeMath  ·  Expressions")
+    c = bk.c
+    label(bk, M, y - 6, "Exponents: how many times to multiply")
+    end = pow_text(bk, M + 14, y - 40, f"3^4 = 3 {TIMES} 3 {TIMES} 3 {TIMES} 3 = 81", size=22)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 64, "The small 4 says: use 3 as a factor 4 times. 3² is “3 squared” = 9.")
+    y -= 86
+
+    label(bk, M, y - 6, "Write it with a letter")
+    for i, (words_, expr) in enumerate((("5 more than n", "n + 5"), ("7 less than n", f"n {MINUS} 7"),
+                                        ("3 times n", "3n"), ("n split into 4 equal parts", f"n {DIV} 4"))):
+        yy = y - 34 - i * 24
+        c.setFillColor(T.text2)
+        c.setFont("Rnd", 13)
+        c.drawString(M + 14, yy, words_)
+        bk.eq(M + 250, yy, expr, size=16, color=T.dot_a)
+    y -= 132
+
+    label(bk, M, y - 6, "Find the value: put the number in for the letter")
+    bk.eq(M + 14, y - 38, f"When n = 5:   3n + 4 = 3 {TIMES} 5 + 4 = 19", size=18)
+    y -= 58
+
+    label(bk, M, y - 6, "Same value, different look")
+    bk.eq(M + 14, y - 38, "2a + 5a = 7a", size=18)
+    bk.eq(M + 230, y - 38, "3 ( x + 4 ) = 3x + 12", size=18)
+    y -= 58
+
+    bottom = your_turn(bk, y, h=64)
+    bk.ask("expressions your turn: 2n + 7 when n = 6")
+    bk.eq(M + 130, bottom + 22, "When n = 6:   2n + 7 = [19]", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: exponents, writing and reading expressions with letters, finding their value and "
+                     "equivalent expressions (6.EE.1–4). Say “3n means 3 times n. Put the number in for the letter.”")
+
+
+def practice_expressions(bk):
+    title = "Expressions: Practice"
+    st = [bk.new_page(title, "A letter stands for a number."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Exponents", "Write it as multiplication, then find it.", "pow6",
+         [pw_item(b, e) for b, e in ((2, 5), (3, 3), (5, 3), (4, 3), (6, 2), (2, 6), (7, 2), (3, 4), (9, 2),
+                                     (8, 2), (2, 4), (5, 4))])
+    part(2, "Write it with a letter", "Fill in the number.", "eq2",
+         [f"{w_}: {e}" for w_, e in (("6 more than n", "n + [6]"), ("9 less than n", f"n {MINUS} [9]"),
+                                     ("n times 8", "[8] n"), ("n shared by 5", f"n {DIV} [5]"),
+                                     ("12 more than t", "t + [12]"), ("4 less than y", f"y {MINUS} [4]"),
+                                     ("double k", "[2] k"), ("10 times m", "[10] m"),
+                                     ("p split into 3 parts", f"p {DIV} [3]"), ("15 added to r", "r + [15]"))])
+    part(3, "Find the value", "Put the number in for the letter.", "eq2",
+         [f"when n = {n}:  {a}n + {b} = [{a * n + b}]" for a, n, b in
+          ((3, 5, 4), (2, 9, 7), (5, 6, 3), (4, 8, 1), (6, 3, 10), (7, 4, 5), (8, 2, 9), (9, 5, 6), (2, 12, 11),
+           (3, 11, 8), (4, 7, 12), (5, 9, 2), (6, 8, 7), (10, 4, 13))])
+    part(4, "Put like terms together", "No help this time.", "eq2",
+         [f"{a}{v} + {b}{v} = [{a + b}] {v}" for a, b, v in
+          ((2, 5, "a"), (4, 3, "x"), (6, 7, "y"), (3, 9, "n"), (8, 4, "b"), (5, 6, "k"), (7, 8, "m"),
+           (9, 3, "p"), (10, 5, "t"), (11, 4, "z"), (6, 12, "c"), (13, 2, "r"))])
+    part(5, "Open the parentheses", "Multiply each part.", "eq2",
+         [f"{k} ( {v} + {n} ) = {k}{v} + [{k * n}]" for k, v, n in
+          ((3, "x", 4), (5, "y", 2), (2, "n", 9), (6, "a", 3), (4, "m", 7), (7, "b", 5), (8, "t", 2), (9, "k", 3),
+           (2, "p", 11), (10, "r", 6))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_99)
+    _words(bk, title, st, 7, "Write an expression, then find its value.", WORDS_99)
+
+
+REVIEW_99 = [cmp_neg(-16, -6), abs_eq(-37), gcf_eq(56, 84), lcm_eq(12, 15), ddiv6("5.46", "0.6"), "80% of 35 = [28]"]
+WORDS_99 = [
+    ("Movie tickets cost $9 each. Write the cost of t tickets. What do 7 tickets cost?",
+     f"9t, 9 {TIMES} 7 = 63", "$63", ""),
+    ("Mia is 4 years older than her brother, who is b years old. How old is Mia if b = 8?",
+     "b + 4, 8 + 4 = 12", "12", "years"),
+    ("A pizza is cut into 8 slices. How many slices are in p pizzas? Find it for p = 6.",
+     f"8p, 8 {TIMES} 6 = 48", "48", "slices"),
+    ("A square has sides of 9 cm. Its area is 9² square cm. What is the area?", f"9 {TIMES} 9 = 81", "81",
+     "square cm"),
+    ("Challenge: A taxi costs $3 plus $2 a mile: 2m + 3. What does a 12-mile ride cost?",
+     f"2 {TIMES} 12 + 3 = 27", "$27", ""),
+]
+KINDS["pow6"] = Kind(44, 1, lambda it: f"exponent: {it[0]}", c_pow6, 8)
+VALUE_POOL = [f"when n = {n}:  {a}n + {b} = [{a * n + b}]" for a, n, b in
+              ((3, 7, 2), (5, 4, 9), (2, 8, 13), (6, 6, 5), (4, 10, 3), (7, 3, 8))]
+LIKE_POOL = [f"{a}{v} + {b}{v} = [{a + b}] {v}" for a, b, v in ((3, 6, "d"), (5, 8, "g"), (9, 7, "h"), (4, 11, "w"),
+                                                                (12, 3, "e"), (2, 14, "s"))]
+CHECKINS["99-expressions"] = [
+    S("Exponents", None, "pow6", [pw_item(b, e) for b, e in ((4, 4), (6, 3), (3, 5), (10, 2))], 2),
+    S("Find the value", None, "eq2", VALUE_POOL, 3),
+    S("Put like terms together", None, "eq2", LIKE_POOL, 2),
+    S("Open the parentheses", None, "eq2",
+      [f"{k} ( {v} + {n} ) = {k}{v} + [{k * n}]" for k, v, n in ((4, "x", 9), (6, "y", 5), (3, "n", 12))], 2),
+]
+_g6[-1:-1] = [S("Expressions", None, "eq2", VALUE_POOL, 2, 99)]
+
+
+# ====================================================================== 100. One-Step Equations
+
+
+def c_eq_bar(bk, x, cy, w, item):
+    """x + a = whole as a bar: a known piece, x the unknown piece."""
+    a, b = item
+    bk.eq(x + GUT, cy + 74, f"x + {a} = {a + b}", size=17)
+    bar_model(bk, x + GUT, cy + 14, w - GUT - 120, [(a, True), (b, False)], (a + b, True), size=13)
+    bk.fit_eq(x + w - 100, cy + 22, 90, f"x = [{b}]", size=16)
+
+
+def c_x_groups(bk, x, cy, w, item):
+    """n × x = whole as n equal pieces."""
+    n, each = item
+    bk.eq(x + GUT, cy + 74, f"{n}x = {n * each}", size=17)
+    equal_bar(bk, x + GUT, cy + 14, w - GUT - 120, n, each, "each", size=13)
+    bk.fit_eq(x + w - 100, cy + 22, 90, f"x = [{each}]", size=16)
+
+
+def solve_eq(text, x):
+    return f"{text}:   x = [{x}]"
+
+
+def learn_equations(bk):
+    y = bk.new_page("One-Step Equations", "Find the number that makes it true.", name_line=False, big=True,
+                    footer="WeMath  ·  One-Step Equations")
+    c = bk.c
+    label(bk, M, y - 6, "x + 5 = 12: the bar shows the whole")
+    bar_model(bk, M + 14, y - 66, 300, [(5, True), (7, True)], (12, True), size=15)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 40, "12 is the whole. 5 is one part.")
+    draw_mixed(c, M + 340, y - 56, "The other part is 12 − 5.", 12)
+    bk.eq(M + 340, y - 82, "x = 7", size=20, color=T.dot_a)
+    y -= 104
+
+    label(bk, M, y - 6, "4x = 20: four equal parts make 20")
+    equal_bar(bk, M + 14, y - 66, 300, 4, 5, "each", size=15, show_all=True)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 340, y - 40, "4x means 4 times x.")
+    draw_mixed(c, M + 340, y - 56, "Each part is 20 ÷ 4.", 12)
+    bk.eq(M + 340, y - 82, "x = 5", size=20, color=T.dot_a)
+    y -= 104
+
+    label(bk, M, y - 6, "Check it: put the number back in")
+    bk.eq(M + 14, y - 38, f"x = 7:   7 + 5 = 12   true!", size=18)
+    y -= 58
+
+    bottom = your_turn(bk, y, h=64)
+    bk.ask("equations your turn: x + 9 = 23")
+    bk.eq(M + 160, bottom + 22, "x + 9 = 23:   x = [14]", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: solve one-step equations x + p = q and px = q, check a solution, and write an equation "
+                     "for a story (6.EE.5–7). Say “What is the whole? What is the part?” Draw the bar first.")
+
+
+def practice_equations(bk):
+    title = "One-Step Equations: Practice"
+    st = [bk.new_page(title, "Draw the bar. Then check your answer."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Is it true?", "Put the number in for x. Circle yes or no.", "yes_text1",
+         [("x = 4 in x + 7 = 11", True), ("x = 6 in 3x = 21", False), ("x = 9 in x + 8 = 17", True),
+          ("x = 5 in 4x = 20", True), ("x = 12 in x + 3 = 16", False), ("x = 8 in 6x = 42", False),
+          ("x = 7 in x + 13 = 20", True), ("x = 3 in 9x = 30", False)])
+    part(2, "Find the missing part", "The bar shows the whole.", "x_bar",
+         [(8, 7), (13, 9), (6, 15), (24, 11), (9, 18), (17, 6), (35, 12), (12, 28)])
+    part(3, "Equal parts", "Find one part.", "x_groups",
+         [(4, 7), (3, 9), (6, 8), (5, 11), (7, 6), (8, 4), (3, 14), (6, 12)])
+    part(4, "Plus equations", "No help this time.", "eq2",
+         [solve_eq(f"x + {a} = {a + b}", b) for a, b in ((13, 28), (27, 15), (9, 46), (35, 37), (18, 54), (46, 19),
+                                                          (7, 68), (52, 33), (24, 49), (61, 25), (16, 76), (39, 42))])
+    part(5, "Times equations", "No help this time.", "eq2",
+         [solve_eq(f"{n}x = {n * e}", e) for n, e in ((6, 9), (8, 7), (4, 13), (9, 8), (7, 12), (5, 16), (12, 6),
+                                                       (3, 27), (11, 5), (8, 15), (6, 14), (10, 23))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_100)
+    _words(bk, title, st, 7, "Write the equation. Then solve it.", WORDS_100)
+
+
+REVIEW_100 = [cmp_neg(-27, -31), opp_eq(-45), lcm_eq(9, 15), f"when n = 7:  4n + 6 = [34]", ddiv6("8.75", "0.25"),
+              "35% of 80 = [28]"]
+WORDS_100 = [
+    ("Leo has some cards. He gets 14 more and now has 51. Write an equation and find x.",
+     "x + 14 = 51, x = 37", "37", "cards"),
+    ("6 friends share the cost of a gift equally. Each pays $9. What does the gift cost?",
+     f"x {DIV} 6 = 9, x = 54", "$54", ""),
+    ("A box of 8 equal bags weighs 96 ounces. How much does each bag weigh?", "8x = 96, x = 12", "12", "ounces"),
+    ("Ava read x pages. Then she read 25 more, 63 pages in all. How many pages first?", "x + 25 = 63, x = 38", "38",
+     "pages"),
+    ("Challenge: 3 packs of pens cost $27 and each pack has 4 pens. What does 1 pen cost?",
+     f"3x = 27, x = 9, 9 {DIV} 4 = 2.25", "$2.25", ""),
+]
+KINDS.update({
+    "x_bar": Kind(96, 2, lambda it: f"x + {it[0]} = {it[0] + it[1]}", c_eq_bar, 10),
+    "x_groups": Kind(96, 2, lambda it: f"{it[0]}x = {it[0] * it[1]}", c_x_groups, 10),
+})
+SOLVE_POOL = [solve_eq(f"x + {a} = {a + b}", b) for a, b in ((14, 39), (26, 17), (8, 57))] + \
+             [solve_eq(f"{n}x = {n * e}", e) for n, e in ((7, 9), (4, 16), (9, 11))]
+TRUE_POOL = [("x = 6 in x + 9 = 15", True), ("x = 7 in 5x = 30", False), ("x = 11 in x + 4 = 16", False),
+             ("x = 8 in 7x = 56", True)]
+CHECKINS["100-one-step-equations"] = [
+    S("Is it true?", "Circle yes or no.", "yes_text1", TRUE_POOL, 2),
+    S("Find the missing part", None, "x_bar", [(16, 9), (7, 22), (21, 14)], 2),
+    S("Solve", None, "eq2", SOLVE_POOL, 4),
+]
+_g6[-1:-1] = [S("One-step equations", None, "eq2", SOLVE_POOL, 2, 100)]
+WORDS_G6 += [
+    ("Cheese costs $4.80 a pound. How much do 2.5 pounds cost?", f"2.5 {TIMES} $4.80 = $12", "$12", ""),
+    ("Cups come in packs of 12 and plates in packs of 8. What is the fewest of each with none left?",
+     "LCM of 12 and 8 = 24", "24", "of each"),
+    ("It was −3 degrees in the morning and −11 at night. Which was colder?", f"{MINUS}11 < {MINUS}3", f"{MINUS}11",
+     "degrees"),
+    ("Sam had x stickers. He gave away 15 and has 28 left. How many did he have?", "x − 15 = 28, x = 43", "43",
+     "stickers"),
+]
+
+
 # ====================================================================== Extra practice (founder: more pages)
 # Kindergarten and grade 1: big print, few problems per page, every basic fact, repeats allowed (pages apart).
 # EXTRA[folder] = (before_part, sections, repeat_ok): the pages are drawn just before that part.
@@ -20857,6 +21565,47 @@ def _zero_mid(r):
 
 
 EXTRA.update({
+    "96-decimal-operations": (7, [
+        ("More multiplying", None, "eq2", [dmul(f"{x / 10}", f"{y / 100}") for x, y in
+                                           _many(96, lambda r: (r.randint(12, 98), r.randint(105, 960)))
+                                           if x % 10 and y % 10], 18),
+        ("More dividing", None, "eq2", [ddiv6(_df(D(q) * D(d) / 100), _df(D(d) / 10)) for q, d in
+                                        _many(1096, lambda r: (r.randint(12, 95), r.randint(2, 9)))], 18),
+    ], False),
+    "97-gcf-and-lcm": (6, [
+        ("More GCF", None, "eq2", [gcf_eq(g * a, g * b) for g, a, b in
+                                   _many(97, lambda r: (r.randint(2, 12), r.randint(2, 9), r.randint(2, 9)))
+                                   if a < b and math.gcd(a, b) == 1 and g * b <= 100], 18),
+        ("More LCM", None, "eq2", [lcm_eq(a, b) for a, b in
+                                   _many(1097, lambda r: (r.randint(2, 12), r.randint(2, 12))) if a < b], 14),
+        ("More pulling out the GCF", None, "eq2", [pull_gcf(g * a, g * b) for g, a, b in
+                                                   _many(2097, lambda r: (r.randint(2, 9), r.randint(2, 9), r.randint(1, 9)))
+                                                   if a != b and math.gcd(a, b) == 1], 10),
+    ], False),
+    "98-negative-numbers": (7, [
+        ("More warmer or colder", "Write < or >.", "eq3", [cmp_neg(a, b) for a, b in {
+            a: (a, b) for a, b in reversed(_many(98, lambda r: (r.randint(-30, 20), r.randint(-30, 20))))
+            if a != b and (a < 0 or b < 0)}.values()], 21),
+        ("More distance from 0", None, "eq3", [abs_eq(n) for n in _many(1098, lambda r: r.randint(-99, 99)) if n], 12),
+        ("More coldest to warmest", None, "eq1", [order_eq(v) for v in
+                                                  _many(2098, lambda r: tuple(r.sample(range(-20, 16), 4)))], 6),
+    ], False),
+    "99-expressions": (6, [
+        ("More values", None, "eq2", [f"when n = {n}:  {a}n + {b} = [{a * n + b}]" for a, n, b in
+                                      _many(99, lambda r: (r.randint(2, 12), r.randint(2, 12), r.randint(1, 20)))], 18),
+        ("More like terms", None, "eq2", [f"{a}{v} + {b}{v} = [{a + b}] {v}" for a, b, v in
+                                          _many(1099, lambda r: (r.randint(2, 15), r.randint(2, 15), r.choice("abcdghkmnpqrstwxyz")))],
+         12),
+        ("More parentheses", None, "eq2", [f"{k} ( {v} + {n} ) = {k}{v} + [{k * n}]" for k, v, n in
+                                           _many(2099, lambda r: (r.randint(2, 12), r.choice("abcdmnpqrstwxyz"), r.randint(2, 15)))],
+         10),
+    ], False),
+    "100-one-step-equations": (6, [
+        ("More plus equations", None, "eq2", [solve_eq(f"x + {a} = {a + b}", b) for a, b in
+                                              _many(100, lambda r: (r.randint(5, 80), r.randint(5, 80)))], 18),
+        ("More times equations", None, "eq2", [solve_eq(f"{n}x = {n * e}", e) for n, e in
+                                               _many(1100, lambda r: (r.randint(2, 12), r.randint(2, 25)))], 18),
+    ], False),
     "91-ratios": (6, [
         ("More equal ratios", None, "eq3", [eq_ratio(a, b, k, z) for a, b, k, z in
                                             _many(91, lambda r: (r.randint(1, 12), r.randint(2, 12), r.randint(2, 9), r.randint(0, 1)))
@@ -21422,7 +22171,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4", "grade-5": "5", "grade-6": "6"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -21808,6 +22557,16 @@ PACKETS = [
     ("94-dividing-fractions", "dividing-fractions", "Dividing Fractions", learn_frac_div, practice_frac_div,
      False),
     ("95-long-division", "long-division", "Long Division", learn_long_div, practice_long_div,
+     False),
+    ("96-decimal-operations", "decimal-operations", "Decimal Operations", learn_dec_ops, practice_dec_ops,
+     False),
+    ("97-gcf-and-lcm", "gcf-and-lcm", "GCF and LCM", learn_gcf_lcm, practice_gcf_lcm,
+     False),
+    ("98-negative-numbers", "negative-numbers", "Negative Numbers", learn_negatives, practice_negatives,
+     False),
+    ("99-expressions", "expressions", "Expressions", learn_expressions, practice_expressions,
+     False),
+    ("100-one-step-equations", "one-step-equations", "One-Step Equations", learn_equations, practice_equations,
      False),
 ]
 
