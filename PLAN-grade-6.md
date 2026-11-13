@@ -24,4 +24,16 @@ Every packet follows the newer rules: a lot of practice (80–110 problems), no 
 | 99 | Expressions | 6.EE.1–4 |
 | 100 | One-Step Equations | 6.EE.5–7 |
 
-Later: area of triangles and other shapes, volume with fraction edges, surface area and nets, statistics. The four-quadrant coordinate plane needs the founder's answer on packet 89 first.
+## Round 3 (packets 101–105): built
+
+| # | Packet | Standard | Main picture |
+|---|---|---|---|
+| 101 | Area of Triangles and Other Shapes | 6.G.1 | a parallelogram is a moved rectangle; a triangle is half of the dashed rectangle around it; trapezoids as (top + bottom) × height ÷ 2; a rectangle with a triangle roof |
+| 102 | Volume with Fractions | 6.G.2 | a box packed with ½-unit cubes (8 make 1 cubic unit), then l × w × h with fractions |
+| 103 | Surface Area and Nets | 6.G.4 | box nets (top and bottom blue, front and back orange), cube nets (which of the 35 six-square shapes fold into a cube: checked by rolling a cube over the squares), square pyramid nets |
+| 104 | Mean, Median and Mode | 6.SP.3, 6.SP.5c | towers of cubes evened out (mean as a fair share), the list in order with the middle ringed, X charts |
+| 105 | Data Displays | 6.SP.1, 6.SP.4, 6.SP.5 | statistics questions (yes/no), counting data in groups, histograms drawn as bar graphs on groups, X charts, a far-off number pulls the mean but not the median |
+
+Box plots (6.SP.4) are left out: they are drawn on a number line. Ask the founder.
+
+Later: the four-quadrant coordinate plane (needs the founder's answer on packet 89), inequalities (6.EE.8 is usually a number line), two variables (6.EE.9, tables only).

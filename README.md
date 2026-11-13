@@ -1,6 +1,6 @@
 # WeMath worksheets
 
-One hundred and one packets, in teaching order (K to grade 6). Each starts with a picture-first learning page, followed by practice.
+One hundred and six packets, in teaching order (K to grade 6). Each starts with a picture-first learning page, followed by practice.
 
 | Folder | Topic | Pages |
 |---|---|---|
@@ -105,6 +105,11 @@ One hundred and one packets, in teaching order (K to grade 6). Each starts with 
 | `98-negative-numbers/` | Read and show temperatures on a thermometer (no number line), opposites, warmer or colder, distance from 0, order | 12 |
 | `99-expressions/` | Exponents, write it with a letter, find the value, like terms, open the parentheses | 12 |
 | `100-one-step-equations/` | Is it true?, bar models for x + a = b and ax = b, plus and times equations, write the equation for a story | 11 |
+| `101-area-of-triangles-and-other-shapes/` | Parallelograms as moved rectangles, triangles as half a rectangle, trapezoids, shapes put together, find the height | 13 |
+| `102-volume-with-fractions/` | Pack the box with ½-unit cubes (8 make 1), l × w × h with fractions and mixed numbers, base × height, missing edge | 11 |
+| `103-surface-area-and-nets/` | Does it fold into a cube?, cube and box nets, square pyramids, surface area with no help | 12 |
+| `104-mean-median-and-mode/` | Mean as evening out towers, median in order, X charts, mode and range, the missing number | 12 |
+| `105-data-displays/` | Statistics questions, count data in groups, read histograms, make X charts, a far-off number moves the mean | 10 |
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 
@@ -127,7 +132,7 @@ Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hol
 | Grade 3 | 33–52: multiplication, strategies, division, rounding, multiplying by tens, area, six fraction packets (unit fractions, counting fractions, fractions and wholes, equal fractions, comparing, fractions of a group), perimeter, elapsed time, two-step problems, times-table patterns, mass and volume, scaled graphs, quarter inches, quadrilaterals | 86 problems | 86 problems |
 | Grade 4 | 53–72: thousands, rounding big numbers, adding and subtracting big numbers, multiplying by one and two digits, dividing (remainders, bigger numbers), factors and multiples, equivalent and unlike fractions, adding fractions, mixed numbers, fraction × whole number, tenths and hundredths, decimals, conversions, area and perimeter formulas, line plots, angles, lines and shapes | 77 problems | 77 problems |
 | Grade 5 | 73–90: powers of ten, thousandths, comparing and rounding decimals, adding and subtracting decimals, multiplying bigger numbers, dividing by two-digit numbers, multiplying and dividing decimals, unlike fractions, multiplying fractions, volume, fractions as division, dividing with unit fractions, order of operations, number patterns, converting units, line plot data, the coordinate grid, classifying shapes | 52 problems | 52 problems |
-| Grade 6 | 91–100 so far: ratios, rates, percents, dividing fractions, long division, decimal operations, GCF and LCM, negative numbers, expressions, one-step equations | 26 problems | 26 problems |
+| Grade 6 | 91–105 so far: ratios, rates, percents, dividing fractions, long division, decimal operations, GCF and LCM, negative numbers, expressions, one-step equations, area of shapes, volume with fractions, surface area, mean/median/mode, data displays | 35 problems | 35 problems |
 
 Each answer key ends with a **scoring sheet**: every part, the packet it checks, and a score line. Use the **pre-assessment** for placement: start a student at the first packet where they miss more than 1 problem in its parts. Use the **post-assessment** to see growth: a part with more than 1 miss means that packet needs review.
 

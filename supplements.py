@@ -726,6 +726,85 @@ for _f, _types in TYPES.items():
     TYPES[_f] = [t for t in _types if len({repr(i) for i in t.make(random.Random(0), 60)}) >= 7]
 
 
+
+# Picture cards of packets 101 and up that the Check-Ins use only a few of (or not at all): a rule for each.
+# Matched to an auto type by card kind; a kind with no auto type becomes a new guided type.
+
+def _x6(r):
+    base = r.choice([0, 1, 2, 5, 8])
+    vals = sorted(base + r.randint(0, 5) for _ in range(r.choice([8, 9, 10])))
+    counts = [vals.count(k) for k in set(vals)]
+    if counts.count(max(counts)) > 1 or max(counts) > 5 or max(vals) == min(vals):
+        return None
+    return vals
+
+
+def _hist(r):
+    size = r.choice([5, 10])
+    lo = r.choice([0, 5, 10, 20]) if size == 5 else r.choice([0, 10, 20, 30])
+    counts = [r.randint(1, 10) for _ in range(4)]
+    if counts.count(max(counts)) > 1:
+        return None
+    title = r.choice(["Minutes on the bus", "Points in a game", "Laps run", "Pages read", "Ages at the center",
+                      "Minutes of practice", "Push-ups in a minute"])
+    return (title, [(lo + i * size, lo + i * size + size - 1) for i in range(4)], counts)
+
+
+def _freq(r):
+    size = r.choice([5, 10])
+    lo = r.choice([0, 10, 20, 40]) if size == 10 else r.choice([0, 10, 20])
+    vals = [r.randint(lo, lo + 4 * size - 1) for _ in range(r.choice([10, 12]))]
+    return (vals, size) if len(W._bins(vals, size)) <= 4 else None
+
+
+GUIDED = {
+    101: [("parallelograms", "Parallelograms", "para",
+           [(b, h, u) for b in range(3, 13) for h in range(2, 9) for u in ("cm", "m", "in", "ft")][::3]),
+          ("triangles", "Triangles", "tri",
+           [(b, h, a, u) for b in range(3, 13) for h in range(2, 10) for a in (0, 0.3, 0.5, 0.7, 1)
+            for u in ("cm", "m", "in", "ft") if b * h % 2 == 0][::7]),
+          ("trapezoids", "Trapezoids", "trap",
+           [(t, b, h, u) for b in range(5, 15) for t in range(2, b - 1) for h in range(2, 8) for u in ("cm", "m")
+            if (t + b) * h % 2 == 0][::5]),
+          ("put_shapes_together", "Put shapes together", "house",
+           [(w, h1, h2, u) for w in range(2, 11) for h1 in range(2, 7) for h2 in range(2, 6)
+            for u in ("cm", "m", "ft") if w * h2 % 2 == 0][::4])],
+    102: [("count_the_small_cubes", "Count the small cubes", "half_cubes",
+           [(L, Wd, H) for L in range(2, 7) for Wd in range(2, 5) for H in range(1, 5) if L * Wd * H % 8 == 0])],
+    103: [("cubes", "Cubes", "cube_net", [(e, u) for e in range(2, 13) for u in ("cm", "m", "in", "ft")]),
+          ("boxes", "Boxes", "net", [(L, Wd, H, u) for L in range(3, 10) for Wd in range(2, 6) for H in range(1, 7)
+                                      for u in ("cm", "in", "m") if L > Wd][::3]),
+          ("square_pyramids", "Square pyramids", "pyramid",
+           [(b, h, u) for b in range(2, 13) for h in range(3, 13) for u in ("cm", "in", "m", "ft") if b * h % 2 == 0][::3])],
+    104: [("even_it_out", "Even it out", "level",
+           _pool("g104a", lambda r: (lambda v: v if sum(v) % len(v) == 0 and len(set(v)) > 1 else None)(
+               tuple(r.randint(1, 9) for _ in range(r.choice([3, 4, 5])))), 80)),
+          ("find_the_median", "Find the median", "median",
+           _pool("g104b", lambda r: tuple(r.sample(range(1, 40), r.choice([5, 5, 7]))), 80)),
+          ("read_the_x_chart", "Read the X chart", "xstats",
+           [(["Goals scored", "Pets at home", "Books read", "Siblings", "Hours of sleep"][sum(v) % 5], v)
+            for v in _pool("g104c", _x6, 60)])],
+    105: [("count_the_groups", "Count the groups", "freq", _pool("g105a", _freq, 60)),
+          ("read_the_histogram", "Read the histogram", "hist", _pool("g105b", _hist, 60)),
+          ("make_the_x_chart", "Make the X chart", "make_x",
+           [(["Siblings", "Pets", "Hours of sleep", "Shoe sizes"][sum(v) % 4], v) for v in _pool("g105c", _x6, 60)])],
+}
+for _f in list(TYPES):
+    for _id, _label, _kind, _items in GUIDED.get(number(_f), []):
+        _make = (lambda p: lambda r, n: deal(r, p, n))(_items)
+        _types = TYPES[_f]
+        _old = next((i for i, t in enumerate(_types) if t.kind == _kind), None)
+        if _old is not None:
+            _types[_old] = _types[_old]._replace(make=_make)
+        else:
+            _at = next((i for i, t in enumerate(_types) if t.help != "guided"), len(_types))
+            _types.insert(_at, T(_id, _label, "guided", _kind, make=_make, check=2))
+# statistics questions: every one the packet has, half yes and half no
+for _i, _t in enumerate(TYPES.get("105-data-displays", [])):
+    if _t.kind == "yes_text1":
+        TYPES["105-data-displays"][_i] = _t._replace(
+            make=lambda r, n: balanced_yesno(r, n, W.STAT_Q_YES, W.STAT_Q_NO))
+
 def catalog():
     """Every packet's problem types for the website: id, label, help level, default and most per page."""
     out = {}

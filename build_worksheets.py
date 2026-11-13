@@ -20157,9 +20157,9 @@ WORDS_G6 = [
     ("A school buys 2,016 pencils in boxes of 24. How many boxes?", f"2,016 {DIV} 24 = 84", "84", "boxes"),
     ("6 bottles of water cost $4.20. How much is 1 bottle?", f"$4.20 {DIV} 6 = $0.70", "$0.70", ""),
 ]
-GRADES.append(("grade-6", "Grade 6", "Packets 91–100", [
+GRADES.append(("grade-6", "Grade 6", "Packets 91–105", [
     S("Ratios", None, "eq3", EQ_RATIO_POOL, 2, 91),
-    S("Word problems", None, "word", WORDS_G6, 6, "91–100"),
+    S("Word problems", None, "word", WORDS_G6, 6, "91–105"),
 ]))
 _g6 = GRADES[-1][3]
 
@@ -21264,6 +21264,978 @@ WORDS_G6 += [
 ]
 
 
+# ====================================================================== 101. Area of Triangles and Other Shapes
+
+
+def _area_scale(b, h, max_w, max_h, top=12):
+    return min(top, max_w / b, max_h / h)
+
+
+def para_shape(bk, x, y, b, h, s, slant=2, u="", fill=True):
+    """A parallelogram (base b, height h, sides leaning `slant` units) with its dashed height. y = bottom."""
+    c = bk.c
+    o = slant * s
+    pts = [(x, y), (x + b * s, y), (x + b * s + o, y + h * s), (x + o, y + h * s)]
+    if fill and T.color:
+        c.setFillColor(T.band)
+        c.drawPath(_poly(c, pts), stroke=0, fill=1)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.6)
+    c.drawPath(_poly(c, pts), stroke=1, fill=0)
+    _height_line(bk, x + o, y, y + h * s)
+    if u:
+        side_label(bk, x + b * s / 2, y - 12, f"{b} {u}")
+        side_label(bk, x + o + 4, y + h * s / 2 - 3.5, f"{h} {u}", anchor="left")
+
+
+def _height_line(bk, hx, y0, y1):
+    """A dashed height line with a small square corner at the bottom."""
+    c = bk.c
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1)
+    c.setDash(3, 2.5)
+    c.line(hx, y0, hx, y1)
+    c.setDash()
+    c.setLineWidth(0.8)
+    c.rect(hx, y0, 5, 5, stroke=1, fill=0)
+
+
+def tri_shape(bk, x, y, b, h, s, apex, u="", box=True):
+    """A triangle with base b and height h; the top corner is `apex` (0 to 1) of the way along the base.
+    box=True draws the b × h rectangle around it, dashed: the triangle is half of it."""
+    c = bk.c
+    ax = x + apex * b * s
+    pts = [(x, y), (x + b * s, y), (ax, y + h * s)]
+    if box:
+        c.setStrokeColor(T.muted)
+        c.setLineWidth(0.9)
+        c.setDash(2, 2)
+        c.rect(x, y, b * s, h * s, stroke=1, fill=0)
+        c.setDash()
+    if T.color:
+        c.setFillColor(T.band)
+        c.drawPath(_poly(c, pts), stroke=0, fill=1)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.6)
+    c.drawPath(_poly(c, pts), stroke=1, fill=0)
+    if 0 < apex < 1:
+        _height_line(bk, ax, y, y + h * s)
+    if u:
+        side_label(bk, x + b * s / 2, y - 12, f"{b} {u}")
+        hx = ax + 4 if apex < 1 else x + b * s + 5
+        side_label(bk, hx, y + h * s / 2 - 3.5, f"{h} {u}", anchor="left")
+
+
+def trap_shape(bk, x, y, top, bottom, h, s, u=""):
+    """A trapezoid: bottom side `bottom`, top side `top` (centred), height h, dashed height line."""
+    c = bk.c
+    o = (bottom - top) / 2 * s
+    pts = [(x, y), (x + bottom * s, y), (x + o + top * s, y + h * s), (x + o, y + h * s)]
+    if T.color:
+        c.setFillColor(T.band)
+        c.drawPath(_poly(c, pts), stroke=0, fill=1)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.6)
+    c.drawPath(_poly(c, pts), stroke=1, fill=0)
+    _height_line(bk, x + o, y, y + h * s)
+    if u:
+        side_label(bk, x + bottom * s / 2, y - 12, f"{bottom} {u}")
+        side_label(bk, x + o + top * s / 2, y + h * s + 5, f"{top} {u}")
+        side_label(bk, x + o + 4, y + h * s / 2 - 3.5, f"{h} {u}", anchor="left")
+
+
+def house_shape(bk, x, y, w, h1, h2, s, u=""):
+    """A rectangle w × h1 with a triangle roof of height h2 on top (blue rectangle, orange roof)."""
+    c = bk.c
+    rect = [(x, y), (x + w * s, y), (x + w * s, y + h1 * s), (x, y + h1 * s)]
+    roof = [(x, y + h1 * s), (x + w * s, y + h1 * s), (x + w * s / 2, y + (h1 + h2) * s)]
+    for pts, col in ((rect, T.band), (roof, T.strip)):
+        if T.color:
+            c.setFillColor(col)
+            c.drawPath(_poly(c, pts), stroke=0, fill=1)
+    c.setStrokeColor(T.ink)
+    c.setLineWidth(1.6)
+    c.drawPath(_poly(c, rect), stroke=1, fill=0)
+    c.drawPath(_poly(c, roof), stroke=1, fill=0)
+    _height_line(bk, x + w * s / 2, y + h1 * s, y + (h1 + h2) * s)
+    if u:
+        side_label(bk, x + w * s / 2, y - 12, f"{w} {u}")
+        side_label(bk, x + w * s + 5, y + h1 * s / 2 - 3.5, f"{h1} {u}", anchor="left")
+        side_label(bk, x + w * s / 2 + 4, y + (h1 + h2 / 2) * s - 3.5, f"{h2} {u}", anchor="left")
+
+
+def c_para(bk, x, cy, w, item):
+    b, h, u = item
+    s = _area_scale(b + 2, h, 120, 56)
+    para_shape(bk, x + GUT, cy + 48, b, h, s, u=u)
+    bk.fit_eq(x + GUT, cy + 12, w - GUT - 10, f"[{b}] × [{h}] = [{b * h}] sq {u}", size=15)
+
+
+def c_tri(bk, x, cy, w, item):
+    b, h, apex, u = item
+    s = _area_scale(b, h, 120, 56)
+    tri_shape(bk, x + GUT, cy + 48, b, h, s, apex, u=u)
+    bk.fit_eq(x + GUT, cy + 12, w - GUT - 10, f"[{b}] × [{h}] ÷ 2 = [{b * h // 2}] sq {u}", size=15)
+
+
+def c_trap(bk, x, cy, w, item):
+    top, bottom, h, u = item
+    s = _area_scale(bottom, h, 120, 38)
+    trap_shape(bk, x + GUT, cy + 62, top, bottom, h, s, u=u)
+    bk.fit_eq(x + GUT, cy + 30, w - GUT - 10, f"{top} + {bottom} = [{top + bottom}]", size=14)
+    bk.fit_eq(x + GUT, cy + 6, w - GUT - 10, f"[{top + bottom}] × [{h}] ÷ 2 = [{(top + bottom) * h // 2}] sq {u}",
+              size=14)
+
+
+def c_house(bk, x, cy, w, item):
+    wd, h1, h2, u = item
+    s = _area_scale(wd, h1 + h2, 110, 92)
+    house_shape(bk, x + GUT, cy + 22, wd, h1, h2, s, u=u)
+    tx = x + GUT + wd * s + 56
+    for i, line in enumerate((f"rectangle: [{wd * h1}]", f"triangle: [{wd * h2 // 2}]",
+                              f"[{wd * h1}] + [{wd * h2 // 2}] = [{wd * h1 + wd * h2 // 2}] sq {u}")):
+        bk.fit_eq(tx, cy + 88 - i * 34, w - (tx - x) - 10, line, size=14)
+
+
+def tri_area(b, h, u):
+    return f"triangle, base {b} {u}, height {h} {u}:  area = [{b * h // 2}] sq {u}"
+
+
+def para_area(b, h, u):
+    return f"parallelogram, base {b} {u}, height {h} {u}:  area = [{b * h}] sq {u}"
+
+
+def tri_height(b, h, u):
+    return f"triangle, area {b * h // 2} sq {u}, base {b} {u}:  height = [{h}] {u}"
+
+
+def trap_area(a, b, h, u):
+    return f"trapezoid, sides {a} and {b} {u}, height {h} {u}:  area = [{(a + b) * h // 2}] sq {u}"
+
+
+def learn_area_shapes(bk):
+    y = bk.new_page("Area of Triangles and Other Shapes", "Move a piece or double the shape: make a rectangle.",
+                    name_line=False, big=True, footer="WeMath  ·  Area of Triangles and Other Shapes")
+    c = bk.c
+    label(bk, M, y - 6, "A parallelogram: cut off a triangle, move it over")
+    para_shape(bk, M + 30, y - 100, 7, 5, 14, u="cm")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 290, y - 40, "The triangle on the left fits on the right.")
+    c.drawString(M + 290, y - 58, "Now it is a rectangle, 7 by 5.")
+    color_eq(bk, M + 290, y - 90, [("7", "a"), ("×", "op"), ("5", "b"), ("=", "op"), ("35", None),
+                                   ("sq cm", None)], 20)
+    y -= 132
+
+    label(bk, M, y - 6, "A triangle is half of a rectangle")
+    tri_shape(bk, M + 30, y - 100, 8, 5, 14, 0.35, u="cm")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 290, y - 40, "The dashed rectangle is 8 by 5 = 40.")
+    c.drawString(M + 290, y - 58, "The triangle is half of it.")
+    color_eq(bk, M + 290, y - 90, [("8", "a"), ("×", "op"), ("5", "b"), ("÷", "op"), ("2", None), ("=", "op"),
+                                   ("20", None), ("sq cm", None)], 20)
+    y -= 132
+
+    label(bk, M, y - 6, "Other shapes: split them into rectangles and triangles, then add")
+    y -= 24
+
+    bottom = your_turn(bk, y, h=100)
+    bk.ask("area shapes your turn: triangle 6 by 7")
+    tri_shape(bk, M + 150, bottom + 26, 6, 7, 8.5, 0.5, u="m")
+    bk.eq(M + 260, bottom + 40, "[6] × [7] ÷ 2 = [21] sq m", size=19)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: area of parallelograms, triangles, trapezoids and shapes made of them (6.G.1). Say "
+                     "“What rectangle is hiding here?” The height always meets the base in a square corner.")
+
+
+def practice_area_shapes(bk):
+    title = "Area of Triangles and Other Shapes: Practice"
+    st = [bk.new_page(title, "Find the rectangle. Then base × height."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Parallelograms", "Move the triangle: it is a rectangle.", "para",
+         [(6, 4, "cm"), (9, 3, "m"), (5, 5, "in"), (8, 6, "ft"), (7, 2, "cm"), (10, 4, "m")])
+    part(2, "Triangles", "Half of the dashed rectangle.", "tri",
+         [(6, 5, 0.4, "cm"), (10, 3, 0, "m"), (8, 7, 0.6, "in"), (4, 9, 0.5, "ft"), (12, 5, 0.3, "cm"),
+          (7, 6, 1, "m")])
+    part(3, "Trapezoids", "Top + bottom, times the height, then half.", "trap",
+         [(4, 8, 5, "cm"), (3, 9, 4, "m"), (6, 10, 3, "in"), (5, 7, 6, "ft")])
+    part(4, "Put shapes together", "A rectangle and a triangle: find each, then add.", "house",
+         [(6, 4, 3, "m"), (8, 3, 4, "ft"), (4, 5, 2, "cm"), (10, 2, 3, "in")])
+    part(5, "Triangles", "No help this time.", "eq1",
+         [tri_area(b, h, u) for b, h, u in ((14, 5, "cm"), (9, 8, "m"), (11, 6, "in"), (16, 3, "ft"), (7, 12, "cm"),
+                                             (20, 9, "m"), (13, 4, "in"), (15, 6, "cm"))])
+    part(6, "Parallelograms", "No help this time.", "eq1",
+         [para_area(b, h, u) for b, h, u in ((12, 7, "cm"), (9, 9, "m"), (15, 4, "ft"), (8, 11, "in"), (14, 6, "m"),
+                                              (25, 3, "cm"))])
+    part(7, "Trapezoids", "No help this time.", "eq1",
+         [trap_area(a, b, h, u) for a, b, h, u in ((5, 11, 4, "cm"), (8, 12, 5, "m"), (3, 7, 6, "in"),
+                                                   (9, 15, 2, "ft"), (6, 14, 7, "cm"), (10, 16, 3, "m"))])
+    part(8, "Find the height", "Area × 2 ÷ base.", "eq1",
+         [tri_height(b, h, u) for b, h, u in ((8, 7, "cm"), (10, 9, "m"), (6, 11, "in"), (12, 4, "ft"),
+                                               (14, 6, "cm"), (5, 8, "m"))])
+    part(9, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_101)
+    _words(bk, title, st, 10, "Draw the shape. Find the rectangle.", WORDS_101)
+
+
+REVIEW_101 = ["x + 18 = 45:   x = [27]", "6 ( a + 4 ) = 6a + [24]", "|−13| = [13]", "gcf of 18 and 45 = [9]",
+              "4.2 × 1.5 = [6.3]", "12 : 16 = [3] : [4]"]
+WORDS_101 = [
+    ("A sail is a triangle with a base of 6 m and a height of 9 m. What is its area?", f"6 {TIMES} 9 {DIV} 2 = 27",
+     "27", "sq m"),
+    ("A garden is a parallelogram, base 12 ft and height 7 ft. How much ground does it cover?",
+     f"12 {TIMES} 7 = 84", "84", "sq ft"),
+    ("A ramp's side is a trapezoid: sides 4 ft and 10 ft, height 3 ft. What is its area?",
+     f"14 {TIMES} 3 {DIV} 2 = 21", "21", "sq ft"),
+    ("A flag is a triangle with area 30 sq in and base 10 in. How tall is it?", f"30 {TIMES} 2 {DIV} 10 = 6", "6",
+     "in"),
+    ("Challenge: A wall 8 m wide and 3 m tall has a triangle on top 2 m tall. What is its area?",
+     "24 + 8 = 32", "32", "sq m"),
+]
+KINDS.update({
+    "para": Kind(118, 2, lambda it: f"parallelogram picture {it[0]} by {it[1]} {it[2]}", c_para, 8),
+    "tri": Kind(118, 2, lambda it: f"triangle picture {it[0]} by {it[1]} {it[3]}", c_tri, 8),
+    "trap": Kind(124, 2, lambda it: f"trapezoid picture {it[0]} {it[1]} {it[2]} {it[3]}", c_trap, 8),
+    "house": Kind(128, 1, lambda it: f"rectangle and triangle {it[0]} {it[1]} {it[2]} {it[3]}", c_house, 8),
+})
+TRI_AREA_POOL = [tri_area(b, h, u) for b, h, u in ((18, 5, "cm"), (9, 6, "m"), (13, 8, "in"), (10, 11, "ft"))]
+CHECKINS["101-area-of-triangles-and-other-shapes"] = [
+    S("Triangles", None, "tri", [(8, 5, 0.4, "cm"), (6, 7, 0.5, "m"), (10, 4, 0, "in")], 2),
+    S("Put shapes together", None, "house", [(6, 3, 4, "cm"), (8, 5, 2, "m")], 1),
+    S("Find the area", None, "eq1", TRI_AREA_POOL + [para_area(b, h, u) for b, h, u in ((11, 6, "cm"), (13, 4, "m"))]
+      + [trap_area(a, b, h, u) for a, b, h, u in ((4, 10, 6, "in"), (7, 9, 5, "cm"))], 4),
+]
+_g6[-1:-1] = [S("Area of shapes", None, "eq1", TRI_AREA_POOL, 2, 101)]
+
+
+# ====================================================================== 102. Volume with Fractions
+
+
+def c_half_cubes(bk, x, cy, w, item):
+    """A box of small cubes, each 1/2 unit on every edge (8 make one unit cube)."""
+    L2, W2, H2 = item
+    n = L2 * W2 * H2
+    cube_box(bk, x + GUT + 28, cy + 18, L2, W2, H2, 12, labels=(half_str(L2), half_str(W2), half_str(H2)))
+    tx = x + GUT + 190
+    bk.fit_eq(tx, cy + 60, w - (tx - x) - 10, f"[{n}] small cubes", size=16)
+    bk.fit_eq(tx, cy + 22, w - (tx - x) - 10, f"[{n}] ÷ 8 = [{n // 8}] cubic units", size=16)
+
+
+def _fx(f):
+    """A Fraction as frac_expr text: 5/2 -> "2 1/2", 3 -> "3"."""
+    f = Fraction(f)
+    q, r = divmod(f.numerator, f.denominator)
+    return f"{q} {r}/{f.denominator}" if q and r else f"{r}/{f.denominator}" if r else str(q)
+
+
+def _fbox(f):
+    """A Fraction as answer boxes: 15/2 -> "[7] [1]/2", 6 -> "[6]"."""
+    f = Fraction(f)
+    q, r = divmod(f.numerator, f.denominator)
+    return f"[{q}] [{r}]/{f.denominator}" if q and r else f"[{r}]/{f.denominator}" if r else f"[{q}]"
+
+
+def fvol(a, b, c_):
+    """2 1/2 × 4 × 3 = [30]"""
+    a, b, c_ = Fraction(a), Fraction(b), Fraction(c_)
+    return mx(f"{_fx(a)} × {_fx(b)} × {_fx(c_)} = {_fbox(a * b * c_)}", _fx(a * b * c_))
+
+
+def fbase(B, h):
+    """base 7 1/2, height 4: 7 1/2 × 4 = [30]"""
+    B, h = Fraction(B), Fraction(h)
+    return mx(f"{_fx(B)} × {_fx(h)} = {_fbox(B * h)}", _fx(B * h))
+
+
+def fedge(a, b, c_):
+    """4 × 2 1/2 × [3] = 30 (the missing edge)."""
+    a, b, c_ = Fraction(a), Fraction(b), Fraction(c_)
+    return mx(f"{_fx(a)} × {_fx(b)} × {_fbox(c_)} = {_fx(a * b * c_)}", _fx(c_))
+
+
+def learn_frac_volume(bk):
+    y = bk.new_page("Volume with Fractions", "Fill the box with small cubes. 8 small cubes make 1.",
+                    name_line=False, big=True, footer="WeMath  ·  Volume with Fractions")
+    c = bk.c
+    label(bk, M, y - 6, "Small cubes: ½ unit on every edge")
+    cube_box(bk, M + 40, y - 100, 2, 2, 2, 28)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 220, y - 40, "2 across, 2 back, 2 up = 8 small cubes.")
+    c.drawString(M + 220, y - 58, "Together they make 1 unit cube.")
+    color_eq(bk, M + 220, y - 90, [("8", "a"), ("small cubes", None), ("=", "op"), ("1", "b"), ("cubic unit", None)],
+             19)
+    y -= 132
+
+    label(bk, M, y - 6, "A box 1½ by 1 by 2")
+    cube_box(bk, M + 40, y - 112, 3, 2, 4, 15, labels=("1½", "1", "2"))
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 220, y - 40, "Small cubes: 3 × 2 × 4 = 24.")
+    c.drawString(M + 220, y - 58, "24 ÷ 8 = 3 unit cubes.")
+    frac_expr(bk, M + 220, y - 92, "1 1/2 × 1 × 2 = 3", size=20)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 220, y - 116, "Length × width × height works with fractions too.")
+    y -= 144
+
+    bottom = your_turn(bk, y, h=70)
+    bk.ask("frac volume your turn: 2 1/2 x 2 x 2")
+    frac_expr(bk, M + 160, bottom + 26, "2 1/2 × 2 × 2 = [10]", size=21)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: volume of boxes with fraction edges, by packing ½-unit cubes and by l × w × h "
+                     "(6.G.2). Say “How many small cubes? 8 small cubes make one.” Then check with l × w × h.")
+
+
+def practice_frac_volume(bk):
+    title = "Volume with Fractions: Practice"
+    st = [bk.new_page(title, "Count small cubes, then multiply the edges."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Count the small cubes", "Each small cube is ½ on every edge. 8 make 1 cubic unit.", "half_cubes",
+         [(3, 4, 2), (2, 2, 4), (4, 4, 3), (5, 4, 2), (6, 2, 2), (3, 2, 4)])
+    part(2, "Length × width × height", "Multiply the fractions.", "mixed2",
+         [fvol(a, b, c_) for a, b, c_ in (("5/2", 4, 3), ("3/2", 2, 5), ("1/2", 6, 5), ("7/2", 2, 2),
+                                          ("3/4", 4, 6), ("5/2", "3/2", 4), ("9/2", 2, 3), ("1/3", 6, 9),
+                                          ("3/2", "3/2", 4), ("5/4", 8, 2))])
+    part(3, "Answers with fractions", "The answer is a mixed number.", "mixed2",
+         [fvol(a, b, c_) for a, b, c_ in (("3/2", 3, 1), ("5/2", 3, 1), ("1/2", 7, 3), ("7/2", 3, 1),
+                                          ("3/2", 5, 3), ("1/2", "1/2", 6), ("5/2", 5, 1), ("1/4", 5, 3))])
+    part(4, "Base × height", "The base is already worked out.", "mixed2",
+         [fbase(B, h) for B, h in (("15/2", 4), (12, "5/2"), ("9/2", 6), (10, "7/2"), ("21/2", 2), (8, "9/4"))])
+    part(5, "Find the missing edge", "Volume ÷ the other two edges.", "mixed2",
+         [fedge(a, b, c_) for a, b, c_ in ((4, "5/2", 3), (6, "3/2", 2), ("1/2", 8, 5), (5, "7/2", 2),
+                                           ("3/2", 4, 6), (2, "9/2", 4))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_102)
+    _words(bk, title, st, 7, "Length × width × height.", WORDS_102)
+
+
+REVIEW_102 = ["16 × 5 ÷ 2 = [40]", "x + 26 = 61:   x = [35]", "5/6 ÷ 1/12 = [10]",
+              "25% of 64 = [16]", "lcm of 6 and 10 = [30]", "7.2 ÷ 0.8 = [9]"]
+WORDS_102 = [
+    ("A box is 3 ft long, 2 ft wide and 1½ ft tall. What is its volume?", f"3 {TIMES} 2 {TIMES} 1½ = 9", "9",
+     "cubic ft"),
+    ("A tank is 5 m by 2 m. Water fills it ½ m deep. How much water is that?", f"5 {TIMES} 2 {TIMES} ½ = 5", "5",
+     "cubic m"),
+    ("A box holds small cubes 4 across, 6 back and 2 up, each ½ inch. How many cubic inches?",
+     f"4 {TIMES} 6 {TIMES} 2 = 48, 48 {DIV} 8 = 6", "6", "cubic in"),
+    ("A box has a base of 12 sq cm and holds 30 cubic cm. How tall is it?", f"30 {DIV} 12 = 2½", "2½", "cm"),
+    ("Challenge: A drawer is 2½ ft long, 2 ft wide and ½ ft deep. Two of them: what volume in all?",
+     f"2½ {TIMES} 2 {TIMES} ½ {TIMES} 2 = 5", "5", "cubic ft"),
+]
+KINDS["half_cubes"] = Kind(104, 1, lambda it: f"half cubes {it[0]} {it[1]} {it[2]}", c_half_cubes, 8)
+FVOL_POOL = [fvol(a, b, c_) for a, b, c_ in (("5/2", 2, 6), ("3/2", 4, 3), ("1/2", 8, 3), ("7/2", 4, 2),
+                                            ("5/2", 3, 3), ("3/2", 3, 3))]
+CHECKINS["102-volume-with-fractions"] = [
+    S("Count the small cubes", None, "half_cubes", [(4, 2, 3), (2, 4, 4), (6, 4, 1)], 2),
+    S("Length × width × height", None, "mixed2", FVOL_POOL, 4),
+    S("Find the missing edge", None, "mixed2", [fedge(a, b, c_) for a, b, c_ in ((3, "5/2", 4), ("3/2", 6, 2))], 2),
+]
+_g6[-1:-1] = [S("Volume with fractions", None, "mixed2", FVOL_POOL, 2, 102)]
+
+
+# ====================================================================== 103. Surface Area and Nets
+
+
+def box_net(bk, x, y, L, W, H, s, u=""):
+    """The net of a box: a row of four faces (side, front, side, back), the top and bottom on the front.
+    Top and bottom blue, front and back orange. y = bottom of the net. Returns the width."""
+    c = bk.c
+    row_y = y + W * s
+    xs = [x, x + W * s, x + (W + L) * s, x + (2 * W + L) * s]
+    faces = [(xs[0], row_y, W, H, None), (xs[1], row_y, L, H, T.strip), (xs[2], row_y, W, H, None),
+             (xs[3], row_y, L, H, T.strip), (xs[1], y, L, W, T.band), (xs[1], row_y + H * s, L, W, T.band)]
+    for fx, fy, fw, fh, col in faces:
+        if col is not None and T.color:
+            c.setFillColor(col)
+            c.rect(fx, fy, fw * s, fh * s, stroke=0, fill=1)
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(1.2)
+        c.rect(fx, fy, fw * s, fh * s, stroke=1, fill=0)
+    if u:
+        top = row_y + H * s + W * s
+        side_label(bk, xs[1] + L * s / 2, top + 4, f"{L} {u}")
+        side_label(bk, xs[1] + L * s + 4, row_y + H * s + W * s / 2 - 3.5, f"{W} {u}", anchor="left")
+        c.setFillColor(T.text2)
+        c.setFont("AvD", 10)
+        c.drawRightString(x - 4, row_y + H * s / 2 - 3.5, f"{H} {u}")
+    return (2 * W + 2 * L) * s
+
+
+def c_net(bk, x, cy, w, item):
+    L, W, H, u = item
+    s = min(11, 230 / (2 * L + 2 * W), 120 / (H + 2 * W))
+    nx = x + GUT + 30
+    nw = box_net(bk, nx, cy + 14, L, W, H, s, u=u)
+    tx = max(nx + nw + 24, x + GUT + 290)
+    lines = (f"top and bottom: 2 × [{L * W}] = [{2 * L * W}]", f"front and back: 2 × [{L * H}] = [{2 * L * H}]",
+             f"two sides: 2 × [{W * H}] = [{2 * W * H}]", f"surface area = [{2 * (L * W + L * H + W * H)}] sq {u}")
+    for i, line in enumerate(lines):
+        bk.fit_eq(tx, cy + 118 - i * 32, w - (tx - x) - 10, line, size=14)
+
+
+CROSS = [(1, 0), (0, 1), (1, 1), (2, 1), (1, 2), (1, 3)]  # a cube net: a column of 4 with one face each side
+
+
+def cube_net(bk, x, y, cells, s, fill=True):
+    """Six (or any) unit squares at grid cells (col, row from the bottom)."""
+    c = bk.c
+    for i, (cx_, cy_) in enumerate(cells):
+        if fill and T.color:
+            c.setFillColor(T.band if i % 2 == 0 else T.strip)
+            c.rect(x + cx_ * s, y + cy_ * s, s, s, stroke=0, fill=1)
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(1.2)
+        c.rect(x + cx_ * s, y + cy_ * s, s, s, stroke=1, fill=0)
+
+
+def c_cube_net(bk, x, cy, w, item):
+    e, u = item
+    cube_net(bk, x + GUT + 10, cy + 10, CROSS, 22)
+    side_label(bk, x + GUT + 10 + 33, cy + 10 - 1 + 22 * 4 + 3, f"{e} {u}")
+    tx = x + GUT + 150
+    bk.fit_eq(tx, cy + 62, w - (tx - x) - 10, f"one face: [{e * e}]", size=16)
+    bk.fit_eq(tx, cy + 24, w - (tx - x) - 10, f"6 × [{e * e}] = [{6 * e * e}] sq {u}", size=16)
+
+
+def pyramid_net(bk, x, y, b, s):
+    """A square base with a triangle on each side (a square pyramid opened out). x, y = the square's corner."""
+    c = bk.c
+    t = s * 0.9
+    sq = [(x, y), (x + b, y), (x + b, y + b), (x, y + b)]
+    tris = [[(x, y + b), (x + b, y + b), (x + b / 2, y + b + t)], [(x, y), (x + b, y), (x + b / 2, y - t)],
+            [(x, y), (x, y + b), (x - t, y + b / 2)], [(x + b, y), (x + b, y + b), (x + b + t, y + b / 2)]]
+    for pts in tris:
+        if T.color:
+            c.setFillColor(T.strip)
+            c.drawPath(_poly(c, pts), stroke=0, fill=1)
+        c.setStrokeColor(T.ink)
+        c.setLineWidth(1.2)
+        c.drawPath(_poly(c, pts), stroke=1, fill=0)
+    if T.color:
+        c.setFillColor(T.band)
+        c.drawPath(_poly(c, sq), stroke=0, fill=1)
+    c.setStrokeColor(T.ink)
+    c.drawPath(_poly(c, sq), stroke=1, fill=0)
+    _height_line(bk, x + b / 2, y + b, y + b + t)
+
+
+def c_pyramid(bk, x, cy, w, item):
+    b, h, u = item
+    px, py = x + GUT + 46, cy + 46
+    pyramid_net(bk, px, py, 40, 40)
+    c = bk.c
+    c.setFillColor(T.text2)
+    c.setFont("AvD", 10)
+    c.drawCentredString(px + 20, py + 3, f"{b} {u}")
+    c.drawString(px + 33, py + 40 + 13, f"{h} {u}")
+    tx = x + GUT + 190
+    for i, line in enumerate((f"square: [{b * b}]", f"4 × [{b * h // 2}] = [{2 * b * h}]",
+                              f"surface area = [{b * b + 2 * b * h}] sq {u}")):
+        bk.fit_eq(tx, cy + 96 - i * 34, w - (tx - x) - 10, line, size=16)
+
+
+def _folds(cells):
+    """Does this net fold into a cube? Roll a cube over the squares; each square must get its own face."""
+    cells = set(cells)
+    if len(cells) != 6:
+        return False
+    start = min(cells)
+    # faces: U, D, N, S, E, W; rolling east moves the top to the east side, and so on
+    roll = {(1, 0): {"U": "E", "E": "D", "D": "W", "W": "U", "N": "N", "S": "S"},
+            (-1, 0): {"U": "W", "W": "D", "D": "E", "E": "U", "N": "N", "S": "S"},
+            (0, 1): {"U": "N", "N": "D", "D": "S", "S": "U", "E": "E", "W": "W"},
+            (0, -1): {"U": "S", "S": "D", "D": "N", "N": "U", "E": "E", "W": "W"}}
+    seen, todo = {start: {f: f for f in "UDNSEW"}}, [start]
+    while todo:
+        cell = todo.pop()
+        for (dx, dy), mv in roll.items():
+            nxt = (cell[0] + dx, cell[1] + dy)
+            if nxt in cells and nxt not in seen:
+                seen[nxt] = {mv[k]: v for k, v in seen[cell].items()}
+                todo.append(nxt)
+    # the face on the ground (D) for each square
+    return len({o["D"] for o in seen.values()}) == 6
+
+
+def _hexominoes():
+    """All 35 shapes made of 6 squares (turns and flips counted once), in a fixed order."""
+    def canon(cells):
+        forms = []
+        for f in range(8):
+            cc = [((-a if f & 1 else a), (-b if f & 2 else b)) for a, b in cells]
+            cc = [(b, a) if f & 4 else (a, b) for a, b in cc]
+            mx, my = min(a for a, _ in cc), min(b for _, b in cc)
+            forms.append(tuple(sorted((a - mx, b - my) for a, b in cc)))
+        return min(forms)
+    cur = {((0, 0),)}
+    for _ in range(5):
+        cur = {canon(c + (n,)) for c in cur for a, b in c
+               for n in ((a + 1, b), (a - 1, b), (a, b + 1), (a, b - 1)) if n not in c}
+    return sorted(cur)
+
+
+_HEX = shuf("hexominoes", _hexominoes())
+NETS_OK = [list(c) for c in _HEX if _folds(c)]  # the 11 cube nets
+NETS_NO = [list(c) for c in _HEX if not _folds(c) and max(a for a, _ in c) < 5]
+
+
+def c_net_ok(bk, x, cy, w, item):
+    cells, ok = item
+    xs = [p[0] for p in cells]
+    ys = [p[1] for p in cells]
+    s = min(14, 60 / (max(xs) - min(xs) + 1), 52 / (max(ys) - min(ys) + 1))
+    cube_net(bk, x + GUT - min(xs) * s, cy + 6 - min(ys) * s, cells, s, fill=False)
+    yes_no_choice(bk, x, cy, w, ok)
+
+
+def net_key(it):
+    return "cube net " + "-".join(f"{a}.{b}" for a, b in sorted(it[0]))
+
+
+def box_sa(L, W, H, u):
+    return f"box {L} × {W} × {H} {u}:  surface area = [{nf(2 * (L * W + L * H + W * H))}] sq {u}"
+
+
+def cube_sa(e, u):
+    return f"cube, edge {e} {u}:  surface area = [{nf(6 * e * e)}] sq {u}"
+
+
+def learn_surface_area(bk):
+    y = bk.new_page("Surface Area and Nets", "Open the box flat. Add the areas of all the faces.",
+                    name_line=False, big=True, footer="WeMath  ·  Surface Area and Nets")
+    c = bk.c
+    label(bk, M, y - 6, "A box 4 by 2 by 3, opened flat (a net)")
+    box_net(bk, M + 40, y - 152, 4, 2, 3, 14, u="cm")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 240, y - 36, "6 faces, in 3 matching pairs.")
+    for i, line in enumerate(("top and bottom: 2 × 8 = 16", "front and back: 2 × 12 = 24",
+                              "two sides: 2 × 6 = 12")):
+        bk.eq(M + 240, y - 62 - i * 26, line, size=15)
+    color_eq(bk, M + 240, y - 150, [("16", "a"), ("+", "op"), ("24", "b"), ("+", "op"), ("12", None), ("=", "op"),
+                                    ("52", None), ("sq cm", None)], 19)
+    y -= 178
+
+    label(bk, M, y - 6, "Surface area is square units (covering). Volume is cubic units (filling).")
+    y -= 26
+
+    bottom = your_turn(bk, y, h=78)
+    bk.ask("surface area your turn: cube 5")
+    bk.eq(M + 150, bottom + 26, "cube, edge 5 cm:  6 × [25] = [150] sq cm", size=19)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: surface area from nets of boxes and square pyramids (6.G.4). Say “Which faces match? "
+                     "Find one, double it.” Surface area is covering (sq units); volume is filling (cubic units).")
+
+
+def practice_surface_area(bk):
+    title = "Surface Area and Nets: Practice"
+    st = [bk.new_page(title, "Find each face. Matching faces come in pairs."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Does it fold into a cube?", "Imagine folding it up. Circle yes or no.", "net_ok",
+         shuf("net101", [(n, True) for n in NETS_OK[:4]] + [(n, False) for n in NETS_NO[:4]]))
+    part(2, "Cubes", "Six faces, all the same.", "cube_net", [(3, "cm"), (6, "in"), (4, "m"), (9, "ft")])
+    part(3, "Boxes", "Three pairs of faces.", "net",
+         [(5, 2, 3, "cm"), (4, 3, 2, "in"), (6, 2, 2, "m"), (5, 4, 1, "ft"), (3, 3, 5, "cm"), (7, 2, 3, "in")])
+    part(4, "Square pyramids", "The square, then 4 triangles.", "pyramid",
+         [(6, 5, "cm"), (4, 7, "in"), (8, 9, "m"), (10, 6, "ft")])
+    part(5, "Boxes", "No help this time.", "eq1",
+         [box_sa(L, W, H, u) for L, W, H, u in ((6, 4, 3, "cm"), (5, 5, 2, "in"), (8, 3, 2, "m"), (7, 4, 5, "ft"),
+                                                (10, 2, 3, "cm"), (9, 6, 1, "m"), (4, 4, 7, "in"), (12, 3, 2, "cm"))])
+    part(6, "Cubes", "No help this time.", "eq1",
+         [cube_sa(e, u) for e, u in ((7, "cm"), (2, "m"), (8, "in"), (10, "ft"), (11, "cm"), (12, "in"))])
+    part(7, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_103)
+    _words(bk, title, st, 8, "Draw the net. Add the faces.", WORDS_103)
+
+
+REVIEW_103 = ["2 1/2 × 2 × 6 = [30]", "5x = 85:   x = [17]", "2.6 + 13.75 = [16.35]",
+              "−9 [<] −4", "when n = 6:  3n + 11 = [29]", "18 out of 20 = [90] %"]
+WORDS_103 = [
+    ("A cube box has edges of 4 in. How much paper covers it all?", f"6 {TIMES} 16 = 96", "96", "sq in"),
+    ("A box is 5 cm by 3 cm by 2 cm. What is its surface area?", "30 + 20 + 12 = 62", "62", "sq cm"),
+    ("A gift box is 10 in by 6 in by 4 in. How much wrapping paper covers it?", "120 + 80 + 48 = 248", "248",
+     "sq in"),
+    ("A tent has 4 triangle sides, each with base 3 m and height 4 m. How much cloth for the sides?", f"3 {TIMES} 4 {DIV} 2 = 6, 4 {TIMES} 6 = 24", "24", "sq m"),
+    ("Challenge: A box 6 × 4 × 2 ft has no top. How much wood makes it?", "96 − 24 = 72", "72", "sq ft"),
+]
+KINDS.update({
+    "net": Kind(138, 1, lambda it: f"box net {it[0]} {it[1]} {it[2]} {it[3]}", c_net, 8),
+    "cube_net": Kind(110, 1, lambda it: f"cube net picture {it[0]} {it[1]}", c_cube_net, 8),
+    "pyramid": Kind(140, 1, lambda it: f"pyramid net {it[0]} {it[1]} {it[2]}", c_pyramid, 8),
+    "net_ok": Kind(70, 2, net_key, c_net_ok, 8),
+})
+BALANCE["net_ok"] = lambda it: it[1]
+BOX_SA_POOL = [box_sa(L, W, H, u) for L, W, H, u in ((5, 3, 4, "cm"), (8, 2, 3, "in"), (6, 6, 2, "m"),
+                                                     (9, 4, 2, "ft"))]
+CHECKINS["103-surface-area-and-nets"] = [
+    S("Does it fold into a cube?", "Circle yes or no.", "net_ok",
+      [(n, True) for n in NETS_OK[4:]] + [(n, False) for n in NETS_NO[4:]], 2),
+    S("Boxes", None, "net", [(4, 2, 3, "cm"), (6, 3, 2, "in"), (5, 2, 4, "m")], 1),
+    S("Find the surface area", None, "eq1", BOX_SA_POOL + [cube_sa(e, u) for e, u in ((5, "in"), (9, "m"))], 3),
+]
+_g6[-1:-1] = [S("Surface area", None, "eq1", BOX_SA_POOL, 2, 103)]
+
+
+# ====================================================================== 104. Mean, Median and Mode
+
+
+def _lst(vals):
+    return ", ".join(map(str, vals))
+
+
+def c_level(bk, x, cy, w, vals):
+    """Towers of cubes: even them out. The key draws the level line."""
+    c = bk.c
+    s = 9
+    n = len(vals)
+    mean = sum(vals) // n
+    x0 = x + GUT
+    for i, v in enumerate(vals):
+        for j in range(v):
+            bx, by = x0 + i * (s + 6), cy + 12 + j * s
+            if T.color:
+                c.setFillColor(T.band)
+                c.rect(bx, by, s, s, stroke=0, fill=1)
+            c.setStrokeColor(T.ink)
+            c.setLineWidth(0.8)
+            c.rect(bx, by, s, s, stroke=1, fill=0)
+    if bk.key:
+        c.setStrokeColor(T.answer)
+        c.setLineWidth(1.4)
+        c.setDash(3, 2)
+        c.line(x0 - 4, cy + 12 + mean * s, x0 + n * (s + 6), cy + 12 + mean * s)
+        c.setDash()
+    tx = x0 + n * (s + 6) + 14
+    bk.fit_eq(tx, cy + 72, w - (tx - x) - 10, f"in all: [{sum(vals)}]", size=14)
+    bk.fit_eq(tx, cy + 40, w - (tx - x) - 10, f"[{sum(vals)}] ÷ [{n}] = [{mean}]", size=14)
+    bk.fit_eq(tx, cy + 8, w - (tx - x) - 10, f"mean = [{mean}]", size=14)
+
+
+def c_median(bk, x, cy, w, vals):
+    """A list; write it in order (the key fills the boxes), then the middle one."""
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 15)
+    c.drawString(x + GUT, cy + 40, _lst(vals))
+    srt = sorted(vals)
+    mid = len(vals) // 2
+    bx = x + GUT
+    for i, v in enumerate(srt):
+        bw = 30
+        bk.box(bx, cy + 6, bw, 22, v, size=13)
+        if bk.key and i == mid:
+            c.setStrokeColor(T.answer)
+            c.setLineWidth(1.4)
+            c.ellipse(bx - 4, cy + 2, bx + bw + 4, cy + 32, stroke=1, fill=0)
+        bx += bw + 8
+    bk.fit_eq(bx + 16, cy + 12, w - (bx + 16 - x) - 10, f"median = [{srt[mid]}]", size=15)
+
+
+def stat_qs(vals):
+    srt = sorted(vals)
+    n = len(vals)
+    med = srt[n // 2] if n % 2 else dn2(D(srt[n // 2 - 1] + srt[n // 2]) / 2)
+    mode = max(set(vals), key=vals.count)
+    qs = [("Median?", med), ("Mode?", mode), ("Range?", max(vals) - min(vals))]
+    if sum(vals) % n == 0:
+        qs.append(("Mean?", sum(vals) // n))
+    else:
+        qs.append(("How many?", n))
+    return qs
+
+
+def c_xstats(bk, x, cy, w, item):
+    title, vals = item
+    span = list(range(min(vals), max(vals) + 1))
+    x_chart(bk, x + GUT + 6, cy + 168, title, [str(k) for k in span], [vals.count(k) for k in span], colw=30)
+    graph_questions(bk, x + GUT + 300, cy + 140, w - GUT - 312, stat_qs(vals))
+
+
+def mean_eq(vals):
+    return f"mean of {_lst(vals)} = [{sum(vals) // len(vals)}]"
+
+
+def median_eq(vals):
+    srt = sorted(vals)
+    n = len(vals)
+    m = srt[n // 2] if n % 2 else dn2(D(srt[n // 2 - 1] + srt[n // 2]) / 2)
+    return f"median of {_lst(vals)} = [{m}]"
+
+
+def mode_eq(vals):
+    return f"mode of {_lst(vals)} = [{max(set(vals), key=vals.count)}]"
+
+
+def range_eq(vals):
+    return f"range of {_lst(vals)} = [{max(vals) - min(vals)}]"
+
+
+def missing_mean(vals, mean):
+    """mean of 6, 8, [13] = 9: the missing value."""
+    last = mean * (len(vals) + 1) - sum(vals)
+    return f"mean of {_lst(vals)}, [{last}] = {mean}"
+
+
+def learn_mean_median(bk):
+    y = bk.new_page("Mean, Median and Mode", "Three ways to say what is typical.", name_line=False, big=True,
+                    footer="WeMath  ·  Mean, Median and Mode")
+    c = bk.c
+    label(bk, M, y - 6, "Mean: even it out (a fair share)")
+    vals = [3, 7, 4, 6]
+    for i, v in enumerate(vals):
+        for j in range(v):
+            bk.dot(M + 30 + i * 30, y - 112 + j * 14, 6, "a")
+    c.setStrokeColor(T.accent)
+    c.setLineWidth(1.4)
+    c.setDash(3, 2)
+    c.line(M + 18, y - 112 + 5 * 14 - 7, M + 140, y - 112 + 5 * 14 - 7)
+    c.setDash()
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 190, y - 40, "Move dots from the tall towers to the short ones.")
+    c.drawString(M + 190, y - 58, "Now every tower has 5.")
+    color_eq(bk, M + 190, y - 92, [("20", "a"), ("÷", "op"), ("4", "b"), ("=", "op"), ("5", None)], 20)
+    y -= 132
+
+    label(bk, M, y - 6, "Median: the middle one, in order")
+    bk.eq(M + 14, y - 38, "9, 2, 7, 4, 12  →  2, 4, 7, 9, 12", size=19)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 14, y - 60, "7 is in the middle. Two in the middle? Take the number halfway between them.")
+    y -= 80
+
+    label(bk, M, y - 6, "Mode: the one that comes up most.   Range: biggest − smallest.")
+    bk.eq(M + 14, y - 38, "3, 5, 5, 8, 9:   mode 5,   range 9 − 3 = 6", size=17)
+    y -= 58
+
+    bottom = your_turn(bk, y, h=70)
+    bk.ask("mean median your turn: 4 8 9")
+    bk.eq(M + 160, bottom + 26, "mean of 4, 8, 9 = [7]", size=20)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: mean as a fair share, median, mode and range (6.SP.3, 6.SP.5c). Say “If we shared "
+                     "them out evenly, how many each?” For the median, always put the numbers in order first.")
+
+
+def practice_mean_median(bk):
+    title = "Mean, Median and Mode: Practice"
+    st = [bk.new_page(title, "Even it out, find the middle, find the most."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Even it out", "Move cubes until the towers match.", "level",
+         [(2, 6, 4), (7, 3, 5, 1), (5, 9, 4), (8, 2, 6, 4), (3, 4, 8, 5), (6, 1, 5)])
+    part(2, "Find the median", "Write them in order. Ring the middle one.", "median",
+         [(8, 3, 11, 6, 5), (14, 9, 12, 20, 7), (4, 10, 2, 8, 6, 3, 9), (25, 18, 31, 22, 27), (6, 13, 9, 2, 11)])
+    part(3, "Read the X chart", "Find the middle, the most, and the spread.", "xstats",
+         [("Goals scored", [1, 2, 2, 3, 3, 3, 4, 6]), ("Pets at home", [0, 1, 1, 1, 2, 2, 3, 4, 5]),
+          ("Books read", [2, 3, 4, 4, 5, 5, 5, 6, 7, 9])])
+    part(4, "Mean", "Add them, then share them out.", "eq1",
+         [mean_eq(v) for v in ((5, 9, 10), (12, 4, 8), (3, 7, 6, 8), (15, 9, 21), (6, 6, 11, 9), (20, 14, 17),
+                               (2, 9, 5, 12), (30, 18, 24))])
+    part(5, "Median", "In order first.", "eq1",
+         [median_eq(v) for v in ((7, 2, 9), (15, 4, 11, 8, 6), (3, 12, 5), (21, 16, 19, 25, 30), (8, 4, 10, 6),
+                                 (13, 7, 9, 11))])
+    part(6, "Mode and range", "The most often, and biggest − smallest.", "eq1",
+         [mode_eq((4, 7, 7, 2, 9)), range_eq((13, 5, 22, 9)), mode_eq((11, 3, 8, 3, 6)), range_eq((40, 18, 27, 33)),
+          mode_eq((9, 12, 12, 15, 12)), range_eq((6, 19, 2, 11))])
+    part(7, "The missing number", "What makes the mean right?", "eq1",
+         [missing_mean((6, 8), 9), missing_mean((10, 4), 8), missing_mean((7, 9, 5), 8), missing_mean((12, 15), 11)])
+    part(8, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_104)
+    _words(bk, title, st, 9, "Mean, median, mode or range?", WORDS_104)
+
+
+REVIEW_104 = ["14 × 9 ÷ 2 = [63]", "1/2 × 6 × 9 = [27]",
+              "9x = 117:   x = [13]", "45% of 60 = [27]", "5.4 × 0.3 = [1.62]", "2/3 ÷ 1/6 = [4]"]
+WORDS_104 = [
+    ("Ana scored 8, 6 and 10 points in three games. What is her mean score?", f"8 + 6 + 10 = 24, 24 {DIV} 3 = 8", "8", "points"),
+    ("Five plants are 12, 9, 15, 10 and 14 cm tall. What is the median height?", "9, 10, 12, 14, 15", "12", "cm"),
+    ("Shoe sizes in a group: 4, 5, 5, 6, 5, 7. What is the mode?", "5 comes up 3 times", "5", ""),
+    ("The coldest day was 18 degrees and the warmest 41. What is the range?", "41 − 18 = 23", "23", "degrees"),
+    ("Challenge: Leo's mean on 3 tests is 80. He got 75 and 85 on two. What was the third?",
+     "240 − 160 = 80", "80", "points"),
+]
+KINDS.update({
+    "level": Kind(110, 2, lambda v: "even out towers " + "-".join(map(str, v)), c_level, 8),
+    "median": Kind(64, 1, lambda v: "median list " + "-".join(map(str, v)), c_median, 8),
+    "xstats": Kind(176, 1, lambda it: f"x chart stats {it[0]}", c_xstats, 10),
+})
+MEAN_POOL = [mean_eq(v) for v in ((4, 9, 11), (7, 13, 10), (5, 8, 6, 9), (16, 10, 22))]
+MEDIAN_POOL = [median_eq(v) for v in ((9, 3, 14, 6, 11), (18, 12, 25), (7, 15, 9, 13))]
+CHECKINS["104-mean-median-and-mode"] = [
+    S("Even it out", None, "level", [(4, 8, 6), (9, 3, 6), (2, 7, 3, 4)], 2),
+    S("Mean", None, "eq1", MEAN_POOL, 2),
+    S("Median", None, "eq1", MEDIAN_POOL, 2),
+    S("Mode and range", None, "eq1", [mode_eq((6, 9, 9, 4, 12)), range_eq((17, 8, 25, 12))], 2),
+]
+_g6[-1:-1] = [S("Mean and median", None, "eq1", MEAN_POOL + MEDIAN_POOL, 2, 104)]
+
+
+# ====================================================================== 105. Data Displays
+
+
+STAT_Q_YES = [("How many hours of sleep do kids in my class get?", True), ("How tall are the trees in the park?", True),
+              ("How many pets do families on my street have?", True), ("How far can sixth graders jump?", True),
+              ("How long do my friends take to get to school?", True), ("How old are the people at the center?", True),
+              ("What scores did our team get this season?", True), ("How much rain fell each day in May?", True)]
+STAT_Q_NO = [("How tall is Mia?", False), ("How many days are in a week?", False),
+             ("What time does school start today?", False), ("How many legs does a spider have?", False),
+             ("What color is my backpack?", False), ("How old is my teacher?", False),
+             ("How many players are on a soccer team?", False), ("What is 7 × 8?", False)]
+
+
+def _bins(vals, size):
+    lo = min(vals) // size * size
+    hi = max(vals) // size * size
+    return [(a, a + size - 1) for a in range(lo, hi + 1, size)]
+
+
+def c_freq(bk, x, cy, w, item):
+    """A list of data; count how many fall in each group (the key fills the counts)."""
+    vals, size = item
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 13)
+    c.drawString(x + GUT, cy + 52, _lst(vals))
+    bx = x + GUT
+    for a, b in _bins(vals, size):
+        lab = f"{a}–{b}"
+        c.setFillColor(T.text2)
+        c.setFont("AvD", 11)
+        c.drawString(bx, cy + 18, lab)
+        lw = sw(lab, "AvD", 11)
+        bk.box(bx + lw + 5, cy + 12, 28, 20, sum(a <= v <= b for v in vals), size=13)
+        bx += lw + 50
+
+
+def hist_qs(bins, counts):
+    big = max(range(len(counts)), key=lambda i: counts[i])
+    one = (big + 1) % len(bins)
+    half = len(bins) // 2
+    return [(f"How many in {bins[one][0]}–{bins[one][1]}?", counts[one]),
+            ("Most in which group?", f"{bins[big][0]}–{bins[big][1]}"),
+            (f"How many are {bins[half][0]} or more?", sum(counts[half:])), ("How many in all?", sum(counts))]
+
+
+def c_hist(bk, x, cy, w, item):
+    title, bins, counts = item
+    labels = [f"{a}–{b}" for a, b in bins]
+    bar_graph(bk, x + GUT + 6, cy + 168, title, labels, counts, maxv=10, cell=11, barw=38)
+    graph_questions(bk, x + GUT + 270, cy + 140, w - GUT - 282, hist_qs(bins, counts))
+
+
+def c_make_x(bk, x, cy, w, item):
+    """Data in a list; make the X chart (the key puts in the X's), then the mode."""
+    title, vals = item
+    c = bk.c
+    c.setFillColor(T.ink)
+    c.setFont("Rnd", 13)
+    c.drawString(x + GUT, cy + 112, _lst(vals))
+    span = list(range(min(vals), max(vals) + 1))
+    x_chart(bk, x + GUT + 6, cy + 104, title, [str(k) for k in span], [vals.count(k) for k in span], colw=30,
+            show=False)
+    tx = x + GUT + 30 * len(span) + 40
+    bk.fit_eq(tx, cy + 40, w - (tx - x) - 10, f"mode = [{max(set(vals), key=vals.count)}]", size=15)
+    bk.fit_eq(tx, cy + 10, w - (tx - x) - 10, f"range = [{max(vals) - min(vals)}]", size=15)
+
+
+def big_one(vals):
+    """One far-off number pulls the mean but not the median."""
+    srt = sorted(vals)
+    return f"{_lst(vals)}:  mean = [{sum(vals) // len(vals)}]  and  median = [{srt[len(vals) // 2]}]"
+
+
+def learn_data_displays(bk):
+    y = bk.new_page("Data Displays", "Ask a question with many answers. Then show the data.", name_line=False,
+                    big=True, footer="WeMath  ·  Data Displays")
+    c = bk.c
+    label(bk, M, y - 6, "A statistics question expects different answers")
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 13)
+    c.drawString(M + 14, y - 32, "“How tall are the kids in my class?”   Yes: many answers.")
+    c.drawString(M + 14, y - 52, "“How tall is Mia?”   No: one answer.")
+    y -= 74
+
+    label(bk, M, y - 6, "A histogram: count the data in equal groups")
+    bar_graph(bk, M + 14, y - 14, "Minutes of reading", ["0–9", "10–19", "20–29", "30–39"], [2, 5, 7, 3],
+              maxv=8, cell=11, barw=38)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 260, y - 40, "Each bar is a group of numbers.")
+    c.drawString(M + 260, y - 58, "7 kids read 20 to 29 minutes.")
+    c.drawString(M + 260, y - 76, "The bars touch: the groups follow on.")
+    y -= 150
+
+    label(bk, M, y - 6, "One far-off number pulls the mean, not the median")
+    bk.eq(M + 14, y - 38, "2, 3, 3, 4, 28:   mean 8,   median 3", size=18)
+    y -= 58
+
+    bottom = your_turn(bk, y, h=70)
+    bk.ask("data displays your turn: 1 4 4 6 15")
+    bk.eq(M + 130, bottom + 26, "1, 4, 4, 6, 15:  mean = [6]  and  median = [4]", size=19)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: statistics questions, X charts and histograms, and how a far-off value moves the mean "
+                     "(6.SP.1, 6.SP.4, 6.SP.5). Say “Does this question have one answer or many?”")
+
+
+def practice_data_displays(bk):
+    title = "Data Displays: Practice"
+    st = [bk.new_page(title, "Group the data. Show it. Read it."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Statistics question?", "Many different answers? Circle yes or no.", "yes_text1",
+         shuf("sq105", STAT_Q_YES[:4] + STAT_Q_NO[:4]))
+    part(2, "Count the groups", "How many numbers fall in each group?", "freq",
+         [([12, 25, 7, 18, 31, 22, 9, 15, 27, 3, 19, 24], 10), ([45, 52, 61, 48, 57, 66, 50, 43, 59, 63], 10),
+          ([4, 11, 8, 15, 2, 13, 6, 9, 17, 12, 5, 10], 5), ([33, 21, 38, 26, 29, 35, 24, 31, 37, 22], 5)])
+    part(3, "Read the histogram", "Each bar is a group.", "hist",
+         [("Minutes on the bus", [(0, 9), (10, 19), (20, 29), (30, 39)], [3, 8, 6, 2]),
+          ("Points in a game", [(0, 4), (5, 9), (10, 14), (15, 19)], [5, 9, 4, 1]),
+          ("Ages at the center", [(5, 9), (10, 14), (15, 19), (20, 24)], [7, 10, 4, 2])])
+    part(4, "Make the X chart", "One X for each number.", "make_x",
+         [("Siblings", [2, 0, 1, 3, 1, 1, 2, 0, 1]), ("Hours of sleep", [9, 8, 10, 9, 9, 8, 11, 10, 9]),
+          ("Shoe sizes", [5, 6, 4, 6, 7, 5, 6, 8])])
+    part(5, "A far-off number", "Find both. Which one moved?", "eq1",
+         [big_one(v) for v in ((3, 4, 4, 5, 24), (10, 12, 12, 14, 52), (1, 2, 2, 3, 17), (6, 7, 8, 8, 31),
+                               (20, 21, 21, 22, 66))])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_105)
+    _words(bk, title, st, 7, "Which measure? Then find it.", WORDS_105)
+
+
+REVIEW_105 = ["mean of 8, 13, 9, 14 = [11]", "6 × 5 × 2 + 2 × 4 = [68]",
+              "3 1/2 × 2 × 4 = [28]", "x + 47 = 92:   x = [45]",
+              "3,456 ÷ 12 = [288]", "−15 [<] 2"]
+WORDS_105 = [
+    ("Test scores: 82, 90, 75, 90, 88. What is the median?", "75, 82, 88, 90, 90", "88", "points"),
+    ("Kids read 3, 5, 4, 5, 8 books. What is the mean?", f"3 + 5 + 4 + 5 + 8 = 25, 25 {DIV} 5 = 5", "5", "books"),
+    ("In a histogram the bars show 4, 9, 6 and 1 kids. How many kids in all?", "4 + 9 + 6 + 1 = 20", "20", "kids"),
+    ("Heights: 50, 52, 52, 55, 56 in. What is the range?", "56 − 50 = 6", "6", "in"),
+    ("Challenge: Wait times 2, 3, 3, 4 and 38 minutes. Mean minus median?", "10 − 3 = 7", "7", "minutes"),
+]
+KINDS.update({
+    "freq": Kind(76, 1, lambda it: "count groups " + "-".join(map(str, it[0])), c_freq, 8),
+    "hist": Kind(176, 1, lambda it: f"histogram {it[0]}", c_hist, 10),
+    "make_x": Kind(130, 1, lambda it: f"make the x chart {it[0]} " + "-".join(map(str, it[1])), c_make_x, 8),
+})
+STAT_POOL = [big_one(v) for v in ((5, 6, 6, 7, 31), (12, 13, 13, 14, 48))]
+CHECKINS["105-data-displays"] = [
+    S("Statistics question?", "Circle yes or no.", "yes_text1", STAT_Q_YES[4:] + STAT_Q_NO[4:], 2),
+    S("Read the histogram", None, "hist",
+      [("Laps run", [(0, 4), (5, 9), (10, 14), (15, 19)], [2, 6, 8, 3])], 1),
+    S("Count the groups", None, "freq", [([14, 27, 8, 21, 33, 16, 29, 5, 24, 18, 36, 11], 10)], 1),
+    S("A far-off number", None, "eq1", STAT_POOL, 1),
+]
+_g6[-1:-1] = [S("Data", None, "eq1", STAT_POOL, 1, 105)]
+WORDS_G6 += [
+    ("A triangle has a base of 12 cm and a height of 7 cm. What is its area?", f"12 {TIMES} 7 {DIV} 2 = 42", "42",
+     "sq cm"),
+    ("A box is 2½ ft long, 2 ft wide and 2 ft tall. What is its volume?", f"2½ {TIMES} 2 {TIMES} 2 = 10", "10",
+     "cubic ft"),
+    ("A cube has edges of 3 m. What is its surface area?", f"6 {TIMES} 9 = 54", "54", "sq m"),
+    ("Scores were 7, 9, 6, 10 and 8. What is the mean?", f"7 + 9 + 6 + 10 + 8 = 40, 40 {DIV} 5 = 8", "8", "points"),
+]
+
+
 # ====================================================================== Extra practice (founder: more pages)
 # Kindergarten and grade 1: big print, few problems per page, every basic fact, repeats allowed (pages apart).
 # EXTRA[folder] = (before_part, sections, repeat_ok): the pages are drawn just before that part.
@@ -22171,7 +23143,7 @@ import json
 # Teaching order (packets 23–25 slot in earlier, see CLAUDE.md).
 TEACHING_ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 23, 12, 13, 14, 15, 16, 24, 17, 18, 19, 20, 21, 22, 25,
                   26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
-                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100]
+                  51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105]
 GRADE_CODE = {"kindergarten": "K", "grade-1": "1", "grade-2": "2", "grade-3": "3", "grade-4": "4", "grade-5": "5", "grade-6": "6"}
 
 # Cards whose key circles a choice (no answer box): the answer in words.
@@ -22289,6 +23261,7 @@ ANSWER_OF = {
     "share_rem": lambda it: f"{it[0] // it[1]} R {it[0] % it[1]}",
     "jump_time": lambda it: (tstr(*tadd(it[0], it[1])) if it[2] == "end" else f"{tdiff(it[0], it[1])} minutes"),
 }
+ANSWER_OF["net_ok"] = lambda it: _yes(it[1])
 
 
 def packet_grades():
@@ -22385,6 +23358,62 @@ def write_manifest(entries):
 
 
 # ====================================================================== build
+
+_U6 = ("cm", "m", "in", "ft")
+EXTRA.update({
+    "101-area-of-triangles-and-other-shapes": (9, [
+        ("More triangles", None, "eq1", [tri_area(b, h, u) for b, h, u in
+                                         _many(101, lambda r: (r.randint(3, 24), r.randint(3, 20), r.choice(_U6)))
+                                         if b * h % 2 == 0], 12),
+        ("More parallelograms", None, "eq1", [para_area(b, h, u) for b, h, u in
+                                              _many(1101, lambda r: (r.randint(4, 25), r.randint(2, 15), r.choice(_U6)))],
+         8),
+        ("More trapezoids", None, "eq1", [trap_area(a, b, h, u) for a, b, h, u in
+                                          _many(2101, lambda r: (r.randint(2, 12), r.randint(5, 20), r.randint(2, 12), r.choice(_U6)))
+                                          if a < b and (a + b) * h % 2 == 0], 8),
+        ("More heights", None, "eq1", [tri_height(b, h, u) for b, h, u in
+                                       _many(3101, lambda r: (r.randint(3, 16), r.randint(3, 15), r.choice(_U6)))
+                                       if b * h % 2 == 0], 8),
+    ], False),
+    "102-volume-with-fractions": (6, [
+        ("More length × width × height", None, "mixed2",
+         [fvol(a, b, c_) for a, b, c_ in
+          _many(102, lambda r: (Fraction(r.randint(1, 9), r.choice([2, 2, 4, 3])), r.randint(2, 8), r.randint(1, 6)))
+          if Fraction(a).denominator > 1], 16),
+        ("More base × height", None, "mixed2",
+         [fbase(B, h) for B, h in _many(1102, lambda r: (Fraction(r.randint(3, 25), 2), r.randint(2, 9)))
+          if Fraction(B).denominator > 1], 10),
+        ("More missing edges", None, "mixed2",
+         [fedge(a, b, c_) for a, b, c_ in
+          _many(2102, lambda r: (r.randint(2, 8), Fraction(r.choice([1, 3, 5, 7, 9]), 2), r.randint(2, 6)))], 8),
+    ], False),
+    "103-surface-area-and-nets": (7, [
+        ("More boxes", None, "eq1", [box_sa(L, W, H, u) for L, W, H, u in
+                                     _many(103, lambda r: (r.randint(3, 15), r.randint(2, 10), r.randint(1, 9), r.choice(_U6)))
+                                     if L > W], 18),
+        ("More cubes", None, "eq1", [cube_sa(e, u) for e, u in
+                                     _many(1103, lambda r: (r.randint(3, 20), r.choice(_U6)))], 8),
+    ], False),
+    "104-mean-median-and-mode": (8, [
+        ("More means", None, "eq1", [mean_eq(v) for v in
+                                     _many(104, lambda r: tuple(r.randint(2, 30) for _ in range(r.choice([3, 4, 5]))))
+                                     if sum(v) % len(v) == 0], 14),
+        ("More medians", None, "eq1", [median_eq(v) for v in
+                                       _many(1104, lambda r: tuple(r.sample(range(1, 40), r.choice([5, 5, 7, 4]))))],
+         12),
+        ("More modes and ranges", None, "eq1",
+         [range_eq(v) for v in _many(3104, lambda r: tuple(r.sample(range(2, 50), 5)))][:12]
+         + [mode_eq(v + (v[1],)) for v in _many(4104, lambda r: tuple(r.sample(range(1, 25), 4)))][:12], 10),
+    ], False),
+    "105-data-displays": (6, [
+        ("More far-off numbers", None, "eq1",
+         [big_one(v) for v in _many(105, lambda r: (lambda a, b: tuple(r.sample([a, a + r.randint(0, 2), a + r.randint(1, 3), a + r.randint(2, 5), b], 5)))(r.randint(1, 40), r.randint(45, 99)))
+          if sum(v) % 5 == 0], 10),
+        ("More means and medians", None, "eq1",
+         [mean_eq(v) for v in _many(1105, lambda r: tuple(r.randint(10, 60) for _ in range(4))) if sum(v) % 4 == 0]
+         [:20] + [median_eq(v) for v in _many(2105, lambda r: tuple(r.sample(range(10, 80), 6)))][:20], 12),
+    ], False),
+})
 
 PACKETS = [
     ("0-adding-and-taking-away", "adding-and-taking-away", "Adding and Taking Away", learn_adding_taking_away,
@@ -22568,6 +23597,15 @@ PACKETS = [
      False),
     ("100-one-step-equations", "one-step-equations", "One-Step Equations", learn_equations, practice_equations,
      False),
+    ("101-area-of-triangles-and-other-shapes", "area-of-triangles-and-other-shapes", "Area of Triangles and Other Shapes",
+     learn_area_shapes, practice_area_shapes, False),
+    ("102-volume-with-fractions", "volume-with-fractions", "Volume with Fractions", learn_frac_volume,
+     practice_frac_volume, False),
+    ("103-surface-area-and-nets", "surface-area-and-nets", "Surface Area and Nets", learn_surface_area,
+     practice_surface_area, False),
+    ("104-mean-median-and-mode", "mean-median-and-mode", "Mean, Median and Mode", learn_mean_median,
+     practice_mean_median, False),
+    ("105-data-displays", "data-displays", "Data Displays", learn_data_displays, practice_data_displays, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own
