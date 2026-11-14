@@ -1115,7 +1115,7 @@ def step_panel(bk, x, top, w, h, num, title, fills, left_over, result=None):
 
 
 def learn_over_ten(bk):
-    y = bk.new_page("Over Ten with Buddies", "Fill the ten first!", name_line=False, big=True,
+    y = bk.new_page("Up to and Over Ten", "Fill the ten first!", name_line=False, big=True,
                     footer="WeMath  ·  Up to and Over Ten")
     gap, ph = 22, 172
     pw = (CW - 2 * gap) / 3
