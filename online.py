@@ -12,6 +12,7 @@ difficulty tier (1–3, by the size of its numbers) and the explanation: steps w
 numbers, following the method the packet teaches (make ten, jump through ten, tens and ones, …).
 """
 
+import io
 import json
 import math
 import random
@@ -28,6 +29,7 @@ MINUS, TIMES, DIV = "−", "×", "÷"
 
 TEXT_KINDS = {"eq1", "eq2", "eq3", "frac1", "frac2", "frac3", "rev2", "kbig", "mixed1", "mixed2", "mixed3", "pow",
               "pow6", "word", "yes_text", "yes_text1"}
+PICTURE_POOL = 60  # picture skills: fewer (each is drawn)
 POOL = 150  # problems per skill (fewer when the rule can't make that many different ones)
 
 # ---------------------------------------------------------------------------------------------------- numbers
@@ -371,11 +373,11 @@ def frac_op_steps(x, op, y):
         return ["Multiply the tops, then the bottoms.", f"Tops: {a} {TIMES} {c} = {a * c}. Bottoms: {b} {TIMES} {d} = {b * d}.",
                 f"So {x} {TIMES} {y} = {a * c}/{b * d}."]
     if b == d:
-        return [f"Same bottoms: how many {c}s fit in {a}?", f"{a} {DIV} {c} = {a}/{c}" + (f" = {frac_str(F(a, c))}." if F(a, c).denominator != c else ".")]
+        return [f"Same bottoms: how many {c}s fit in {a}?", f"{a} {DIV} {c} = " + (f"{a // c}." if a % c == 0 else f"{a}/{c}" + (f" = {frac_str(F(a, c))}." if F(a, c).denominator != c else "."))]
     n = b * d // math.gcd(b, d)
     ea, ec = a * n // b, c * n // d
     return [f"How many {y} fit in {x}? Make the pieces the same size: {n}ths.", f"{x} = {ea}/{n} and {y} = {ec}/{n}.",
-            f"How many {ec}s fit in {ea}? {ea} {DIV} {ec} = {ea}/{ec}" + (f" = {frac_str(F(ea, ec))}." if F(ea, ec).denominator != ec else ".")]
+            f"How many {ec}s fit in {ea}? {ea} {DIV} {ec} = " + (f"{ea // ec}." if ea % ec == 0 else f"{ea}/{ec}" + (f" = {frac_str(F(ea, ec))}." if F(ea, ec).denominator != ec else "."))]
 
 
 # ---------------------------------------------------------------------------------------------------- the skills
@@ -597,7 +599,7 @@ def g_frac(packet, sid, text):
         return [f"Find 1/{b} of {n}: {n} {DIV} {b} = {n // b}.",
                 f"{a} of those: {a} {TIMES} {n // b} = {a * n // b}." if a > 1 else f"So 1/{b} of {n} is {n // b}."]
     m = re.fullmatch(r"(\d+)/(\d+) = (\d+)/(\d+)", f)
-    if m:
+    if m and "[=]" not in text:
         a, b, c, d = map(int, m.groups())
         if d > b:
             return [f"The bottom went from {b} to {d}: times {d // b}.", f"Do the same to the top: {a} {TIMES} {d // b} = {c}."]
@@ -1269,6 +1271,384 @@ def _apart(text):
     return g_mixed(70, "", text)
 
 
+# ---------------------------------------------------------------------------------------------------- picture cards
+# Every other card is drawn exactly as on the packets (an image), with the answer boxes and the "circle it" choices
+# found while drawing it: the website puts typing boxes over the printed boxes, and the student taps what the key
+# circles. Cards answered only by drawing (shade it, draw the hands, plot the points …) are left out.
+
+import tempfile as _tmp
+
+NO_SCREEN = {"shade", "tally_draw", "frac_shade", "pv_fill", "dstack", "grid_plot", "draw_hands"}
+# Cards whose answer key rings a choice (a word, a number, a shape): the rings become things to tap.
+TAP_KINDS = set(W.ANSWER_OF) | {"round_card", "name_share", "round_dec", "gcf_lists", "all_names", "tri_sides", "net_ok",
+                                "which_more", "biggest", "biggest_dec", "is_quad", "name_quad", "quad_fact", "prime"}
+TAP_KINDS -= {"mixed1", "mixed2", "mixed3", "yes_text", "yes_text1", "draw_hands", "shade", "frac_shade", "match_frac",
+              "shade_more", "show_amount", "tally_draw", "area2", "partial2", "div_area", "partial_q", "add_strip", "to_mixed",
+              "groups_frac", "read_grid", "read_tenths", "conv_table", "rect_formula", "make_x8", "read_x8", "shift",
+              "factor_array", "cut_strip", "find_whole", "unit_name", "wholes", "more_whole", "count_pieces", "frac_name"}
+
+
+def card_size(kind):
+    k = W.KINDS[kind]
+    return (W.CW - k.gap * (k.cols - 1)) / k.cols, k.h
+
+
+def draw_card(kind, item, key):
+    """One card alone on a page its size: (pdf bytes, page w, page h, [(rect, answer)], [ring rects])."""
+    w, h = card_size(kind)
+    pw, ph = w + 16, h + 8  # the whole card (gutter included) with a margin; trimmed to the drawing later
+    fields, rings = [], []
+    with _tmp.TemporaryDirectory() as tmp:
+        bk = W.Book(Path(tmp) / "c.pdf", key, subtitle="", asked={})
+        bk.rec, bk.repeat_ok = [], True
+        c = bk.c
+        c.setPageSize((pw, ph))
+        cur = {}
+        ob, ov, oe = bk.box, bk.value, c.ellipse
+
+        def box(x, y, bw, bh, value=None, size=16, reveal=None):
+            cur["r"] = (x, y, bw, bh)
+            try:
+                return ob(x, y, bw, bh, value, size, reveal)
+            finally:
+                cur.pop("r", None)
+
+        def value(cx, cy, value, size=16, reveal=None):
+            if reveal is None and value not in (None, ""):
+                r = cur.get("r") or (cx - max(14, size * 1.2), cy - size * 0.8, max(28, size * 2.4), size * 1.6)
+                fields.append((r, str(value)))
+            return ov(cx, cy, value, size, reveal)
+
+        def ellipse(x1, y1, x2, y2, stroke=1, fill=0):
+            if key and getattr(c, "_strokeColorObj", None) == W.T.answer:
+                rings.append((min(x1, x2), min(y1, y2), abs(x2 - x1), abs(y2 - y1)))
+            return oe(x1, y1, x2, y2, stroke=stroke, fill=fill)
+
+        bk.box, bk.value, c.ellipse = box, value, ellipse
+        W.KINDS[kind].draw(bk, 8, 4, w, item)
+        c.showPage()
+        c.save()
+        data = (Path(tmp) / "c.pdf").read_bytes()
+    return data, pw, ph, fields, (rings if kind in TAP_KINDS else [])
+
+
+def trim_box(data, pw, ph, margin=6):
+    """The part of the page with drawing on it, in points: (x, y from the top, w, h)."""
+    import pypdfium2 as pdfium
+    from PIL import Image, ImageChops
+    doc = pdfium.PdfDocument(data)
+    img = doc[0].render(scale=1).to_pil().convert("RGB")
+    doc.close()
+    box = ImageChops.difference(img, Image.new("RGB", img.size, "white")).getbbox() or (0, 0, img.width, img.height)
+    sx, sy = pw / img.width, ph / img.height
+    x0, y0 = max(0, box[0] * sx - margin), max(0, box[1] * sy - margin)
+    x1, y1 = min(pw, box[2] * sx + margin), min(ph, box[3] * sy + margin)
+    return x0, y0, x1 - x0, y1 - y0
+
+
+def card_png(kind, item, scale=2.5):
+    import pypdfium2 as pdfium
+    W.T = W.theme(True)
+    data, pw, ph, _, _ = draw_card(kind, item, False)
+    x, y, w, h = trim_box(data, pw, ph)
+    doc = pdfium.PdfDocument(data)
+    img = doc[0].render(scale=scale).to_pil().convert("RGB")
+    doc.close()
+    img = img.crop((round(x * scale), round(y * scale), round((x + w) * scale), round((y + h) * scale)))
+    out = io.BytesIO()
+    img.save(out, "PNG", optimize=True)
+    return out.getvalue()
+
+
+def pct(r, crop, ph):
+    """A rect in page points (y from the bottom) as % of the trimmed picture."""
+    x, y, w, h = r
+    cx, cy, cw, chh = crop
+    return [round(100 * (x - cx) / cw, 2), round(100 * (ph - y - h - cy) / chh, 2), round(100 * w / cw, 2), round(100 * h / chh, 2)]
+
+
+def picture_problem(packet, skill, item):
+    W.T = W.theme(True)
+    _, pw, ph, fields, rings = draw_card(skill.kind, item, True)
+    if not fields and not rings:
+        return None
+    crop = trim_box(draw_card(skill.kind, item, False)[0], pw, ph)
+    ans = [a for _, a in fields]
+    steps = explain_picture(packet, skill.kind, item, ans) or []
+    if not steps:
+        steps = ["Fill in: " + ", ".join(ans) + "."] if ans else []
+    if rings and not ans:
+        right = W.ANSWER_OF.get(skill.kind, lambda it: None)(item)
+        if right and not any(right.lower() in s.lower() for s in steps):
+            steps.append(f"The answer is {right}.")
+    p = {"img": [round(crop[2], 1), round(crop[3], 1)], "f": [pct(r, crop, ph) for r, _ in fields], "a": ans, "x": steps,
+         "rings": [pct(r, crop, ph) for r in rings], "n": len(rings)}
+    return p
+
+
+def _ints(it):
+    return [x for x in (it if isinstance(it, (tuple, list)) else [it]) if isinstance(x, int)]
+
+
+def explain_picture(packet, kind, it, ans):
+    try:
+        f = PIC.get(kind)
+        st = f(it, ans, packet) if f else None
+    except Exception:
+        st = None
+    return st
+
+
+def _sub(a, b, p):
+    return sub_steps(a, b, p)
+
+
+def _place_count(n):
+    parts = places(n)
+    return [", ".join(f"{fmt(v)} is {v // 10 ** (len(str(v)) - 1)} {name}" for v, name in parts) + ".", f"Together: {fmt(n)}."]
+
+
+PIC = {
+    "pic_add": lambda it, a, p: add_steps(it[1], it[2], p), "sp_wide_add": lambda it, a, p: add_steps(it[1], it[2], p),
+    "pic_take": lambda it, a, p: [f"Start with {it[1]}. Cross out {it[2]}.", f"Count the ones left: {it[1] - it[2]}."],
+    "sp_wide_take": lambda it, a, p: [f"Start with {it[1]}. Cross out {it[2]}.", f"Count the ones left: {it[1] - it[2]}."],
+    "wide_story": lambda it, a, p: [f"The number sentence: {it[1]} {it[2].replace('-', MINUS)} {it[3]} = {a[-1]}."]
+    + (add_steps(it[1], it[3], p) if it[2] == "+" else [f"Take away {it[3]} from {it[1]}: {it[1] - it[3]} left."]),
+    "draw_solve": lambda it, a, p: [f"Draw {it[0]} circles" + (f", then {it[2]} more." if it[1] == "+" else f", then cross out {it[2]}."),
+                                    f"Count them: {a[-1]}."],
+    "frame_buddy": lambda it, a, p: [f"The frame has {it} dots, so {10 - it} boxes are empty.", f"{it} and {10 - it} are Ten Buddies."],
+    "kframe": lambda it, a, p: [f"Count the empty boxes: {10 - it}.", f"{it} and {10 - it} are Ten Buddies."],
+    "more10": lambda it, a, p: [f"{it[1]} needs {it[2]} more to make 10: {it[1]} and {it[2]} are Ten Buddies."],
+    "teen": lambda it, a, p: [f"A full ten and {it[1]} more.", f"10 + {it[1]} = {10 + it[1]}."],
+    "kteen": lambda it, a, p: [f"A full ten and {it} more.", f"10 + {it} = {10 + it}."],
+    "three": lambda it, a, p: _three(it),
+    "ba": lambda it, a, p: add_steps(it[0], it[1], p), "ladder": lambda it, a, p: add_steps(it[0], it[1], p),
+    "hint": lambda it, a, p: add_steps(it[0], it[1], p),
+    "jump_dots": lambda it, a, p: _sub(it[0], it[1], 5), "jump": lambda it, a, p: _sub(it[0], it[1], 5),
+    "jump_less": lambda it, a, p: _sub(it[0], it[1], 5), "jump_big": lambda it, a, p: _sub(it[0], it[1], 5),
+    "double_dots": lambda it, a, p: [f"Two rows of {it}: a double.", f"{it} + {it} = {2 * it}."],
+    "near_dots": lambda it, a, p: add_steps(it[0], it[1], 6),
+    "count_to": lambda it, a, p: [f"Count the sticks: {it // 10} tens. Count the loose dots: {it % 10} ones.", f"{it // 10} tens and {it % 10} ones is {it}."],
+    "draw_qt": lambda it, a, p: [f"{it} is {it // 10} tens and {it % 10} ones.", f"Draw {it // 10} lines and {it % 10} dots."],
+    "count_tens": lambda it, a, p: [f"Count the sticks: {it // 10} tens.", f"{it // 10} tens is {it}."],
+    "which_more": lambda it, a, p: [f"Compare the tens first: {it[0] // 10} tens and {it[1] // 10} tens.", f"{max(it)} is more."],
+    "ten_pic": lambda it, a, p: [f"{'One more ten' if it[1] == '+' else 'One ten crossed out'}: the tens digit goes {'up' if it[1] == '+' else 'down'} by 1.", f"So {a[0]}."],
+    "side": lambda it, a, p: [f"10 less: {it} has one ten fewer, {it - 10}.", f"10 more: one ten more, {it + 10}."],
+    "chain10": lambda it, a, p: [f"Each step {'takes away' if it[0] == MINUS else 'adds'} a ten: only the tens digit changes.", ", ".join(a) + "."],
+    "add_tens_pic": lambda it, a, p: add_steps(it[0], it[1], p), "add_split": lambda it, a, p: add_steps(it[0], it[1], 9),
+    "sub_tens_pic": lambda it, a, p: _sub(it[0], it[1], 10), "sub_split": lambda it, a, p: _sub(it[0], it[1], 10),
+    "enough": lambda it, a, p: [f"Look at the ones: {it[0] % 10} and {it[1] % 10}.",
+                                f"{it[0] % 10} {'is' if it[0] % 10 >= it[1] % 10 else 'is not'} enough to take away {it[1] % 10}, so {'yes' if it[0] % 10 >= it[1] % 10 else 'no'}."],
+    "jump_up": lambda it, a, p: missing_add(it[0], it[1]), "find_stops": lambda it, a, p: missing_add(it[0], it[1]),
+    "break_ten": lambda it, a, p: [f"{it} is {it // 10} tens and {it % 10} ones.", f"Break one ten into 10 ones: {it // 10 - 1} tens and {it % 10 + 10} ones."],
+    "borrow_rows": lambda it, a, p: _sub(it[0], it[1], 12),
+    "col_add_boxes": lambda it, a, p: column_add(it[0], it[1]), "line_up": lambda it, a, p: column_add(it[0], it[1]),
+    "col_add": lambda it, a, p: column_add(it[0], it[1]),
+    "sub_mat": lambda it, a, p: column_sub(it[0], it[1]), "col_sub_boxes": lambda it, a, p: column_sub(it[0], it[1]),
+    "col_sub": lambda it, a, p: column_sub(it[0], it[1]),
+    "count_hto": lambda it, a, p: _place_count(it), "draw_hto": lambda it, a, p: _place_count(it),
+    "worth": lambda it, a, p: [f"Find the place of the {it[1]} in {it[0]}.", f"There it is worth {a[0]}."],
+    "bars5": lambda it, a, p: ["Each bar has 5 dots: count by 5s.", ", ".join(str(5 * i) for i in range(1, it + 1)) + "."],
+    "chain": lambda it, a, p: [f"Each step adds {it[1]}.", ", ".join(a) + "."],
+    "chain_any": lambda it, a, p: [f"Each step {'adds' if it[1] > 0 else 'takes away'} {abs(it[1])}.", ", ".join(a) + "."],
+    "chain_hund": lambda it, a, p: [f"Each step {'adds' if it[1] > 0 else 'takes away'} {abs(it[1])}.", ", ".join(a) + "."],
+    "seq": lambda it, a, p: [f"Each step adds {it[1]}.", "The missing numbers: " + ", ".join(a) + "."],
+    "seq_any": lambda it, a, p: [f"Each step {'adds' if it[1] > 0 else 'takes away'} {abs(it[1])}.", "The missing numbers: " + ", ".join(a) + "."],
+    "count_by": lambda it, a, p: [f"Find the jump between neighbours: {it[1]} {MINUS} {it[0]} = {it[1] - it[0]}.", f"We're counting by {a[0]}s."],
+    "direction": lambda it, a, p: [f"From {it[0]} to {it[1]} is {'up' if it[1] > it[0] else 'down'} {abs(it[1] - it[0])}.", f"Counting {a[0]} by {a[1]}."],
+    "cmp_pic": lambda it, a, p: _cmp(it[0], it[1], a), "cmp_draw": lambda it, a, p: _cmp(it[0], it[1], a),
+    "order": lambda it, a, p: ["Compare the hundreds, then the tens, then the ones.", "From smallest: " + ", ".join(a) + "."],
+    "hund_pic": lambda it, a, p: [f"{'One more hundred' if it[1] == '+' else 'One hundred less'}: only the hundreds digit changes.", f"So {a[0]}."],
+    "cross": lambda it, a, p: [f"10 more and 10 less change the tens digit; 100 more and 100 less change the hundreds digit.", f"Around {it}: " + ", ".join(a) + "."],
+    "add3_rows": lambda it, a, p: column_add(it[0], it[1]), "col_add3_boxes": lambda it, a, p: column_add(it[0], it[1]),
+    "col_add3": lambda it, a, p: column_add(it[0], it[1]),
+    "take3": lambda it, a, p: column_sub(it[0], it[1]), "sub3_rows": lambda it, a, p: column_sub(it[0], it[1]),
+    "col_sub3": lambda it, a, p: column_sub(it[0], it[1]),
+    "groups": lambda it, a, p: [f"{it[0]} groups of {it[1]}: " + " + ".join([str(it[1])] * it[0]) + f" = {it[0] * it[1]}."],
+    "eq_groups": lambda it, a, p: [f"The groups have {', '.join(map(str, it))}.", "Equal groups all have the same number: " + ("yes." if len(set(it)) == 1 else "no.")],
+    "array": lambda it, a, p: [f"{it[0]} rows of {it[1]}: " + " + ".join([str(it[1])] * it[0]) + f" = {it[0] * it[1]}."],
+    "pairs_eo": lambda it, a, p: [f"Make pairs: {it // 2} pairs" + (", and 1 is left over." if it % 2 else ", none left over."), f"{it} is {'odd' if it % 2 else 'even'}."],
+    "eo_ones": lambda it, a, p: [f"Look at the ones digit: {it % 10}.", f"{it % 10} is {'odd' if it % 2 else 'even'}, so {it} is {'odd' if it % 2 else 'even'}."],
+    "eo_word": lambda it, a, p: [f"Look at the ones digit: {it % 10}.", f"So {it} is {'odd' if it % 2 else 'even'}."],
+    "hgrid": lambda it, a, p: [f"{it} dots are filled. The tens make 9: {it // 10} and {9 - it // 10}. The ones make 10: {it % 10} and {10 - it % 10}." if it % 10 else f"{it} + {100 - it} = 100.", f"So {it} + {100 - it} = 100."],
+    "share": lambda it, a, p: [f"Share {it[1]} on two plates, one at a time.", f"Each plate gets {it[1] // 2}: half of {it[1]} is {it[1] // 2}."],
+    "half_split": lambda it, a, p: [f"Split {it} into tens and ones: {it // 10 * 10} and {it % 10}.", f"Half of each, then put them together: half of {it} is {fmt(D(it) / 2)}."],
+    "tens_ones": lambda it, a, p: [f"{it} = {it // 10} tens + {it % 10} ones.", f"Break one ten: {it // 10 - 1} tens + {it % 10 + 10} ones."],
+    "read_clock": lambda it, a, p: [f"The short hand is past {it[0]}: the hour is {it[0]}.", f"The long hand counts by 5s to {it[1]} minutes: {a[0]}."],
+    "read_minute": lambda it, a, p: [f"The short hand: {it[0]}. The long hand: {it[1]} minutes (count by 5s, then 1s).", f"So {a[0]}."],
+    "coins": lambda it, a, p: ["Start with the biggest coins and count on: quarters 25, dimes 10, nickels 5, pennies 1.", f"Altogether {a[0]}."],
+    "read_tape": lambda it, a, p: [f"The object starts at 0. Read the number at its end.", f"It is {a[0]} {it[2]} long."],
+    "tally_read": lambda it, a, p: ["Each bundle of tally marks is 5. Count by 5s, then the ones.", f"{a[0]}."],
+    "times_groups": lambda it, a, p: mul_steps(it[0], it[1], 33), "times_array": lambda it, a, p: mul_steps(it[0], it[1], 33),
+    "break_array": lambda it, a, p: mul_steps(it[0], it[1], 34),
+    "share_div": lambda it, a, p: [f"Share {it[1]} on {it[2]} plates, one at a time.", f"Each plate gets {it[1] // it[2]}: {it[1]} {DIV} {it[2]} = {it[1] // it[2]}."],
+    "think_times": lambda it, a, p: div_steps(it[0], it[1], 35),
+    "round_card": lambda it, a, p: _round_card(it, a),
+    "tens_groups": lambda it, a, p: mul_steps(it[0], it[1] * 10, 37),
+    "area_rows": lambda it, a, p: [f"{it[0]} rows of {it[1]} squares.", f"{it[0]} {TIMES} {it[1]} = {it[0] * it[1]} squares."],
+    "area_split": lambda it, a, p: [f"Split the {it[0]} by {it[1] + it[2]} rectangle into {it[0]} by {it[1]} and {it[0]} by {it[2]}.",
+                                    f"{it[0]} {TIMES} {it[1]} = {it[0] * it[1]} and {it[0]} {TIMES} {it[2]} = {it[0] * it[2]}.", f"Together: {it[0] * (it[1] + it[2])}."],
+    "unit_name": lambda it, a, p: [f"The whole is cut into {it[1]} equal parts.", f"One part is 1/{it[1]}."],
+    "frac_name": lambda it, a, p: [f"{it[1]} equal parts make the whole; {it[2]} are shaded.", f"That's {it[2]}/{it[1]}."],
+    "find_whole": lambda it, a, p: [f"1/{it} is one of {it} equal pieces.", f"So {it} pieces make the whole."],
+    "wholes": lambda it, a, p: [f"Each whole has {a[-1]} pieces." if False else f"Count the pieces: {a[0]}.", f"That's {a[0]}/{a[1]}."],
+    "more_whole": lambda it, a, p: [f"Count all the shaded pieces: {a[0]}.", f"Each piece is 1/{a[1]}, so {a[0]}/{a[1]}."],
+    "match_frac": lambda it, a, p: [f"{it[0][0]}/{it[0][1]}: the bottom goes from {it[0][1]} to {it[1]}, times {it[1] // it[0][1]}.", f"Do the same to the top: {it[0][0]} {TIMES} {it[1] // it[0][1]} = {a[0]}."],
+    "compare_frac": lambda it, a, p: [f"Look at the shaded parts of the two strips.", f"{it[0][0]}/{it[0][1]} {a[0]} {it[1][0]}/{it[1][1]}."],
+    "group_frac": lambda it, a, p: [f"Make {it[1]} equal groups of {it[0]}: each has {it[0] // it[1]}.", f"{it[2]} of the groups: {it[2]} {TIMES} {it[0] // it[1]} = {it[2] * it[0] // it[1]}." if it[2] > 1 else f"One group is {it[0] // it[1]}."],
+    "perim_add": lambda it, a, p: ["Add all four sides.", f"{it[0]} + {it[1]} + {it[0]} + {it[1]} = {2 * (it[0] + it[1])} {it[2]}."],
+    "area_perim": lambda it, a, p: [f"Area: {it[0]} {TIMES} {it[1]} = {it[0] * it[1]} squares.", f"Perimeter: {it[0]} + {it[1]} + {it[0]} + {it[1]} = {2 * (it[0] + it[1])}."],
+    "table_row": lambda it, a, p: [f"Each box is {it[0]} times the number on top.", ", ".join(f"{it[0]} {TIMES} {k} = {it[0] * k}" for k in it[1]) + "."],
+    "balance": lambda it, a, p: ["The balance is level, so the object weighs the same as the weights.", " + ".join(map(str, it[1])) + f" = {a[0]} {it[2]}."],
+    "beaker": lambda it, a, p: ["Read the mark at the top of the liquid.", f"{it[0]} liters."],
+    "quarter": lambda it, a, p: ["Each inch has 4 quarter marks.", f"The end is at {a[0]} inches."],
+    "quick_th": lambda it, a, p: _place_count(it),
+    "big_stack": lambda it, a, p: column_add(it[0], it[1]) if it[2] == "+" else column_sub(it[0], it[1]),
+    "area_mult": lambda it, a, p: mul_steps(it[0], it[1], 56), "partial": lambda it, a, p: mul_steps(it[0], it[1], 56),
+    "groups_rem": lambda it, a, p: div_steps(it[0], it[1], 57), "rem_think": lambda it, a, p: div_steps(it[0], it[1], 57),
+    "area2": lambda it, a, p: mul_steps(it[0], it[1], 58), "mrows": lambda it, a, p: mul_steps(it[0], it[1], 77),
+    "div_area": lambda it, a, p: div_steps(it[0], it[1], 59), "partial_q": lambda it, a, p: div_steps(it[0], it[1], 78),
+    "long_div": lambda it, a, p: div_steps(it[0], it[1], 95),
+    "pairs": lambda it, a, p: ["Find every pair of numbers that multiply to make it, starting with 1.", f"{it.replace('[', '').replace(']', '')}."],
+    "cut_strip": lambda it, a, p: [f"Cut each 1/{it[1]} piece into {it[2]}: {it[1]} {TIMES} {it[2]} = {it[1] * it[2]} pieces in all.", f"{it[0]}/{it[1]} = {it[0] * it[2]}/{it[1] * it[2]}."],
+    "add_strip": lambda it, a, p: [f"Same bottoms: {'add' if it[3] == '+' else 'take away'} the tops.", f"{it[0]} {it[3].replace('-', MINUS)} {it[1]} = {a[0]}, so {a[0]}/{it[2]}."],
+    "to_mixed": lambda it, a, p: [f"{it[1]} pieces of 1/{it[0]}: every {it[0]} pieces make a whole.", f"{it[1]} {DIV} {it[0]} = {it[1] // it[0]} R {it[1] % it[0]}: {a[-3] if len(a) >= 3 else ''}".strip()],
+    "groups_frac": lambda it, a, p: [f"{it[0]} groups of {it[1]}/{it[2]}: {it[0]} {TIMES} {it[1]} = {it[0] * it[1]} pieces.", f"That's {it[0] * it[1]}/{it[2]}."],
+    "read_grid": lambda it, a, p: [f"{it} of the 100 squares are shaded: {it}/100.", f"As a decimal: {fmt(D(it) / 100)}."],
+    "compare_grids": lambda it, a, p: [f"Compare the shaded squares: {it[0]} and {it[1]} hundredths.", f"So {fmt(D(it[0]) / 100)} {a[0]} {fmt(D(it[1]) / 100)}."],
+    "biggest_dec": lambda it, a, p: ["Line up the decimal points and compare tenths first.", f"The biggest is {W.dstr(max(it))}."],
+    "biggest": lambda it, a, p: ["Same bottoms: the biggest top is the biggest fraction.", f"The biggest is {max(it, key=lambda t: F(*t))[0]}/{max(it, key=lambda t: F(*t))[1]}."],
+    "conv_table": lambda it, a, p: [f"1 {it[0]} = {W.CONV[(it[0], it[1])] if hasattr(W, 'CONV') and (it[0], it[1]) in W.CONV else '…'} {it[1]}: multiply each row.", ", ".join(a) + "."],
+    "rect_formula": lambda it, a, p: [f"Area = length {TIMES} width: {it[0]} {TIMES} {it[1]} = {it[0] * it[1]}.", f"Perimeter = 2 lengths + 2 widths: {2 * (it[0] + it[1])}."],
+    "shift": lambda it, a, p: [f"{'Times' if it[1] == 'm' else 'Divide by'} {10 ** it[2]:,}: every digit moves {it[2]} place{'s' if it[2] > 1 else ''} to the {'left' if it[1] == 'm' else 'right'}.", f"So {a[0]}."],
+    "order_dec": lambda it, a, p: ["Line up the decimal points and compare place by place from the left.", "From smallest: " + ", ".join(a) + "."],
+    "round_dec": lambda it, a, p: [f"The numbers on each side: {a[0]} below and {a[1]} above.", f"Which is {it[0]} closer to? It rounds to {a[2]}."],
+    "frac_grid": lambda it, a, p: frac_op_steps(f"{it[0]}/{it[1]}", TIMES, f"{it[2]}/{it[3]}"),
+    "cube_count": lambda it, a, p: [f"One layer: {it[0]} {TIMES} {it[1]} = {it[0] * it[1]} cubes.", f"{it[2]} layers: {it[0] * it[1]} {TIMES} {it[2]} = {it[0] * it[1] * it[2]}."],
+    "share_frac": lambda it, a, p: [f"{it[0]} wholes shared by {it[1]}: each gets one piece from each whole.", f"{it[0]} pieces of 1/{it[1]}: {it[0]}/{it[1]}."],
+    "unit_cut": lambda it, a, p: [f"Share 1/{it[0]} among {it[1]}: cut each piece into {it[1]}.", f"Each share is 1/{it[0] * it[1]}."],
+    "two_rules": lambda it, a, p: [f"Each step, B adds {it[1]} and A adds {it[0]}.", f"{it[1]} {DIV} {it[0]} = {it[1] // it[0]}."],
+    "grid_read": lambda it, a, p: ["Over first (along the bottom), then up.", ", ".join(f"{n}: ({x}, {y})" for x, y, n in it) + "."],
+    "ratio_pic": lambda it, a, p: [f"Count the circles: {it[0]}. Count the squares: {it[1]}.", f"Circles to squares = {it[0]} : {it[1]}."],
+    "ratio_tab": lambda it, a, p: [f"The first column is {it[2]} : {it[3]}. Multiply both by the same number.", ", ".join(f"{it[2] * k} : {it[3] * k}" for k in it[4]) + "."],
+    "rate_tab": lambda it, a, p: [f"Find 1 first: {it[3]} {DIV} {it[2]} = {it[3] // it[2]}.", ", ".join(f"{k}: {it[3] // it[2] * k}" for k in it[4]) + "."],
+    "grid_pct": lambda it, a, p: [f"{it} of the 100 squares are shaded.", f"Out of 100 is percent: {it}%."],
+    "fit_strip": lambda it, a, p: frac_op_steps(f"{it[0]}/{it[1]}", DIV, f"{it[2]}/{it[3]}"),
+    "gcf_lists": lambda it, a, p: g_misc(97, "", f"GCF of {it[0]} and {it[1]} = [{math.gcd(it[0], it[1])}]"),
+    "thermo_read": lambda it, a, p: ["Read the top of the liquid. Below 0 is negative.", f"{a[0]} degrees."],
+    "x_bar": lambda it, a, p: [f"The whole is {it[0] + it[1]}; one part is {it[0]}.", f"x = {it[0] + it[1]} {MINUS} {it[0]} = {it[1]}."],
+    "para": lambda it, a, p: g_measure(101, "", f"parallelogram, base {it[0]} {it[2]}, height {it[1]} {it[2]}:  area = [{it[0] * it[1]}] sq {it[2]}"),
+    "tri": lambda it, a, p: g_measure(101, "", f"triangle, base {it[0]} {it[3]}, height {it[1]} {it[3]}:  area = [{it[0] * it[1] // 2}] sq {it[3]}"),
+    "trap": lambda it, a, p: g_measure(101, "", f"trapezoid, sides {it[0]} and {it[1]} {it[3]}, height {it[2]} {it[3]}:  area = [{(it[0] + it[1]) * it[2] // 2}] sq {it[3]}"),
+    "house": lambda it, a, p: [f"Rectangle: {it[0]} {TIMES} {it[1]} = {it[0] * it[1]}.", f"Triangle: {it[0]} {TIMES} {it[2]} {DIV} 2 = {it[0] * it[2] // 2}.", f"Together: {it[0] * it[1] + it[0] * it[2] // 2}."],
+    "half_cubes": lambda it, a, p: [f"Small cubes: {it[0]} {TIMES} {it[1]} {TIMES} {it[2]} = {it[0] * it[1] * it[2]}.", f"8 small cubes make 1: {it[0] * it[1] * it[2]} {DIV} 8 = {it[0] * it[1] * it[2] // 8}."],
+    "cube_net": lambda it, a, p: g_measure(103, "", f"cube, edge {it[0]} {it[1]}:  surface area = [{6 * it[0] ** 2}] sq {it[1]}"),
+    "net": lambda it, a, p: g_measure(103, "", f"box {it[0]} × {it[1]} × {it[2]} {it[3]}:  surface area = [{2 * (it[0] * it[1] + it[0] * it[2] + it[1] * it[2])}] sq {it[3]}"),
+    "pyramid": lambda it, a, p: [f"The square: {it[0]} {TIMES} {it[0]} = {it[0] ** 2}.", f"Each triangle: {it[0]} {TIMES} {it[1]} {DIV} 2 = {it[0] * it[1] // 2}; four of them: {2 * it[0] * it[1]}.",
+                                 f"Together: {it[0] ** 2 + 2 * it[0] * it[1]}."],
+    "level": lambda it, a, p: [f"All the cubes: " + " + ".join(map(str, it)) + f" = {sum(it)}.", f"Share them out: {sum(it)} {DIV} {len(it)} = {sum(it) // len(it)} in each tower."],
+    "median": lambda it, a, p: ["Put them in order: " + ", ".join(map(str, sorted(it))) + ".", f"The middle one is {sorted(it)[len(it) // 2]}."],
+    "level_eq": None,
+}
+PIC = {k: v for k, v in PIC.items() if v}
+def _qa(qs):
+    return [f"{q} {a if isinstance(a, str) else fmt(a)}." for q, a in qs]
+
+
+def _bar(it, a):
+    if it[0] == "pw":
+        _, x, y, unk = it
+        return ([f"The two parts are {x} and {y}. Put them together: {x} + {y} = {x + y}."] if unk == "whole" else
+                [f"The whole is {x + y}; one part is {x}.", f"The other part: {x + y} {MINUS} {x} = {y}."])
+    if it[0] == "cmp":
+        big, small, unk = it[1], it[2], it[3]
+        return {"diff": [f"The difference is the dashed part: {big} {MINUS} {small} = {big - small}."],
+                "big": [f"The bigger bar is the smaller one and the difference: {small} + {big - small} = {big}."],
+                "small": [f"The smaller bar is the bigger one take away the difference: {big} {MINUS} {big - small} = {small}."]}[unk]
+    if it[0] == "eq":
+        n, each, unk = it[1], it[2], it[3]
+        return ([f"{n} equal pieces of {each}: {n} {TIMES} {each} = {n * each}."] if unk == "whole" else
+                [f"{n * each} shared into {n} equal pieces: {n * each} {DIV} {n} = {each}."])
+    return None
+
+
+PIC.update({
+    "bar": lambda it, a, p: _bar(it, a),
+    "two_step": lambda it, a, p: [f"Step 1: {it[1][0]}.", f"Step 2: {it[2][0]}.", f"The answer is {a[-1]}."],
+    "name_share": lambda it, a, p: [f"The shape is cut into {it[1]} equal parts.", f"{it[2]} of them are shaded: {it[2]} {W.share_word(it[1], it[2]).split(' ', 1)[1] if hasattr(W, 'share_word') else ''}".strip() + "."],
+    "mini_bar": lambda it, a, p: ["Read the top of the bar against the numbers on the side.", f"{a[0]}."],
+    "jump_time": lambda it, a, p: [f"Jump from {it[0][0]}:{it[0][1]:02d} to the next o'clock, {it[0][0] % 12 + 1}:00: {60 - it[0][1]} minutes.",
+                                   f"Then to {it[1][0]}:{it[1][1]:02d}: {it[1][1] + 60 * ((it[1][0] - it[0][0] - 1) % 12)} minutes.",
+                                   f"Altogether: {(it[1][0] * 60 + it[1][1]) - (it[0][0] * 60 + it[0][1])} minutes."],
+    "table_piece": lambda it, a, p: ["Each box is its row number times its column number.", "So the boxes are " + ", ".join(a) + "."],
+    "sgraph": lambda it, a, p: [f"Each picture or square stands for {it[5]}."] + _qa(it[6]),
+    "right_count": lambda it, a, p: ["A right angle is a square corner. Check each corner of the shape.", f"This one has {a[0]}."],
+    "read_x8": lambda it, a, p: ["Each X is one thing measured."] + _qa(W.x8_questions(it[1], it[2])),
+    "read_share": lambda it, a, p: ["Each X is one thing measured."] + _qa(W.share_questions(it[1], it[2])),
+    "xstats": lambda it, a, p: ["List the data from the X chart in order: " + ", ".join(map(str, sorted(it[1]))) + "."] + _qa(W.stat_qs(it[1])),
+    "hist": lambda it, a, p: ["Each bar shows how many numbers are in its group."] + _qa(W.hist_qs(it[1], it[2])),
+    "freq": lambda it, a, p: ["Go through the list and count the numbers in each group.", ", ".join(f"{lo}–{hi}: {sum(lo <= v <= hi for v in it[0])}" for lo, hi in W._bins(it[0], it[1])) + "."],
+    "make_x": lambda it, a, p: ["One X above each number for every time it appears.", f"The most X's are over {max(set(it[1]), key=it[1].count)}: that's the mode.",
+                                f"Range: {max(it[1])} {MINUS} {min(it[1])} = {max(it[1]) - min(it[1])}."],
+    "read_protractor": lambda it, a, p: ["Start at 0 on the side the angle opens from, and read where the other ray crosses.", f"{it} degrees."],
+    # tap cards
+    "buddy_yesno": lambda it, a, p: [f"Add them: {it[0].replace(' and ', ' + ')} = {sum(map(int, it[0].split(' and ')))}.", "They make 10, so yes." if it[1] else "They don't make 10, so no."],
+    "eq_share": lambda it, a, p: ["Equal shares are all the same size.", "These parts are equal: yes." if it[2] else "These parts aren't the same size: no."],
+    "ampm": lambda it, a, p: ["a.m. is from midnight to noon (morning); p.m. is from noon to midnight.", f"{it[0]}: {it[1]}."],
+    "symbol": lambda it, a, p: ["Small amounts are cents (¢); big ones are dollars ($).", f"{it[0]}{it[1]}." if it[1] == "¢" else f"{it[0]} {it[1]}."],
+    "unit_choice": lambda it, a, p: ["Picture the real thing: which unit gives a sensible number?", f"{it[0]} {it[2]}."],
+    "is_quad": lambda it, a, p: ["A quadrilateral has exactly 4 straight sides.", f"A {it[0]} has {W.SHAPES[it[0]] if hasattr(W, 'SHAPES') and isinstance(W.SHAPES.get(it[0]), int) else ''}".strip() + (" so yes." if it[0] in ("square", "rectangle", "rhombus", "parallelogram", "trapezoid", "kite", "quad") else ": not 4 sides, so no.")],
+    "name_quad": lambda it, a, p: ["Look at the sides and the corners: equal sides? Square corners? Parallel sides?", f"It's a {it[0]}."],
+    "quad_fact": lambda it, a, p: [W.FITS and ("Yes: it is always true." if it[1] else "No: it isn't always true."), ""][0:1],
+    "prime": lambda it, a, p: ([f"{it} has only two factors, 1 and {it}: prime."] if W.is_prime(it) else
+                               [f"{it} has more factors: {', '.join(map(str, W.factors(it)))}. Composite."]),
+    "equal_q": lambda it, a, p: [f"Make the bottoms the same: {it[0][0]}/{it[0][1]} and {it[1][0]}/{it[1][1]}.",
+                                 "They are equal: yes." if F(*it[0]) == F(*it[1]) else "They are not equal: no."],
+    "vs_half": lambda it, a, p: [f"Half of {it[1]} is {fmt(D(it[1]) / 2)}.",
+                                 f"{it[0]} is {'less than' if 2 * it[0] < it[1] else 'equal to' if 2 * it[0] == it[1] else 'more than'} that, so {it[0]}/{it[1]} is {'less than' if 2 * it[0] < it[1] else 'equal to' if 2 * it[0] == it[1] else 'more than'} 1/2."],
+    "vs_one": lambda it, a, p: [f"{it[1]}/{it[1]} is one whole.", f"{it[0]}/{it[1]} is {'less than' if it[0] < it[1] else 'equal to' if it[0] == it[1] else 'more than'} 1."],
+    "same_amount": lambda it, a, p: [f"Compare {it[0]}/{it[1]} and {it[2]}/{it[3]} on the same whole.",
+                                     "They cover the same amount: yes." if F(it[0], it[1]) == F(it[2], it[3]) else "They don't cover the same amount: no."],
+    "bigger_unit_plain": lambda it, a, p: ["The more pieces a whole is cut into, the smaller each piece.", f"1/{min(it[0], it[1])} is bigger than 1/{max(it[0], it[1])}."],
+    "bigger_unit": lambda it, a, p: ["The more pieces a whole is cut into, the smaller each piece.", f"1/{min(it[0], it[1])} is bigger than 1/{max(it[0], it[1])}."],
+    "angle_kind": lambda it, a, p: ["Less than a square corner (90°) is acute; exactly 90° is right; more is obtuse.",
+                                    f"{it[0]}° is {'acute' if it[0] < 90 else 'right' if it[0] == 90 else 'obtuse'}."],
+    "line_name": lambda it, a, p: ["A segment has two endpoints, a ray has one, a line has arrows both ways.", f"This is a {it[0]}."],
+    "two_lines": lambda it, a, p: ["Parallel lines never meet; perpendicular lines meet in a square corner.", f"These are {it[0]}."],
+    "triangle_kind": lambda it, a, p: [f"The angles are {it[0]}°, {it[1]}° and {180 - it[0] - it[1]}° (they add to 180°).",
+                                       f"The biggest is {max(it[0], it[1], 180 - it[0] - it[1])}°: " + ("a right triangle." if 90 in (it[0], it[1], 180 - it[0] - it[1]) else "an obtuse triangle." if max(it[0], it[1], 180 - it[0] - it[1]) > 90 else "an acute triangle.")],
+    "all_names": lambda it, a, p: [f"A {it[0]} is all of these: " + ", ".join(W.FITS[it[0]]) + "."],
+    "tri_sides": lambda it, a, p: [f"The angles are {it[0]}°, {it[1]}° and {180 - it[0] - it[1]}°; equal angles face equal sides.", f"So it's {W.tri_sides(it[0], it[1])}."],
+    "net_ok": lambda it, a, p: ["Fold it up in your head: one square is the bottom, the others fold up around it.",
+                                "Every square lands on its own face: yes, it makes a cube." if it[1] else "Two squares land on the same face (or a face is missing): no."],
+    "eo_product": lambda it, a, p: [f"{it[0]} {TIMES} {it[1]} = {it[0] * it[1]}." , f"{it[0] * it[1]} is {'even' if it[0] * it[1] % 2 == 0 else 'odd'}" + (": an even number times anything is even." if it[0] % 2 == 0 or it[1] % 2 == 0 else ": odd times odd is odd.")],
+    "symmetry": lambda it, a, p: ["A line of symmetry folds the shape onto itself.", f"A {it} has {W.SYM[it]}."],
+})
+PIC["quad_fact"] = lambda it, a, p: [it[0], "That's always true: yes." if it[1] else "That isn't always true: no."]
+
+
+
+def _three(it):
+    a, b, c = it
+    pairs = [(x, y) for x, y in ((a, b), (a, c), (b, c)) if x + y == 10]
+    if pairs:
+        x, y = pairs[0]
+        other = a + b + c - 10
+        return [f"Find the Ten Buddies first: {x} and {y} make 10.", f"10 + {other} = {10 + other}."]
+    return add_steps(a + b, c)
+
+
+def _cmp(x, y, a):
+    return ["Compare the biggest place first: hundreds, then tens, then ones.", f"{x} {a[0]} {y}."]
+
+
+def _round_card(it, a):
+    n, place = it[0], it[1]
+    lo = n // place * place
+    return [f"The {fmt(place)}s on each side: {fmt(lo)} below, {fmt(lo + place)} above.",
+            f"{fmt(n)} is closer to {a[-1]}" + (" (in the middle rounds up)." if n - lo == place // 2 else ".")]
+
+
 # ---------------------------------------------------------------------------------------------------- export
 
 
@@ -1329,24 +1709,52 @@ def problem(packet, skill, item):
     return p
 
 
-def skill_problems(folder, skill, n=POOL):
-    packet = S.number(folder)
+def skill_items(folder, skill, n):
+    """The skill's problems in a fixed order (problem i here is problem i everywhere: export and card images)."""
     seen, out = set(), []
-    items = skill.make(random.Random(f"online:{folder}:{skill.id}"), n * 4)
-    for it in items:
+    for it in skill.make(random.Random(f"online:{folder}:{skill.id}"), n * 4):
         k = json.dumps(it, default=str, ensure_ascii=False)
-        if k in seen:
-            continue
-        seen.add(k)
-        out.append(problem(packet, skill, it))
+        if k not in seen:
+            seen.add(k)
+            out.append(it)
         if len(out) == n:
             break
-    # difficulty tiers by size, inside the skill
+    return out
+
+
+def is_picture(kind):
+    return kind not in TEXT_KINDS and kind not in NO_SCREEN
+
+
+def pool_size(kind):
+    return POOL if kind in TEXT_KINDS else PICTURE_POOL
+
+
+def skill_problems(folder, skill):
+    packet = S.number(folder)
+    out = []
+    for i, it in enumerate(skill_items(folder, skill, pool_size(skill.kind))):
+        if is_picture(skill.kind):
+            p = picture_problem(packet, skill, it)
+            if p is None:
+                continue
+            p["i"] = i
+        else:
+            p = problem(packet, skill, it)
+        p["size"] = float(sum(abs(n) for n in [num(n) for n in re.findall(r"\d[\d,]*(?:\.\d+)?", json.dumps([it], default=str))][:6]))
+        out.append(p)
     order = sorted(range(len(out)), key=lambda i: out[i]["size"])
     for rank, i in enumerate(order):
         out[i]["d"] = 1 + rank * 3 // max(1, len(out))
         del out[i]["size"]
     return out
+
+
+def card_for(folder, skill_id, i):
+    """The PNG of problem i of a picture skill (the student's version: empty boxes, nothing circled)."""
+    skill = next(t for t in S.TYPES[folder] if t.id == skill_id)
+    it = skill_items(folder, skill, pool_size(skill.kind))[int(i)]
+    return card_png(skill.kind, it)
 
 
 GRADE_OF = {}
@@ -1358,6 +1766,34 @@ def grade(packet):
             return name
 
 
+def instruction(skill, probs):
+    """One line for the top of a picture problem."""
+    sub = next((sec[1] for sec in _subs(skill)), None)
+    if sub:
+        keep = [t for t in re.split(r"(?<=[.?!])\s+", sub) if not re.match(r"(Every|All|The rest|More|Some)\b", t)]
+        if keep:
+            return " ".join(keep)
+    p = probs[0]
+    if p.get("n") and not p.get("a"):
+        return "Tap every right answer." if p["n"] > 1 else "Tap the right answer."
+    return "Fill in the boxes." if p.get("img") else ""
+
+
+def _subs(skill):
+    """(name, subtitle) of the packet sections this skill came from."""
+    for f, ts in S.TYPES.items():
+        if skill in ts:
+            for sec in W.CHECKINS.get(f, []):
+                if sec.kind == skill.kind and sec.sub:
+                    yield sec.name, sec.sub
+            ex = W.EXTRA.get(f)
+            for block in ([ex] if isinstance(ex, tuple) else ex or []):
+                for sec in block[1]:
+                    if sec[2] == skill.kind and sec[1]:
+                        yield sec[0], sec[1]
+            return
+
+
 def export(out_dir):
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -1366,7 +1802,7 @@ def export(out_dir):
     order.sort(key=lambda f: teach.get(S.number(f), 999))
     units = []
     for folder in order:
-        skills = [t for t in S.TYPES.get(folder, []) if t.kind in TEXT_KINDS]
+        skills = [t for t in S.TYPES.get(folder, []) if t.kind in TEXT_KINDS or is_picture(t.kind)]
         if not skills:
             continue
         slug = folder.split("-", 1)[1]
@@ -1383,6 +1819,7 @@ def export(out_dir):
             # the worked example: a middle problem with the fullest explanation, so it shows the whole method
             mid = [p for p in probs if p["d"] == 2] or probs
             meta.append({"id": t.id, "label": t.label, "help": t.help, "count": len(probs),
+                         "picture": is_picture(t.kind), "inst": instruction(t, probs),
                          "example": max(mid, key=lambda p: (len(p["x"]), -probs.index(p)))})
         if not meta:
             continue
@@ -1416,7 +1853,9 @@ def report():
 
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else "report"
-    if cmd == "export":
+    if cmd == "card":
+        sys.stdout.buffer.write(card_for(sys.argv[2], sys.argv[3], sys.argv[4]))
+    elif cmd == "export":
         units = export(sys.argv[2])
         print(f"{len(units)} units, {sum(len(u['skills']) for u in units)} skills")
     else:

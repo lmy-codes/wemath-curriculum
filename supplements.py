@@ -175,7 +175,6 @@ TYPES = {
         T("ladder", "Buddy first, then the rest", "less help", "ladder", pool=OVER10),
         T("plain_big", "On your own: bigger number first", "no help", "kbig", pool=eqs(OVER10, "+"), check=3),
         T("plain_any", "On your own: either order", "no help", "kbig", pool=eqs(OVER10_ANY, "+"), check=3),
-        T("up_or_over", "Up to ten or over ten?", "no help", "kbig", pool=eqs(BUDDY_PAIRS + OVER10_ANY, "+")),
         T("words", "Word problems", "words", "word", make=words("add", OVER10), check=1),
     ],
     "4-over-the-next-ten": [
