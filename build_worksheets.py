@@ -23700,16 +23700,30 @@ def plain_assessments():
         GRADES[gi] = (slug, name, sub, out)
 
 
-# Founder: the K-3 assessments had too many problems ("9 over ten problems is too much"). About 3 a concept is
-# enough; a 2-across card kind gets 2 so its row is full. Kindergarten and grade 1 get big print, 3 to a row.
-LOWER_GRADES = ("kindergarten", "grade-1", "grade-2", "grade-3")
+# Founder: the assessments had too many problems ("9 over ten problems is too much"; then "grades 4-6 too"). About
+# 3 a concept is enough; a 2-across card kind gets 2 so its row is full. Kindergarten and grade 1 get big print, 3 to a row.
+LOWER_GRADES = ("kindergarten", "grade-1", "grade-2", "grade-3", "grade-4", "grade-5", "grade-6")  # founder: all grades
 KINDS["kbig3"] = Kind(84, 3, lambda t: t, c_kbig, 12)
+
+
+def _eq_kind(pool, kind):
+    """A one-line problem's card: wide enough that the problem prints at a good size (founder: give it space)."""
+    texts = [t for t in pool[:60] if isinstance(t, str)]
+    if not texts:
+        return kind
+    wide = max(sw(re.sub(r"[\[\]{}]", "", t), "Rnd", 16) for t in texts) + 24  # + room for the answer boxes
+    for k, room in (("eq3", 112), ("eq2", 190)):
+        if KINDS[kind].cols >= KINDS[k].cols and wide <= room:
+            return k
+    return "eq1" if wide > 190 else kind
 
 
 def shorter(slug, s):
     kind = s.kind
     if slug in ("kindergarten", "grade-1") and kind in ("eq1", "eq2", "eq3"):
         kind = "kbig3" if kind == "eq3" else "kbig"  # longer problems ("6 tens 2 ones = 62") go 2 across
+    elif kind in ("eq2", "eq3"):
+        kind = _eq_kind(s.pool, kind)
     per = 3 if KINDS[kind].cols != 2 else 2
     return s._replace(kind=kind, count=min(s.count, per))
 
