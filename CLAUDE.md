@@ -181,7 +181,7 @@ Each folder has `color/` and `black-and-white/` subfolders, each holding `<slug>
    - Part header ≈ 14pt; gap after a grid ≈ 30pt.
    - The footer guard warns if a card goes below y = 44.
    - Typical heights: compact rows 42, word cards 110 + 8 gap, break-apart cards 130.
-5. **Build, then render every new page to PNG and look at it** (pypdfium2, scale 1.4) in both inks. Check the answer key too.
+5. **Build, then render every new page to PNG and look at it** (pypdfium2, scale 1.4) in both inks. Check the answer key too, and run `python check_margins.py <build folder>` (nothing may run past the side margins).
 6. **Fix, rebuild, re-check.** Update `README.md` (packet table and page counts).
 7. **Send** the color packet and key with `SendUserFile`, and say the black-and-white versions are in the folder.
 
@@ -247,6 +247,7 @@ Each folder has `color/` and `black-and-white/` subfolders, each holding `<slug>
 | `\u201c` escapes in a file written with the Write tool turn into real curly quotes, so a later patch that searches for the escape finds nothing | Search for the real character, or for a plain part of the line. |
 | **Learning page running into the "For teachers" note** (key only, note sits at y ≈ 48–106) | Learning-page content must end above y = 112. Add a check like the one in `learn_doubles`, and look at the **answer key's** page 1, not just the packet's. |
 | **A packet's core skill getting dodged with odd wording** because earlier packets had used those facts as filler (packet 6's "find the near double" became ☐ + ☐ = 13, and the founder said adding two numbers 1 apart is the whole point) | **Each packet owns its core facts.** Move filler problems in earlier packets to other facts so the new packet can ask its main question plainly (5 + 6 to 8 + 9 were moved out of packet 3). Never weaken the main skill to get past the duplicate check. |
+| **A number running off the right edge** (packet 56's learning page: "300 + 120 + 18 = 438" placed at the same x as the shorter 2-digit sums above it; 11 more like it: long titles and taglines, hand-placed notes, "Your turn" lines, 9 ten-sticks in a 3-column card, ring choices) | Run `python check_margins.py <build folder>` after every build: it lists every page with ink past the side margins. Big titles and taglines now shrink to fit; use `fit_eq` or right-align from the card edge for anything else. |
 | Facts already used as plain questions in an earlier packet (5 + 5 … 9 + 9 in packet 3) | Use a different wording: "double 6 = ?", "? + ? = 12", "double 7 = ?, so 7 + 8 = ?". Let `bk.ask` catch the rest. It caught "10 + 9" from packet 2. |
 
 ---

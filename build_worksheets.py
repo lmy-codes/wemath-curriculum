@@ -195,11 +195,17 @@ class Book:
 
         if big:  # learning page: large, friendly title
             c.setFillColor(T.ink)
-            c.setFont("AvB", 30)
+            ts = 30  # a long title shrinks to fit between the margins
+            while sw(heading, "AvB", ts) > W - 2 * M and ts > 20:
+                ts -= 0.5
+            c.setFont("AvB", ts)
             c.drawString(M, H - 96, heading)
             if goal:
                 c.setFillColor(T.text2)
-                c.setFont("Rnd", 15)
+                gs = 15
+                while sw(goal, "Rnd", gs) > W - 2 * M and gs > 11:
+                    gs -= 0.5
+                c.setFont("Rnd", gs)
                 c.drawString(M, H - 120, goal)
             return H - 146
         if first:
@@ -6112,7 +6118,7 @@ KINDS = {
     "near_dots": _k("near_dots", 124, 2, lambda it: f"double {it[0]} = [], so {it[0]} + {it[1]} = []"),
     "count_to": _k("count_to", 120, 2, lambda n: f"tens and ones in the picture of {n}"),
     "draw_qt": _k("draw_qt", 114, 2, lambda n: f"draw {n} as quick tens"),
-    "count_tens": _k("count_tens", 98, 3, lambda n: f"count the tens in the picture of {n}"),
+    "count_tens": _k("count_tens", 98, 2, lambda n: f"count the tens in the picture of {n}"),  # 9 sticks: 2 columns
     "which_more": _k("which_more", 46, 2, lambda it: f"which is more: {it[0]} or {it[1]}", 8),
     "ten_more_pic": _k("ten_more_pic", 120, 2, lambda n: f"{n} + 10 = []"),
     "ten_pic": Kind(120, 2, lambda it: f"{it[0]} + 10 = []" if it[1] == "+" else f"{it[0]} {MINUS} 10 = []",
@@ -8041,9 +8047,10 @@ def learn_money(bk):
         c.drawCentredString(cx, y - 90, COIN[kind][2])
     c.setFillColor(T.text2)
     c.setFont("Rnd", 12)
-    c.drawString(M + 440, y - 40, "A dime is small,")
-    c.drawString(M + 440, y - 56, "but it is worth")
-    c.drawString(M + 440, y - 72, "more than a nickel.")
+    c.drawString(M + 420, y - 40, "A dime is small,")
+    c.drawString(M + 420, y - 56, "but it is worth")
+    c.drawString(M + 420, y - 72, "more than")
+    c.drawString(M + 420, y - 88, "a nickel.")
     y -= 116
 
     label(bk, M, y - 6, "Same coins: count by the coin")
@@ -13909,7 +13916,7 @@ def practice_round_big(bk):
          [f"Round {nf(n)} to the nearest {nf(p)}: [{nf(round_to(n, p))}]"
           for n, p in ((5286, 10), (3741, 1000), (8452, 100), (6097, 10), (2508, 1000), (7364, 100))], 2, 42, 8,
          plain, lambda t: t)
-    part(8, "About how much?", "No help this time. Round each number to the nearest thousand, then add or take away.",
+    part(8, "About how much?", "No help this time. Round to the nearest thousand, then add or take away.",
          [about_k(a, op, b) for a, op, b in ((3872, "+", 2145), (6204, MINUS, 1893), (4710, "+", 3088),
                                              (8925, MINUS, 4170), (2390, "+", 5612), (7481, MINUS, 2763))], 2, 42, 8,
          plain, lambda t: t)
@@ -14161,12 +14168,13 @@ def learn_mult_one_digit(bk):
     y -= 136
 
     label(bk, M, y - 6, "Three digits work the same way: 146 × 3")
-    area_model(bk, M + 40, y - 92, 300, 52, 146, 3, products=True, size=17)
-    color_eq(bk, M + 380, y - 60, [("300", "a"), ("+", "op"), ("120", "b"), ("+", "op"), ("18", "a"), ("=", "op"),
+    area_model(bk, M + 40, y - 92, 270, 52, 146, 3, products=True, size=17)
+    # the sum is wider than the 2-digit rows above, so it starts further left to end inside the margin
+    color_eq(bk, M + 330, y - 60, [("300", "a"), ("+", "op"), ("120", "b"), ("+", "op"), ("18", "a"), ("=", "op"),
                                    ("438", None)], 18)
     c.setFillColor(T.text2)
     c.setFont("Rnd", 12)
-    c.drawString(M + 380, y - 86, "Hundreds, tens and ones.")
+    c.drawString(M + 330, y - 86, "Hundreds, tens and ones.")
     y -= 128
 
     label(bk, M, y - 6, "No picture? Write the parts in a list")
@@ -16633,7 +16641,11 @@ def c_angle_add(bk, x, cy, w, item):
     for mid, val, rr in ((a / 2, a, 30), (a + b / 2, b, 40)):
         t = math.radians(mid)
         bk.c.drawCentredString(vx + rr * math.cos(t) + 4, vy + rr * math.sin(t) - 3, f"{val}°")
-    bk.fit_eq(x + GUT + 120, cy + 30, w - GUT - 130, f"{a} + {b} = [{a + b}] degrees", size=16)
+    ex = x + GUT + 100
+    bk.fit_eq(ex, cy + 44, w - (ex - x) - 12, f"{a} + {b} = [{a + b}]", size=16)
+    bk.c.setFillColor(T.text2)
+    bk.c.setFont("AvM", 11)
+    bk.c.drawString(ex, cy + 20, "degrees")
 
 
 def learn_angles(bk):
@@ -16816,7 +16828,9 @@ def c_triangle_kind(bk, x, cy, w, item):
             if (a1 - a0) % 360 > 180:
                 a0, a1 = a1, a0
             angle_mark(bk, p[0], p[1], a0, a0 + 90, r=10)
-    circle_choice(bk, x + GUT + 104, cy + 26, ["right", "acute", "obtuse"], tri_kind(A, B), size=11, gap=10)
+    words = ["right", "acute", "obtuse"]
+    wide = sum(sw(t, "AvD", 11) for t in words) + 2 * 10
+    circle_choice(bk, min(x + GUT + 104, x + w - 14 - wide), cy + 26, words, tri_kind(A, B), size=11, gap=10)
 
 
 def c_line_name(bk, x, cy, w, item):
@@ -19094,7 +19108,8 @@ def learn_order_ops(bk):
                                   ("×", "op"), ("3", None), ("=", "op"), ("36", None)], 20)
     c.setFillColor(T.text2)
     c.setFont("Rnd", 12)
-    c.drawString(M + 330, y - 36, "The parentheses go first: 8 + 4 = 12.")
+    c.drawString(M + 330, y - 28, "The parentheses go first:")
+    c.drawString(M + 330, y - 44, "8 + 4 = 12.")
     y -= 66
 
     label(bk, M, y - 6, "8 + 4 × 3")
@@ -20624,8 +20639,8 @@ def learn_dec_ops(bk):
     dec_stack(bk, M + 60, y - 40, "12.5", "3.75", "+", hint=True, size=20, shown=T.dot_a)
     c.setFillColor(T.text2)
     c.setFont("Rnd", 12)
-    c.drawString(M + 200, y - 44, "12.5 is 12.50: write the zero so every column is filled.")
-    c.drawString(M + 200, y - 62, "Then add like whole numbers. The point drops straight down.")
+    c.drawString(M + 200, y - 44, "12.5 is 12.50: the zero fills the empty column.")
+    c.drawString(M + 200, y - 62, "Then add. The point drops straight down.")
     y -= 126
 
     label(bk, M, y - 6, "Multiply: whole numbers first, then name the piece")
@@ -21824,7 +21839,7 @@ def learn_surface_area(bk):
 
     bottom = your_turn(bk, y, h=78)
     bk.ask("surface area your turn: cube 5")
-    bk.eq(M + 150, bottom + 26, "cube, edge 5 cm:  6 × [25] = [150] sq cm", size=19)
+    bk.fit_eq(M + 60, bottom + 26, W - 2 * M - 80, "cube, edge 5 cm:  6 × [25] = [150] sq cm", size=19)
     if bottom < 112:
         print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
     teacher_note(bk, "Goal: surface area from nets of boxes and square pyramids (6.G.4). Say “Which faces match? "
@@ -22173,7 +22188,7 @@ def learn_data_displays(bk):
 
     bottom = your_turn(bk, y, h=70)
     bk.ask("data displays your turn: 1 4 4 6 15")
-    bk.eq(M + 130, bottom + 26, "1, 4, 4, 6, 15:  mean = [6]  and  median = [4]", size=19)
+    bk.fit_eq(M + 60, bottom + 26, W - 2 * M - 80, "1, 4, 4, 6, 15:  mean = [6]  and  median = [4]", size=19)
     if bottom < 112:
         print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
     teacher_note(bk, "Goal: statistics questions, X charts and histograms, and how a far-off value moves the mean "
