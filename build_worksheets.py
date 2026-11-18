@@ -23640,6 +23640,51 @@ def build_packet(packet, ink_folder, key, asked, suffix="", save=True, extras=Tr
     return path
 
 
+# ---------------------------------------------------------------------- assessments: plain questions only
+
+# Founder: the grade assessments ask only the final, plain question of each concept, never the scaffolded cards
+# (ten-frames, break-apart, ladders, jumps, split rows, stick pictures, bar models). Pictures stay only where
+# the picture is the question itself (clocks, coins, rulers, graphs, shapes, fraction pictures). Each scaffolded
+# section is dropped and its problems go to the same packet's plain section, so each concept keeps its weight.
+SCAFFOLD_KINDS = {"pic_add", "pic_take", "wide_story", "draw_solve", "frame_buddy", "teen", "ba", "ladder", "jump",
+                  "near_dots", "count_to", "side", "add_split", "enough", "jump_up", "break_ten", "count_hto",
+                  "array", "times_groups", "break_array", "think_times", "bar"}
+
+THREE_PLAIN = [f"{a} + {b} + {c} = [{a + b + c}]" for a, b, c in
+               [(a, 10 - a, c) for a in rng(1, 9) for c in rng(1, 9)] + [(c, a, 10 - a) for a in rng(1, 9) for c in rng(1, 9)]]
+TWO_STEP_WORDS = [(st, f"{s1[0]}, {s2[0]}", ans, t) for st, s1, s2, ans, t, _ in TWO_STEP]
+
+
+def plain_assessments():
+    for gi, (slug, name, sub, secs) in enumerate(GRADES):
+        out = []
+        for s in secs:
+            if slug == "kindergarten" and s.kind == "eq3" and s.packet == 0:
+                # adding and taking away get a section each, like the no-help parts of packet 0
+                out += [S("Add", None, "eq3", eqs(ADD5 + ADD9, "+"), 9, 0),
+                        S("Take away", None, "eq3", eqs(SUB5 + SUB9, "-"), 9, 0)]
+            elif s.kind == "three":
+                out.append(S("Add three numbers", None, "eq3", THREE_PLAIN, 3, s.packet))
+            elif s.kind == "bar" and s.packet == 30:
+                out.append(S("Two-step word problems", None, "word", TWO_STEP_WORDS, s.count, 30))
+            elif s.kind not in SCAFFOLD_KINDS:
+                out.append(s)
+        dropped = {}
+        for s in secs:
+            if s.kind in SCAFFOLD_KINDS and not (s.kind == "bar" and s.packet == 30) and s.packet != 0:
+                dropped[s.packet] = dropped.get(s.packet, 0) + s.count
+        for packet, n in dropped.items():
+            same = [i for i, s in enumerate(out) if s.packet == packet and s.kind not in SCAFFOLD_KINDS]
+            k = next((i for i in same if out[i].kind in ("eq1", "eq2", "eq3") and out[i].name != "Add three numbers"), same[-1])
+            n = out[k].count + n
+            cols = KINDS[out[k].kind].cols
+            out[k] = out[k]._replace(count=-(-n // cols) * cols)  # full rows
+        GRADES[gi] = (slug, name, sub, out)
+
+
+plain_assessments()
+
+
 def find_exclude():
     """A dry run without the extra practice: every practice question and every question the check-ins and
     assessments pick. The extra practice skips all of these, so adding it changes no check-in or assessment."""
