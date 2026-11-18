@@ -20173,9 +20173,9 @@ WORDS_G6 = [
     ("A school buys 2,016 pencils in boxes of 24. How many boxes?", f"2,016 {DIV} 24 = 84", "84", "boxes"),
     ("6 bottles of water cost $4.20. How much is 1 bottle?", f"$4.20 {DIV} 6 = $0.70", "$0.70", ""),
 ]
-GRADES.append(("grade-6", "Grade 6", "Packets 91–105", [
+GRADES.append(("grade-6", "Grade 6", "Packets 91–107", [
     S("Ratios", None, "eq3", EQ_RATIO_POOL, 2, 91),
-    S("Word problems", None, "word", WORDS_G6, 6, "91–105"),
+    S("Word problems", None, "word", WORDS_G6, 6, "91–107"),
 ]))
 _g6 = GRADES[-1][3]
 
@@ -23431,6 +23431,306 @@ EXTRA.update({
     ], False),
 })
 
+# ====================================================================== 106. Inequalities
+# 6.EE.5 and 6.EE.8 without a number line: an inequality has many answers; test a number by putting it in.
+
+
+def ineq_text(form, a, sign, b):
+    """x + a > b, x − a < b, or ax > b (form 'add', 'sub', 'mul')."""
+    left = {"add": f"x + {a}", "sub": f"x {MINUS} {a}", "mul": f"{a}x"}[form]
+    return f"{left} {sign} {b}"
+
+
+def ineq_ok(form, a, sign, b, v):
+    left = {"add": v + a, "sub": v - a, "mul": a * v}[form]
+    return left > b if sign == ">" else left < b
+
+
+def smallest_whole(form, a, b):
+    """The smallest whole number with left > b."""
+    return {"add": b - a + 1, "sub": b + a + 1, "mul": b // a + 1}[form]
+
+
+def biggest_whole(form, a, b):
+    """The biggest whole number with left < b."""
+    return {"add": b - a - 1, "sub": b + a - 1, "mul": -(-b // a) - 1}[form]
+
+
+def small_whole_eq(form, a, b):
+    return f"{ineq_text(form, a, '>', b)}:   smallest whole number x = [{smallest_whole(form, a, b)}]"
+
+
+def big_whole_eq(form, a, b):
+    return f"{ineq_text(form, a, '<', b)}:   biggest whole number x = [{biggest_whole(form, a, b)}]"
+
+
+def ineq_q(v, form, a, sign, b):
+    """'Is 7 a solution of x + 3 > 9?' (no minus or times sign: the yes/no card is drawn in Arial Rounded)."""
+    return (f"Is {v} a solution of {ineq_text(form, a, sign, b)}?", ineq_ok(form, a, sign, b, v))
+
+
+def c_ineq_pick(bk, x, cy, w, item):
+    """An inequality, then a row of numbers; the key rings every one that works."""
+    (form, a, sign, b), nums = item
+    bk.eq(x + GUT, cy + 26, ineq_text(form, a, sign, b), size=19)
+    nx = x + GUT + 190
+    bk.c.setFillColor(T.text2)
+    bk.c.setFont("AvD", 10)
+    bk.c.drawString(nx, cy + 48, "Circle every number that works:")
+    ringed_list(bk, nx + 4, cy + 18, nums, [v for v in nums if ineq_ok(form, a, sign, b, v)], size=17, gap=14)
+
+
+def word_sign(words, sign, b):
+    return f"{words} {b}:   x [{sign}] {b}"
+
+
+def learn_inequalities(bk):
+    y = bk.new_page("Inequalities", "Many numbers can make it true. Test a number by putting it in.", name_line=False,
+                    big=True, footer="WeMath  ·  Inequalities")
+    c = bk.c
+    label(bk, M, y - 6, "x > 4 means x is any number bigger than 4")
+    xx = M + 18
+    for v in range(1, 10):
+        t = str(v)
+        c.setFillColor(T.ink)
+        c.setFont("Rnd", 20)
+        c.drawCentredString(xx, y - 44, t)
+        if v > 4:
+            c.setStrokeColor(T.dot_a)
+            c.setLineWidth(1.6)
+            c.circle(xx, y - 37, 13, stroke=1, fill=0)
+        xx += 34
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 4, y - 74, "5, 6, 7 and on all work. 4 does not: 4 is not bigger than 4.")
+    y -= 100
+
+    label(bk, M, y - 6, "Test it: put the number in for x")
+    bk.eq(M + 14, y - 38, "x + 3 < 10,  x = 5:   5 + 3 = 8,   8 < 10   yes", size=17)
+    bk.eq(M + 14, y - 66, "x + 3 < 10,  x = 7:   7 + 3 = 10,   10 < 10?   no", size=17)
+    y -= 94
+
+    label(bk, M, y - 6, "Words to signs")
+    bk.eq(M + 14, y - 38, "more than 6:   x > 6", size=18)
+    bk.eq(M + 270, y - 38, "less than 9:   x < 9", size=18)
+    y -= 62
+
+    bottom = your_turn(bk, y, h=64)
+    bk.ask("inequalities your turn: x + 5 > 12")
+    bk.eq(M + 110, bottom + 22, "x + 5 > 12:   smallest whole number x = [8]", size=19)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: an inequality has many solutions; test a number by putting it in, and find the smallest "
+                     "or biggest whole number that works (6.EE.5, 6.EE.8). Say “Put it in. Is it still true?”")
+
+
+INEQ_YES = [ineq_q(*t) for t in (
+    (7, "add", 3, ">", 9), (4, "add", 6, "<", 9), (9, "mul", 2, ">", 17), (5, "mul", 4, "<", 19), (12, "add", 8, ">", 21),
+    (3, "mul", 6, ">", 18), (8, "add", 5, "<", 14), (6, "mul", 3, "<", 20), (11, "add", 9, ">", 19), (2, "mul", 7, ">", 15),
+    (10, "add", 4, "<", 13), (7, "mul", 5, ">", 34), (15, "add", 2, "<", 18), (4, "mul", 9, "<", 35), (13, "add", 7, ">", 20),
+    (6, "mul", 8, ">", 49), (9, "add", 12, "<", 22), (8, "mul", 3, "<", 25))]
+INEQ_PICK = [(spec, nums) for spec, nums in (
+    (("add", 4, ">", 10), [3, 5, 6, 7, 9, 12]), (("mul", 3, "<", 16), [2, 4, 5, 6, 8]), (("sub", 2, ">", 6), [5, 8, 9, 11, 14]),
+    (("add", 7, "<", 15), [4, 6, 8, 9, 11]), (("mul", 5, ">", 22), [3, 4, 5, 7, 9]), (("sub", 5, "<", 4), [6, 8, 9, 10, 12]),
+    (("mul", 4, ">", 13), [1, 3, 4, 6, 7]), (("add", 9, ">", 20), [8, 10, 11, 12, 15]), (("sub", 3, "<", 10), [9, 12, 13, 14, 16]))]
+WORDS_SIGN = [word_sign(w, s, b) for w, s, b in (
+    ("more than", ">", 7), ("less than", "<", 12), ("bigger than", ">", 15), ("smaller than", "<", 30),
+    ("more than", ">", 45), ("less than", "<", 8), ("greater than", ">", 100), ("fewer than", "<", 25),
+    ("over", ">", 50), ("under", "<", 18), ("above", ">", 32), ("below", "<", 60))]
+SMALL_POOL = [small_whole_eq(*t) for t in (
+    ("add", 6, 15), ("mul", 4, 21), ("sub", 3, 9), ("add", 12, 30), ("mul", 6, 40), ("sub", 8, 14), ("add", 25, 61),
+    ("mul", 7, 50), ("add", 9, 9), ("sub", 11, 20), ("mul", 3, 25), ("add", 17, 44), ("mul", 8, 63), ("sub", 6, 27),
+    ("add", 31, 75), ("mul", 9, 70))]
+BIG_POOL = [big_whole_eq(*t) for t in (
+    ("add", 4, 13), ("mul", 5, 32), ("sub", 2, 10), ("add", 15, 40), ("mul", 6, 45), ("sub", 7, 19), ("add", 23, 58),
+    ("mul", 8, 60), ("add", 6, 20), ("sub", 9, 30), ("mul", 3, 29), ("add", 38, 90), ("mul", 7, 55), ("sub", 12, 25),
+    ("add", 14, 33), ("mul", 9, 80))]
+
+
+def practice_inequalities(bk):
+    title = "Inequalities: Practice"
+    st = [bk.new_page(title, "Put the number in for x. Is it still true?"), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Is it a solution?", "Put the number in. Circle yes or no.", "yes_text1", shuf("ineq106", INEQ_YES[:8]))
+    part(2, "Which numbers work?", "Test each number.", "ineq_pick", INEQ_PICK[:6])
+    part(3, "Write it with a sign", "Write < or >.", "eq2", WORDS_SIGN[:8])
+    part(4, "The smallest whole number", "Find the first whole number that works.", "eq1", SMALL_POOL[:8])
+    part(5, "The biggest whole number", "Find the last whole number that works.", "eq1", BIG_POOL[:8])
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_106)
+    _words(bk, title, st, 7, "Write the inequality. Then answer.", WORDS_106)
+
+
+REVIEW_106 = ["x + 58 = 93:   x = [35]", "6x = 102:   x = [17]", "when n = 4:  9n + 5 = [41]",
+              "mean of 12, 18, 9, 21 = [15]", "5 1/2 × 2 × 3 = [33]", "48 ÷ 0.4 = [120]"]
+WORDS_106 = [
+    ("A ride needs riders taller than 48 inches. Mia is 45 inches. At least how many inches must she grow?",
+     "45 + x > 48, x = 4", "4", "inches"),
+    ("You need more than 20 points to win. You have 13. What is the fewest more points you need?",
+     "13 + x > 20, x = 8", "8", "points"),
+    ("A bag holds less than 15 pounds. Books weigh 2 pounds each. What is the most books?",
+     "2x < 15, x = 7", "7", "books"),
+    ("Sam spends less than $40. He has spent $26. What is the most whole dollars left to spend?",
+     "26 + x < 40, x = 13", "$13", ""),
+    ("Challenge: Tickets cost $6. The class needs more than $100. What is the fewest tickets to sell?",
+     "6x > 100, x = 17", "17", "tickets"),
+]
+KINDS["ineq_pick"] = Kind(70, 1, lambda it: f"which work: {ineq_text(*it[0])} " + "-".join(map(str, it[1])), c_ineq_pick, 8)
+ANSWER_OF["ineq_pick"] = lambda it: ", ".join(str(v) for v in it[1] if ineq_ok(*it[0], v))
+INEQ_POOL = SMALL_POOL[8:12] + BIG_POOL[8:12]
+CHECKINS["106-inequalities"] = [
+    S("Is it a solution?", "Circle yes or no.", "yes_text1", INEQ_YES[8:12], 2),
+    S("Which numbers work?", None, "ineq_pick", INEQ_PICK[6:], 1),
+    S("Write it with a sign", None, "eq2", WORDS_SIGN[8:], 2),
+    S("Smallest and biggest", None, "eq1", INEQ_POOL, 3),
+]
+_g6[-1:-1] = [S("Inequalities", None, "eq1", INEQ_POOL, 2, 106)]
+
+
+# ====================================================================== 107. Rules and Tables
+# 6.EE.9: two quantities that change together. One depends on the other; a rule (written a + b = c, the founder's
+# order) gives it, and a table shows it. Tables only: graphs on axes are number lines.
+
+
+def rule_text(form, k, box=False):
+    kk = f"[{k}]" if box else str(k)
+    return f"x + {kk} = y" if form == "add" else f"x × {kk} = y"
+
+
+def rule_y(form, k, x):
+    return x + k if form == "add" else x * k
+
+
+def c_rule_table(bk, x, cy, w, item):
+    """The rule, then a table: x given, y boxes."""
+    form, k, xs = item
+    bk.eq(x + GUT, cy + 74, "Rule:  " + rule_text(form, k), size=16)
+    ratio_table(bk, x + GUT, cy + 58, ["x", "y"], [list(xs), [rule_y(form, k, v) for v in xs]], given=set(),
+                top_row=True, cw=40, lw=26)
+
+
+def c_find_rule(bk, x, cy, w, item):
+    """A full table; find the rule's number."""
+    form, k, xs = item
+    ratio_table(bk, x + GUT, cy + 92, ["x", "y"], [list(xs), [rule_y(form, k, v) for v in xs]],
+                given=set(range(len(xs))), cw=40, lw=26)
+    bk.eq(x + GUT, cy + 14, "Rule:  " + rule_text(form, k, box=True), size=16)
+
+
+def use_rule(form, k, v):
+    return f"{rule_text(form, k)}:   when x = {v},  y = [{rule_y(form, k, v)}]"
+
+
+def learn_rules(bk):
+    y = bk.new_page("Rules and Tables", "One amount changes, and the other follows a rule.", name_line=False,
+                    big=True, footer="WeMath  ·  Rules and Tables")
+    c = bk.c
+    label(bk, M, y - 6, "Each bag holds 5 apples")
+    ratio_table(bk, M + 14, y - 18, ["bags (x)", "apples (y)"], [[1, 2, 3, 4], [5, 10, 15, 20]], given={0, 1, 2, 3},
+                cw=46, rh=28, lw=84)
+    c.setFillColor(T.text2)
+    c.setFont("Rnd", 12)
+    c.drawString(M + 330, y - 34, "The apples depend on the bags.")
+    c.drawString(M + 330, y - 50, "More bags, more apples.")
+    bk.eq(M + 330, y - 78, "Rule:  x × 5 = y", size=20, color=T.dot_a)
+    y -= 104
+
+    label(bk, M, y - 6, "Use the rule: put the number in for x")
+    bk.eq(M + 14, y - 38, "x × 5 = y,  x = 7:   7 × 5 = 35,  so y = 35", size=18)
+    y -= 58
+
+    label(bk, M, y - 6, "Find the rule: what happens to x every time?")
+    ratio_table(bk, M + 14, y - 18, ["x", "y"], [[2, 3, 5, 8], [9, 10, 12, 15]], given={0, 1, 2, 3}, cw=46, rh=28,
+                lw=40)
+    bk.eq(M + 300, y - 50, "Rule:  x + 7 = y", size=20, color=T.dot_a)
+    y -= 92
+
+    bottom = your_turn(bk, y, h=64)
+    bk.ask("rules your turn: x times 4, x = 9")
+    bk.eq(M + 130, bottom + 22, "x × 4 = y:   when x = 9,  y = [36]", size=19)
+    if bottom < 112:
+        print(f"WARNING: learning page content ends at y={bottom:.0f}, under the teacher note")
+    teacher_note(bk, "Goal: two amounts that change together; one depends on the other (6.EE.9). Fill tables from a "
+                     "rule and find the rule from a table. Say “What happens to x every time?”")
+
+
+RULE_FILL = [("add", 6, (1, 2, 4, 7)), ("mul", 3, (2, 5, 6, 9)), ("add", 11, (3, 5, 8, 10)), ("mul", 7, (1, 3, 4, 8)),
+             ("add", 25, (5, 10, 15, 20)), ("mul", 9, (2, 4, 6, 10)), ("add", 14, (6, 7, 9, 12)), ("mul", 6, (3, 5, 7, 11))]
+RULE_FIND_ADD = [("add", 8, (1, 3, 4, 6)), ("add", 13, (2, 5, 7, 9)), ("add", 20, (4, 6, 10, 12)),
+                 ("add", 9, (5, 8, 11, 15)), ("add", 16, (1, 2, 5, 10)), ("add", 30, (3, 7, 8, 20))]
+RULE_FIND_MUL = [("mul", 4, (1, 2, 5, 7)), ("mul", 8, (2, 3, 6, 9)), ("mul", 6, (4, 5, 8, 10)),
+                 ("mul", 12, (1, 3, 4, 6)), ("mul", 15, (2, 4, 5, 8)), ("mul", 11, (3, 6, 7, 9))]
+USE_POOL = [use_rule(*t) for t in (
+    ("mul", 6, 8), ("add", 15, 9), ("mul", 9, 7), ("add", 27, 14), ("mul", 12, 5), ("add", 8, 46), ("mul", 7, 11),
+    ("add", 35, 28), ("mul", 4, 23), ("add", 19, 19), ("mul", 15, 6), ("add", 42, 37), ("mul", 8, 13), ("add", 56, 9),
+    ("mul", 11, 9), ("add", 64, 27), ("mul", 25, 4), ("add", 18, 75), ("mul", 3, 47), ("add", 7, 88))]
+DEPENDS = [
+    ("Pay and hours worked: does pay depend on hours?", True),
+    ("Shoe size and test score: does the score depend on it?", False),
+    ("Cost and boxes bought: does cost depend on boxes?", True),
+    ("Gas used and miles driven: does gas depend on miles?", True),
+    ("Eye color and age: does age depend on eye color?", False),
+    ("The date and rain: does the date depend on rain?", False),
+    ("Pages read and minutes reading: do pages depend on minutes?", True),
+    ("Height and favorite song: does the song depend on height?", False),
+]
+
+
+def practice_rules(bk):
+    title = "Rules and Tables: Practice"
+    st = [bk.new_page(title, "Put each number in for x. Then look for the rule."), 1]
+    part = _part_fn(bk, title, st)
+    part(1, "Fill in the table", "Use the rule for each x.", "rule_table", RULE_FILL[:6])
+    part(2, "Find the adding rule", "What is added to x every time?", "find_rule", RULE_FIND_ADD[:4])
+    part(3, "Find the times rule", "What is x multiplied by every time?", "find_rule", RULE_FIND_MUL[:4])
+    part(4, "Use the rule", "No help this time.", "eq1", USE_POOL[:12])
+    part(5, "Which one depends?", "Circle yes or no.", "yes_text1", shuf("dep107", DEPENDS[:6]))
+    part(6, "Remember?", "Problems from earlier packets.", "rev2", REVIEW_107)
+    _words(bk, title, st, 7, "Find the rule. Then use it.", WORDS_107)
+
+
+REVIEW_107 = ["x + 5 > 19:  smallest x = [15]", "8x = 136:   x = [17]", "median of 14, 3, 9, 21, 6 = [9]",
+              "65% of 40 = [26]", "3 1/4 × 4 = [13]", "7.2 ÷ 0.9 = [8]"]
+WORDS_107 = [
+    ("Each pizza has 8 slices. Rule: x × 8 = y. How many slices in 6 pizzas?", "x × 8 = y, 6 × 8 = 48", "48", "slices"),
+    ("Tom is 3 years older than his sister. Rule: x + 3 = y. His sister is 9. How old is Tom?", "x + 3 = y, 9 + 3 = 12", "12",
+     "years old"),
+    ("A plant grows 4 cm a week. How tall does it grow in 7 weeks? Use x × 4 = y.", "x × 4 = y, 7 × 4 = 28", "28", "cm"),
+    ("Tickets cost $9 each. How much do 5 tickets cost? Use x × 9 = y.", "x × 9 = y, 5 × 9 = 45", "$45", ""),
+    ("Challenge: x = 2, 4, 6 gives y = 13, 15, 17. What is y when x = 30?", "x + 11 = y, 30 + 11 = 41", "41", ""),
+]
+KINDS.update({
+    "rule_table": Kind(96, 2, lambda it: f"rule table {it[0]} {it[1]} " + "-".join(map(str, it[2])), c_rule_table, 10),
+    "find_rule": Kind(110, 2, lambda it: f"find rule {it[0]} {it[1]} " + "-".join(map(str, it[2])), c_find_rule, 10),
+})
+TABLE_RULE_POOL = USE_POOL[12:]
+CHECKINS["107-rules-and-tables"] = [
+    S("Fill in the table", None, "rule_table", RULE_FILL[6:], 2),
+    S("Find the rule", None, "find_rule", RULE_FIND_ADD[4:] + RULE_FIND_MUL[4:], 2),
+    S("Use the rule", None, "eq1", TABLE_RULE_POOL, 2),
+    S("Which one depends?", "Circle yes or no.", "yes_text1", DEPENDS[6:], 2),
+]
+_g6[-1:-1] = [S("Rules and tables", None, "eq1", TABLE_RULE_POOL, 2, 107)]
+WORDS_G6 += [
+    ("A game needs more than 50 points to win. You have 38. What is the fewest more points?", "38 + x > 50, x = 13",
+     "13", "points"),
+    ("Each box has 12 pens. Rule: x × 12 = y. How many pens in 7 boxes?", "x × 12 = y, 7 × 12 = 84", "84", "pens"),
+]
+EXTRA.update({
+    "106-inequalities": (6, [
+        ("More smallest whole numbers", None, "eq1", SMALL_POOL[12:] + [small_whole_eq(f, a, b) for f, a, b in
+                                                                       _many(106, lambda r: (r.choice(["add", "mul", "sub"]), r.randint(2, 12), r.randint(10, 80)))], 10),
+        ("More biggest whole numbers", None, "eq1", BIG_POOL[12:] + [big_whole_eq(f, a, b) for f, a, b in
+                                                                   _many(1106, lambda r: (r.choice(["add", "mul", "sub"]), r.randint(2, 12), r.randint(15, 80)))
+                                                                   if biggest_whole(f, a, b) > 0], 10),
+    ], False),
+    "107-rules-and-tables": (6, [
+        ("More rules", None, "eq1", [use_rule(f, k, v) for f, k, v in
+                                     _many(107, lambda r: (r.choice(["add", "mul"]), r.randint(3, 15), r.randint(4, 40)))], 12),
+    ], False),
+})
+TEACHING_ORDER += [106, 107]
+
+
 PACKETS = [
     ("0-adding-and-taking-away", "adding-and-taking-away", "Adding and Taking Away", learn_adding_taking_away,
      practice_adding_taking_away, False),
@@ -23622,6 +23922,8 @@ PACKETS = [
     ("104-mean-median-and-mode", "mean-median-and-mode", "Mean, Median and Mode", learn_mean_median,
      practice_mean_median, False),
     ("105-data-displays", "data-displays", "Data Displays", learn_data_displays, practice_data_displays, False),
+    ("106-inequalities", "inequalities", "Inequalities", learn_inequalities, practice_inequalities, False),
+    ("107-rules-and-tables", "rules-and-tables", "Rules and Tables", learn_rules, practice_rules, False),
 ]
 
 # Packets built in more than one version for the founder to choose from. Each option gets its own

@@ -708,7 +708,43 @@ RULES = {
     ("99", "exponents"): _pool("g99", _pow, 40),
     ("100", "find_the_missing_part"): [(a, b) for a in R(4, 41, 3) for b in R(5, 41, 4) if a + b <= 60],
 }
-YESNO_RULES = {("100", "is_it_true"): _pool("g100", _is_true, 120)}
+def _ineq(r):
+    form, sign = r.choice(["add", "mul"]), r.choice([">", "<"])
+    a, b = (r.randint(2, 15), r.randint(8, 40)) if form == "add" else (r.randint(2, 9), r.randint(10, 60))
+    return form, a, sign, b
+
+
+def _ineq_q(r):
+    """'Is 7 a solution of x + 3 > 9?' (only + and nx: the yes/no card is drawn in Arial Rounded, which has no minus)."""
+    spec = _ineq(r)
+    return W.ineq_q(r.randint(1, 20), *spec)
+
+
+def _ineq_pick(r):
+    spec = (r.choice(["add", "mul", "sub"]),) + _ineq(r)[1:]
+    nums = sorted(r.sample(range(1, 25), 5))
+    ok = [v for v in nums if W.ineq_ok(*spec, v)]
+    return (spec, nums) if 1 <= len(ok) <= 4 else None
+
+
+DEPENDS_MORE = W.DEPENDS + [
+    ("Boxes of cereal and their weight: does weight depend on boxes?", True),
+    ("Laps run and minutes running: do laps depend on minutes?", True),
+    ("Hair color and math score: does the score depend on it?", False),
+    ("Cups of flour and cookies made: do cookies depend on flour?", True),
+    ("Birthday month and height: does height depend on the month?", False),
+    ("Seeds planted and flowers grown: do flowers depend on seeds?", True),
+    ("A pet's name and its age: does age depend on the name?", False),
+    ("Shirt color and running speed: does speed depend on it?", False),
+]
+RULES.update({
+    ("106", "write_it_with_a_sign"): [W.word_sign(w, sg, b) for b in (7, 9, 12, 15, 18, 20, 24, 30, 36, 45, 50, 64, 75, 90)
+                                      for w, sg in (("more than", ">"), ("less than", "<"), ("greater than", ">"),
+                                                    ("fewer than", "<"), ("over", ">"), ("under", "<"))],
+})
+YESNO_RULES = {("100", "is_it_true"): _pool("g100", _is_true, 120),
+               ("106", "is_it_a_solution"): _pool("g106", _ineq_q, 120),
+               ("107", "which_one_depends"): DEPENDS_MORE}
 
 for _f, _types in TYPES.items():
     if number(_f) <= 9:
@@ -783,6 +819,11 @@ GUIDED = {
           ("read_the_x_chart", "Read the X chart", "xstats",
            [(["Goals scored", "Pets at home", "Books read", "Siblings", "Hours of sleep"][sum(v) % 5], v)
             for v in _pool("g104c", _x6, 60)])],
+    106: [("which_numbers_work", "Which numbers work?", "ineq_pick", _pool("g106b", _ineq_pick, 80))],
+    107: [("fill_in_the_table", "Fill in the table", "rule_table",
+           [(f, k, xs) for f in ("add", "mul") for k in range(2, 13) for xs in ((1, 2, 4, 6), (2, 3, 5, 9), (3, 5, 7, 10))]),
+          ("find_the_rule", "Find the rule", "find_rule",
+           [(f, k, xs) for f in ("add", "mul") for k in range(3, 16) for xs in ((1, 3, 4, 7), (2, 5, 6, 8))])],
     105: [("count_the_groups", "Count the groups", "freq", _pool("g105a", _freq, 60)),
           ("read_the_histogram", "Read the histogram", "hist", _pool("g105b", _hist, 60)),
           ("make_the_x_chart", "Make the X chart", "make_x",

@@ -110,6 +110,8 @@ One hundred and six packets, in teaching order (K to grade 6). Each starts with 
 | `103-surface-area-and-nets/` | Does it fold into a cube?, cube and box nets, square pyramids, surface area with no help | 12 |
 | `104-mean-median-and-mode/` | Mean as evening out towers, median in order, X charts, mode and range, the missing number | 12 |
 | `105-data-displays/` | Statistics questions, count data in groups, read histograms, make X charts, a far-off number moves the mean | 10 |
+| `106-inequalities/` | Inequalities without a number line: test a number, write < or >, smallest and biggest whole number | 10 |
+| `107-rules-and-tables/` | Two amounts that change together: fill tables from a rule, find the rule, which one depends | 8 |
 
 Each folder has `color/` and `black-and-white/` (printer friendly: no fills, hollow dots) versions of:
 

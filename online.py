@@ -497,7 +497,30 @@ def _explain(packet, sid, kind, item):
     return None
 
 
+def _yes_106_107(packet, item):
+    text, yes = item
+    m = re.match(r"Is (\d+) a solution of (.+)\?", text)
+    if packet == 106 and m:
+        v, ineq = int(m.group(1)), m.group(2)
+        spec = _ineq_parts(ineq)
+        if spec:
+            form, a, sign, b = spec
+            val = {"add": v + a, "sub": v - a, "mul": a * v}[form]
+            shown = {"add": f"{v} + {a}", "sub": f"{v} {MINUS} {a}", "mul": f"{a} {TIMES} {v}"}[form]
+            return [f"Put {v} in for x: {shown} = {val}.", f"Is {val} {sign} {b}? {'Yes' if yes else 'No'}.",
+                    f"So the answer is {'yes' if yes else 'no'}."]
+    if packet == 107:
+        return ["Ask: when the first amount changes, does the second one change because of it?",
+                f"{'Yes: it changes with it.' if yes else 'No: one has nothing to do with the other.'}",
+                f"So the answer is {'yes' if yes else 'no'}."]
+    return None
+
+
 def explain_yes(packet, sid, item):
+    if packet in (106, 107):
+        st = _yes_106_107(packet, item)
+        if st:
+            return st
     text, yes = item
     m = re.fullmatch(r"Is (\d+) a factor of (\d+)\?", text)
     if m:
@@ -1125,6 +1148,59 @@ def rule(packet, sid):
     return deco
 
 
+# Packets 106 and 107: inequalities by testing numbers, and rules with tables.
+def _ineq_parts(text):
+    m = re.match(rf"(?:x ([+{MINUS}]) (\d+)|(\d+)x) ([<>]) (\d+)", text)
+    if not m:
+        return None
+    op, a, n, sign, b = m.groups()
+    form = "mul" if n else ("add" if op == "+" else "sub")
+    return form, int(a or n), sign, int(b)
+
+
+@rule(106, "smallest_and_biggest")
+def _ineq_edge(text):
+    spec = _ineq_parts(text)
+    if not spec:
+        return None
+    form, a, sign, b = spec
+    want = W.smallest_whole(form, a, b) if sign == ">" else W.biggest_whole(form, a, b)
+    left = lambda v: {"add": f"{v} + {a}", "sub": f"{v} {MINUS} {a}", "mul": f"{a} {TIMES} {v}"}[form]
+    val = lambda v: {"add": v + a, "sub": v - a, "mul": a * v}[form]
+    word = "bigger" if sign == ">" else "smaller"
+    edge = {"add": b - a, "sub": b + a, "mul": fmt(F(b, a)) if b % a else b // a}[form]
+    out = [f"First find where x {'+ ' + str(a) if form == 'add' else MINUS + ' ' + str(a) if form == 'sub' else 'times ' + str(a)} is exactly {b}: x = {edge}."]
+    nxt = want + 1 if sign == ">" else want - 1
+    no = want - 1 if sign == ">" else want + 1
+    out.append(f"Try {no}: {left(no)} = {val(no)}. Is {val(no)} {word} than {b}? No.")
+    out.append(f"Try {want}: {left(want)} = {val(want)}. Is {val(want)} {word} than {b}? Yes.")
+    out.append(f"So the {'smallest' if sign == '>' else 'biggest'} whole number is {want}.")
+    return out
+
+
+@rule(106, "write_it_with_a_sign")
+def _ineq_words(text):
+    m = re.match(r"(.+) (\d+):", text)
+    if not m:
+        return None
+    w, b = m.groups()
+    more = w in ("more than", "greater than", "bigger than", "over", "above", "a number more than")
+    return [f"\"{w.capitalize()} {b}\" means x is {'bigger' if more else 'smaller'} than {b}.",
+            f"The sign opens toward the bigger side: x {'>' if more else '<'} {b}."]
+
+
+@rule(107, "use_the_rule")
+@rule(107, "more_rules")
+def _use_rule(text):
+    m = re.match(rf"x ([+×]) (\d+) = y:\s+when x = (\d+)", text)
+    if not m:
+        return None
+    op, k, v = m.groups()
+    k, v = int(k), int(v)
+    y = v + k if op == "+" else v * k
+    return [f"Put {v} in for x: {v} {op} {k}.", f"{v} {op} {k} = {fmt(y)}, so y = {fmt(y)}."]
+
+
 @rule(26, "make_a_whole")
 @rule(26, "bigger_or_smaller")
 def _shares(text):
@@ -1609,6 +1685,10 @@ ASK = {
     "freq": lambda it: "Count how many numbers fall in each group.",
     "hist": lambda it: "Read the histogram and answer each question.",
     "make_x": lambda it: "Read the X chart and answer each question.",
+    "ineq_pick": lambda it: f"Which numbers make {W.ineq_text(*it[0])} true? Put each one in for x, then tap every one that works.",
+    "rule_table": lambda it: f"The rule is {W.rule_text(it[0], it[1])}. Put each x in to find its y.",
+    "find_rule": lambda it: f"What is {'added to' if it[0] == 'add' else 'x multiplied by'} {'x ' if it[0] == 'add' else ''}every time? "
+                            "Write the rule's number.",
 }
 
 
@@ -1808,6 +1888,14 @@ PIC = {
     "median": lambda it, a, p: ["Put them in order: " + ", ".join(map(str, sorted(it))) + ".", f"The middle one is {sorted(it)[len(it) // 2]}."],
     "level_eq": None,
 }
+PIC.update({
+    "ineq_pick": lambda it, a, p: [f"Put each number in for x: {W.ineq_text(*it[0])}."]
+    + [f"{v}: {'yes' if W.ineq_ok(*it[0], v) else 'no'}." for v in it[1]],
+    "rule_table": lambda it, a, p: [f"{v} {'+' if it[0] == 'add' else TIMES} {it[1]} = {W.rule_y(it[0], it[1], v)}." for v in it[2]],
+    "find_rule": lambda it, a, p: [f"{it[2][0]} {'+' if it[0] == 'add' else TIMES} {it[1]} = {W.rule_y(it[0], it[1], it[2][0])}, and "
+                                   f"{it[2][1]} {'+' if it[0] == 'add' else TIMES} {it[1]} = {W.rule_y(it[0], it[1], it[2][1])}.",
+                                   f"The rule is {W.rule_text(it[0], it[1])}."],
+})
 PIC = {k: v for k, v in PIC.items() if v}
 def _qa(qs):
     return [f"{q} {a if isinstance(a, str) else fmt(a)}." for q, a in qs]
