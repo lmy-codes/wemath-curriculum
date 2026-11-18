@@ -23695,7 +23695,23 @@ def plain_assessments():
             n = out[k].count + n
             cols = KINDS[out[k].kind].cols
             out[k] = out[k]._replace(count=-(-n // cols) * cols)  # full rows
+        if slug in LOWER_GRADES:
+            out = [shorter(slug, s) for s in out]
         GRADES[gi] = (slug, name, sub, out)
+
+
+# Founder: the K-3 assessments had too many problems ("9 over ten problems is too much"). About 3 a concept is
+# enough; a 2-across card kind gets 2 so its row is full. Kindergarten and grade 1 get big print, 3 to a row.
+LOWER_GRADES = ("kindergarten", "grade-1", "grade-2", "grade-3")
+KINDS["kbig3"] = Kind(84, 3, lambda t: t, c_kbig, 12)
+
+
+def shorter(slug, s):
+    kind = s.kind
+    if slug in ("kindergarten", "grade-1") and kind in ("eq1", "eq2", "eq3"):
+        kind = "kbig3" if kind == "eq3" else "kbig"  # longer problems ("6 tens 2 ones = 62") go 2 across
+    per = 3 if KINDS[kind].cols != 2 else 2
+    return s._replace(kind=kind, count=min(s.count, per))
 
 
 plain_assessments()
