@@ -1,5 +1,5 @@
 {
- "version": "ec8c8f52df9b",
+ "version": "fbb94ee83446",
  "packets": [
   {
    "number": 0,
@@ -808,6 +808,46 @@
    "file": "one-step-equations",
    "title": "One-Step Equations",
    "grade": "6"
+  },
+  {
+   "number": 101,
+   "slug": "area-of-triangles-and-other-shapes",
+   "folder": "101-area-of-triangles-and-other-shapes",
+   "file": "area-of-triangles-and-other-shapes",
+   "title": "Area of Triangles and Other Shapes",
+   "grade": "6"
+  },
+  {
+   "number": 102,
+   "slug": "volume-with-fractions",
+   "folder": "102-volume-with-fractions",
+   "file": "volume-with-fractions",
+   "title": "Volume with Fractions",
+   "grade": "6"
+  },
+  {
+   "number": 103,
+   "slug": "surface-area-and-nets",
+   "folder": "103-surface-area-and-nets",
+   "file": "surface-area-and-nets",
+   "title": "Surface Area and Nets",
+   "grade": "6"
+  },
+  {
+   "number": 104,
+   "slug": "mean-median-and-mode",
+   "folder": "104-mean-median-and-mode",
+   "file": "mean-median-and-mode",
+   "title": "Mean, Median and Mode",
+   "grade": "6"
+  },
+  {
+   "number": 105,
+   "slug": "data-displays",
+   "folder": "105-data-displays",
+   "file": "data-displays",
+   "title": "Data Displays",
+   "grade": "6"
   }
  ],
  "tests": [
@@ -815,146 +855,119 @@
    "id": "grade-1-pre",
    "type": "pre",
    "title": "Grade 1 Pre-Assessment",
-   "total": 60,
+   "total": 66,
    "file": "assessments/color/grade-1-pre-assessment-key.pdf",
    "parts": [
     {
      "part": 1,
-     "name": "Break it apart",
-     "kind": "ba",
-     "packet": 3,
-     "packets": "3",
-     "questions": [
-      {
-       "n": 1,
-       "prompt": "9 + 4 = ?",
-       "answer": "13"
-      },
-      {
-       "n": 2,
-       "prompt": "7 + 5 = ?",
-       "answer": "12"
-      }
-     ]
-    },
-    {
-     "part": 2,
      "name": "Over ten",
      "kind": "eq3",
      "packet": 3,
      "packets": "3",
      "questions": [
       {
-       "n": 3,
+       "n": 1,
        "prompt": "9 + 6 = ?",
        "answer": "15"
       },
       {
-       "n": 4,
+       "n": 2,
        "prompt": "8 + 3 = ?",
        "answer": "11"
       },
       {
-       "n": 5,
+       "n": 3,
        "prompt": "7 + 4 = ?",
        "answer": "11"
       },
       {
-       "n": 6,
+       "n": 4,
        "prompt": "4 + 7 = ?",
        "answer": "11"
       },
       {
-       "n": 7,
+       "n": 5,
        "prompt": "9 + 9 = ?",
        "answer": "18"
       },
       {
-       "n": 8,
+       "n": 6,
        "prompt": "6 + 8 = ?",
        "answer": "14"
-      }
-     ]
-    },
-    {
-     "part": 3,
-     "name": "Up to the next ten, then over",
-     "kind": "ladder",
-     "packet": 4,
-     "packets": "4",
-     "questions": [
-      {
-       "n": 9,
-       "prompt": "27 + 9 = ?",
-       "answer": "36"
       },
       {
-       "n": 10,
-       "prompt": "48 + 8 = ?",
-       "answer": "56"
+       "n": 7,
+       "prompt": "9 + 5 = ?",
+       "answer": "14"
+      },
+      {
+       "n": 8,
+       "prompt": "4 + 9 = ?",
+       "answer": "13"
+      },
+      {
+       "n": 9,
+       "prompt": "3 + 8 = ?",
+       "answer": "11"
       }
      ]
     },
     {
-     "part": 4,
+     "part": 2,
      "name": "Over the next ten",
      "kind": "eq3",
      "packet": 4,
      "packets": "4",
      "questions": [
       {
-       "n": 11,
+       "n": 10,
        "prompt": "76 + 7 = ?",
        "answer": "83"
       },
       {
-       "n": 12,
+       "n": 11,
        "prompt": "67 + 4 = ?",
        "answer": "71"
       },
       {
-       "n": 13,
+       "n": 12,
        "prompt": "47 + 7 = ?",
        "answer": "54"
       },
       {
-       "n": 14,
+       "n": 13,
        "prompt": "39 + 6 = ?",
        "answer": "45"
       },
       {
-       "n": 15,
+       "n": 14,
        "prompt": "58 + 7 = ?",
        "answer": "65"
       },
       {
-       "n": 16,
+       "n": 15,
        "prompt": "29 + 8 = ?",
        "answer": "37"
-      }
-     ]
-    },
-    {
-     "part": 5,
-     "name": "Jump through ten",
-     "kind": "jump",
-     "packet": 5,
-     "packets": "5",
-     "questions": [
+      },
+      {
+       "n": 16,
+       "prompt": "18 + 9 = ?",
+       "answer": "27"
+      },
       {
        "n": 17,
-       "prompt": "14 − 8 = ?",
-       "answer": "6"
+       "prompt": "17 + 9 = ?",
+       "answer": "26"
       },
       {
        "n": 18,
-       "prompt": "17 − 8 = ?",
-       "answer": "9"
+       "prompt": "56 + 5 = ?",
+       "answer": "61"
       }
      ]
     },
     {
-     "part": 6,
+     "part": 3,
      "name": "Back through ten",
      "kind": "eq3",
      "packet": 5,
@@ -989,54 +1002,45 @@
        "n": 24,
        "prompt": "15 − 6 = ?",
        "answer": "9"
-      }
-     ]
-    },
-    {
-     "part": 7,
-     "name": "Near doubles with dots",
-     "kind": "near_dots",
-     "packet": 6,
-     "packets": "6",
-     "questions": [
+      },
       {
        "n": 25,
-       "prompt": "double 4 = ?, so 4 + 5 = ?",
-       "answer": "8, so 4 + 5 = 9"
+       "prompt": "11 − 5 = ?",
+       "answer": "6"
       },
       {
        "n": 26,
-       "prompt": "double 2 = ?, so 2 + 3 = ?",
-       "answer": "4, so 2 + 3 = 5"
+       "prompt": "15 − 7 = ?",
+       "answer": "8"
+      },
+      {
+       "n": 27,
+       "prompt": "13 − 5 = ?",
+       "answer": "8"
       }
      ]
     },
     {
-     "part": 8,
+     "part": 4,
      "name": "Doubles and near doubles",
      "kind": "eq3",
      "packet": 6,
      "packets": "6",
      "questions": [
       {
-       "n": 27,
+       "n": 28,
        "prompt": "6 + 7 = ?",
        "answer": "13"
       },
       {
-       "n": 28,
+       "n": 29,
        "prompt": "7 + 8 = ?",
        "answer": "15"
       },
       {
-       "n": 29,
+       "n": 30,
        "prompt": "6 + 5 = ?",
        "answer": "11"
-      },
-      {
-       "n": 30,
-       "prompt": "4 + 4 = ?",
-       "answer": "8"
       },
       {
        "n": 31,
@@ -1047,216 +1051,219 @@
        "n": 32,
        "prompt": "3 + 2 = ?",
        "answer": "5"
-      }
-     ]
-    },
-    {
-     "part": 9,
-     "name": "Count the tens and ones",
-     "kind": "count_to",
-     "packet": 7,
-     "packets": "7",
-     "questions": [
+      },
       {
        "n": 33,
-       "prompt": "tens and ones in the picture of 44",
-       "answer": "4 · 4 · 44"
+       "prompt": "9 + 10 = ?",
+       "answer": "19"
       },
       {
        "n": 34,
-       "prompt": "tens and ones in the picture of 28",
-       "answer": "2 · 8 · 28"
+       "prompt": "3 + 4 = ?",
+       "answer": "7"
+      },
+      {
+       "n": 35,
+       "prompt": "4 + 3 = ?",
+       "answer": "7"
+      },
+      {
+       "n": 36,
+       "prompt": "10 + 10 = ?",
+       "answer": "20"
       }
      ]
     },
     {
-     "part": 10,
+     "part": 5,
      "name": "Tens and ones",
      "kind": "eq2",
      "packet": 7,
      "packets": "7",
      "questions": [
       {
-       "n": 35,
+       "n": 37,
        "prompt": "? tens ? ones = 66",
        "answer": "6 tens 6 ones = 66"
       },
       {
-       "n": 36,
+       "n": 38,
        "prompt": "? tens ? ones = 84",
        "answer": "8 tens 4 ones = 84"
       },
       {
-       "n": 37,
+       "n": 39,
        "prompt": "? tens ? ones = 64",
        "answer": "6 tens 4 ones = 64"
       },
       {
-       "n": 38,
+       "n": 40,
        "prompt": "7 tens 8 ones = ?",
        "answer": "78"
+      },
+      {
+       "n": 41,
+       "prompt": "9 tens 8 ones = ?",
+       "answer": "98"
+      },
+      {
+       "n": 42,
+       "prompt": "4 tens 2 ones = ?",
+       "answer": "42"
       }
      ]
     },
     {
-     "part": 11,
+     "part": 6,
      "name": "Which is more?",
      "kind": "which_more",
      "packet": 7,
      "packets": "7",
      "questions": [
       {
-       "n": 39,
+       "n": 43,
        "prompt": "which is more: 24 or 66",
        "answer": "66"
       },
       {
-       "n": 40,
+       "n": 44,
        "prompt": "which is more: 28 or 96",
        "answer": "96"
       }
      ]
     },
     {
-     "part": 12,
-     "name": "10 less and 10 more",
-     "kind": "side",
-     "packet": 8,
-     "packets": "8",
-     "questions": [
-      {
-       "n": 41,
-       "prompt": "10 less and 10 more than 27",
-       "answer": "17 · 37"
-      },
-      {
-       "n": 42,
-       "prompt": "10 less and 10 more than 29",
-       "answer": "19 · 39"
-      }
-     ]
-    },
-    {
-     "part": 13,
+     "part": 7,
      "name": "Ten more, ten less",
      "kind": "eq3",
      "packet": 8,
      "packets": "8",
      "questions": [
       {
-       "n": 43,
+       "n": 45,
        "prompt": "39 + 10 = ?",
        "answer": "49"
       },
       {
-       "n": 44,
+       "n": 46,
        "prompt": "35 + 10 = ?",
        "answer": "45"
       },
       {
-       "n": 45,
+       "n": 47,
        "prompt": "25 + 10 = ?",
        "answer": "35"
       },
       {
-       "n": 46,
+       "n": 48,
        "prompt": "22 − 10 = ?",
        "answer": "12"
       },
       {
-       "n": 47,
+       "n": 49,
        "prompt": "39 − 10 = ?",
        "answer": "29"
       },
       {
-       "n": 48,
+       "n": 50,
        "prompt": "71 + 10 = ?",
        "answer": "81"
-      }
-     ]
-    },
-    {
-     "part": 14,
-     "name": "Split it",
-     "kind": "add_split",
-     "packet": 9,
-     "packets": "9",
-     "questions": [
-      {
-       "n": 49,
-       "prompt": "17 + 18 = ?",
-       "answer": "35"
       },
       {
-       "n": 50,
-       "prompt": "47 + 11 = ?",
-       "answer": "58"
+       "n": 51,
+       "prompt": "78 + 10 = ?",
+       "answer": "88"
+      },
+      {
+       "n": 52,
+       "prompt": "65 − 10 = ?",
+       "answer": "55"
+      },
+      {
+       "n": 53,
+       "prompt": "59 + 10 = ?",
+       "answer": "69"
       }
      ]
     },
     {
-     "part": 15,
+     "part": 8,
      "name": "Adding two-digit numbers",
      "kind": "eq3",
      "packet": 9,
      "packets": "9",
      "questions": [
       {
-       "n": 51,
+       "n": 54,
        "prompt": "52 + 29 = ?",
        "answer": "81"
       },
       {
-       "n": 52,
+       "n": 55,
        "prompt": "36 + 25 = ?",
        "answer": "61"
       },
       {
-       "n": 53,
+       "n": 56,
        "prompt": "64 + 28 = ?",
        "answer": "92"
       },
       {
-       "n": 54,
+       "n": 57,
        "prompt": "29 + 19 = ?",
        "answer": "48"
       },
       {
-       "n": 55,
+       "n": 58,
        "prompt": "69 + 16 = ?",
        "answer": "85"
       },
       {
-       "n": 56,
+       "n": 59,
        "prompt": "28 + 27 = ?",
        "answer": "55"
+      },
+      {
+       "n": 60,
+       "prompt": "62 + 21 = ?",
+       "answer": "83"
+      },
+      {
+       "n": 61,
+       "prompt": "52 + 12 = ?",
+       "answer": "64"
+      },
+      {
+       "n": 62,
+       "prompt": "36 + 17 = ?",
+       "answer": "53"
       }
      ]
     },
     {
-     "part": 16,
+     "part": 9,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "3–9",
      "questions": [
       {
-       "n": 57,
+       "n": 63,
        "prompt": "Leo has 8 packs of 10 beads and 3 loose beads. How many beads is that?",
        "answer": "83 beads"
       },
       {
-       "n": 58,
+       "n": 64,
        "prompt": "Ravi has 13 leaves and gives 4 away. How many leaves does Ravi have left?",
        "answer": "9 leaves"
       },
       {
-       "n": 59,
+       "n": 65,
        "prompt": "Omar has 14 leaves and gives 7 away. How many leaves does Omar have left?",
        "answer": "7 leaves"
       },
       {
-       "n": 60,
+       "n": 66,
        "prompt": "Tess has 3 packs of 10 books and 1 loose books. How many books is that?",
        "answer": "31 books"
       }
@@ -1269,68 +1276,50 @@
    "id": "grade-2-pre",
    "type": "pre",
    "title": "Grade 2 Pre-Assessment",
-   "total": 98,
+   "total": 102,
    "file": "assessments/color/grade-2-pre-assessment-key.pdf",
    "parts": [
     {
      "part": 1,
-     "name": "Enough ones?",
-     "kind": "enough",
-     "packet": 10,
-     "packets": "10",
-     "questions": [
-      {
-       "n": 1,
-       "prompt": "enough ones? 79 − 33",
-       "answer": "yes"
-      },
-      {
-       "n": 2,
-       "prompt": "enough ones? 44 − 28",
-       "answer": "no"
-      }
-     ]
-    },
-    {
-     "part": 2,
      "name": "Subtracting two-digit numbers",
      "kind": "eq3",
      "packet": 10,
      "packets": "10",
      "questions": [
       {
-       "n": 3,
+       "n": 1,
        "prompt": "64 − 41 = ?",
        "answer": "23"
       },
       {
-       "n": 4,
+       "n": 2,
        "prompt": "98 − 13 = ?",
        "answer": "85"
       },
       {
-       "n": 5,
+       "n": 3,
        "prompt": "86 − 42 = ?",
        "answer": "44"
-      }
-     ]
-    },
-    {
-     "part": 3,
-     "name": "Jump up",
-     "kind": "jump_up",
-     "packet": 11,
-     "packets": "11",
-     "questions": [
+      },
+      {
+       "n": 4,
+       "prompt": "98 − 27 = ?",
+       "answer": "71"
+      },
+      {
+       "n": 5,
+       "prompt": "89 − 32 = ?",
+       "answer": "57"
+      },
       {
        "n": 6,
-       "prompt": "55 + ? = 71",
-       "answer": "16"
+       "prompt": "59 − 12 = ?",
+       "answer": "47"
       }
      ]
     },
     {
-     "part": 4,
+     "part": 2,
      "name": "Missing numbers",
      "kind": "eq3",
      "packet": 11,
@@ -1350,719 +1339,712 @@
        "n": 9,
        "prompt": "45 + ? = 73",
        "answer": "28"
-      }
-     ]
-    },
-    {
-     "part": 5,
-     "name": "Break a ten",
-     "kind": "break_ten",
-     "packet": 12,
-     "packets": "12",
-     "questions": [
+      },
       {
        "n": 10,
-       "prompt": "break a ten: 62",
-       "answer": "12"
+       "prompt": "38 + ? = 64",
+       "answer": "26"
       },
       {
        "n": 11,
-       "prompt": "break a ten: 51",
-       "answer": "11"
+       "prompt": "36 + ? = 51",
+       "answer": "15"
+      },
+      {
+       "n": 12,
+       "prompt": "17 + ? = 32",
+       "answer": "15"
       }
      ]
     },
     {
-     "part": 6,
+     "part": 3,
      "name": "Subtracting with borrowing",
      "kind": "eq3",
      "packet": 12,
      "packets": "12",
      "questions": [
       {
-       "n": 12,
+       "n": 13,
        "prompt": "46 − 28 = ?",
        "answer": "18"
       },
       {
-       "n": 13,
+       "n": 14,
        "prompt": "36 − 18 = ?",
        "answer": "18"
       },
       {
-       "n": 14,
+       "n": 15,
        "prompt": "76 − 39 = ?",
        "answer": "37"
+      },
+      {
+       "n": 16,
+       "prompt": "94 − 66 = ?",
+       "answer": "28"
+      },
+      {
+       "n": 17,
+       "prompt": "82 − 25 = ?",
+       "answer": "57"
+      },
+      {
+       "n": 18,
+       "prompt": "78 − 29 = ?",
+       "answer": "49"
       }
      ]
     },
     {
-     "part": 7,
+     "part": 4,
      "name": "Adding in columns",
      "kind": "col_add",
      "packet": 13,
      "packets": "13",
      "questions": [
       {
-       "n": 15,
+       "n": 19,
        "prompt": "25 + 29 = ?",
        "answer": "54"
       },
       {
-       "n": 16,
+       "n": 20,
        "prompt": "35 + 26 = ?",
        "answer": "61"
       },
       {
-       "n": 17,
+       "n": 21,
        "prompt": "59 + 15 = ?",
        "answer": "74"
       },
       {
-       "n": 18,
+       "n": 22,
        "prompt": "29 + 29 = ?",
        "answer": "58"
       },
       {
-       "n": 19,
+       "n": 23,
        "prompt": "38 + 24 = ?",
        "answer": "62"
       }
      ]
     },
     {
-     "part": 8,
+     "part": 5,
      "name": "Subtracting in columns",
      "kind": "col_sub",
      "packet": 14,
      "packets": "14",
      "questions": [
       {
-       "n": 20,
+       "n": 24,
        "prompt": "79 − 48 = ?",
        "answer": "31"
       },
       {
-       "n": 21,
+       "n": 25,
        "prompt": "63 − 34 = ?",
        "answer": "29"
       },
       {
-       "n": 22,
+       "n": 26,
        "prompt": "51 − 35 = ?",
        "answer": "16"
       },
       {
-       "n": 23,
+       "n": 27,
        "prompt": "67 − 25 = ?",
        "answer": "42"
       },
       {
-       "n": 24,
+       "n": 28,
        "prompt": "89 − 16 = ?",
        "answer": "73"
       }
      ]
     },
     {
-     "part": 9,
-     "name": "Count them",
-     "kind": "count_hto",
-     "packet": 15,
-     "packets": "15",
-     "questions": [
-      {
-       "n": 25,
-       "prompt": "hundreds, tens and ones in the picture of 125",
-       "answer": "1 · 2 · 5 · 125"
-      },
-      {
-       "n": 26,
-       "prompt": "hundreds, tens and ones in the picture of 311",
-       "answer": "3 · 1 · 1 · 311"
-      }
-     ]
-    },
-    {
-     "part": 10,
+     "part": 6,
      "name": "What is it worth?",
      "kind": "worth",
      "packet": 15,
      "packets": "15",
      "questions": [
       {
-       "n": 27,
+       "n": 29,
        "prompt": "worth: the 6 in 685",
        "answer": "600"
       },
       {
-       "n": 28,
+       "n": 30,
        "prompt": "worth: the 8 in 879",
        "answer": "800"
       }
      ]
     },
     {
-     "part": 11,
+     "part": 7,
      "name": "Write the number",
      "kind": "eq2",
      "packet": 15,
      "packets": "15",
      "questions": [
       {
-       "n": 29,
+       "n": 31,
        "prompt": "600 + 60 + 8 = ?",
        "answer": "668"
       },
       {
-       "n": 30,
+       "n": 32,
        "prompt": "100 + 10 + 7 = ?",
        "answer": "117"
+      },
+      {
+       "n": 33,
+       "prompt": "300 + 40 + 7 = ?",
+       "answer": "347"
+      },
+      {
+       "n": 34,
+       "prompt": "100 + 20 + 8 = ?",
+       "answer": "128"
       }
      ]
     },
     {
-     "part": 12,
+     "part": 8,
      "name": "Skip counting",
      "kind": "seq",
      "packet": 16,
      "packets": "16",
      "questions": [
       {
-       "n": 31,
+       "n": 35,
        "prompt": "count by 10 from 65: 75, 95",
        "answer": "75 · 95"
       },
       {
-       "n": 32,
+       "n": 36,
        "prompt": "count by 5 from 100: 105, 115",
        "answer": "105 · 115"
       },
       {
-       "n": 33,
+       "n": 37,
        "prompt": "count by 10 from 95: 105, 125",
        "answer": "105 · 125"
       },
       {
-       "n": 34,
+       "n": 38,
        "prompt": "count by 5 from 120: 125, 135",
        "answer": "125 · 135"
       }
      ]
     },
     {
-     "part": 13,
+     "part": 9,
      "name": "Comparing numbers",
      "kind": "eq3",
      "packet": 17,
      "packets": "17",
      "questions": [
       {
-       "n": 35,
+       "n": 39,
        "prompt": "188 ? 831",
        "answer": "<"
       },
       {
-       "n": 36,
+       "n": 40,
        "prompt": "336 ? 261",
        "answer": ">"
       },
       {
-       "n": 37,
+       "n": 41,
        "prompt": "111 ? 591",
        "answer": "<"
       },
       {
-       "n": 38,
+       "n": 42,
        "prompt": "265 ? 171",
        "answer": ">"
       },
       {
-       "n": 39,
+       "n": 43,
        "prompt": "314 ? 431",
        "answer": "<"
       },
       {
-       "n": 40,
+       "n": 44,
        "prompt": "177 ? 171",
        "answer": ">"
       }
      ]
     },
     {
-     "part": 14,
+     "part": 10,
      "name": "10 or 100 more or less",
      "kind": "eq3",
      "packet": 18,
      "packets": "18",
      "questions": [
       {
-       "n": 41,
+       "n": 45,
        "prompt": "261 + 10 = ?",
        "answer": "271"
       },
       {
-       "n": 42,
+       "n": 46,
        "prompt": "277 + 100 = ?",
        "answer": "377"
       },
       {
-       "n": 43,
+       "n": 47,
        "prompt": "934 + 10 = ?",
        "answer": "944"
       },
       {
-       "n": 44,
+       "n": 48,
        "prompt": "164 + 100 = ?",
        "answer": "264"
       },
       {
-       "n": 45,
+       "n": 49,
        "prompt": "381 − 100 = ?",
        "answer": "281"
       },
       {
-       "n": 46,
+       "n": 50,
        "prompt": "754 + 10 = ?",
        "answer": "764"
       }
      ]
     },
     {
-     "part": 15,
+     "part": 11,
      "name": "Adding three-digit numbers",
      "kind": "col_add3",
      "packet": 19,
      "packets": "19",
      "questions": [
       {
-       "n": 47,
+       "n": 51,
        "prompt": "371 + 132 = ?",
        "answer": "503"
       },
       {
-       "n": 48,
+       "n": 52,
        "prompt": "161 + 121 = ?",
        "answer": "282"
       },
       {
-       "n": 49,
+       "n": 53,
        "prompt": "595 + 286 = ?",
        "answer": "881"
       },
       {
-       "n": 50,
+       "n": 54,
        "prompt": "686 + 176 = ?",
        "answer": "862"
       }
      ]
     },
     {
-     "part": 16,
+     "part": 12,
      "name": "Subtracting three-digit numbers",
      "kind": "col_sub3",
      "packet": 20,
      "packets": "20",
      "questions": [
       {
-       "n": 51,
+       "n": 55,
        "prompt": "819 − 238 = ?",
        "answer": "581"
       },
       {
-       "n": 52,
+       "n": 56,
        "prompt": "585 − 238 = ?",
        "answer": "347"
       },
       {
-       "n": 53,
+       "n": 57,
        "prompt": "793 − 168 = ?",
        "answer": "625"
       },
       {
-       "n": 54,
+       "n": 58,
        "prompt": "754 − 154 = ?",
        "answer": "600"
       }
      ]
     },
     {
-     "part": 17,
-     "name": "Arrays",
-     "kind": "array",
-     "packet": 21,
-     "packets": "21",
-     "questions": [
-      {
-       "n": 55,
-       "prompt": "array 2 rows of 4",
-       "answer": "2 · 4 · 4 · 4 · 8"
-      },
-      {
-       "n": 56,
-       "prompt": "array 4 rows of 3",
-       "answer": "4 · 3 · 3 · 3 · 3 · 3 · 12"
-      }
-     ]
-    },
-    {
-     "part": 18,
+     "part": 13,
      "name": "Equal groups",
      "kind": "eq2",
      "packet": 21,
      "packets": "21",
      "questions": [
       {
-       "n": 57,
+       "n": 59,
        "prompt": "4 + 4 + 4 = ?",
        "answer": "12"
       },
       {
-       "n": 58,
+       "n": 60,
        "prompt": "2 rows of 4 = ?",
        "answer": "8"
+      },
+      {
+       "n": 61,
+       "prompt": "3 rows of 2 = ?",
+       "answer": "6"
+      },
+      {
+       "n": 62,
+       "prompt": "2 + 2 + 2 = ?",
+       "answer": "6"
       }
      ]
     },
     {
-     "part": 19,
+     "part": 14,
      "name": "Even or odd?",
      "kind": "eo_word",
      "packet": 22,
      "packets": "22",
      "questions": [
       {
-       "n": 59,
+       "n": 63,
        "prompt": "207 is ?",
        "answer": "odd"
       },
       {
-       "n": 60,
+       "n": 64,
        "prompt": "268 is ?",
        "answer": "even"
       },
       {
-       "n": 61,
+       "n": 65,
        "prompt": "215 is ?",
        "answer": "odd"
       },
       {
-       "n": 62,
+       "n": 66,
        "prompt": "290 is ?",
        "answer": "even"
       },
       {
-       "n": 63,
+       "n": 67,
        "prompt": "41 is ?",
        "answer": "odd"
       },
       {
-       "n": 64,
+       "n": 68,
        "prompt": "212 is ?",
        "answer": "even"
       }
      ]
     },
     {
-     "part": 20,
+     "part": 15,
      "name": "Hundred buddies",
      "kind": "eq3",
      "packet": 23,
      "packets": "23",
      "questions": [
       {
-       "n": 65,
+       "n": 69,
        "prompt": "? + 47 = 100",
        "answer": "53"
       },
       {
-       "n": 66,
+       "n": 70,
        "prompt": "28 + ? = 100",
        "answer": "72"
       },
       {
-       "n": 67,
+       "n": 71,
        "prompt": "? + 84 = 100",
        "answer": "16"
       }
      ]
     },
     {
-     "part": 21,
+     "part": 16,
      "name": "Counting forward and backward",
      "kind": "seq_any",
      "packet": 24,
      "packets": "24",
      "questions": [
       {
-       "n": 68,
+       "n": 72,
        "prompt": "count by -2 from 88: 86, 82",
        "answer": "86 · 82"
       },
       {
-       "n": 69,
+       "n": 73,
        "prompt": "count by 4 from 108: 112, 120",
        "answer": "112 · 120"
       }
      ]
     },
     {
-     "part": 22,
+     "part": 17,
      "name": "Halves",
      "kind": "eq3",
      "packet": 25,
      "packets": "25",
      "questions": [
       {
-       "n": 70,
+       "n": 74,
        "prompt": "half of 44 = ?",
        "answer": "22"
       },
       {
-       "n": 71,
+       "n": 75,
        "prompt": "half of 94 = ?",
        "answer": "47"
       },
       {
-       "n": 72,
+       "n": 76,
        "prompt": "half of 8 = ?",
        "answer": "4"
       }
      ]
     },
     {
-     "part": 23,
+     "part": 18,
      "name": "Equal shares",
      "kind": "name_share",
      "packet": 26,
      "packets": "26",
      "questions": [
       {
-       "n": 73,
+       "n": 77,
        "prompt": "name share: tall 2 1",
        "answer": "half"
       },
       {
-       "n": 74,
+       "n": 78,
        "prompt": "name share: tall 3 2",
        "answer": "third"
       }
      ]
     },
     {
-     "part": 24,
+     "part": 19,
      "name": "Halves, thirds and fourths",
      "kind": "eq2",
      "packet": 26,
      "packets": "26",
      "questions": [
       {
-       "n": 75,
+       "n": 79,
        "prompt": "1 fourth + 3 fourths = ? whole",
        "answer": "1"
       },
       {
-       "n": 76,
+       "n": 80,
        "prompt": "2 fourths ? 2 halves",
        "answer": "<"
       }
      ]
     },
     {
-     "part": 25,
+     "part": 20,
      "name": "Telling time",
      "kind": "read_clock",
      "packet": 27,
      "packets": "27",
      "questions": [
       {
-       "n": 77,
+       "n": 81,
        "prompt": "clock read 9:05",
        "answer": "9:05"
       },
       {
-       "n": 78,
+       "n": 82,
        "prompt": "clock read 12:40",
        "answer": "12:40"
       }
      ]
     },
     {
-     "part": 26,
+     "part": 21,
      "name": "Half past and quarters",
      "kind": "eq2",
      "packet": 27,
      "packets": "27",
      "questions": [
       {
-       "n": 79,
+       "n": 83,
        "prompt": "quarter to 4 = ?",
        "answer": "3:45"
       },
       {
-       "n": 80,
+       "n": 84,
        "prompt": "quarter to 5 = ?",
        "answer": "4:45"
       }
      ]
     },
     {
-     "part": 27,
+     "part": 22,
      "name": "Money",
      "kind": "coins",
      "packet": 28,
      "packets": "28",
      "questions": [
       {
-       "n": 81,
+       "n": 85,
        "prompt": "coins: NPN",
        "answer": "11¢"
       },
       {
-       "n": 82,
+       "n": 86,
        "prompt": "coins: PDDNP",
        "answer": "27¢"
       }
      ]
     },
     {
-     "part": 28,
+     "part": 23,
      "name": "Adding money",
      "kind": "eq3",
      "packet": 28,
      "packets": "28",
      "questions": [
       {
-       "n": 83,
+       "n": 87,
        "prompt": "35¢ + 33¢ = ?",
        "answer": "68¢"
       },
       {
-       "n": 84,
+       "n": 88,
        "prompt": "35¢ + 36¢ = ?",
        "answer": "71¢"
       }
      ]
     },
     {
-     "part": 29,
+     "part": 24,
      "name": "Subtracting across zeros",
      "kind": "col_sub3",
      "packet": 29,
      "packets": "29",
      "questions": [
       {
-       "n": 85,
+       "n": 89,
        "prompt": "760 − 473 = ?",
        "answer": "287"
       },
       {
-       "n": 86,
+       "n": 90,
        "prompt": "600 − 513 = ?",
        "answer": "87"
       }
      ]
     },
     {
-     "part": 30,
-     "name": "Read the bar",
-     "kind": "bar",
+     "part": 25,
+     "name": "Two-step word problems",
+     "kind": "word",
      "packet": 30,
      "packets": "30",
      "questions": [
       {
-       "n": 87,
-       "prompt": "bar: cmp 47 21 small",
-       "answer": "21"
+       "n": 91,
+       "prompt": "Ben had 47 leaves. Ben got 11 more, then gave 10 away. How many leaves are left?",
+       "answer": "48 leaves"
       },
       {
-       "n": 88,
-       "prompt": "bar: cmp 59 17 big",
-       "answer": "59"
+       "n": 92,
+       "prompt": "Theo had 17 blocks. Theo got 27 more, then gave 10 away. How many blocks are left?",
+       "answer": "34 blocks"
       }
      ]
     },
     {
-     "part": 31,
+     "part": 26,
      "name": "Measuring length",
      "kind": "read_tape",
      "packet": 31,
      "packets": "31",
      "questions": [
       {
-       "n": 89,
+       "n": 93,
        "prompt": "tape: ribbon 9 cm from 2",
        "answer": "9"
       },
       {
-       "n": 90,
+       "n": 94,
        "prompt": "tape: pencil 12 cm from 0",
        "answer": "12"
       }
      ]
     },
     {
-     "part": 32,
+     "part": 27,
      "name": "Adding and subtracting lengths",
      "kind": "eq2",
      "packet": 31,
      "packets": "31",
      "questions": [
       {
-       "n": 91,
+       "n": 95,
        "prompt": "76 cm − 21 cm = ? cm",
        "answer": "55"
       },
       {
-       "n": 92,
+       "n": 96,
        "prompt": "38 cm + 15 cm = ? cm",
        "answer": "53"
       }
      ]
     },
     {
-     "part": 33,
+     "part": 28,
      "name": "Graphs",
      "kind": "mini_bar",
      "packet": 32,
      "packets": "32",
      "questions": [
       {
-       "n": 93,
+       "n": 97,
        "prompt": "mini graph 12: How many kids picked cats?",
        "answer": "4"
       },
       {
-       "n": 94,
+       "n": 98,
        "prompt": "mini graph 7: How many in all?",
        "answer": "25"
       }
      ]
     },
     {
-     "part": 34,
+     "part": 29,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "10–22",
      "questions": [
       {
-       "n": 95,
+       "n": 99,
        "prompt": "Sam has 483 stamps and finds 286 more. How many stamps does Sam have now?",
        "answer": "769 stamps"
       },
       {
-       "n": 96,
+       "n": 100,
        "prompt": "Ava has 476 seeds and finds 275 more. How many seeds does Ava have now?",
        "answer": "751 seeds"
       },
       {
-       "n": 97,
+       "n": 101,
        "prompt": "Kim has 4 bags with 5 blocks in each bag. How many blocks are there in all?",
        "answer": "20 blocks"
       },
       {
-       "n": 98,
+       "n": 102,
        "prompt": "Sam has 55 rocks. Lily has 28 rocks. How many more rocks does Sam have than Lily?",
        "answer": "27 rocks"
       }
@@ -2075,161 +2057,134 @@
    "id": "grade-3-pre",
    "type": "pre",
    "title": "Grade 3 Pre-Assessment",
-   "total": 86,
+   "total": 89,
    "file": "assessments/color/grade-3-pre-assessment-key.pdf",
    "parts": [
     {
      "part": 1,
-     "name": "Groups of",
-     "kind": "times_groups",
-     "packet": 33,
-     "packets": "33",
-     "questions": [
-      {
-       "n": 1,
-       "prompt": "times groups 2 groups of 4",
-       "answer": "2 · 4 · 2 · 4 · 8"
-      },
-      {
-       "n": 2,
-       "prompt": "times groups 2 groups of 5",
-       "answer": "2 · 5 · 2 · 5 · 10"
-      }
-     ]
-    },
-    {
-     "part": 2,
      "name": "Times 2, 5 and 10",
      "kind": "eq3",
      "packet": 33,
      "packets": "33",
      "questions": [
       {
-       "n": 3,
+       "n": 1,
        "prompt": "2 × 3 = ?",
        "answer": "6"
       },
       {
-       "n": 4,
+       "n": 2,
        "prompt": "8 × 5 = ?",
        "answer": "40"
       },
       {
-       "n": 5,
+       "n": 3,
        "prompt": "6 × 10 = ?",
        "answer": "60"
       },
       {
-       "n": 6,
+       "n": 4,
        "prompt": "3 × 10 = ?",
        "answer": "30"
       },
       {
-       "n": 7,
+       "n": 5,
        "prompt": "5 × 5 = ?",
        "answer": "25"
       },
       {
-       "n": 8,
-       "prompt": "5 × 6 = ?",
-       "answer": "30"
-      }
-     ]
-    },
-    {
-     "part": 3,
-     "name": "Break it apart",
-     "kind": "break_array",
-     "packet": 34,
-     "packets": "34",
-     "questions": [
-      {
-       "n": 9,
-       "prompt": "break array 7 6",
-       "answer": "42 · 30 · 12 · 30 · 12 · 42"
+       "n": 6,
+       "prompt": "2 × 4 = ?",
+       "answer": "8"
       },
       {
-       "n": 10,
-       "prompt": "break array 6 6",
-       "answer": "36 · 30 · 6 · 30 · 6 · 36"
+       "n": 7,
+       "prompt": "5 × 6 = ?",
+       "answer": "30"
+      },
+      {
+       "n": 8,
+       "prompt": "9 × 2 = ?",
+       "answer": "18"
+      },
+      {
+       "n": 9,
+       "prompt": "5 × 3 = ?",
+       "answer": "15"
       }
      ]
     },
     {
-     "part": 4,
+     "part": 2,
      "name": "Multiply",
      "kind": "eq3",
      "packet": 34,
      "packets": "34",
      "questions": [
       {
-       "n": 11,
+       "n": 10,
        "prompt": "4 × 7 = ?",
        "answer": "28"
       },
       {
-       "n": 12,
+       "n": 11,
        "prompt": "8 × 4 = ?",
        "answer": "32"
       },
       {
-       "n": 13,
+       "n": 12,
        "prompt": "7 × 4 = ?",
        "answer": "28"
       },
       {
-       "n": 14,
+       "n": 13,
        "prompt": "3 × 7 = ?",
        "answer": "21"
       },
       {
-       "n": 15,
+       "n": 14,
        "prompt": "6 × 4 = ?",
        "answer": "24"
       },
       {
-       "n": 16,
+       "n": 15,
        "prompt": "4 × 8 = ?",
        "answer": "32"
       },
       {
-       "n": 17,
+       "n": 16,
        "prompt": "9 × 8 = ?",
        "answer": "72"
       },
       {
-       "n": 18,
+       "n": 17,
        "prompt": "4 × 3 = ?",
+       "answer": "12"
+      },
+      {
+       "n": 18,
+       "prompt": "3 × 4 = ?",
        "answer": "12"
       },
       {
        "n": 19,
        "prompt": "4 × 4 = ?",
        "answer": "16"
-      }
-     ]
-    },
-    {
-     "part": 5,
-     "name": "Think multiplication",
-     "kind": "think_times",
-     "packet": 35,
-     "packets": "35",
-     "questions": [
+      },
       {
        "n": 20,
-       "prompt": "6 × ? = 48",
-       "answer": "8"
+       "prompt": "8 × 7 = ?",
+       "answer": "56"
       },
       {
        "n": 21,
-       "prompt": "7 × ? = 28",
-       "answer": "4"
+       "prompt": "4 × 6 = ?",
+       "answer": "24"
       }
      ]
     },
     {
-     "part": 6,
+     "part": 3,
      "name": "Divide",
      "kind": "eq3",
      "packet": 35,
@@ -2279,491 +2234,497 @@
        "n": 30,
        "prompt": "20 ÷ 5 = ?",
        "answer": "4"
+      },
+      {
+       "n": 31,
+       "prompt": "40 ÷ 4 = ?",
+       "answer": "10"
+      },
+      {
+       "n": 32,
+       "prompt": "70 ÷ 7 = ?",
+       "answer": "10"
+      },
+      {
+       "n": 33,
+       "prompt": "24 ÷ 8 = ?",
+       "answer": "3"
       }
      ]
     },
     {
-     "part": 7,
+     "part": 4,
      "name": "Rounding",
      "kind": "eq2",
      "packet": 36,
      "packets": "36",
      "questions": [
       {
-       "n": 31,
+       "n": 34,
        "prompt": "Round 307 to the nearest 10: ?",
        "answer": "310"
       },
       {
-       "n": 32,
+       "n": 35,
        "prompt": "Round 398 to the nearest 10: ?",
        "answer": "400"
       },
       {
-       "n": 33,
+       "n": 36,
        "prompt": "Round 619 to the nearest 100: ?",
        "answer": "600"
       },
       {
-       "n": 34,
+       "n": 37,
        "prompt": "Round 216 to the nearest 10: ?",
        "answer": "220"
       }
      ]
     },
     {
-     "part": 8,
+     "part": 5,
      "name": "Multiply by tens",
      "kind": "eq3",
      "packet": 37,
      "packets": "37",
      "questions": [
       {
-       "n": 35,
+       "n": 38,
        "prompt": "5 × 20 = ?",
        "answer": "100"
       },
       {
-       "n": 36,
+       "n": 39,
        "prompt": "2 × 60 = ?",
        "answer": "120"
       },
       {
-       "n": 37,
+       "n": 40,
        "prompt": "5 × 60 = ?",
        "answer": "300"
       }
      ]
     },
     {
-     "part": 9,
+     "part": 6,
      "name": "Area",
      "kind": "eq2",
      "packet": 38,
      "packets": "38",
      "questions": [
       {
-       "n": 38,
+       "n": 41,
        "prompt": "7 in by 5 in: area = ? sq in",
        "answer": "35"
       },
       {
-       "n": 39,
+       "n": 42,
        "prompt": "3 in by 8 in: area = ? sq in",
        "answer": "24"
       }
      ]
     },
     {
-     "part": 10,
+     "part": 7,
      "name": "Unit fractions",
      "kind": "unit_name",
      "packet": 39,
      "packets": "39",
      "questions": [
       {
-       "n": 40,
+       "n": 43,
        "prompt": "name the unit fraction: rect cut in 5, part 4 shaded",
        "answer": "1/5"
       },
       {
-       "n": 41,
+       "n": 44,
        "prompt": "name the unit fraction: square cut in 8, part 7 shaded",
        "answer": "1/8"
       }
      ]
     },
     {
-     "part": 11,
+     "part": 8,
      "name": "Bigger piece",
      "kind": "bigger_unit_plain",
      "packet": 39,
      "packets": "39",
      "questions": [
       {
-       "n": 42,
+       "n": 45,
        "prompt": "bigger piece: 1/8 or 1/2",
        "answer": "1/2"
       },
       {
-       "n": 43,
+       "n": 46,
        "prompt": "bigger piece: 1/5 or 1/6",
        "answer": "1/5"
       },
       {
-       "n": 44,
+       "n": 47,
        "prompt": "bigger piece: 1/8 or 1/4",
        "answer": "1/4"
       }
      ]
     },
     {
-     "part": 12,
+     "part": 9,
      "name": "Name the fraction",
      "kind": "frac_name",
      "packet": 40,
      "packets": "40",
      "questions": [
       {
-       "n": 45,
+       "n": 48,
        "prompt": "name the fraction: circle cut in 8, 2 shaded",
        "answer": "2/8"
       },
       {
-       "n": 46,
+       "n": 49,
        "prompt": "name the fraction: rect cut in 8, 5 shaded",
        "answer": "5/8"
       }
      ]
     },
     {
-     "part": 13,
+     "part": 10,
      "name": "Pieces and fractions",
      "kind": "frac2",
      "packet": 40,
      "packets": "40",
      "questions": [
       {
-       "n": 47,
+       "n": 50,
        "prompt": "2/8 = ? pieces of 1/8",
        "answer": "2"
       },
       {
-       "n": 48,
+       "n": 51,
        "prompt": "four eighths = ?/8",
        "answer": "4"
       }
      ]
     },
     {
-     "part": 14,
+     "part": 11,
      "name": "Less than, equal to, or more than 1?",
      "kind": "vs_one",
      "packet": 41,
      "packets": "41",
      "questions": [
       {
-       "n": 49,
+       "n": 52,
        "prompt": "less, equal or more than 1: 7/8",
        "answer": "less than 1"
       },
       {
-       "n": 50,
+       "n": 53,
        "prompt": "less, equal or more than 1: 8/4",
        "answer": "more than 1"
       }
      ]
     },
     {
-     "part": 15,
+     "part": 12,
      "name": "Fractions and wholes",
      "kind": "frac3",
      "packet": 41,
      "packets": "41",
      "questions": [
       {
-       "n": 51,
+       "n": 54,
        "prompt": "?/8 = 4",
        "answer": "32"
       },
       {
-       "n": 52,
+       "n": 55,
        "prompt": "4/2 = ?",
        "answer": "2"
       },
       {
-       "n": 53,
+       "n": 56,
        "prompt": "24/8 = ?",
        "answer": "3"
       }
      ]
     },
     {
-     "part": 16,
+     "part": 13,
      "name": "Equal fractions",
      "kind": "frac3",
      "packet": 42,
      "packets": "42",
      "questions": [
       {
-       "n": 54,
+       "n": 57,
        "prompt": "3/6 = 1/?",
        "answer": "2"
       },
       {
-       "n": 55,
+       "n": 58,
        "prompt": "1/2 = 3/?",
        "answer": "6"
       },
       {
-       "n": 56,
+       "n": 59,
        "prompt": "3/5 = 6/?",
        "answer": "10"
       }
      ]
     },
     {
-     "part": 17,
+     "part": 14,
      "name": "Compare fractions",
      "kind": "frac3",
      "packet": 43,
      "packets": "43",
      "questions": [
       {
-       "n": 57,
+       "n": 60,
        "prompt": "1/8 ? 7/8",
        "answer": "<"
       },
       {
-       "n": 58,
+       "n": 61,
        "prompt": "2/3 ? 2/5",
        "answer": ">"
       },
       {
-       "n": 59,
+       "n": 62,
        "prompt": "3/8 ? 5/8",
        "answer": "<"
       }
      ]
     },
     {
-     "part": 18,
+     "part": 15,
      "name": "Fractions of a group",
      "kind": "frac3",
      "packet": 44,
      "packets": "44",
      "questions": [
       {
-       "n": 60,
+       "n": 63,
        "prompt": "1/7 of 21 = ?",
        "answer": "3"
       },
       {
-       "n": 61,
+       "n": 64,
        "prompt": "1/4 of 24 = ?",
        "answer": "6"
       },
       {
-       "n": 62,
+       "n": 65,
        "prompt": "1/10 of 20 = ?",
        "answer": "2"
       }
      ]
     },
     {
-     "part": 19,
+     "part": 16,
      "name": "More than one group",
      "kind": "frac2",
      "packet": 44,
      "packets": "44",
      "questions": [
       {
-       "n": 63,
+       "n": 66,
        "prompt": "4/8 of 64 = ?",
        "answer": "32"
       },
       {
-       "n": 64,
+       "n": 67,
        "prompt": "5/6 of 12 = ?",
        "answer": "10"
       }
      ]
     },
     {
-     "part": 20,
+     "part": 17,
      "name": "Perimeter",
      "kind": "eq2",
      "packet": 45,
      "packets": "45",
      "questions": [
       {
-       "n": 65,
+       "n": 68,
        "prompt": "10 cm by 8 cm: perimeter = ? cm",
        "answer": "36"
       },
       {
-       "n": 66,
+       "n": 69,
        "prompt": "14 ft by 8 ft: perimeter = ? ft",
        "answer": "44"
       }
      ]
     },
     {
-     "part": 21,
+     "part": 18,
      "name": "Elapsed time",
      "kind": "eq2",
      "packet": 46,
      "packets": "46",
      "questions": [
       {
-       "n": 67,
+       "n": 70,
        "prompt": "7:15 to 7:30 = ? minutes",
        "answer": "15"
       },
       {
-       "n": 68,
+       "n": 71,
        "prompt": "10:40 to 11:15 = ? minutes",
        "answer": "35"
       }
      ]
     },
     {
-     "part": 22,
-     "name": "Equal pieces",
-     "kind": "bar",
-     "packet": 47,
-     "packets": "47",
-     "questions": [
-      {
-       "n": 69,
-       "prompt": "bar: eq 4 7 each",
-       "answer": "7"
-      },
-      {
-       "n": 70,
-       "prompt": "bar: eq 6 5 whole",
-       "answer": "30"
-      }
-     ]
-    },
-    {
-     "part": 23,
+     "part": 19,
      "name": "Two-step word problems",
      "kind": "word",
      "packet": 47,
      "packets": "47",
      "questions": [
       {
-       "n": 71,
+       "n": 72,
        "prompt": "15 pencils are shared equally by 5 kids. Then each kid gets 10 more. How many does each kid have now?",
        "answer": "13 pencils"
       },
       {
-       "n": 72,
+       "n": 73,
        "prompt": "Ava has 4 boxes of 7 buttons. Ava uses 16 of them. How many buttons are left?",
        "answer": "12 buttons"
+      },
+      {
+       "n": 74,
+       "prompt": "12 cards are shared equally by 3 kids. Then each kid gets 7 more. How many does each kid have now?",
+       "answer": "11 cards"
+      },
+      {
+       "n": 75,
+       "prompt": "Lily has 8 boxes of 3 books. Lily uses 13 of them. How many books are left?",
+       "answer": "11 books"
       }
      ]
     },
     {
-     "part": 24,
+     "part": 20,
      "name": "Times table patterns",
      "kind": "eo_product",
      "packet": 48,
      "packets": "48",
      "questions": [
       {
-       "n": 73,
+       "n": 76,
        "prompt": "even odd product 3 4",
        "answer": "even"
       },
       {
-       "n": 74,
+       "n": 77,
        "prompt": "even odd product 3 5",
        "answer": "odd"
       }
      ]
     },
     {
-     "part": 25,
+     "part": 21,
      "name": "Mass and liquid volume",
      "kind": "beaker",
      "packet": 49,
      "packets": "49",
      "questions": [
       {
-       "n": 75,
+       "n": 78,
        "prompt": "beaker 3 of 10",
        "answer": "3 liters"
       },
       {
-       "n": 76,
+       "n": 79,
        "prompt": "beaker 9 of 10",
        "answer": "9 liters"
       }
      ]
     },
     {
-     "part": 26,
+     "part": 22,
      "name": "Scaled graphs",
      "kind": "eq2",
      "packet": 50,
      "packets": "50",
      "questions": [
       {
-       "n": 77,
+       "n": 80,
        "prompt": "each picture = 2: 4 pictures = ?",
        "answer": "8"
       },
       {
-       "n": 78,
+       "n": 81,
        "prompt": "each picture = 5: 5 pictures = ?",
        "answer": "25"
       }
      ]
     },
     {
-     "part": 27,
+     "part": 23,
      "name": "Quarter inches",
      "kind": "eq2",
      "packet": 51,
      "packets": "51",
      "questions": [
       {
-       "n": 79,
+       "n": 82,
        "prompt": "4½ inches = ? quarter inches",
        "answer": "18"
       },
       {
-       "n": 80,
+       "n": 83,
        "prompt": "2¼ inches = ? quarter inches",
        "answer": "9"
       }
      ]
     },
     {
-     "part": 28,
+     "part": 24,
      "name": "Quadrilaterals",
      "kind": "is_quad",
      "packet": 52,
      "packets": "52",
      "questions": [
       {
-       "n": 81,
+       "n": 84,
        "prompt": "is quadrilateral kite 0",
        "answer": "yes"
       },
       {
-       "n": 82,
+       "n": 85,
        "prompt": "is quadrilateral parallelogram 25",
        "answer": "yes"
       }
      ]
     },
     {
-     "part": 29,
+     "part": 25,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "33–35",
      "questions": [
       {
-       "n": 83,
+       "n": 86,
        "prompt": "Kim shares 36 toy cars equally among 4 friends. How many toy cars does each friend get?",
        "answer": "9 toy cars"
       },
       {
-       "n": 84,
+       "n": 87,
        "prompt": "Sam shares 63 shells equally among 7 friends. How many shells does each friend get?",
        "answer": "9 shells"
       },
       {
-       "n": 85,
+       "n": 88,
        "prompt": "Sam has 6 bags with 8 stickers in each bag. How many stickers are there in all?",
        "answer": "48 stickers"
       },
       {
-       "n": 86,
+       "n": 89,
        "prompt": "Jay has 8 bags with 9 stickers in each bag. How many stickers are there in all?",
        "answer": "72 stickers"
       }
@@ -3855,7 +3816,7 @@
    "id": "grade-6-pre",
    "type": "pre",
    "title": "Grade 6 Pre-Assessment",
-   "total": 26,
+   "total": 35,
    "file": "assessments/color/grade-6-pre-assessment-key.pdf",
    "parts": [
     {
@@ -4050,38 +4011,128 @@
     },
     {
      "part": 11,
-     "name": "Word problems",
-     "kind": "word",
-     "packet": null,
-     "packets": "91–100",
+     "name": "Area of shapes",
+     "kind": "eq1",
+     "packet": 101,
+     "packets": "101",
      "questions": [
       {
        "n": 21,
+       "prompt": "triangle, base 13 in, height 8 in:  area = ? sq in",
+       "answer": "52"
+      },
+      {
+       "n": 22,
+       "prompt": "triangle, base 9 m, height 6 m:  area = ? sq m",
+       "answer": "27"
+      }
+     ]
+    },
+    {
+     "part": 12,
+     "name": "Volume with fractions",
+     "kind": "mixed2",
+     "packet": 102,
+     "packets": "102",
+     "questions": [
+      {
+       "n": 23,
+       "prompt": "1 1/2 × 3 × 3 = ? ?/2",
+       "answer": "13 1/2"
+      },
+      {
+       "n": 24,
+       "prompt": "2 1/2 × 2 × 6 = ?",
+       "answer": "30"
+      }
+     ]
+    },
+    {
+     "part": 13,
+     "name": "Surface area",
+     "kind": "eq1",
+     "packet": 103,
+     "packets": "103",
+     "questions": [
+      {
+       "n": 25,
+       "prompt": "box 5 × 3 × 4 cm:  surface area = ? sq cm",
+       "answer": "94"
+      },
+      {
+       "n": 26,
+       "prompt": "box 9 × 4 × 2 ft:  surface area = ? sq ft",
+       "answer": "124"
+      }
+     ]
+    },
+    {
+     "part": 14,
+     "name": "Mean and median",
+     "kind": "eq1",
+     "packet": 104,
+     "packets": "104",
+     "questions": [
+      {
+       "n": 27,
+       "prompt": "median of 7, 15, 9, 13 = ?",
+       "answer": "11"
+      },
+      {
+       "n": 28,
+       "prompt": "mean of 5, 8, 6, 9 = ?",
+       "answer": "7"
+      }
+     ]
+    },
+    {
+     "part": 15,
+     "name": "Data",
+     "kind": "eq1",
+     "packet": 105,
+     "packets": "105",
+     "questions": [
+      {
+       "n": 29,
+       "prompt": "12, 13, 13, 14, 48:  mean = ?  and  median = ?",
+       "answer": "20  and  median = 13"
+      }
+     ]
+    },
+    {
+     "part": 16,
+     "name": "Word problems",
+     "kind": "word",
+     "packet": null,
+     "packets": "91–105",
+     "questions": [
+      {
+       "n": 30,
        "prompt": "A car goes 336 miles in 6 hours. How many miles does it go in 1 hour?",
        "answer": "56 miles"
       },
       {
-       "n": 22,
+       "n": 31,
        "prompt": "Juice is mixed 2 cups of mango for every 5 cups of water. How much water goes with 6 cups of mango?",
        "answer": "15 cups"
       },
       {
-       "n": 23,
+       "n": 32,
        "prompt": "6 bottles of water cost $4.20. How much is 1 bottle?",
        "answer": "$0.70"
       },
       {
-       "n": 24,
+       "n": 33,
        "prompt": "A school buys 2,016 pencils in boxes of 24. How many boxes?",
        "answer": "84 boxes"
       },
       {
-       "n": 25,
+       "n": 34,
        "prompt": "A $45 shirt is 20% off. How many dollars do you save?",
        "answer": "$9"
       },
       {
-       "n": 26,
+       "n": 35,
        "prompt": "You have 3/4 of a pizza. Each slice is 1/8 of the pizza. How many slices is that?",
        "answer": "6 slices"
       }
@@ -4099,116 +4150,89 @@
    "parts": [
     {
      "part": 1,
-     "name": "Put together",
-     "kind": "pic_add",
+     "name": "Add",
+     "kind": "eq3",
      "packet": 0,
      "packets": "0",
      "questions": [
       {
        "n": 1,
-       "prompt": "pic: frog 2 + 3",
-       "answer": "5"
+       "prompt": "7 + 2 = ?",
+       "answer": "9"
       },
       {
        "n": 2,
-       "prompt": "pic: crayon 1 + 4",
-       "answer": "5"
+       "prompt": "6 + 1 = ?",
+       "answer": "7"
       },
       {
        "n": 3,
-       "prompt": "pic: cookie 3 + 1",
-       "answer": "4"
+       "prompt": "8 + 1 = ?",
+       "answer": "9"
       },
       {
        "n": 4,
-       "prompt": "pic: frog 3 + 1",
+       "prompt": "6 + 3 = ?",
+       "answer": "9"
+      },
+      {
+       "n": 5,
+       "prompt": "1 + 2 = ?",
+       "answer": "3"
+      },
+      {
+       "n": 6,
+       "prompt": "2 + 6 = ?",
+       "answer": "8"
+      },
+      {
+       "n": 7,
+       "prompt": "1 + 3 = ?",
        "answer": "4"
+      },
+      {
+       "n": 8,
+       "prompt": "4 + 1 = ?",
+       "answer": "5"
+      },
+      {
+       "n": 9,
+       "prompt": "1 + 4 = ?",
+       "answer": "5"
       }
      ]
     },
     {
      "part": 2,
      "name": "Take away",
-     "kind": "pic_take",
-     "packet": 0,
-     "packets": "0",
-     "questions": [
-      {
-       "n": 5,
-       "prompt": "pic: star 3 - 1",
-       "answer": "2"
-      },
-      {
-       "n": 6,
-       "prompt": "pic: bird 3 - 1",
-       "answer": "2"
-      },
-      {
-       "n": 7,
-       "prompt": "pic: frog 5 - 4",
-       "answer": "1"
-      },
-      {
-       "n": 8,
-       "prompt": "pic: crayon 5 - 4",
-       "answer": "1"
-      }
-     ]
-    },
-    {
-     "part": 3,
-     "name": "Story problems",
-     "kind": "wide_story",
-     "packet": 0,
-     "packets": "0",
-     "questions": [
-      {
-       "n": 9,
-       "prompt": "story pic: car 9 - 1",
-       "answer": "9 · − · 1 · 8"
-      },
-      {
-       "n": 10,
-       "prompt": "story pic: cupcake 7 - 1",
-       "answer": "7 · − · 1 · 6"
-      }
-     ]
-    },
-    {
-     "part": 4,
-     "name": "Draw to solve",
-     "kind": "draw_solve",
-     "packet": 0,
-     "packets": "0",
-     "questions": [
-      {
-       "n": 11,
-       "prompt": "draw to solve: 3 + 6",
-       "answer": "9"
-      },
-      {
-       "n": 12,
-       "prompt": "draw to solve: 1 + 5",
-       "answer": "6"
-      }
-     ]
-    },
-    {
-     "part": 5,
-     "name": "Add and take away",
      "kind": "eq3",
      "packet": 0,
      "packets": "0",
      "questions": [
       {
+       "n": 10,
+       "prompt": "9 − 7 = ?",
+       "answer": "2"
+      },
+      {
+       "n": 11,
+       "prompt": "7 − 1 = ?",
+       "answer": "6"
+      },
+      {
+       "n": 12,
+       "prompt": "5 − 3 = ?",
+       "answer": "2"
+      },
+      {
        "n": 13,
-       "prompt": "5 + 3 = ?",
-       "answer": "8"
+       "prompt": "3 − 1 = ?",
+       "answer": "2"
       },
       {
        "n": 14,
-       "prompt": "3 + 6 = ?",
-       "answer": "9"
+       "prompt": "5 − 2 = ?",
+       "answer": "3"
       },
       {
        "n": 15,
@@ -4217,202 +4241,184 @@
       },
       {
        "n": 16,
-       "prompt": "8 − 3 = ?",
-       "answer": "5"
-      },
-      {
-       "n": 17,
-       "prompt": "7 − 4 = ?",
-       "answer": "3"
-      },
-      {
-       "n": 18,
-       "prompt": "3 + 1 = ?",
+       "prompt": "5 − 1 = ?",
        "answer": "4"
       },
       {
-       "n": 19,
-       "prompt": "4 − 1 = ?",
-       "answer": "3"
+       "n": 17,
+       "prompt": "9 − 1 = ?",
+       "answer": "8"
       },
       {
-       "n": 20,
-       "prompt": "3 − 2 = ?",
-       "answer": "1"
-      },
-      {
-       "n": 21,
-       "prompt": "3 + 4 = ?",
-       "answer": "7"
+       "n": 18,
+       "prompt": "8 − 4 = ?",
+       "answer": "4"
       }
      ]
     },
     {
-     "part": 6,
-     "name": "How many dots? What is its buddy?",
-     "kind": "frame_buddy",
-     "packet": 1,
-     "packets": "1",
-     "questions": [
-      {
-       "n": 22,
-       "prompt": "frame 8",
-       "answer": "8 · 2"
-      },
-      {
-       "n": 23,
-       "prompt": "frame 2",
-       "answer": "2 · 8"
-      }
-     ]
-    },
-    {
-     "part": 7,
+     "part": 3,
      "name": "Fill in the buddy",
      "kind": "eq3",
      "packet": 1,
      "packets": "1",
      "questions": [
       {
-       "n": 24,
+       "n": 19,
        "prompt": "? + 4 = 10",
        "answer": "6"
       },
       {
-       "n": 25,
+       "n": 20,
        "prompt": "10 + ? = 10",
        "answer": "0"
       },
       {
-       "n": 26,
+       "n": 21,
        "prompt": "3 + ? = 10",
        "answer": "7"
       },
       {
-       "n": 27,
+       "n": 22,
        "prompt": "? + 5 = 10",
        "answer": "5"
       },
       {
-       "n": 28,
+       "n": 23,
        "prompt": "? + 7 = 10",
        "answer": "3"
       },
       {
-       "n": 29,
+       "n": 24,
        "prompt": "? + 8 = 10",
        "answer": "2"
+      },
+      {
+       "n": 25,
+       "prompt": "? + 1 = 10",
+       "answer": "9"
+      },
+      {
+       "n": 26,
+       "prompt": "0 + ? = 10",
+       "answer": "10"
+      },
+      {
+       "n": 27,
+       "prompt": "6 + ? = 10",
+       "answer": "4"
       }
      ]
     },
     {
-     "part": 8,
+     "part": 4,
      "name": "Are they Ten Buddies?",
      "kind": "buddy_yesno",
      "packet": 1,
      "packets": "1",
      "questions": [
       {
-       "n": 30,
+       "n": 28,
        "prompt": "buddies? 1 and 9",
        "answer": "yes"
       },
       {
-       "n": 31,
+       "n": 29,
        "prompt": "buddies? 2 and 3",
        "answer": "no"
       },
       {
-       "n": 32,
+       "n": 30,
        "prompt": "buddies? 5 and 5",
        "answer": "yes"
       },
       {
-       "n": 33,
+       "n": 31,
        "prompt": "buddies? 8 and 3",
        "answer": "no"
       }
      ]
     },
     {
-     "part": 9,
-     "name": "Ten and some more",
-     "kind": "teen",
-     "packet": 2,
-     "packets": "2",
-     "questions": [
-      {
-       "n": 34,
-       "prompt": "10 + 8 = ?",
-       "answer": "18"
-      },
-      {
-       "n": 35,
-       "prompt": "10 + 7 = ?",
-       "answer": "17"
-      }
-     ]
-    },
-    {
-     "part": 10,
+     "part": 5,
      "name": "Teen numbers",
      "kind": "eq3",
      "packet": 2,
      "packets": "2",
      "questions": [
       {
-       "n": 36,
+       "n": 32,
        "prompt": "10 + ? = 14",
        "answer": "4"
       },
       {
-       "n": 37,
+       "n": 33,
        "prompt": "5 + 10 = ?",
        "answer": "15"
       },
       {
-       "n": 38,
+       "n": 34,
        "prompt": "6 + 10 = ?",
        "answer": "16"
       },
       {
-       "n": 39,
+       "n": 35,
        "prompt": "3 + ? = 13",
        "answer": "10"
       },
       {
-       "n": 40,
+       "n": 36,
        "prompt": "8 + ? = 18",
        "answer": "10"
       },
       {
-       "n": 41,
+       "n": 37,
        "prompt": "5 + ? = 15",
+       "answer": "10"
+      },
+      {
+       "n": 38,
+       "prompt": "7 + 10 = ?",
+       "answer": "17"
+      },
+      {
+       "n": 39,
+       "prompt": "? + 7 = 17",
+       "answer": "10"
+      },
+      {
+       "n": 40,
+       "prompt": "1 + ? = 11",
        "answer": "10"
       }
      ]
     },
     {
-     "part": 11,
-     "name": "Find the buddies first, then add",
-     "kind": "three",
+     "part": 6,
+     "name": "Add three numbers",
+     "kind": "eq3",
      "packet": 2,
      "packets": "2",
      "questions": [
       {
+       "n": 41,
+       "prompt": "5 + 1 + 9 = ?",
+       "answer": "15"
+      },
+      {
        "n": 42,
-       "prompt": "3 + 7 + 4 = ?",
-       "answer": "4 · 14"
+       "prompt": "9 + 1 + 7 = ?",
+       "answer": "17"
       },
       {
        "n": 43,
-       "prompt": "5 + 5 + 7 = ?",
-       "answer": "7 · 17"
+       "prompt": "7 + 3 + 2 = ?",
+       "answer": "12"
       }
      ]
     },
     {
-     "part": 12,
+     "part": 7,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
@@ -4442,146 +4448,119 @@
    "id": "grade-1-post",
    "type": "post",
    "title": "Grade 1 Post-Assessment",
-   "total": 60,
+   "total": 66,
    "file": "assessments/color/grade-1-post-assessment-key.pdf",
    "parts": [
     {
      "part": 1,
-     "name": "Break it apart",
-     "kind": "ba",
-     "packet": 3,
-     "packets": "3",
-     "questions": [
-      {
-       "n": 1,
-       "prompt": "9 + 8 = ?",
-       "answer": "17"
-      },
-      {
-       "n": 2,
-       "prompt": "9 + 5 = ?",
-       "answer": "14"
-      }
-     ]
-    },
-    {
-     "part": 2,
      "name": "Over ten",
      "kind": "eq3",
      "packet": 3,
      "packets": "3",
      "questions": [
       {
-       "n": 3,
-       "prompt": "4 + 9 = ?",
-       "answer": "13"
-      },
-      {
-       "n": 4,
-       "prompt": "3 + 8 = ?",
-       "answer": "11"
-      },
-      {
-       "n": 5,
+       "n": 1,
        "prompt": "8 + 4 = ?",
        "answer": "12"
       },
       {
-       "n": 6,
+       "n": 2,
        "prompt": "2 + 9 = ?",
        "answer": "11"
       },
       {
-       "n": 7,
+       "n": 3,
        "prompt": "3 + 9 = ?",
        "answer": "12"
       },
       {
-       "n": 8,
+       "n": 4,
        "prompt": "6 + 9 = ?",
        "answer": "15"
-      }
-     ]
-    },
-    {
-     "part": 3,
-     "name": "Up to the next ten, then over",
-     "kind": "ladder",
-     "packet": 4,
-     "packets": "4",
-     "questions": [
-      {
-       "n": 9,
-       "prompt": "67 + 8 = ?",
-       "answer": "75"
       },
       {
-       "n": 10,
-       "prompt": "26 + 5 = ?",
-       "answer": "31"
+       "n": 5,
+       "prompt": "4 + 8 = ?",
+       "answer": "12"
+      },
+      {
+       "n": 6,
+       "prompt": "7 + 5 = ?",
+       "answer": "12"
+      },
+      {
+       "n": 7,
+       "prompt": "9 + 8 = ?",
+       "answer": "17"
+      },
+      {
+       "n": 8,
+       "prompt": "5 + 8 = ?",
+       "answer": "13"
+      },
+      {
+       "n": 9,
+       "prompt": "9 + 4 = ?",
+       "answer": "13"
       }
      ]
     },
     {
-     "part": 4,
+     "part": 2,
      "name": "Over the next ten",
      "kind": "eq3",
      "packet": 4,
      "packets": "4",
      "questions": [
       {
-       "n": 11,
-       "prompt": "18 + 9 = ?",
-       "answer": "27"
-      },
-      {
-       "n": 12,
-       "prompt": "17 + 9 = ?",
-       "answer": "26"
-      },
-      {
-       "n": 13,
-       "prompt": "56 + 5 = ?",
-       "answer": "61"
-      },
-      {
-       "n": 14,
+       "n": 10,
        "prompt": "87 + 5 = ?",
        "answer": "92"
       },
       {
-       "n": 15,
+       "n": 11,
        "prompt": "86 + 8 = ?",
        "answer": "94"
       },
       {
-       "n": 16,
+       "n": 12,
        "prompt": "17 + 8 = ?",
        "answer": "25"
-      }
-     ]
-    },
-    {
-     "part": 5,
-     "name": "Jump through ten",
-     "kind": "jump",
-     "packet": 5,
-     "packets": "5",
-     "questions": [
+      },
+      {
+       "n": 13,
+       "prompt": "65 + 9 = ?",
+       "answer": "74"
+      },
+      {
+       "n": 14,
+       "prompt": "27 + 4 = ?",
+       "answer": "31"
+      },
+      {
+       "n": 15,
+       "prompt": "65 + 8 = ?",
+       "answer": "73"
+      },
+      {
+       "n": 16,
+       "prompt": "58 + 8 = ?",
+       "answer": "66"
+      },
       {
        "n": 17,
-       "prompt": "12 − 5 = ?",
-       "answer": "7"
+       "prompt": "78 + 9 = ?",
+       "answer": "87"
       },
       {
        "n": 18,
-       "prompt": "16 − 7 = ?",
-       "answer": "9"
+       "prompt": "85 + 7 = ?",
+       "answer": "92"
       }
      ]
     },
     {
-     "part": 6,
+     "part": 3,
      "name": "Back through ten",
      "kind": "eq3",
      "packet": 5,
@@ -4589,130 +4568,112 @@
      "questions": [
       {
        "n": 19,
-       "prompt": "11 − 5 = ?",
-       "answer": "6"
-      },
-      {
-       "n": 20,
-       "prompt": "15 − 7 = ?",
-       "answer": "8"
-      },
-      {
-       "n": 21,
-       "prompt": "13 − 5 = ?",
-       "answer": "8"
-      },
-      {
-       "n": 22,
-       "prompt": "11 − 8 = ?",
-       "answer": "3"
-      },
-      {
-       "n": 23,
        "prompt": "13 − 6 = ?",
        "answer": "7"
       },
       {
-       "n": 24,
+       "n": 20,
+       "prompt": "11 − 8 = ?",
+       "answer": "3"
+      },
+      {
+       "n": 21,
        "prompt": "14 − 7 = ?",
        "answer": "7"
-      }
-     ]
-    },
-    {
-     "part": 7,
-     "name": "Near doubles with dots",
-     "kind": "near_dots",
-     "packet": 6,
-     "packets": "6",
-     "questions": [
+      },
+      {
+       "n": 22,
+       "prompt": "12 − 5 = ?",
+       "answer": "7"
+      },
+      {
+       "n": 23,
+       "prompt": "14 − 8 = ?",
+       "answer": "6"
+      },
+      {
+       "n": 24,
+       "prompt": "12 − 3 = ?",
+       "answer": "9"
+      },
       {
        "n": 25,
-       "prompt": "double 8 = ?, so 8 + 9 = ?",
-       "answer": "16, so 8 + 9 = 17"
+       "prompt": "17 − 9 = ?",
+       "answer": "8"
       },
       {
        "n": 26,
-       "prompt": "double 5 = ?, so 5 + 6 = ?",
-       "answer": "10, so 5 + 6 = 11"
+       "prompt": "11 − 3 = ?",
+       "answer": "8"
+      },
+      {
+       "n": 27,
+       "prompt": "17 − 8 = ?",
+       "answer": "9"
       }
      ]
     },
     {
-     "part": 8,
+     "part": 4,
      "name": "Doubles and near doubles",
      "kind": "eq3",
      "packet": 6,
      "packets": "6",
      "questions": [
       {
-       "n": 27,
-       "prompt": "2 + 3 = ?",
-       "answer": "5"
-      },
-      {
        "n": 28,
-       "prompt": "9 + 10 = ?",
-       "answer": "19"
-      },
-      {
-       "n": 29,
-       "prompt": "4 + 3 = ?",
-       "answer": "7"
-      },
-      {
-       "n": 30,
-       "prompt": "10 + 10 = ?",
-       "answer": "20"
-      },
-      {
-       "n": 31,
        "prompt": "2 + 2 = ?",
        "answer": "4"
       },
       {
+       "n": 29,
+       "prompt": "6 + 7 = ?",
+       "answer": "13"
+      },
+      {
+       "n": 30,
+       "prompt": "8 + 8 = ?",
+       "answer": "16"
+      },
+      {
+       "n": 31,
+       "prompt": "6 + 5 = ?",
+       "answer": "11"
+      },
+      {
        "n": 32,
-       "prompt": "3 + 3 = ?",
-       "answer": "6"
-      }
-     ]
-    },
-    {
-     "part": 9,
-     "name": "Count the tens and ones",
-     "kind": "count_to",
-     "packet": 7,
-     "packets": "7",
-     "questions": [
+       "prompt": "4 + 5 = ?",
+       "answer": "9"
+      },
       {
        "n": 33,
-       "prompt": "tens and ones in the picture of 65",
-       "answer": "6 · 5 · 65"
+       "prompt": "6 + 6 = ?",
+       "answer": "12"
       },
       {
        "n": 34,
-       "prompt": "tens and ones in the picture of 57",
-       "answer": "5 · 7 · 57"
+       "prompt": "7 + 6 = ?",
+       "answer": "13"
+      },
+      {
+       "n": 35,
+       "prompt": "8 + 7 = ?",
+       "answer": "15"
+      },
+      {
+       "n": 36,
+       "prompt": "10 + 9 = ?",
+       "answer": "19"
       }
      ]
     },
     {
-     "part": 10,
+     "part": 5,
      "name": "Tens and ones",
      "kind": "eq2",
      "packet": 7,
      "packets": "7",
      "questions": [
-      {
-       "n": 35,
-       "prompt": "9 tens 8 ones = ?",
-       "answer": "98"
-      },
-      {
-       "n": 36,
-       "prompt": "4 tens 2 ones = ?",
-       "answer": "42"
-      },
       {
        "n": 37,
        "prompt": "? tens ? ones = 89",
@@ -4722,127 +4683,109 @@
        "n": 38,
        "prompt": "2 tens 3 ones = ?",
        "answer": "23"
+      },
+      {
+       "n": 39,
+       "prompt": "6 tens 6 ones = ?",
+       "answer": "66"
+      },
+      {
+       "n": 40,
+       "prompt": "? tens ? ones = 52",
+       "answer": "5 tens 2 ones = 52"
+      },
+      {
+       "n": 41,
+       "prompt": "9 tens 1 ones = ?",
+       "answer": "91"
+      },
+      {
+       "n": 42,
+       "prompt": "3 tens 5 ones = ?",
+       "answer": "35"
       }
      ]
     },
     {
-     "part": 11,
+     "part": 6,
      "name": "Which is more?",
      "kind": "which_more",
      "packet": 7,
      "packets": "7",
      "questions": [
       {
-       "n": 39,
+       "n": 43,
        "prompt": "which is more: 21 or 32",
        "answer": "32"
       },
       {
-       "n": 40,
+       "n": 44,
        "prompt": "which is more: 23 or 86",
        "answer": "86"
       }
      ]
     },
     {
-     "part": 12,
-     "name": "10 less and 10 more",
-     "kind": "side",
-     "packet": 8,
-     "packets": "8",
-     "questions": [
-      {
-       "n": 41,
-       "prompt": "10 less and 10 more than 23",
-       "answer": "13 · 33"
-      },
-      {
-       "n": 42,
-       "prompt": "10 less and 10 more than 84",
-       "answer": "74 · 94"
-      }
-     ]
-    },
-    {
-     "part": 13,
+     "part": 7,
      "name": "Ten more, ten less",
      "kind": "eq3",
      "packet": 8,
      "packets": "8",
      "questions": [
       {
-       "n": 43,
-       "prompt": "78 + 10 = ?",
-       "answer": "88"
-      },
-      {
-       "n": 44,
-       "prompt": "65 − 10 = ?",
-       "answer": "55"
-      },
-      {
        "n": 45,
-       "prompt": "59 + 10 = ?",
-       "answer": "69"
-      },
-      {
-       "n": 46,
        "prompt": "35 − 10 = ?",
        "answer": "25"
       },
       {
-       "n": 47,
+       "n": 46,
        "prompt": "38 − 10 = ?",
        "answer": "28"
       },
       {
-       "n": 48,
+       "n": 47,
        "prompt": "84 + 10 = ?",
        "answer": "94"
-      }
-     ]
-    },
-    {
-     "part": 14,
-     "name": "Split it",
-     "kind": "add_split",
-     "packet": 9,
-     "packets": "9",
-     "questions": [
+      },
+      {
+       "n": 48,
+       "prompt": "77 − 10 = ?",
+       "answer": "67"
+      },
       {
        "n": 49,
-       "prompt": "67 + 19 = ?",
-       "answer": "86"
+       "prompt": "22 + 10 = ?",
+       "answer": "32"
       },
       {
        "n": 50,
-       "prompt": "24 + 12 = ?",
-       "answer": "36"
+       "prompt": "86 − 10 = ?",
+       "answer": "76"
+      },
+      {
+       "n": 51,
+       "prompt": "21 + 10 = ?",
+       "answer": "31"
+      },
+      {
+       "n": 52,
+       "prompt": "26 − 10 = ?",
+       "answer": "16"
+      },
+      {
+       "n": 53,
+       "prompt": "73 + 10 = ?",
+       "answer": "83"
       }
      ]
     },
     {
-     "part": 15,
+     "part": 8,
      "name": "Adding two-digit numbers",
      "kind": "eq3",
      "packet": 9,
      "packets": "9",
      "questions": [
-      {
-       "n": 51,
-       "prompt": "62 + 21 = ?",
-       "answer": "83"
-      },
-      {
-       "n": 52,
-       "prompt": "52 + 12 = ?",
-       "answer": "64"
-      },
-      {
-       "n": 53,
-       "prompt": "36 + 17 = ?",
-       "answer": "53"
-      },
       {
        "n": 54,
        "prompt": "47 + 19 = ?",
@@ -4857,33 +4800,63 @@
        "n": 56,
        "prompt": "48 + 17 = ?",
        "answer": "65"
+      },
+      {
+       "n": 57,
+       "prompt": "56 + 12 = ?",
+       "answer": "68"
+      },
+      {
+       "n": 58,
+       "prompt": "51 + 17 = ?",
+       "answer": "68"
+      },
+      {
+       "n": 59,
+       "prompt": "16 + 26 = ?",
+       "answer": "42"
+      },
+      {
+       "n": 60,
+       "prompt": "24 + 28 = ?",
+       "answer": "52"
+      },
+      {
+       "n": 61,
+       "prompt": "16 + 18 = ?",
+       "answer": "34"
+      },
+      {
+       "n": 62,
+       "prompt": "43 + 16 = ?",
+       "answer": "59"
       }
      ]
     },
     {
-     "part": 16,
+     "part": 9,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "3–9",
      "questions": [
       {
-       "n": 57,
+       "n": 63,
        "prompt": "Max has 28 crayons and finds 13 more. How many crayons does Max have now?",
        "answer": "41 crayons"
       },
       {
-       "n": 58,
+       "n": 64,
        "prompt": "June has 13 seeds and gives 9 away. How many seeds does June have left?",
        "answer": "4 seeds"
       },
       {
-       "n": 59,
+       "n": 65,
        "prompt": "Kim has 64 crayons and finds 27 more. How many crayons does Kim have now?",
        "answer": "91 crayons"
       },
       {
-       "n": 60,
+       "n": 66,
        "prompt": "Tess has 6 beads and finds 5 more. How many beads does Tess have now?",
        "answer": "11 beads"
       }
@@ -4896,68 +4869,50 @@
    "id": "grade-2-post",
    "type": "post",
    "title": "Grade 2 Post-Assessment",
-   "total": 98,
+   "total": 102,
    "file": "assessments/color/grade-2-post-assessment-key.pdf",
    "parts": [
     {
      "part": 1,
-     "name": "Enough ones?",
-     "kind": "enough",
-     "packet": 10,
-     "packets": "10",
-     "questions": [
-      {
-       "n": 1,
-       "prompt": "enough ones? 65 − 21",
-       "answer": "yes"
-      },
-      {
-       "n": 2,
-       "prompt": "enough ones? 73 − 17",
-       "answer": "no"
-      }
-     ]
-    },
-    {
-     "part": 2,
      "name": "Subtracting two-digit numbers",
      "kind": "eq3",
      "packet": 10,
      "packets": "10",
      "questions": [
       {
+       "n": 1,
+       "prompt": "49 − 27 = ?",
+       "answer": "22"
+      },
+      {
+       "n": 2,
+       "prompt": "65 − 13 = ?",
+       "answer": "52"
+      },
+      {
        "n": 3,
-       "prompt": "98 − 27 = ?",
-       "answer": "71"
+       "prompt": "75 − 12 = ?",
+       "answer": "63"
       },
       {
        "n": 4,
-       "prompt": "89 − 32 = ?",
-       "answer": "57"
+       "prompt": "79 − 14 = ?",
+       "answer": "65"
       },
       {
        "n": 5,
-       "prompt": "59 − 12 = ?",
-       "answer": "47"
-      }
-     ]
-    },
-    {
-     "part": 3,
-     "name": "Jump up",
-     "kind": "jump_up",
-     "packet": 11,
-     "packets": "11",
-     "questions": [
+       "prompt": "98 − 31 = ?",
+       "answer": "67"
+      },
       {
        "n": 6,
-       "prompt": "35 + ? = 53",
-       "answer": "18"
+       "prompt": "53 − 32 = ?",
+       "answer": "21"
       }
      ]
     },
     {
-     "part": 4,
+     "part": 2,
      "name": "Missing numbers",
      "kind": "eq3",
      "packet": 11,
@@ -4965,731 +4920,724 @@
      "questions": [
       {
        "n": 7,
-       "prompt": "38 + ? = 64",
+       "prompt": "39 + ? = 65",
        "answer": "26"
       },
       {
        "n": 8,
-       "prompt": "36 + ? = 51",
-       "answer": "15"
+       "prompt": "19 + ? = 36",
+       "answer": "17"
       },
       {
        "n": 9,
-       "prompt": "17 + ? = 32",
-       "answer": "15"
-      }
-     ]
-    },
-    {
-     "part": 5,
-     "name": "Break a ten",
-     "kind": "break_ten",
-     "packet": 12,
-     "packets": "12",
-     "questions": [
+       "prompt": "38 + ? = 54",
+       "answer": "16"
+      },
       {
        "n": 10,
-       "prompt": "break a ten: 55",
-       "answer": "15"
+       "prompt": "44 + ? = 61",
+       "answer": "17"
       },
       {
        "n": 11,
-       "prompt": "break a ten: 57",
-       "answer": "17"
+       "prompt": "65 + ? = 84",
+       "answer": "19"
+      },
+      {
+       "n": 12,
+       "prompt": "59 + ? = 86",
+       "answer": "27"
       }
      ]
     },
     {
-     "part": 6,
+     "part": 3,
      "name": "Subtracting with borrowing",
      "kind": "eq3",
      "packet": 12,
      "packets": "12",
      "questions": [
       {
-       "n": 12,
-       "prompt": "94 − 66 = ?",
-       "answer": "28"
-      },
-      {
        "n": 13,
-       "prompt": "82 − 25 = ?",
-       "answer": "57"
+       "prompt": "38 − 19 = ?",
+       "answer": "19"
       },
       {
        "n": 14,
-       "prompt": "78 − 29 = ?",
+       "prompt": "91 − 38 = ?",
+       "answer": "53"
+      },
+      {
+       "n": 15,
+       "prompt": "73 − 14 = ?",
+       "answer": "59"
+      },
+      {
+       "n": 16,
+       "prompt": "84 − 45 = ?",
+       "answer": "39"
+      },
+      {
+       "n": 17,
+       "prompt": "86 − 37 = ?",
        "answer": "49"
+      },
+      {
+       "n": 18,
+       "prompt": "56 − 18 = ?",
+       "answer": "38"
       }
      ]
     },
     {
-     "part": 7,
+     "part": 4,
      "name": "Adding in columns",
      "kind": "col_add",
      "packet": 13,
      "packets": "13",
      "questions": [
       {
-       "n": 15,
+       "n": 19,
        "prompt": "26 + 27 = ?",
        "answer": "53"
       },
       {
-       "n": 16,
+       "n": 20,
        "prompt": "47 + 25 = ?",
        "answer": "72"
       },
       {
-       "n": 17,
+       "n": 21,
        "prompt": "47 + 29 = ?",
        "answer": "76"
       },
       {
-       "n": 18,
+       "n": 22,
        "prompt": "26 + 29 = ?",
        "answer": "55"
       },
       {
-       "n": 19,
+       "n": 23,
        "prompt": "59 + 19 = ?",
        "answer": "78"
       }
      ]
     },
     {
-     "part": 8,
+     "part": 5,
      "name": "Subtracting in columns",
      "kind": "col_sub",
      "packet": 14,
      "packets": "14",
      "questions": [
       {
-       "n": 20,
+       "n": 24,
        "prompt": "79 − 36 = ?",
        "answer": "43"
       },
       {
-       "n": 21,
+       "n": 25,
        "prompt": "65 − 28 = ?",
        "answer": "37"
       },
       {
-       "n": 22,
+       "n": 26,
        "prompt": "59 − 13 = ?",
        "answer": "46"
       },
       {
-       "n": 23,
+       "n": 27,
        "prompt": "91 − 27 = ?",
        "answer": "64"
       },
       {
-       "n": 24,
+       "n": 28,
        "prompt": "98 − 24 = ?",
        "answer": "74"
       }
      ]
     },
     {
-     "part": 9,
-     "name": "Count them",
-     "kind": "count_hto",
-     "packet": 15,
-     "packets": "15",
-     "questions": [
-      {
-       "n": 25,
-       "prompt": "hundreds, tens and ones in the picture of 242",
-       "answer": "2 · 4 · 2 · 242"
-      },
-      {
-       "n": 26,
-       "prompt": "hundreds, tens and ones in the picture of 225",
-       "answer": "2 · 2 · 5 · 225"
-      }
-     ]
-    },
-    {
-     "part": 10,
+     "part": 6,
      "name": "What is it worth?",
      "kind": "worth",
      "packet": 15,
      "packets": "15",
      "questions": [
       {
-       "n": 27,
+       "n": 29,
        "prompt": "worth: the 6 in 365",
        "answer": "60"
       },
       {
-       "n": 28,
+       "n": 30,
        "prompt": "worth: the 4 in 497",
        "answer": "400"
       }
      ]
     },
     {
-     "part": 11,
+     "part": 7,
      "name": "Write the number",
      "kind": "eq2",
      "packet": 15,
      "packets": "15",
      "questions": [
       {
-       "n": 29,
-       "prompt": "300 + 40 + 7 = ?",
-       "answer": "347"
+       "n": 31,
+       "prompt": "4 hundreds 1 tens 6 ones = ?",
+       "answer": "416"
       },
       {
-       "n": 30,
-       "prompt": "100 + 20 + 8 = ?",
-       "answer": "128"
+       "n": 32,
+       "prompt": "6 hundreds 8 tens 9 ones = ?",
+       "answer": "689"
+      },
+      {
+       "n": 33,
+       "prompt": "1 hundreds 6 tens 3 ones = ?",
+       "answer": "163"
+      },
+      {
+       "n": 34,
+       "prompt": "5 hundreds 9 tens 6 ones = ?",
+       "answer": "596"
       }
      ]
     },
     {
-     "part": 12,
+     "part": 8,
      "name": "Skip counting",
      "kind": "seq",
      "packet": 16,
      "packets": "16",
      "questions": [
       {
-       "n": 31,
+       "n": 35,
        "prompt": "count by 100 from 130: 230, 430",
        "answer": "230 · 430"
       },
       {
-       "n": 32,
+       "n": 36,
        "prompt": "count by 5 from 395: 400, 410",
        "answer": "400 · 410"
       },
       {
-       "n": 33,
+       "n": 37,
        "prompt": "count by 100 from 20: 120, 320",
        "answer": "120 · 320"
       },
       {
-       "n": 34,
+       "n": 38,
        "prompt": "count by 100 from 360: 460, 660",
        "answer": "460 · 660"
       }
      ]
     },
     {
-     "part": 13,
+     "part": 9,
      "name": "Comparing numbers",
      "kind": "eq3",
      "packet": 17,
      "packets": "17",
      "questions": [
       {
-       "n": 35,
+       "n": 39,
        "prompt": "127 ? 621",
        "answer": "<"
       },
       {
-       "n": 36,
+       "n": 40,
        "prompt": "221 ? 131",
        "answer": ">"
       },
       {
-       "n": 37,
+       "n": 41,
        "prompt": "259 ? 441",
        "answer": "<"
       },
       {
-       "n": 38,
+       "n": 42,
        "prompt": "293 ? 171",
        "answer": ">"
       },
       {
-       "n": 39,
+       "n": 43,
        "prompt": "199 ? 791",
        "answer": "<"
       },
       {
-       "n": 40,
+       "n": 44,
        "prompt": "287 ? 111",
        "answer": ">"
       }
      ]
     },
     {
-     "part": 14,
+     "part": 10,
      "name": "10 or 100 more or less",
      "kind": "eq3",
      "packet": 18,
      "packets": "18",
      "questions": [
       {
-       "n": 41,
+       "n": 45,
        "prompt": "441 + 10 = ?",
        "answer": "451"
       },
       {
-       "n": 42,
+       "n": 46,
        "prompt": "481 + 100 = ?",
        "answer": "581"
       },
       {
-       "n": 43,
+       "n": 47,
        "prompt": "971 + 10 = ?",
        "answer": "981"
       },
       {
-       "n": 44,
+       "n": 48,
        "prompt": "117 − 10 = ?",
        "answer": "107"
       },
       {
-       "n": 45,
+       "n": 49,
        "prompt": "854 + 10 = ?",
        "answer": "864"
       },
       {
-       "n": 46,
+       "n": 50,
        "prompt": "747 − 10 = ?",
        "answer": "737"
       }
      ]
     },
     {
-     "part": 15,
+     "part": 11,
      "name": "Adding three-digit numbers",
      "kind": "col_add3",
      "packet": 19,
      "packets": "19",
      "questions": [
       {
-       "n": 47,
+       "n": 51,
        "prompt": "511 + 132 = ?",
        "answer": "643"
       },
       {
-       "n": 48,
+       "n": 52,
        "prompt": "322 + 187 = ?",
        "answer": "509"
       },
       {
-       "n": 49,
+       "n": 53,
        "prompt": "343 + 165 = ?",
        "answer": "508"
       },
       {
-       "n": 50,
+       "n": 54,
        "prompt": "357 + 187 = ?",
        "answer": "544"
       }
      ]
     },
     {
-     "part": 16,
+     "part": 12,
      "name": "Subtracting three-digit numbers",
      "kind": "col_sub3",
      "packet": 20,
      "packets": "20",
      "questions": [
       {
-       "n": 51,
+       "n": 55,
        "prompt": "793 − 175 = ?",
        "answer": "618"
       },
       {
-       "n": 52,
+       "n": 56,
        "prompt": "611 − 203 = ?",
        "answer": "408"
       },
       {
-       "n": 53,
+       "n": 57,
        "prompt": "923 − 161 = ?",
        "answer": "762"
       },
       {
-       "n": 54,
+       "n": 58,
        "prompt": "364 − 210 = ?",
        "answer": "154"
       }
      ]
     },
     {
-     "part": 17,
-     "name": "Arrays",
-     "kind": "array",
-     "packet": 21,
-     "packets": "21",
-     "questions": [
-      {
-       "n": 55,
-       "prompt": "array 5 rows of 2",
-       "answer": "5 · 2 · 2 · 2 · 2 · 2 · 2 · 10"
-      },
-      {
-       "n": 56,
-       "prompt": "array 5 rows of 3",
-       "answer": "5 · 3 · 3 · 3 · 3 · 3 · 3 · 15"
-      }
-     ]
-    },
-    {
-     "part": 18,
+     "part": 13,
      "name": "Equal groups",
      "kind": "eq2",
      "packet": 21,
      "packets": "21",
      "questions": [
       {
-       "n": 57,
-       "prompt": "3 rows of 2 = ?",
-       "answer": "6"
+       "n": 59,
+       "prompt": "3 + 3 + 3 + 3 = ?",
+       "answer": "12"
       },
       {
-       "n": 58,
-       "prompt": "2 + 2 + 2 = ?",
-       "answer": "6"
+       "n": 60,
+       "prompt": "2 + 2 + 2 + 2 = ?",
+       "answer": "8"
+      },
+      {
+       "n": 61,
+       "prompt": "5 rows of 4 = ?",
+       "answer": "20"
+      },
+      {
+       "n": 62,
+       "prompt": "2 + 2 + 2 + 2 + 2 = ?",
+       "answer": "10"
       }
      ]
     },
     {
-     "part": 19,
+     "part": 14,
      "name": "Even or odd?",
      "kind": "eo_word",
      "packet": 22,
      "packets": "22",
      "questions": [
       {
-       "n": 59,
+       "n": 63,
        "prompt": "191 is ?",
        "answer": "odd"
       },
       {
-       "n": 60,
+       "n": 64,
        "prompt": "22 is ?",
        "answer": "even"
       },
       {
-       "n": 61,
+       "n": 65,
        "prompt": "295 is ?",
        "answer": "odd"
       },
       {
-       "n": 62,
+       "n": 66,
        "prompt": "170 is ?",
        "answer": "even"
       },
       {
-       "n": 63,
+       "n": 67,
        "prompt": "57 is ?",
        "answer": "odd"
       },
       {
-       "n": 64,
+       "n": 68,
        "prompt": "298 is ?",
        "answer": "even"
       }
      ]
     },
     {
-     "part": 20,
+     "part": 15,
      "name": "Hundred buddies",
      "kind": "eq3",
      "packet": 23,
      "packets": "23",
      "questions": [
       {
-       "n": 65,
+       "n": 69,
        "prompt": "? + 87 = 100",
        "answer": "13"
       },
       {
-       "n": 66,
+       "n": 70,
        "prompt": "84 + ? = 100",
        "answer": "16"
       },
       {
-       "n": 67,
+       "n": 71,
        "prompt": "13 + ? = 100",
        "answer": "87"
       }
      ]
     },
     {
-     "part": 21,
+     "part": 16,
      "name": "Counting forward and backward",
      "kind": "seq_any",
      "packet": 24,
      "packets": "24",
      "questions": [
       {
-       "n": 68,
+       "n": 72,
        "prompt": "count by 25 from 114: 139, 189",
        "answer": "139 · 189"
       },
       {
-       "n": 69,
+       "n": 73,
        "prompt": "count by -2 from 146: 144, 140",
        "answer": "144 · 140"
       }
      ]
     },
     {
-     "part": 22,
+     "part": 17,
      "name": "Halves",
      "kind": "eq3",
      "packet": 25,
      "packets": "25",
      "questions": [
       {
-       "n": 70,
+       "n": 74,
        "prompt": "half of 52 = ?",
        "answer": "26"
       },
       {
-       "n": 71,
+       "n": 75,
        "prompt": "half of 27 = ?",
        "answer": "13½"
       },
       {
-       "n": 72,
+       "n": 76,
        "prompt": "half of 6 = ?",
        "answer": "3"
       }
      ]
     },
     {
-     "part": 23,
+     "part": 18,
      "name": "Equal shares",
      "kind": "name_share",
      "packet": 26,
      "packets": "26",
      "questions": [
       {
-       "n": 73,
+       "n": 77,
        "prompt": "name share: circle 4 1",
        "answer": "fourth"
       },
       {
-       "n": 74,
+       "n": 78,
        "prompt": "name share: rect 3 0",
        "answer": "third"
       }
      ]
     },
     {
-     "part": 24,
+     "part": 19,
      "name": "Halves, thirds and fourths",
      "kind": "eq2",
      "packet": 26,
      "packets": "26",
      "questions": [
       {
-       "n": 75,
+       "n": 79,
        "prompt": "2 fourths ? 1 whole",
        "answer": "<"
       },
       {
-       "n": 76,
+       "n": 80,
        "prompt": "1 third ? 3 thirds",
        "answer": "<"
       }
      ]
     },
     {
-     "part": 25,
+     "part": 20,
      "name": "Telling time",
      "kind": "read_clock",
      "packet": 27,
      "packets": "27",
      "questions": [
       {
-       "n": 77,
+       "n": 81,
        "prompt": "clock read 1:25",
        "answer": "1:25"
       },
       {
-       "n": 78,
+       "n": 82,
        "prompt": "clock read 8:40",
        "answer": "8:40"
       }
      ]
     },
     {
-     "part": 26,
+     "part": 21,
      "name": "Half past and quarters",
      "kind": "eq2",
      "packet": 27,
      "packets": "27",
      "questions": [
       {
-       "n": 79,
+       "n": 83,
        "prompt": "half past 6 = ?",
        "answer": "6:30"
       },
       {
-       "n": 80,
+       "n": 84,
        "prompt": "quarter past 8 = ?",
        "answer": "8:15"
       }
      ]
     },
     {
-     "part": 27,
+     "part": 22,
      "name": "Money",
      "kind": "coins",
      "packet": 28,
      "packets": "28",
      "questions": [
       {
-       "n": 81,
+       "n": 85,
        "prompt": "coins: NDND",
        "answer": "30¢"
       },
       {
-       "n": 82,
+       "n": 86,
        "prompt": "coins: PNPDPN",
        "answer": "23¢"
       }
      ]
     },
     {
-     "part": 28,
+     "part": 23,
      "name": "Adding money",
      "kind": "eq3",
      "packet": 28,
      "packets": "28",
      "questions": [
       {
-       "n": 83,
+       "n": 87,
        "prompt": "25¢ + 32¢ = ?",
        "answer": "57¢"
       },
       {
-       "n": 84,
+       "n": 88,
        "prompt": "65¢ + 21¢ = ?",
        "answer": "86¢"
       }
      ]
     },
     {
-     "part": 29,
+     "part": 24,
      "name": "Subtracting across zeros",
      "kind": "col_sub3",
      "packet": 29,
      "packets": "29",
      "questions": [
       {
-       "n": 85,
+       "n": 89,
        "prompt": "701 − 382 = ?",
        "answer": "319"
       },
       {
-       "n": 86,
+       "n": 90,
        "prompt": "907 − 239 = ?",
        "answer": "668"
       }
      ]
     },
     {
-     "part": 30,
-     "name": "Read the bar",
-     "kind": "bar",
+     "part": 25,
+     "name": "Two-step word problems",
+     "kind": "word",
      "packet": 30,
      "packets": "30",
      "questions": [
       {
-       "n": 87,
-       "prompt": "bar: cmp 77 25 big",
-       "answer": "77"
+       "n": 91,
+       "prompt": "Finn had 47 crayons. Finn got 23 more, then gave 18 away. How many crayons are left?",
+       "answer": "52 crayons"
       },
       {
-       "n": 88,
-       "prompt": "bar: pw 33 38 part",
-       "answer": "38"
+       "n": 92,
+       "prompt": "Ravi had 35 buttons. Ravi got 23 more, then gave 10 away. How many buttons are left?",
+       "answer": "48 buttons"
       }
      ]
     },
     {
-     "part": 31,
+     "part": 26,
      "name": "Measuring length",
      "kind": "read_tape",
      "packet": 31,
      "packets": "31",
      "questions": [
       {
-       "n": 89,
+       "n": 93,
        "prompt": "tape: straw 8 cm from 2",
        "answer": "8"
       },
       {
-       "n": 90,
+       "n": 94,
        "prompt": "tape: straw 12 cm from 2",
        "answer": "12"
       }
      ]
     },
     {
-     "part": 32,
+     "part": 27,
      "name": "Adding and subtracting lengths",
      "kind": "eq2",
      "packet": 31,
      "packets": "31",
      "questions": [
       {
-       "n": 91,
+       "n": 95,
        "prompt": "38 cm + 23 cm = ? cm",
        "answer": "61"
       },
       {
-       "n": 92,
+       "n": 96,
        "prompt": "81 cm − 36 cm = ? cm",
        "answer": "45"
       }
      ]
     },
     {
-     "part": 33,
+     "part": 28,
      "name": "Graphs",
      "kind": "mini_bar",
      "packet": 32,
      "packets": "32",
      "questions": [
       {
-       "n": 93,
+       "n": 97,
        "prompt": "mini graph 15: How many in all?",
        "answer": "20"
       },
       {
-       "n": 94,
+       "n": 98,
        "prompt": "mini graph 10: Pizza and tacos together?",
        "answer": "11"
       }
      ]
     },
     {
-     "part": 34,
+     "part": 29,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "10–22",
      "questions": [
       {
-       "n": 95,
+       "n": 99,
        "prompt": "Ben has 343 books and finds 264 more. How many books does Ben have now?",
        "answer": "607 books"
       },
       {
-       "n": 96,
+       "n": 100,
        "prompt": "Mia has 81 stickers. Theo has 58 stickers. How many more stickers does Mia have than Theo?",
        "answer": "23 stickers"
       },
       {
-       "n": 97,
+       "n": 101,
        "prompt": "Leo has 85 stamps and gives 16 away. How many stamps does Leo have left?",
        "answer": "69 stamps"
       },
       {
-       "n": 98,
+       "n": 102,
        "prompt": "Leo has 84 seeds and gives 39 away. How many seeds does Leo have left?",
        "answer": "45 seeds"
       }
@@ -5702,161 +5650,134 @@
    "id": "grade-3-post",
    "type": "post",
    "title": "Grade 3 Post-Assessment",
-   "total": 86,
+   "total": 89,
    "file": "assessments/color/grade-3-post-assessment-key.pdf",
    "parts": [
     {
      "part": 1,
-     "name": "Groups of",
-     "kind": "times_groups",
-     "packet": 33,
-     "packets": "33",
-     "questions": [
-      {
-       "n": 1,
-       "prompt": "times groups 5 groups of 3",
-       "answer": "5 · 3 · 5 · 3 · 15"
-      },
-      {
-       "n": 2,
-       "prompt": "times groups 4 groups of 4",
-       "answer": "4 · 4 · 4 · 4 · 16"
-      }
-     ]
-    },
-    {
-     "part": 2,
      "name": "Times 2, 5 and 10",
      "kind": "eq3",
      "packet": 33,
      "packets": "33",
      "questions": [
       {
-       "n": 3,
-       "prompt": "2 × 4 = ?",
-       "answer": "8"
-      },
-      {
-       "n": 4,
-       "prompt": "5 × 3 = ?",
-       "answer": "15"
-      },
-      {
-       "n": 5,
-       "prompt": "9 × 2 = ?",
-       "answer": "18"
-      },
-      {
-       "n": 6,
+       "n": 1,
        "prompt": "2 × 9 = ?",
        "answer": "18"
       },
       {
-       "n": 7,
+       "n": 2,
        "prompt": "5 × 2 = ?",
        "answer": "10"
       },
       {
-       "n": 8,
+       "n": 3,
        "prompt": "10 × 9 = ?",
        "answer": "90"
-      }
-     ]
-    },
-    {
-     "part": 3,
-     "name": "Break it apart",
-     "kind": "break_array",
-     "packet": 34,
-     "packets": "34",
-     "questions": [
-      {
-       "n": 9,
-       "prompt": "break array 6 8",
-       "answer": "48 · 40 · 8 · 40 · 8 · 48"
       },
       {
-       "n": 10,
-       "prompt": "break array 9 8",
-       "answer": "72 · 80 · 80 · 72"
+       "n": 4,
+       "prompt": "5 × 4 = ?",
+       "answer": "20"
+      },
+      {
+       "n": 5,
+       "prompt": "10 × 2 = ?",
+       "answer": "20"
+      },
+      {
+       "n": 6,
+       "prompt": "2 × 2 = ?",
+       "answer": "4"
+      },
+      {
+       "n": 7,
+       "prompt": "10 × 4 = ?",
+       "answer": "40"
+      },
+      {
+       "n": 8,
+       "prompt": "9 × 5 = ?",
+       "answer": "45"
+      },
+      {
+       "n": 9,
+       "prompt": "5 × 8 = ?",
+       "answer": "40"
       }
      ]
     },
     {
-     "part": 4,
+     "part": 2,
      "name": "Multiply",
      "kind": "eq3",
      "packet": 34,
      "packets": "34",
      "questions": [
       {
-       "n": 11,
-       "prompt": "3 × 4 = ?",
-       "answer": "12"
-      },
-      {
-       "n": 12,
-       "prompt": "8 × 7 = ?",
-       "answer": "56"
-      },
-      {
-       "n": 13,
-       "prompt": "4 × 6 = ?",
-       "answer": "24"
-      },
-      {
-       "n": 14,
+       "n": 10,
        "prompt": "3 × 8 = ?",
        "answer": "24"
       },
       {
-       "n": 15,
+       "n": 11,
        "prompt": "6 × 8 = ?",
        "answer": "48"
       },
       {
-       "n": 16,
+       "n": 12,
        "prompt": "9 × 6 = ?",
        "answer": "54"
       },
       {
-       "n": 17,
+       "n": 13,
        "prompt": "8 × 3 = ?",
        "answer": "24"
       },
       {
-       "n": 18,
+       "n": 14,
        "prompt": "9 × 7 = ?",
        "answer": "63"
       },
       {
-       "n": 19,
+       "n": 15,
        "prompt": "8 × 6 = ?",
        "answer": "48"
-      }
-     ]
-    },
-    {
-     "part": 5,
-     "name": "Think multiplication",
-     "kind": "think_times",
-     "packet": 35,
-     "packets": "35",
-     "questions": [
+      },
+      {
+       "n": 16,
+       "prompt": "7 × 8 = ?",
+       "answer": "56"
+      },
+      {
+       "n": 17,
+       "prompt": "6 × 3 = ?",
+       "answer": "18"
+      },
+      {
+       "n": 18,
+       "prompt": "9 × 4 = ?",
+       "answer": "36"
+      },
+      {
+       "n": 19,
+       "prompt": "6 × 7 = ?",
+       "answer": "42"
+      },
       {
        "n": 20,
-       "prompt": "4 × ? = 36",
-       "answer": "9"
+       "prompt": "8 × 8 = ?",
+       "answer": "64"
       },
       {
        "n": 21,
-       "prompt": "8 × ? = 56",
-       "answer": "7"
+       "prompt": "8 × 9 = ?",
+       "answer": "72"
       }
      ]
     },
     {
-     "part": 6,
+     "part": 3,
      "name": "Divide",
      "kind": "eq3",
      "packet": 35,
@@ -5864,533 +5785,539 @@
      "questions": [
       {
        "n": 22,
-       "prompt": "40 ÷ 4 = ?",
-       "answer": "10"
-      },
-      {
-       "n": 23,
-       "prompt": "70 ÷ 7 = ?",
-       "answer": "10"
-      },
-      {
-       "n": 24,
-       "prompt": "24 ÷ 8 = ?",
-       "answer": "3"
-      },
-      {
-       "n": 25,
        "prompt": "4 ÷ 2 = ?",
        "answer": "2"
       },
       {
-       "n": 26,
+       "n": 23,
        "prompt": "18 ÷ 3 = ?",
        "answer": "6"
       },
       {
-       "n": 27,
+       "n": 24,
        "prompt": "56 ÷ 8 = ?",
        "answer": "7"
       },
       {
-       "n": 28,
+       "n": 25,
        "prompt": "21 ÷ 7 = ?",
        "answer": "3"
       },
       {
-       "n": 29,
+       "n": 26,
        "prompt": "30 ÷ 6 = ?",
        "answer": "5"
       },
       {
-       "n": 30,
+       "n": 27,
        "prompt": "35 ÷ 7 = ?",
        "answer": "5"
+      },
+      {
+       "n": 28,
+       "prompt": "64 ÷ 8 = ?",
+       "answer": "8"
+      },
+      {
+       "n": 29,
+       "prompt": "16 ÷ 2 = ?",
+       "answer": "8"
+      },
+      {
+       "n": 30,
+       "prompt": "40 ÷ 10 = ?",
+       "answer": "4"
+      },
+      {
+       "n": 31,
+       "prompt": "18 ÷ 6 = ?",
+       "answer": "3"
+      },
+      {
+       "n": 32,
+       "prompt": "25 ÷ 5 = ?",
+       "answer": "5"
+      },
+      {
+       "n": 33,
+       "prompt": "28 ÷ 7 = ?",
+       "answer": "4"
       }
      ]
     },
     {
-     "part": 7,
+     "part": 4,
      "name": "Rounding",
      "kind": "eq2",
      "packet": 36,
      "packets": "36",
      "questions": [
       {
-       "n": 31,
+       "n": 34,
        "prompt": "Round 918 to the nearest 10: ?",
        "answer": "920"
       },
       {
-       "n": 32,
+       "n": 35,
        "prompt": "Round 567 to the nearest 100: ?",
        "answer": "600"
       },
       {
-       "n": 33,
+       "n": 36,
        "prompt": "Round 853 to the nearest 10: ?",
        "answer": "850"
       },
       {
-       "n": 34,
+       "n": 37,
        "prompt": "Round 801 to the nearest 100: ?",
        "answer": "800"
       }
      ]
     },
     {
-     "part": 8,
+     "part": 5,
      "name": "Multiply by tens",
      "kind": "eq3",
      "packet": 37,
      "packets": "37",
      "questions": [
       {
-       "n": 35,
+       "n": 38,
        "prompt": "5 × 40 = ?",
        "answer": "200"
       },
       {
-       "n": 36,
+       "n": 39,
        "prompt": "6 × 20 = ?",
        "answer": "120"
       },
       {
-       "n": 37,
+       "n": 40,
        "prompt": "3 × 30 = ?",
        "answer": "90"
       }
      ]
     },
     {
-     "part": 9,
+     "part": 6,
      "name": "Area",
      "kind": "eq2",
      "packet": 38,
      "packets": "38",
      "questions": [
       {
-       "n": 38,
+       "n": 41,
        "prompt": "3 ft by 8 ft: area = ? sq ft",
        "answer": "24"
       },
       {
-       "n": 39,
+       "n": 42,
        "prompt": "6 in by 4 in: area = ? sq in",
        "answer": "24"
       }
      ]
     },
     {
-     "part": 10,
+     "part": 7,
      "name": "Unit fractions",
      "kind": "unit_name",
      "packet": 39,
      "packets": "39",
      "questions": [
       {
-       "n": 40,
+       "n": 43,
        "prompt": "name the unit fraction: square cut in 6, part 4 shaded",
        "answer": "1/6"
       },
       {
-       "n": 41,
+       "n": 44,
        "prompt": "name the unit fraction: rect cut in 8, part 6 shaded",
        "answer": "1/8"
       }
      ]
     },
     {
-     "part": 11,
+     "part": 8,
      "name": "Bigger piece",
      "kind": "bigger_unit_plain",
      "packet": 39,
      "packets": "39",
      "questions": [
       {
-       "n": 42,
+       "n": 45,
        "prompt": "bigger piece: 1/5 or 1/10",
        "answer": "1/5"
       },
       {
-       "n": 43,
+       "n": 46,
        "prompt": "bigger piece: 1/3 or 1/8",
        "answer": "1/3"
       },
       {
-       "n": 44,
+       "n": 47,
        "prompt": "bigger piece: 1/10 or 1/2",
        "answer": "1/2"
       }
      ]
     },
     {
-     "part": 12,
+     "part": 9,
      "name": "Name the fraction",
      "kind": "frac_name",
      "packet": 40,
      "packets": "40",
      "questions": [
       {
-       "n": 45,
+       "n": 48,
        "prompt": "name the fraction: circle cut in 10, 8 shaded",
        "answer": "8/10"
       },
       {
-       "n": 46,
+       "n": 49,
        "prompt": "name the fraction: strip cut in 4, 2 shaded",
        "answer": "2/4"
       }
      ]
     },
     {
-     "part": 13,
+     "part": 10,
      "name": "Pieces and fractions",
      "kind": "frac2",
      "packet": 40,
      "packets": "40",
      "questions": [
       {
-       "n": 47,
+       "n": 50,
        "prompt": "2/3 = ? pieces of 1/3",
        "answer": "2"
       },
       {
-       "n": 48,
+       "n": 51,
        "prompt": "5/8 = ? pieces of 1/8",
        "answer": "5"
       }
      ]
     },
     {
-     "part": 14,
+     "part": 11,
      "name": "Less than, equal to, or more than 1?",
      "kind": "vs_one",
      "packet": 41,
      "packets": "41",
      "questions": [
       {
-       "n": 49,
+       "n": 52,
        "prompt": "less, equal or more than 1: 3/4",
        "answer": "less than 1"
       },
       {
-       "n": 50,
+       "n": 53,
        "prompt": "less, equal or more than 1: 14/8",
        "answer": "more than 1"
       }
      ]
     },
     {
-     "part": 15,
+     "part": 12,
      "name": "Fractions and wholes",
      "kind": "frac3",
      "packet": 41,
      "packets": "41",
      "questions": [
       {
-       "n": 51,
+       "n": 54,
        "prompt": "6/6 = ?",
        "answer": "1"
       },
       {
-       "n": 52,
+       "n": 55,
        "prompt": "?/4 = 3",
        "answer": "12"
       },
       {
-       "n": 53,
+       "n": 56,
        "prompt": "?/2 = 3",
        "answer": "6"
       }
      ]
     },
     {
-     "part": 16,
+     "part": 13,
      "name": "Equal fractions",
      "kind": "frac3",
      "packet": 42,
      "packets": "42",
      "questions": [
       {
-       "n": 54,
+       "n": 57,
        "prompt": "1/4 = 2/?",
        "answer": "8"
       },
       {
-       "n": 55,
+       "n": 58,
        "prompt": "2/10 = 1/?",
        "answer": "5"
       },
       {
-       "n": 56,
+       "n": 59,
        "prompt": "8/10 = 4/?",
        "answer": "5"
       }
      ]
     },
     {
-     "part": 17,
+     "part": 14,
      "name": "Compare fractions",
      "kind": "frac3",
      "packet": 43,
      "packets": "43",
      "questions": [
       {
-       "n": 57,
+       "n": 60,
        "prompt": "7/8 ? 2/8",
        "answer": ">"
       },
       {
-       "n": 58,
+       "n": 61,
        "prompt": "2/4 ? 3/4",
        "answer": "<"
       },
       {
-       "n": 59,
+       "n": 62,
        "prompt": "3/5 ? 3/6",
        "answer": ">"
       }
      ]
     },
     {
-     "part": 18,
+     "part": 15,
      "name": "Fractions of a group",
      "kind": "frac3",
      "packet": 44,
      "packets": "44",
      "questions": [
       {
-       "n": 60,
+       "n": 63,
        "prompt": "1/3 of 12 = ?",
        "answer": "4"
       },
       {
-       "n": 61,
+       "n": 64,
        "prompt": "1/3 of 27 = ?",
        "answer": "9"
       },
       {
-       "n": 62,
+       "n": 65,
        "prompt": "1/6 of 48 = ?",
        "answer": "8"
       }
      ]
     },
     {
-     "part": 19,
+     "part": 16,
      "name": "More than one group",
      "kind": "frac2",
      "packet": 44,
      "packets": "44",
      "questions": [
       {
-       "n": 63,
+       "n": 66,
        "prompt": "3/5 of 30 = ?",
        "answer": "18"
       },
       {
-       "n": 64,
+       "n": 67,
        "prompt": "7/8 of 32 = ?",
        "answer": "28"
       }
      ]
     },
     {
-     "part": 20,
+     "part": 17,
      "name": "Perimeter",
      "kind": "eq2",
      "packet": 45,
      "packets": "45",
      "questions": [
       {
-       "n": 65,
+       "n": 68,
        "prompt": "12 cm by 4 cm: perimeter = ? cm",
        "answer": "32"
       },
       {
-       "n": 66,
+       "n": 69,
        "prompt": "3 in by 2 in: perimeter = ? in",
        "answer": "10"
       }
      ]
     },
     {
-     "part": 21,
+     "part": 18,
      "name": "Elapsed time",
      "kind": "eq2",
      "packet": 46,
      "packets": "46",
      "questions": [
       {
-       "n": 67,
+       "n": 70,
        "prompt": "12:05 to 1:00 = ? minutes",
        "answer": "55"
       },
       {
-       "n": 68,
+       "n": 71,
        "prompt": "5:55 to 6:30 = ? minutes",
        "answer": "35"
       }
      ]
     },
     {
-     "part": 22,
-     "name": "Equal pieces",
-     "kind": "bar",
-     "packet": 47,
-     "packets": "47",
-     "questions": [
-      {
-       "n": 69,
-       "prompt": "bar: eq 7 5 each",
-       "answer": "5"
-      },
-      {
-       "n": 70,
-       "prompt": "bar: eq 3 3 whole",
-       "answer": "9"
-      }
-     ]
-    },
-    {
-     "part": 23,
+     "part": 19,
      "name": "Two-step word problems",
      "kind": "word",
      "packet": 47,
      "packets": "47",
      "questions": [
       {
-       "n": 71,
-       "prompt": "12 cards are shared equally by 3 kids. Then each kid gets 7 more. How many does each kid have now?",
-       "answer": "11 cards"
+       "n": 72,
+       "prompt": "Max has 4 boxes of 7 leaves. Max uses 4 of them. How many leaves are left?",
+       "answer": "24 leaves"
       },
       {
-       "n": 72,
-       "prompt": "Lily has 8 boxes of 3 books. Lily uses 13 of them. How many books are left?",
-       "answer": "11 books"
+       "n": 73,
+       "prompt": "Sam has 6 boxes of 9 marbles. Sam uses 10 of them. How many marbles are left?",
+       "answer": "44 marbles"
+      },
+      {
+       "n": 74,
+       "prompt": "40 rocks are shared equally by 8 kids. Then each kid gets 7 more. How many does each kid have now?",
+       "answer": "12 rocks"
+      },
+      {
+       "n": 75,
+       "prompt": "June has 5 boxes of 8 books. June uses 16 of them. How many books are left?",
+       "answer": "24 books"
       }
      ]
     },
     {
-     "part": 24,
+     "part": 20,
      "name": "Times table patterns",
      "kind": "eo_product",
      "packet": 48,
      "packets": "48",
      "questions": [
       {
-       "n": 73,
+       "n": 76,
        "prompt": "even odd product 5 4",
        "answer": "even"
       },
       {
-       "n": 74,
+       "n": 77,
        "prompt": "even odd product 5 3",
        "answer": "odd"
       }
      ]
     },
     {
-     "part": 25,
+     "part": 21,
      "name": "Mass and liquid volume",
      "kind": "beaker",
      "packet": 49,
      "packets": "49",
      "questions": [
       {
-       "n": 75,
+       "n": 78,
        "prompt": "beaker 7 of 10",
        "answer": "7 liters"
       },
       {
-       "n": 76,
+       "n": 79,
        "prompt": "beaker 5 of 10",
        "answer": "5 liters"
       }
      ]
     },
     {
-     "part": 26,
+     "part": 22,
      "name": "Scaled graphs",
      "kind": "eq2",
      "packet": 50,
      "packets": "50",
      "questions": [
       {
-       "n": 77,
+       "n": 80,
        "prompt": "each picture = 10: 7 pictures = ?",
        "answer": "70"
       },
       {
-       "n": 78,
+       "n": 81,
        "prompt": "each picture = 2: 6 pictures = ?",
        "answer": "12"
       }
      ]
     },
     {
-     "part": 27,
+     "part": 23,
      "name": "Quarter inches",
      "kind": "eq2",
      "packet": 51,
      "packets": "51",
      "questions": [
       {
-       "n": 79,
+       "n": 82,
        "prompt": "4¾ inches = ? quarter inches",
        "answer": "19"
       },
       {
-       "n": 80,
+       "n": 83,
        "prompt": "1¾ inches = ? quarter inches",
        "answer": "7"
       }
      ]
     },
     {
-     "part": 28,
+     "part": 24,
      "name": "Quadrilaterals",
      "kind": "is_quad",
      "packet": 52,
      "packets": "52",
      "questions": [
       {
-       "n": 81,
+       "n": 84,
        "prompt": "is quadrilateral kite 10",
        "answer": "yes"
       },
       {
-       "n": 82,
+       "n": 85,
        "prompt": "is quadrilateral hexagon 10",
        "answer": "no"
       }
      ]
     },
     {
-     "part": 29,
+     "part": 25,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
      "packets": "33–35",
      "questions": [
       {
-       "n": 83,
+       "n": 86,
        "prompt": "Theo has 4 bags with 6 books in each bag. How many books are there in all?",
        "answer": "24 books"
       },
       {
-       "n": 84,
+       "n": 87,
        "prompt": "Ben shares 45 acorns equally among 9 friends. How many acorns does each friend get?",
        "answer": "5 acorns"
       },
       {
-       "n": 85,
+       "n": 88,
        "prompt": "Tess shares 25 books equally among 5 friends. How many books does each friend get?",
        "answer": "5 books"
       },
       {
-       "n": 86,
+       "n": 89,
        "prompt": "Leo has 6 bags with 9 blocks in each bag. How many blocks are there in all?",
        "answer": "54 blocks"
       }
@@ -7482,7 +7409,7 @@
    "id": "grade-6-post",
    "type": "post",
    "title": "Grade 6 Post-Assessment",
-   "total": 26,
+   "total": 35,
    "file": "assessments/color/grade-6-post-assessment-key.pdf",
    "parts": [
     {
@@ -7677,38 +7604,128 @@
     },
     {
      "part": 11,
-     "name": "Word problems",
-     "kind": "word",
-     "packet": null,
-     "packets": "91–100",
+     "name": "Area of shapes",
+     "kind": "eq1",
+     "packet": 101,
+     "packets": "101",
      "questions": [
       {
        "n": 21,
+       "prompt": "triangle, base 13 in, height 8 in:  area = ? sq in",
+       "answer": "52"
+      },
+      {
+       "n": 22,
+       "prompt": "triangle, base 18 cm, height 5 cm:  area = ? sq cm",
+       "answer": "45"
+      }
+     ]
+    },
+    {
+     "part": 12,
+     "name": "Volume with fractions",
+     "kind": "mixed2",
+     "packet": 102,
+     "packets": "102",
+     "questions": [
+      {
+       "n": 23,
+       "prompt": "3 1/2 × 4 × 2 = ?",
+       "answer": "28"
+      },
+      {
+       "n": 24,
+       "prompt": "2 1/2 × 2 × 6 = ?",
+       "answer": "30"
+      }
+     ]
+    },
+    {
+     "part": 13,
+     "name": "Surface area",
+     "kind": "eq1",
+     "packet": 103,
+     "packets": "103",
+     "questions": [
+      {
+       "n": 25,
+       "prompt": "box 6 × 6 × 2 m:  surface area = ? sq m",
+       "answer": "120"
+      },
+      {
+       "n": 26,
+       "prompt": "box 8 × 2 × 3 in:  surface area = ? sq in",
+       "answer": "92"
+      }
+     ]
+    },
+    {
+     "part": 14,
+     "name": "Mean and median",
+     "kind": "eq1",
+     "packet": 104,
+     "packets": "104",
+     "questions": [
+      {
+       "n": 27,
+       "prompt": "mean of 7, 13, 10 = ?",
+       "answer": "10"
+      },
+      {
+       "n": 28,
+       "prompt": "mean of 16, 10, 22 = ?",
+       "answer": "16"
+      }
+     ]
+    },
+    {
+     "part": 15,
+     "name": "Data",
+     "kind": "eq1",
+     "packet": 105,
+     "packets": "105",
+     "questions": [
+      {
+       "n": 29,
+       "prompt": "5, 6, 6, 7, 31:  mean = ?  and  median = ?",
+       "answer": "11  and  median = 6"
+      }
+     ]
+    },
+    {
+     "part": 16,
+     "name": "Word problems",
+     "kind": "word",
+     "packet": null,
+     "packets": "91–105",
+     "questions": [
+      {
+       "n": 30,
        "prompt": "A car goes 336 miles in 6 hours. How many miles does it go in 1 hour?",
        "answer": "56 miles"
       },
       {
-       "n": 22,
+       "n": 31,
        "prompt": "You have 3/4 of a pizza. Each slice is 1/8 of the pizza. How many slices is that?",
        "answer": "6 slices"
       },
       {
-       "n": 23,
+       "n": 32,
        "prompt": "Juice is mixed 2 cups of mango for every 5 cups of water. How much water goes with 6 cups of mango?",
        "answer": "15 cups"
       },
       {
-       "n": 24,
+       "n": 33,
        "prompt": "6 bottles of water cost $4.20. How much is 1 bottle?",
        "answer": "$0.70"
       },
       {
-       "n": 25,
+       "n": 34,
        "prompt": "A school buys 2,016 pencils in boxes of 24. How many boxes?",
        "answer": "84 boxes"
       },
       {
-       "n": 26,
+       "n": 35,
        "prompt": "A $45 shirt is 20% off. How many dollars do you save?",
        "answer": "$9"
       }
@@ -7726,320 +7743,275 @@
    "parts": [
     {
      "part": 1,
-     "name": "Put together",
-     "kind": "pic_add",
+     "name": "Add",
+     "kind": "eq3",
      "packet": 0,
      "packets": "0",
      "questions": [
       {
        "n": 1,
-       "prompt": "pic: egg 2 + 3",
+       "prompt": "2 + 3 = ?",
        "answer": "5"
       },
       {
        "n": 2,
-       "prompt": "pic: candy 1 + 3",
-       "answer": "4"
+       "prompt": "5 + 3 = ?",
+       "answer": "8"
       },
       {
        "n": 3,
-       "prompt": "pic: ladybug 1 + 4",
-       "answer": "5"
+       "prompt": "1 + 1 = ?",
+       "answer": "2"
       },
       {
        "n": 4,
-       "prompt": "pic: fish 1 + 4",
-       "answer": "5"
+       "prompt": "6 + 2 = ?",
+       "answer": "8"
+      },
+      {
+       "n": 5,
+       "prompt": "3 + 3 = ?",
+       "answer": "6"
+      },
+      {
+       "n": 6,
+       "prompt": "5 + 1 = ?",
+       "answer": "6"
+      },
+      {
+       "n": 7,
+       "prompt": "3 + 1 = ?",
+       "answer": "4"
+      },
+      {
+       "n": 8,
+       "prompt": "2 + 5 = ?",
+       "answer": "7"
+      },
+      {
+       "n": 9,
+       "prompt": "4 + 4 = ?",
+       "answer": "8"
       }
      ]
     },
     {
      "part": 2,
      "name": "Take away",
-     "kind": "pic_take",
-     "packet": 0,
-     "packets": "0",
-     "questions": [
-      {
-       "n": 5,
-       "prompt": "pic: flower 4 - 2",
-       "answer": "2"
-      },
-      {
-       "n": 6,
-       "prompt": "pic: duck 4 - 1",
-       "answer": "3"
-      },
-      {
-       "n": 7,
-       "prompt": "pic: cupcake 2 - 1",
-       "answer": "1"
-      },
-      {
-       "n": 8,
-       "prompt": "pic: leaf 5 - 4",
-       "answer": "1"
-      }
-     ]
-    },
-    {
-     "part": 3,
-     "name": "Story problems",
-     "kind": "wide_story",
-     "packet": 0,
-     "packets": "0",
-     "questions": [
-      {
-       "n": 9,
-       "prompt": "story pic: candy 3 + 4",
-       "answer": "3 · + · 4 · 7"
-      },
-      {
-       "n": 10,
-       "prompt": "story pic: fish 4 + 4",
-       "answer": "4 · + · 4 · 8"
-      }
-     ]
-    },
-    {
-     "part": 4,
-     "name": "Draw to solve",
-     "kind": "draw_solve",
-     "packet": 0,
-     "packets": "0",
-     "questions": [
-      {
-       "n": 11,
-       "prompt": "draw to solve: 7 - 5",
-       "answer": "2"
-      },
-      {
-       "n": 12,
-       "prompt": "draw to solve: 7 - 4",
-       "answer": "3"
-      }
-     ]
-    },
-    {
-     "part": 5,
-     "name": "Add and take away",
      "kind": "eq3",
      "packet": 0,
      "packets": "0",
      "questions": [
       {
-       "n": 13,
-       "prompt": "7 + 2 = ?",
-       "answer": "9"
-      },
-      {
-       "n": 14,
-       "prompt": "9 − 5 = ?",
-       "answer": "4"
-      },
-      {
-       "n": 15,
-       "prompt": "4 + 2 = ?",
-       "answer": "6"
-      },
-      {
-       "n": 16,
-       "prompt": "8 − 4 = ?",
-       "answer": "4"
-      },
-      {
-       "n": 17,
-       "prompt": "5 + 2 = ?",
-       "answer": "7"
-      },
-      {
-       "n": 18,
-       "prompt": "2 + 7 = ?",
-       "answer": "9"
-      },
-      {
-       "n": 19,
-       "prompt": "5 − 2 = ?",
+       "n": 10,
+       "prompt": "9 − 6 = ?",
        "answer": "3"
       },
       {
-       "n": 20,
+       "n": 11,
+       "prompt": "7 − 4 = ?",
+       "answer": "3"
+      },
+      {
+       "n": 12,
+       "prompt": "8 − 5 = ?",
+       "answer": "3"
+      },
+      {
+       "n": 13,
+       "prompt": "9 − 4 = ?",
+       "answer": "5"
+      },
+      {
+       "n": 14,
+       "prompt": "4 − 2 = ?",
+       "answer": "2"
+      },
+      {
+       "n": 15,
+       "prompt": "8 − 1 = ?",
+       "answer": "7"
+      },
+      {
+       "n": 16,
+       "prompt": "7 − 2 = ?",
+       "answer": "5"
+      },
+      {
+       "n": 17,
        "prompt": "6 − 5 = ?",
        "answer": "1"
       },
       {
-       "n": 21,
-       "prompt": "2 + 1 = ?",
-       "answer": "3"
+       "n": 18,
+       "prompt": "6 − 2 = ?",
+       "answer": "4"
       }
      ]
     },
     {
-     "part": 6,
-     "name": "How many dots? What is its buddy?",
-     "kind": "frame_buddy",
-     "packet": 1,
-     "packets": "1",
-     "questions": [
-      {
-       "n": 22,
-       "prompt": "frame 1",
-       "answer": "1 · 9"
-      },
-      {
-       "n": 23,
-       "prompt": "frame 9",
-       "answer": "9 · 1"
-      }
-     ]
-    },
-    {
-     "part": 7,
+     "part": 3,
      "name": "Fill in the buddy",
      "kind": "eq3",
      "packet": 1,
      "packets": "1",
      "questions": [
       {
-       "n": 24,
-       "prompt": "? + 1 = 10",
-       "answer": "9"
-      },
-      {
-       "n": 25,
-       "prompt": "0 + ? = 10",
-       "answer": "10"
-      },
-      {
-       "n": 26,
-       "prompt": "6 + ? = 10",
-       "answer": "4"
-      },
-      {
-       "n": 27,
+       "n": 19,
        "prompt": "? + 6 = 10",
        "answer": "4"
       },
       {
-       "n": 28,
+       "n": 20,
        "prompt": "? + 9 = 10",
        "answer": "1"
       },
       {
-       "n": 29,
+       "n": 21,
        "prompt": "4 + ? = 10",
        "answer": "6"
+      },
+      {
+       "n": 22,
+       "prompt": "? + 3 = 10",
+       "answer": "7"
+      },
+      {
+       "n": 23,
+       "prompt": "? + 10 = 10",
+       "answer": "0"
+      },
+      {
+       "n": 24,
+       "prompt": "7 + ? = 10",
+       "answer": "3"
+      },
+      {
+       "n": 25,
+       "prompt": "1 + ? = 10",
+       "answer": "9"
+      },
+      {
+       "n": 26,
+       "prompt": "2 + ? = 10",
+       "answer": "8"
+      },
+      {
+       "n": 27,
+       "prompt": "? + 2 = 10",
+       "answer": "8"
       }
      ]
     },
     {
-     "part": 8,
+     "part": 4,
      "name": "Are they Ten Buddies?",
      "kind": "buddy_yesno",
      "packet": 1,
      "packets": "1",
      "questions": [
       {
-       "n": 30,
+       "n": 28,
        "prompt": "buddies? 2 and 9",
        "answer": "no"
       },
       {
-       "n": 31,
+       "n": 29,
        "prompt": "buddies? 7 and 6",
        "answer": "no"
       },
       {
-       "n": 32,
+       "n": 30,
        "prompt": "buddies? 9 and 1",
        "answer": "yes"
       },
       {
-       "n": 33,
+       "n": 31,
        "prompt": "buddies? 8 and 1",
        "answer": "no"
       }
      ]
     },
     {
-     "part": 9,
-     "name": "Ten and some more",
-     "kind": "teen",
-     "packet": 2,
-     "packets": "2",
-     "questions": [
-      {
-       "n": 34,
-       "prompt": "10 + 2 = ?",
-       "answer": "12"
-      },
-      {
-       "n": 35,
-       "prompt": "10 + 9 = ?",
-       "answer": "19"
-      }
-     ]
-    },
-    {
-     "part": 10,
+     "part": 5,
      "name": "Teen numbers",
      "kind": "eq3",
      "packet": 2,
      "packets": "2",
      "questions": [
       {
-       "n": 36,
-       "prompt": "7 + 10 = ?",
-       "answer": "17"
-      },
-      {
-       "n": 37,
-       "prompt": "? + 7 = 17",
-       "answer": "10"
-      },
-      {
-       "n": 38,
-       "prompt": "1 + ? = 11",
-       "answer": "10"
-      },
-      {
-       "n": 39,
+       "n": 32,
        "prompt": "? + 1 = 11",
        "answer": "10"
       },
       {
-       "n": 40,
+       "n": 33,
        "prompt": "2 + ? = 12",
        "answer": "10"
       },
       {
-       "n": 41,
+       "n": 34,
        "prompt": "3 + 10 = ?",
        "answer": "13"
+      },
+      {
+       "n": 35,
+       "prompt": "1 + 10 = ?",
+       "answer": "11"
+      },
+      {
+       "n": 36,
+       "prompt": "6 + ? = 16",
+       "answer": "10"
+      },
+      {
+       "n": 37,
+       "prompt": "4 + ? = 14",
+       "answer": "10"
+      },
+      {
+       "n": 38,
+       "prompt": "7 + ? = 17",
+       "answer": "10"
+      },
+      {
+       "n": 39,
+       "prompt": "? + 4 = 14",
+       "answer": "10"
+      },
+      {
+       "n": 40,
+       "prompt": "10 + 9 = ?",
+       "answer": "19"
       }
      ]
     },
     {
-     "part": 11,
-     "name": "Find the buddies first, then add",
-     "kind": "three",
+     "part": 6,
+     "name": "Add three numbers",
+     "kind": "eq3",
      "packet": 2,
      "packets": "2",
      "questions": [
       {
+       "n": 41,
+       "prompt": "3 + 7 + 3 = ?",
+       "answer": "13"
+      },
+      {
        "n": 42,
-       "prompt": "2 + 8 + 8 = ?",
-       "answer": "8 · 18"
+       "prompt": "9 + 3 + 7 = ?",
+       "answer": "19"
       },
       {
        "n": 43,
-       "prompt": "6 + 3 + 7 = ?",
-       "answer": "6 · 16"
+       "prompt": "8 + 9 + 1 = ?",
+       "answer": "18"
       }
      ]
     },
     {
-     "part": 12,
+     "part": 7,
      "name": "Word problems",
      "kind": "word",
      "packet": null,
@@ -9109,6 +9081,78 @@
    "packet": 69
   },
   {
+   "id": "check-in:area-of-triangles-and-other-shapes",
+   "type": "check-in",
+   "title": "Area of Triangles and Other Shapes Check-In",
+   "total": 7,
+   "file": "101-area-of-triangles-and-other-shapes/color/area-of-triangles-and-other-shapes-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Triangles",
+     "kind": "tri",
+     "packet": 101,
+     "packets": "101",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "triangle picture 8 by 5 cm",
+       "answer": "8 · 5 · 20"
+      },
+      {
+       "n": 2,
+       "prompt": "triangle picture 10 by 4 in",
+       "answer": "10 · 4 · 20"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Put shapes together",
+     "kind": "house",
+     "packet": 101,
+     "packets": "101",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "rectangle and triangle 6 3 4 cm",
+       "answer": "18 · 12 · 18 · 12 · 30"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Find the area",
+     "kind": "eq1",
+     "packet": 101,
+     "packets": "101",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "triangle, base 10 ft, height 11 ft:  area = ? sq ft",
+       "answer": "55"
+      },
+      {
+       "n": 5,
+       "prompt": "trapezoid, sides 7 and 9 cm, height 5 cm:  area = ? sq cm",
+       "answer": "40"
+      },
+      {
+       "n": 6,
+       "prompt": "parallelogram, base 13 m, height 4 m:  area = ? sq m",
+       "answer": "52"
+      },
+      {
+       "n": 7,
+       "prompt": "triangle, base 18 cm, height 5 cm:  area = ? sq cm",
+       "answer": "45"
+      }
+     ]
+    }
+   ],
+   "packet": 101
+  },
+  {
    "id": "check-in:back-through-ten",
    "type": "check-in",
    "title": "Back Through Ten Check-In",
@@ -10044,6 +10088,77 @@
     }
    ],
    "packet": 40
+  },
+  {
+   "id": "check-in:data-displays",
+   "type": "check-in",
+   "title": "Data Displays Check-In",
+   "total": 5,
+   "file": "105-data-displays/color/data-displays-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Statistics question?",
+     "kind": "yes_text1",
+     "packet": 105,
+     "packets": "105",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "How much rain fell each day in May?",
+       "answer": "yes"
+      },
+      {
+       "n": 2,
+       "prompt": "How old is my teacher?",
+       "answer": "no"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Read the histogram",
+     "kind": "hist",
+     "packet": 105,
+     "packets": "105",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "histogram Laps run",
+       "answer": "3 · 10–14 · 11 · 19"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Count the groups",
+     "kind": "freq",
+     "packet": 105,
+     "packets": "105",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "count groups 14-27-8-21-33-16-29-5-24-18-36-11",
+       "answer": "2 · 4 · 4 · 2"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "A far-off number",
+     "kind": "eq1",
+     "packet": 105,
+     "packets": "105",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "5, 6, 6, 7, 31:  mean = ?  and  median = ?",
+       "answer": "11  and  median = 6"
+      }
+     ]
+    }
+   ],
+   "packet": 105
   },
   {
    "id": "check-in:decimal-operations",
@@ -12826,6 +12941,92 @@
    "packet": 49
   },
   {
+   "id": "check-in:mean-median-and-mode",
+   "type": "check-in",
+   "title": "Mean, Median and Mode Check-In",
+   "total": 8,
+   "file": "104-mean-median-and-mode/color/mean-median-and-mode-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Even it out",
+     "kind": "level",
+     "packet": 104,
+     "packets": "104",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "even out towers 2-7-3-4",
+       "answer": "16 · 16 · 4 · 4 · 4"
+      },
+      {
+       "n": 2,
+       "prompt": "even out towers 4-8-6",
+       "answer": "18 · 18 · 3 · 6 · 6"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Mean",
+     "kind": "eq1",
+     "packet": 104,
+     "packets": "104",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "mean of 4, 9, 11 = ?",
+       "answer": "8"
+      },
+      {
+       "n": 4,
+       "prompt": "mean of 16, 10, 22 = ?",
+       "answer": "16"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Median",
+     "kind": "eq1",
+     "packet": 104,
+     "packets": "104",
+     "questions": [
+      {
+       "n": 5,
+       "prompt": "median of 9, 3, 14, 6, 11 = ?",
+       "answer": "9"
+      },
+      {
+       "n": 6,
+       "prompt": "median of 18, 12, 25 = ?",
+       "answer": "18"
+      }
+     ]
+    },
+    {
+     "part": 4,
+     "name": "Mode and range",
+     "kind": "eq1",
+     "packet": 104,
+     "packets": "104",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "range of 17, 8, 25, 12 = ?",
+       "answer": "17"
+      },
+      {
+       "n": 8,
+       "prompt": "mode of 6, 9, 9, 4, 12 = ?",
+       "answer": "9"
+      }
+     ]
+    }
+   ],
+   "packet": 104
+  },
+  {
    "id": "check-in:measurement-conversions",
    "type": "check-in",
    "title": "Measurement Conversions Check-In",
@@ -14876,7 +15077,7 @@
       {
        "n": 1,
        "prompt": "rate table: boxes pens 3-36 2-7",
-       "answer": "1 · 2 · 7 · 12 · 24 · 84"
+       "answer": "12 · 24 · 84"
       }
      ]
     },
@@ -14976,7 +15177,7 @@
       {
        "n": 2,
        "prompt": "ratio table: cups people 3-5 1-2-4-6",
-       "answer": "6 · 12 · 18 · 10 · 20 · 30"
+       "answer": "10 · 20 · 30"
       }
      ]
     },
@@ -15927,6 +16128,73 @@
     }
    ],
    "packet": 12
+  },
+  {
+   "id": "check-in:surface-area-and-nets",
+   "type": "check-in",
+   "title": "Surface Area and Nets Check-In",
+   "total": 6,
+   "file": "103-surface-area-and-nets/color/surface-area-and-nets-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Does it fold into a cube?",
+     "kind": "net_ok",
+     "packet": 103,
+     "packets": "103",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "cube net 0.0-0.1-1.1-1.2-1.3-2.1",
+       "answer": "yes"
+      },
+      {
+       "n": 2,
+       "prompt": "cube net 0.0-0.1-0.2-1.0-1.1-2.1",
+       "answer": "no"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Boxes",
+     "kind": "net",
+     "packet": 103,
+     "packets": "103",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "box net 4 2 3 cm",
+       "answer": "8 · 16 · 12 · 24 · 6 · 12 · 52"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Find the surface area",
+     "kind": "eq1",
+     "packet": 103,
+     "packets": "103",
+     "questions": [
+      {
+       "n": 4,
+       "prompt": "cube, edge 5 in:  surface area = ? sq in",
+       "answer": "150"
+      },
+      {
+       "n": 5,
+       "prompt": "cube, edge 9 m:  surface area = ? sq m",
+       "answer": "486"
+      },
+      {
+       "n": 6,
+       "prompt": "box 8 × 2 × 3 in:  surface area = ? sq in",
+       "answer": "92"
+      }
+     ]
+    }
+   ],
+   "packet": 103
   },
   {
    "id": "check-in:telling-time",
@@ -17261,6 +17529,83 @@
     }
    ],
    "packet": 82
+  },
+  {
+   "id": "check-in:volume-with-fractions",
+   "type": "check-in",
+   "title": "Volume with Fractions Check-In",
+   "total": 8,
+   "file": "102-volume-with-fractions/color/volume-with-fractions-check-in-key.pdf",
+   "parts": [
+    {
+     "part": 1,
+     "name": "Count the small cubes",
+     "kind": "half_cubes",
+     "packet": 102,
+     "packets": "102",
+     "questions": [
+      {
+       "n": 1,
+       "prompt": "half cubes 4 2 3",
+       "answer": "24 · 24 · 3"
+      },
+      {
+       "n": 2,
+       "prompt": "half cubes 2 4 4",
+       "answer": "32 · 32 · 4"
+      }
+     ]
+    },
+    {
+     "part": 2,
+     "name": "Length × width × height",
+     "kind": "mixed2",
+     "packet": 102,
+     "packets": "102",
+     "questions": [
+      {
+       "n": 3,
+       "prompt": "1/2 × 8 × 3 = ?",
+       "answer": "12"
+      },
+      {
+       "n": 4,
+       "prompt": "3 1/2 × 4 × 2 = ?",
+       "answer": "28"
+      },
+      {
+       "n": 5,
+       "prompt": "2 1/2 × 3 × 3 = ? ?/2",
+       "answer": "22 1/2"
+      },
+      {
+       "n": 6,
+       "prompt": "1 1/2 × 4 × 3 = ?",
+       "answer": "18"
+      }
+     ]
+    },
+    {
+     "part": 3,
+     "name": "Find the missing edge",
+     "kind": "mixed2",
+     "packet": 102,
+     "packets": "102",
+     "questions": [
+      {
+       "n": 7,
+       "prompt": "3 × 2 1/2 × ? = 30",
+       "answer": "4"
+      },
+      {
+       "n": 8,
+       "prompt": "1 1/2 × 6 × ? = 18",
+       "answer": "2"
+      }
+     ]
+    }
+   ],
+   "packet": 102
   }
  ]
 }
