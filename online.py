@@ -1367,6 +1367,259 @@ def pct(r, crop, ph):
     return [round(100 * (x - cx) / cw, 2), round(100 * (ph - y - h - cy) / chh, 2), round(100 * w / cw, 2), round(100 * h / chh, 2)]
 
 
+# ---------------------------------------------------------------------- the question of each picture card
+
+# Founder: a picture card on screen must say what it asks. ASK[kind](item) is one or two sentences built from
+# the problem's own numbers, shown above the picture (the packet card's section subtitle alone wasn't enough).
+
+
+def _m(op):
+    return MINUS if op in ("-", MINUS) else "+"
+
+
+def _f(a, b):
+    return f"{a}/{b}"
+
+
+_NTH = {2: "halves", 3: "thirds", 4: "fourths", 5: "fifths", 6: "sixths", 7: "sevenths", 8: "eighths", 9: "ninths",
+        10: "tenths", 12: "twelfths", 100: "hundredths"}
+
+
+def _nth(b):
+    return _NTH.get(b, f"{b}ths")
+
+
+def _plural(word):
+    if word in ("fish", "sheep"):
+        return word
+    if word.endswith("y") and word[-2:-1] not in "aeiou":
+        return word[:-1] + "ies"
+    return word + ("es" if word.endswith(("s", "x", "ch", "sh")) else "s")
+
+
+def _one(word):
+    """boxes -> box, hours -> hour."""
+    if word.endswith("es") and word[:-2].endswith(("x", "s", "ch", "sh")):
+        return word[:-2]
+    return word[:-1] if word.endswith("s") else word
+
+
+def _sh(kind):
+    return {"strip": "strip", "circle": "circle", "rect": "rectangle", "tall": "rectangle", "square": "square",
+            "hsquare": "square", "grid": "square", "diag": "square"}.get(kind, "shape")
+
+
+ASK = {
+    "pic_add": lambda it: f"{it[1]} and {it[2]} more. How many in all?",
+    "sp_wide_add": lambda it: f"{it[1]} and {it[2]} more. How many in all?",
+    "pic_take": lambda it: f"There are {it[1]}. Take away {it[2]}. How many are left?",
+    "sp_wide_take": lambda it: f"There are {it[1]}. Take away {it[2]}. How many are left?",
+    "wide_story": lambda it: "Write the number sentence for the picture: the first number, + or − in the circle, "
+                             "the second number, and the answer.",
+    "draw_solve": lambda it: f"Draw circles to find {it[0]} {_m(it[1])} {it[2]}.",
+    "frame_buddy": lambda it: "How many dots are in the ten-frame? How many more make 10?",
+    "kframe": lambda it: f"The frame has {it} dots. How many more dots fill it to 10?",
+    "more10": lambda it: f"How many more does {it[1]} need to make 10?",
+    "buddy_yesno": lambda it: f"Do {it[0]} make 10? Tap yes or no.",
+    "teen": lambda it: f"A full ten and {it[1]} more. How many is that?",
+    "kteen": lambda it: f"A full ten and {it} more. How many is that?",
+    "three": lambda it: f"Add {it[0]} + {it[1]} + {it[2]}. Find the two numbers that make 10 first, then add the last one.",
+    "ba": lambda it: f"Find {it[0]} + {it[1]}. Break {it[1]} apart: the buddy that makes 10 with {it[0]}, and what is left over.",
+    "ladder": lambda it: f"Find {it[0]} + {it[1]}. First the buddy that takes {it[0]} to 10, then the rest.",
+    "hint": lambda it: f"Find {it[0]} + {it[1]}. Write the next ten after {it[0]} too.",
+    "jump_dots": lambda it: f"Find {it[0]} {MINUS} {it[1]}. Jump down from {it[0]} to 10, then jump the rest. Fill in the jumps and the answer.",
+    "jump": lambda it: f"Find {it[0]} {MINUS} {it[1]}. Jump down from {it[0]} to 10, then jump the rest. Fill in the jumps and the answer.",
+    "jump_less": lambda it: f"Find {it[0]} {MINUS} {it[1]}. Fill in the two jumps (to 10, then the rest) and the answer.",
+    "jump_big": lambda it: f"Find {it[0]} {MINUS} {it[1]} by jumping up from {it[1]}: to the next ten, then to {it[0]}. "
+                           "Fill in the jumps and add them.",
+    "double_dots": lambda it: f"Each row has {it} dot{'s' if it != 1 else ''}. What is double {it}?",
+    "near_dots": lambda it: f"Find double {it[0]}, then {it[0]} + {it[1]} (one more).",
+    "count_to": lambda it: "How many tens and how many ones are in the picture? What number is it?",
+    "draw_qt": lambda it: f"How many tens and ones do you draw for {it}?",
+    "count_tens": lambda it: "How many tens are in the picture? What number is it?",
+    "which_more": lambda it: f"Which is more, {it[0]} or {it[1]}? Tap it.",
+    "ten_pic": lambda it: "What is 10 less than the number in the picture?" if it[1] in ("-", MINUS)
+    else "What is 10 more than the number in the picture?",
+    "side": lambda it: f"What is 10 less than {it}? What is 10 more than {it}?",
+    "chain10": lambda it: f"Start at {it[1]} and keep going {'up' if it[0] == '+' else 'down'} by 10. Fill in the missing numbers.",
+    "add_tens_pic": lambda it: f"Find {it[0]} + {it[1]}. Add the tens in the picture.",
+    "add_split": lambda it: f"Find {it[0]} + {it[1]}. Add the tens, add the ones, then put them together.",
+    "sub_tens_pic": lambda it: f"Find {it[0]} {MINUS} {it[1]}. Take away the tens.",
+    "sub_split": lambda it: f"Find {it[0]} {MINUS} {it[1]}. Take away the tens, take away the ones, then put them together.",
+    "enough": lambda it: f"In {it[0]} {MINUS} {it[1]}, are there enough ones to take away without breaking a ten? Don't solve it.",
+    "jump_up": lambda it: f"What goes with {it[0]} to make {it[1]}? Jump up from {it[0]} to the next ten, then to {it[1]}. "
+                          "Fill in the stops and jumps, then add the jumps.",
+    "find_stops": lambda it: f"What goes with {it[0]} to make {it[1]}? Fill in the stops (next ten, then the tens) and the jumps, "
+                             "then add the jumps.",
+    "break_ten": lambda it: f"Break one ten of {it} into ones. How many ones are there now?",
+    "borrow_rows": lambda it: f"Find {it[0]} {MINUS} {it[1]}. Break a ten, then take away the tens and the ones.",
+    "col_add_boxes": lambda it: f"Add {it[0]} + {it[1]} in columns. Write the new ten in the carry box.",
+    "line_up": lambda it: f"Write {it[0]} + {it[1]} in columns (tens under tens, ones under ones), then add.",
+    "col_add": lambda it: f"Add {it[0]} + {it[1]}.",
+    "sub_mat": lambda it: f"Find {it[0]} {MINUS} {it[1]}. Open a ten on the mat, then subtract.",
+    "col_sub_boxes": lambda it: f"Find {it[0]} {MINUS} {it[1]}. Break a ten: write the new tens and ones digits, then subtract.",
+    "col_sub": lambda it: f"Subtract {it[0]} {MINUS} {it[1]}.",
+    "count_hto": lambda it: "How many hundreds, tens and ones are in the picture? What number is it?",
+    "draw_hto": lambda it: f"How many hundreds, tens and ones do you draw for {it}?",
+    "worth": lambda it: f"What is the {it[1]} in {it[0]} worth?",
+    "bars5": lambda it: "Count the dots by fives. Write the total under each bar.",
+    "chain": lambda it: f"Count by {it[1]}s from {it[0]}. Fill in the missing numbers.",
+    "seq": lambda it: f"Count by {it[1]}s from {it[0]}. Fill in the missing numbers.",
+    "count_by": lambda it: "What number are we counting by?",
+    "cmp_pic": lambda it: f"Compare {it[0]} and {it[1]}. Write <, > or =.",
+    "cmp_draw": lambda it: f"Compare {it[0]} and {it[1]}. Write <, > or =.",
+    "order": lambda it: "Put the numbers in order from smallest to biggest.",
+    "hund_pic": lambda it: "What is 100 less than the number in the picture?" if it[1] in ("-", MINUS)
+    else "What is 100 more than the number in the picture?",
+    "cross": lambda it: f"Fill in the number cross for {it}: 10 more to the right, 10 less to the left, 100 more above, 100 less below.",
+    "chain_hund": lambda it: f"Start at {it[0]} and count by {abs(it[1])}s {'up' if it[1] > 0 else 'down'}. Fill in the missing numbers.",
+    "add3_rows": lambda it: f"Find {it[0]} + {it[1]}. Add the hundreds, the tens and the ones, then put them together.",
+    "col_add3_boxes": lambda it: f"Add {it[0]} + {it[1]} in columns. Write a new ten or hundred in its carry box.",
+    "col_add3": lambda it: f"Add {it[0]} + {it[1]}.",
+    "take3": lambda it: f"Find {it[0]} {MINUS} {it[1]}. Cross out what is taken. What is left?",
+    "sub3_rows": lambda it: f"Find {it[0]} {MINUS} {it[1]}. Take away the hundreds, the tens and the ones, then put them together.",
+    "col_sub3": lambda it: f"Subtract {it[0]} {MINUS} {it[1]}.",
+    "groups": lambda it: "How many groups? How many in each group? How many in all?",
+    "eq_groups": lambda it: "Are the groups equal? Tap yes or no.",
+    "array": lambda it: "How many rows? How many in each row? Add the rows to find how many in all.",
+    "pairs_eo": lambda it: "Pair up the dots. Is the number even or odd?",
+    "eo_ones": lambda it: f"Look at the ones digit of {it}. Is it even or odd?",
+    "eo_word": lambda it: f"Is {it} even or odd? Write even or odd.",
+    "hgrid": lambda it: f"{it} dots are filled. How many more fill the grid to 100?",
+    "chain_any": lambda it: f"Count by {abs(it[1])}s {'up' if it[1] > 0 else 'down'} from {it[0]}. Fill in the missing numbers.",
+    "direction": lambda it: "Is it counting forward or back? By how many?",
+    "seq_any": lambda it: f"Count by {abs(it[1])}s {'up' if it[1] > 0 else 'down'} from {it[0]}. Fill in the missing numbers.",
+    "share": lambda it: f"Share {it[1]} {_plural(it[0])} fairly on 2 plates. How many go on each plate?",
+    "half_split": lambda it: f"Find half of {it}. Take half of the tens and half of the ones, then put them together.",
+    "eq_share": lambda it: "Are the parts equal shares? Tap yes or no.",
+    "name_share": lambda it: "How many equal parts is it cut into? Write the number and tap the name of one part.",
+    "read_clock": lambda it: "What time does the clock show?",
+    "read_minute": lambda it: "What time does the clock show? Read it to the minute.",
+    "ampm": lambda it: "Is it a.m. or p.m.? Tap it.",
+    "coins": lambda it: "How much money is it? Count the coins.",
+    "symbol": lambda it: "Does it cost cents (¢) or dollars ($)? Tap the right one.",
+    "tens_ones": lambda it: f"How many tens and ones make {it}? Then break one ten into ones: how many tens and ones now?",
+    "bar": lambda it: "Find the number that goes in the box of the bar model.",
+    "two_step": lambda it: f"{it[0]} Fill in step 1 and step 2.",
+    "read_tape": lambda it: f"How long is the {it[0]}? Read the tape measure in {'centimeters' if it[2] == 'cm' else 'inches'}.",
+    "unit_choice": lambda it: f"{it[0]} what? Tap the unit that makes sense.",
+    "tally_read": lambda it: "How many tally marks are there?",
+    "mini_bar": lambda it: f"Read the bar graph. {it[3][0]}",
+    "times_groups": lambda it: "How many groups, and how many in each? Write the times fact and how many in all.",
+    "times_array": lambda it: "How many rows, and how many in each row? Write the times fact and how many in all.",
+    "break_array": lambda it: f"Find {it[0]} {TIMES} {it[1]} by breaking the array into two easier parts. Fill in the parts and add them.",
+    "share_div": lambda it: f"Share {it[1]} {_plural(it[0])} on {it[2]} plates. How many on each plate? Write the division fact.",
+    "think_times": lambda it: f"Find {it[0]} {DIV} {it[1]}. Think: {it[1]} {TIMES} what = {it[0]}?",
+    "round_card": lambda it: f"Round {it[0]} to the nearest {it[1]}. Write the {it[1]} below and the {it[1]} above, then tap the closer one.",
+    "tens_groups": lambda it: f"{it[0]} groups of {it[1]} tens. Fill in the times fact in tens, then the number.",
+    "area_rows": lambda it: "How many rows of squares? How many in each row? What is the area?",
+    "area_split": lambda it: "Find the area: break the rectangle into two parts at the dashed line, find each part, then add.",
+    "unit_name": lambda it: f"The {_sh(it[0])} is cut into equal parts. What fraction is one part?",
+    "find_whole": lambda it: f"The piece is 1/{it} of the whole. How many pieces like it make the whole?",
+    "bigger_unit_plain": lambda it: f"Which piece is bigger, 1/{it[0]} or 1/{it[1]} of the same whole? Tap it.",
+    "frac_name": lambda it: "What fraction is shaded? Write the top and the bottom.",
+    "wholes": lambda it: "How many pieces are shaded, and how many wholes is that?",
+    "more_whole": lambda it: "What fraction is shaded? It is more than one whole.",
+    "vs_one": lambda it: f"Is {it[0]}/{it[1]} less than 1, equal to 1, or more than 1? Tap it.",
+    "same_amount": lambda it: f"Do {it[0]}/{it[1]} and {it[2]}/{it[3]} show the same amount? Tap yes or no.",
+    "match_frac": lambda it: f"How many {_nth(it[1])} are the same as {it[0][0]}/{it[0][1]}? Shade to match.",
+    "compare_frac": lambda it: f"Compare {_f(*it[0])} and {_f(*it[1])}. Write <, > or =.",
+    "biggest": lambda it: "Which fraction is the biggest? Tap it.",
+    "group_frac": lambda it: f"What is {it[2]}/{it[1]} of {it[0]}?",
+    "perim_add": lambda it: "Add all four sides. What is the perimeter?",
+    "area_perim": lambda it: "Find the area (squares inside) and the perimeter (all around).",
+    "jump_time": lambda it: f"How long is it from {it[0][0]}:{it[0][1]:02d} to {it[1][0]}:{it[1][1]:02d}? "
+                            "Jump to the next o'clock, then to the end. Fill in the stops and the minutes.",
+    "table_row": lambda it: f"Fill in the {it[0]}s row of the times table.",
+    "table_piece": lambda it: "Fill in the missing numbers in this piece of the times table.",
+    "eo_product": lambda it: f"Is {it[0]} {TIMES} {it[1]} even or odd? Tap it.",
+    "balance": lambda it: f"The balance is level. How heavy is the {it[0]}? Add the weights.",
+    "beaker": lambda it: "How much water is in the beaker? Read the marks (liters).",
+    "sgraph": lambda it: "Read the graph and answer each question. Check the key: each picture or square stands for more than 1.",
+    "quarter": lambda it: f"How long is the {it[0]}? Read the ruler to the nearest quarter inch.",
+    "is_quad": lambda it: "Is the shape a quadrilateral (4 straight sides)? Tap yes or no.",
+    "right_count": lambda it: "How many right angles does the shape have?",
+    "name_quad": lambda it: "What is the best name for the shape? Tap it.",
+    "quad_fact": lambda it: f"{it[0]} True or not? Tap yes or no.",
+    "quick_th": lambda it: "How many thousands, hundreds, tens and ones are in the quick drawing? What number is it?",
+    "big_stack": lambda it: f"{'Add' if it[2] == '+' else 'Subtract'} {it[0]:,} {_m(it[2])} {it[1]:,} in columns.",
+    "area_mult": lambda it: f"Find {it[0]} {TIMES} {it[1]} with the area model: multiply each part, then add the parts.",
+    "partial": lambda it: f"Find {it[0]} {TIMES} {it[1]}: multiply the tens and the ones, then add the parts.",
+    "groups_rem": lambda it: f"Make groups of {it[1]} from {it[0]}. How many groups, and how many are left over?",
+    "rem_think": lambda it: f"Find {it[0]} {DIV} {it[1]} with a times fact: the biggest {it[1]} {TIMES} ? that fits, then the remainder.",
+    "area2": lambda it: f"Find {it[0]} {TIMES} {it[1]} with the area model: fill in each piece, then add the pieces.",
+    "div_area": lambda it: f"Find {it[0]} {DIV} {it[1]} with the area model: divide each part, then add the answers.",
+    "pairs": lambda it: f"Fill in the factor pairs of {it.split(' =')[0]}.",
+    "prime": lambda it: f"Is {it} prime or composite? Tap it.",
+    "cut_strip": lambda it: f"Cut each 1/{it[1]} piece into {it[2]} equal pieces. What fraction equals {it[0]}/{it[1]}?",
+    "equal_q": lambda it: f"Is {_f(*it[0])} equal to {_f(*it[1])}? Tap yes or no.",
+    "vs_half": lambda it: f"Is {it[0]}/{it[1]} more than, less than, or equal to 1/2? Tap it.",
+    "add_strip": lambda it: f"Find {it[0]}/{it[2]} {_m(it[3])} {it[1]}/{it[2]} with the strip.",
+    "to_mixed": lambda it: f"Write {it[1]}/{it[0]} as a mixed number: how many wholes and what fraction is left?",
+    "groups_frac": lambda it: f"Find {it[0]} {TIMES} {it[1]}/{it[2]}: how many {_nth(it[2])} in all?",
+    "read_grid": lambda it: "How many hundredths are shaded? Write it as a fraction and as a decimal.",
+    "compare_grids": lambda it: f"Compare {it[0] / 100:g} and {it[1] / 100:g}. Write <, > or =.",
+    "biggest_dec": lambda it: "Which decimal is the biggest? Tap it.",
+    "conv_table": lambda it: f"Change {it[0]} to {it[1]}. Fill in the table.",
+    "rect_formula": lambda it: f"A rectangle is {it[0]} {it[2]} by {it[1]} {it[2]}. Find its area and its perimeter.",
+    "read_x8": lambda it: "Read the X chart and answer each question.",
+    "angle_kind": lambda it: "Is the angle acute, right or obtuse? Tap it.",
+    "read_protractor": lambda it: "How many degrees is the angle? Read the protractor.",
+    "line_name": lambda it: "Is it a segment, a ray or a line? Tap it.",
+    "two_lines": lambda it: "Are the lines parallel, perpendicular or neither? Tap it.",
+    "triangle_kind": lambda it: "Is it a right, acute or obtuse triangle? Tap it.",
+    "shift": lambda it: f"Find {it[0]} {TIMES if it[1] == 'x' else DIV} {10 ** it[2]:,}. Move the digits in the place-value chart.",
+    "order_dec": lambda it: "Put the decimals in order from smallest to biggest.",
+    "round_dec": lambda it: f"Round {it[0]} to the nearest {['whole number', 'tenth', 'hundredth'][it[1]]}. "
+                            "Write the one below and the one above, then tap the closer one.",
+    "mrows": lambda it: f"Find {it[0]} {TIMES} {it[1]}: multiply by the ones, then by the tens, then add the rows.",
+    "partial_q": lambda it: f"Find {it[0]:,} {DIV} {it[1]}: divide each part, then add the answers.",
+    "frac_grid": lambda it: f"Find {it[0]}/{it[1]} {TIMES} {it[2]}/{it[3]}. Shade the overlap and write the fraction.",
+    "cube_count": lambda it: "How many unit cubes make the box? What is its volume?",
+    "share_frac": lambda it: f"Share {it[0]} strips fairly among {it[1]} people. How much does each one get?",
+    "unit_cut": lambda it: f"Share a 1/{it[0]} piece among {it[1]}. What fraction of the whole does each one get?",
+    "two_rules": lambda it: f"Rule A: start at 0 and add {it[0]}. Rule B: start at 0 and add {it[1]}. "
+                            f"Each B term is how many times the A term next to it?",
+    "read_share": lambda it: "Read the X chart and answer each question.",
+    "grid_read": lambda it: "Write each point's pair: over, then up.",
+    "all_names": lambda it: "Tap every name that fits the shape.",
+    "tri_sides": lambda it: "Is the triangle equilateral, isosceles or scalene? Tap it.",
+    "ratio_pic": lambda it: "Write the ratio of circles to squares.",
+    "ratio_tab": lambda it: f"{it[2]} {it[0]} for every {it[3]} {it[1]}. Fill in the {it[1]} row of the table.",
+    "rate_tab": lambda it: f"{it[3]} {it[1]} for {it[2]} {it[0]}. How many {it[1]} for 1 {_one(it[0])}? "
+                           f"Then fill in the {it[1]} for {' and '.join(map(str, it[4]))} {it[0]}.",
+    "grid_pct": lambda it: "What percent of the grid is shaded?",
+    "fit_strip": lambda it: f"How many {it[2]}/{it[3]} pieces fit in {it[0]}/{it[1]}?",
+    "long_div": lambda it: f"Find {it[0]:,} {DIV} {it[1]} with long division.",
+    "gcf_lists": lambda it: f"Tap the factors that {it[0]} and {it[1]} share. Which is the greatest?",
+    "thermo_read": lambda it: "What temperature does the thermometer show?",
+    "x_bar": lambda it: f"x + {it[0]} = {it[0] + it[1]}. Find the missing part.",
+    "para": lambda it: "Find the area of the parallelogram: base × height.",
+    "tri": lambda it: "Find the area of the triangle: half of base × height.",
+    "trap": lambda it: "Find the area of the trapezoid: add the two bases, times the height, then half.",
+    "house": lambda it: "Find the area: the rectangle plus the triangle on top.",
+    "half_cubes": lambda it: "How many half-unit cubes fill the box? How many whole cubes is that?",
+    "net_ok": lambda it: "Does the net fold into a cube? Tap yes or no.",
+    "cube_net": lambda it: "Find the area of one face, then the surface area of the cube (all 6 faces).",
+    "net": lambda it: "Find the area of each pair of faces, then the surface area of the box.",
+    "pyramid": lambda it: "Find the area of the square base and of the four triangles, then the surface area.",
+    "level": lambda it: "Even out the towers: how many blocks in all, and how many in each tower? That is the mean.",
+    "median": lambda it: "Write the numbers in order. What is the median (the middle number)?",
+    "xstats": lambda it: "Read the X chart: find the median, the mode, the mean and the range.",
+    "freq": lambda it: "Count how many numbers fall in each group.",
+    "hist": lambda it: "Read the histogram and answer each question.",
+    "make_x": lambda it: "Read the X chart and answer each question.",
+}
+
+
+def ask(kind, item):
+    f = ASK.get(kind)
+    try:
+        return f(item) if f else None
+    except Exception:
+        return None
+
+
 def picture_problem(packet, skill, item):
     W.T = W.theme(True)
     _, pw, ph, fields, rings = draw_card(skill.kind, item, True)
@@ -1383,6 +1636,9 @@ def picture_problem(packet, skill, item):
             steps.append(f"The answer is {right}.")
     p = {"img": [round(crop[2], 1), round(crop[3], 1)], "f": [pct(r, crop, ph) for r, _ in fields], "a": ans, "x": steps,
          "rings": [pct(r, crop, ph) for r in rings], "n": len(rings)}
+    q = ask(skill.kind, item)
+    if q:
+        p["s"] = q
     return p
 
 
@@ -1530,8 +1786,10 @@ PIC = {
     "two_rules": lambda it, a, p: [f"Each step, B adds {it[1]} and A adds {it[0]}.", f"{it[1]} {DIV} {it[0]} = {it[1] // it[0]}."],
     "grid_read": lambda it, a, p: ["Over first (along the bottom), then up.", ", ".join(f"{n}: ({x}, {y})" for x, y, n in it) + "."],
     "ratio_pic": lambda it, a, p: [f"Count the circles: {it[0]}. Count the squares: {it[1]}.", f"Circles to squares = {it[0]} : {it[1]}."],
-    "ratio_tab": lambda it, a, p: [f"The first column is {it[2]} : {it[3]}. Multiply both by the same number.", ", ".join(f"{it[2] * k} : {it[3] * k}" for k in it[4]) + "."],
-    "rate_tab": lambda it, a, p: [f"Find 1 first: {it[3]} {DIV} {it[2]} = {it[3] // it[2]}.", ", ".join(f"{k}: {it[3] // it[2] * k}" for k in it[4]) + "."],
+    "ratio_tab": lambda it, a, p: [f"The first column is {it[2]} {it[0]} : {it[3]} {it[1]}. Each column multiplies both by the same number."]
+    + [f"{it[2] * k} is {it[2]} {TIMES} {k}, so {it[3]} {TIMES} {k} = {it[3] * k}." for k in it[4][1:]],
+    "rate_tab": lambda it, a, p: [f"Find 1 first: {it[3]} {it[1]} {DIV} {it[2]} = {it[3] // it[2]} {it[1]} for 1 {_one(it[0])}."]
+    + [f"{k} {it[0] if k != 1 else _one(it[0])}: {k} {TIMES} {it[3] // it[2]} = {it[3] // it[2] * k} {it[1]}." for k in it[4]],
     "grid_pct": lambda it, a, p: [f"{it} of the 100 squares are shaded.", f"Out of 100 is percent: {it}%."],
     "fit_strip": lambda it, a, p: frac_op_steps(f"{it[0]}/{it[1]}", DIV, f"{it[2]}/{it[3]}"),
     "gcf_lists": lambda it, a, p: g_misc(97, "", f"GCF of {it[0]} and {it[1]} = [{math.gcd(it[0], it[1])}]"),

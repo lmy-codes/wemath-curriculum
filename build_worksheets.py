@@ -20022,8 +20022,9 @@ def c_ratio_pic(bk, x, cy, w, item):
     bk.fit_eq(x + GUT, cy + 14, w - GUT - 10, f"circles to squares = [{a}] : [{b}]", size=15)
 
 
-def ratio_table(bk, x, top, labels, cols, given, cw=44, rh=24, lw=70):
-    """A ratio table: one row per label, a column per pair. Cells not in `given` (column indexes) are boxes."""
+def ratio_table(bk, x, top, labels, cols, given, cw=44, rh=24, lw=70, top_row=False):
+    """A ratio table: one row per label, a column per pair. Cells not in `given` (column indexes) are boxes.
+    top_row=True prints the whole first row, so it's clear which column each box is for."""
     c = bk.c
     for r, (lab, vals) in enumerate(zip(labels, cols)):
         yy = top - (r + 1) * rh
@@ -20035,7 +20036,7 @@ def ratio_table(bk, x, top, labels, cols, given, cw=44, rh=24, lw=70):
             c.setStrokeColor(T.line)
             c.setLineWidth(0.8)
             c.rect(cx, yy, cw, rh, stroke=1, fill=0)
-            if i in given:
+            if i in given or (top_row and r == 0):
                 c.setFillColor(T.ink)
                 c.setFont("Rnd", 13)
                 c.drawCentredString(cx + cw / 2, yy + 7, nf(v))
@@ -20046,7 +20047,7 @@ def ratio_table(bk, x, top, labels, cols, given, cw=44, rh=24, lw=70):
 def c_ratio_tab(bk, x, cy, w, item):
     """item = (label_a, label_b, a, b, multipliers): the first column is given, the rest are boxes."""
     la, lb, a, b, ks = item
-    ratio_table(bk, x + GUT, cy + 64, [la, lb], [[a * k for k in ks], [b * k for k in ks]], given={0})
+    ratio_table(bk, x + GUT, cy + 64, [la, lb], [[a * k for k in ks], [b * k for k in ks]], given={0}, top_row=True)
 
 
 def eq_ratio(a, b, k, blank):
@@ -20189,7 +20190,7 @@ def c_rate_tab(bk, x, cy, w, item):
     """A table that finds 1 first: n items cost t; the key fills 1 and k."""
     la, lb, n, t, ks = item
     ratio_table(bk, x + GUT, cy + 64, [la, lb], [[n] + [1] + list(ks), [t] + [t // n] + [t // n * k for k in ks]],
-                given={0})
+                given={0}, top_row=True)
 
 
 def learn_rates(bk):
